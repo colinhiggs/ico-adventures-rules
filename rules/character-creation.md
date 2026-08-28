@@ -10,9 +10,8 @@ mechanics:
   attribute_points: 80
   attribute_min: 3
   attribute_max: 18
-  focused_skill_groups: 1
-  unfocused_skill_groups: 1
-  max_starting_mastery_hp: 15
+  starting_discipline_budget: 20
+  max_starting_mastery_hp: 25
   skill_point_pool: 30
   starting_powers: 1
   starting_gold: 150
@@ -28,19 +27,27 @@ or above {{ mechanics.attribute_max }}. Race modifiers apply after this
 spread, and the bonus for a high score is worked out from the final
 number.
 
-## Skill focus
+## Disciplines
 
-Choose {{ mechanics.focused_skill_groups }} skill group to be
-**focused** and {{ mechanics.unfocused_skill_groups }} to be
-**unfocused**. Every other group is **peripheral**. What these tiers
-mean for how far a skill can be pushed is covered in [[skills]].
+Spend a budget of {{ mechanics.starting_discipline_budget }} points on
+[[disciplines]]. That is enough for Adept in one, or Initiate in
+several — the first is a specialist, the second a generalist, and both
+are legitimate opening positions. The grades you buy set which skill
+groups are focused, unfocused and peripheral, per [[skills]].
 
 ## Mastery hit points and skill points
 
-Choose how many mastery hit points to start with, up to
-{{ mechanics.max_starting_mastery_hp }}. Your starting skill points are
-{{ mechanics.skill_point_pool }} minus that number — every mastery hit
-point is a skill point you did not spend.
+You have {{ mechanics.skill_point_pool }} points for skill ranks and
+mastery hit points together, spent at the same prices [[advancement]]
+uses at every later level — there is no special chargen exchange rate.
+You may start with at most
+{{ mechanics.max_starting_mastery_hp }} mastery hit points however much
+you are willing to spend.
+
+That ceiling is deliberately generous compared with what a level adds
+later. A starting character has almost no cushion in front of their
+core hit points, and without a real opening reserve first-level fights
+end in two exchanges.
 
 ## Powers and money
 

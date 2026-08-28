@@ -1,11 +1,34 @@
 {
+  "advancement": {
+    "id": "advancement",
+    "kind": "rule",
+    "title": "Advancement",
+    "summary": "A level is a budget of points, spent in the same shop as character creation — discipline grades, skill ranks, or mastery hit points.",
+    "summary_html": "A level is a budget of points, spent in the same shop as character creation — discipline grades, skill ranks, or mastery hit points.",
+    "html": "<p>A <strong>level</strong> in Ico is not a template. It is a budget of 15 points and a clock that raises your skill ceilings, and it is spent in exactly the same shop as <a href=\"#rule-character-creation\" data-rule-id=\"character-creation\">Creating a Character</a> — there is nothing you can buy on levelling that you could not have bought at the start, and nothing you bought at the start that is now closed to you.</p>\n<h4>What a level gives</h4>\n<ul><li>15 points to spend, as below.</li><li>3 mastery hit points, free</li></ul>\n<p>and automatic. Everyone gets these; they are the baseline survival curve that used to come from a class.</p>\n<ul><li>1 power, chosen from a pool you have</li></ul>\n<p>opened — see <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a> and <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a>.</p>\n<ul><li>Every 4 levels, one</li></ul>\n<p>attribute point.</p>\n<ul><li>One more rank of headroom on every skill ceiling, per <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a>.</li></ul>\n<h4>What points buy</h4>\n<ul><li><strong>A discipline grade</strong> — at the cost listed in <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a>.</li><li><strong>One rank in a skill</strong> — at the cost listed in <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a>, which</li></ul>\n<p>depends on how that skill is focused.</p>\n<ul><li><strong>Mastery hit points</strong> — one point buys</li></ul>\n<p>2 of them, but no more than 1 bought per level may be added on top of the free grant. Without that ceiling a character with nothing else to buy turns every spare point into padding, and fights get longer every level rather than deadlier.</p>\n<ul><li><strong>Stamina or spirit</strong> — one point buys</li></ul>\n<p>3 points of one <a href=\"#rule-power-sources\" data-rule-id=\"power-sources\">power source</a>, to a limit of 3 points spent per level. Powers get more expensive as you reach further with them, so a character who never widens the reservoir slowly loses access to their own best tricks.</p>\n<p>Both ceilings are per level and cumulative: a character who skipped them last level may catch up on this one. What they prevent is a character with nothing left to buy converting an entire level into one runaway statistic.</p>\n<p>Mastery hit points are cheap per point precisely because a skill rank keeps paying out on every roll you ever make and a mastery hit point absorbs its damage once. Both are worth buying; neither should be obviously correct.</p>\n<p>The per-level mastery grant is deliberately small next to the opening reserve in <a href=\"#rule-character-creation\" data-rule-id=\"character-creation\">Creating a Character</a>. Hit points that climb steeply every level while damage stays flat do not make a character heroic, they make every fight longer than the last; the curve here is meant to be nearly flat, with the growth in what a character can <em>do</em> rather than in how long they take to kill.</p>\n<p>Core hit points are not on this list. They remain equal to your constitution and grow only when that attribute does — see <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">Core and Mastery Hit Points</a>. A character's real durability stays almost flat for life, and everything the levels add is the cushion in front of it.</p>",
+    "tags": [
+      "core",
+      "character",
+      "progression"
+    ],
+    "related": [
+      "character-creation",
+      "discipline-powers",
+      "disciplines",
+      "hit-points",
+      "power-sources",
+      "skills"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-advancement"
+  },
   "armour": {
     "id": "armour",
     "kind": "rule",
-    "title": "Armour",
-    "summary": "Armour is rated by armour points, a skill penalty, and cost. Every blow is reduced by the armour points.",
-    "summary_html": "Armour is rated by armour points, a skill penalty, and cost. Every blow is reduced by the armour points.",
-    "html": "<p>Armour is worn for its <strong>armour points</strong> (AP), which reduce every blow that lands — see <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>. The trade-off is a <strong>skill penalty</strong> that applies while it is worn, and which also worsens a dodging defender's <a href=\"#rule-hitting\" data-rule-id=\"hitting\">targeting difficulty</a>. Heavier armour is also more expensive — see <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> for what the same purse buys offensively.</p>\n<h4>Light armour</h4>\n<ul><li><strong>Partial leather</strong> — AP 1, skill penalty 0, cost 5gp.</li><li><strong>Leather</strong> — AP 2, skill penalty -1, cost 10gp.</li><li><strong>Studded leather</strong> — AP 3, skill penalty -2, cost 25gp.</li><li><strong>Chain shirt</strong> — AP 4, skill penalty -3, cost 100gp.</li></ul>\n<h4>Medium armour</h4>\n<ul><li><strong>Scale mail</strong> — AP 4, skill penalty -4, cost 50gp.</li><li><strong>Chain mail</strong> — AP 5, skill penalty -4, cost 150gp.</li><li><strong>Breastplate</strong> — AP 5, skill penalty -3, cost 200gp.</li><li><strong>Full plate</strong> — AP 8, skill penalty -6, cost 1500gp.</li></ul>",
+    "title": "Armour and Shields",
+    "summary": "Armour points reduce every blow that lands, at the price of a skill penalty that also makes a dodging wearer easier to hit. Shields add to a block instead.",
+    "summary_html": "Armour points reduce every blow that lands, at the price of a skill penalty that also makes a dodging wearer easier to hit. Shields add to a block instead.",
+    "html": "<p>Armour is worn for its <strong>armour points</strong> (AP), subtracted from every blow that lands — see <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>. The price is a <strong>skill penalty</strong> that applies while it is worn and, because a dodging defender's targeting difficulty is built from their dodge skill, makes the wearer easier to hit when dodging. See <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a>, and the Untouchable signature in <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a>, which removes exactly that penalty.</p>\n<h4>Light armour</h4>\n<ul><li><strong>Partial leather</strong> — AP 1, skill</li></ul>\n<p>penalty 0, 5gp.</p>\n<ul><li><strong>Leather</strong> — AP 2, skill penalty</li></ul>\n<p>-1, 10gp.</p>\n<ul><li><strong>Studded leather</strong> — AP 3, skill</li></ul>\n<p>penalty -2, 25gp.</p>\n<ul><li><strong>Chain shirt</strong> — AP 4, skill penalty</li></ul>\n<p>-3, 100gp.</p>\n<h4>Medium and heavy armour</h4>\n<ul><li><strong>Scale mail</strong> — AP 4, skill penalty</li></ul>\n<p>-4, 50gp.</p>\n<ul><li><strong>Chain mail</strong> — AP 5, skill penalty</li></ul>\n<p>-4, 150gp.</p>\n<ul><li><strong>Breastplate</strong> — AP 5, skill penalty</li></ul>\n<p>-3, 200gp.</p>\n<ul><li><strong>Full plate</strong> — AP 8, skill penalty</li></ul>\n<p>-6, 1500gp.</p>\n<h4>Shields</h4>\n<p>A shield does nothing while you dodge. While you block, it adds to your targeting difficulty and its armour points come off the blow on top of your worn armour.</p>\n<ul><li><strong>Buckler</strong> — block bonus +1,</li></ul>\n<p>block AP 2, 5gp.</p>\n<ul><li><strong>Shield</strong> — block bonus +2,</li></ul>\n<p>block AP 3, 15gp.</p>\n<ul><li><strong>Great shield</strong> — block bonus</li></ul>\n<p>+3, block AP 5, skill penalty -1, 40gp.</p>",
     "tags": [
       "equipment",
       "reference",
@@ -13,8 +36,8 @@
     ],
     "related": [
       "damage",
-      "hitting",
-      "weapons"
+      "discipline-powers",
+      "hitting"
     ],
     "includes": [],
     "book_anchor": "#rule-armour"
@@ -43,14 +66,16 @@
     "title": "Creating a Character",
     "summary": "Spend a fixed pool of attribute points, choose skill focus, trade mastery hit points against skill points, take one power, and start with a set purse.",
     "summary_html": "Spend a fixed pool of attribute points, choose skill focus, trade mastery hit points against skill points, take one power, and start with a set purse.",
-    "html": "<p>Build a starting character in this order.</p>\n<h4>Attributes</h4>\n<p>Split 80 points among the six <a href=\"#rule-attributes\" data-rule-id=\"attributes\">Attributes</a>. No score may start below 3 or above 18. Race modifiers apply after this spread, and the bonus for a high score is worked out from the final number.</p>\n<h4>Skill focus</h4>\n<p>Choose 1 skill group to be <strong>focused</strong> and 1 to be <strong>unfocused</strong>. Every other group is <strong>peripheral</strong>. What these tiers mean for how far a skill can be pushed is covered in <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a>.</p>\n<h4>Mastery hit points and skill points</h4>\n<p>Choose how many mastery hit points to start with, up to 15. Your starting skill points are 30 minus that number — every mastery hit point is a skill point you did not spend.</p>\n<h4>Powers and money</h4>\n<p>Take 1 power (see <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a>) and 150 gold pieces to equip yourself from <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> and <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour</a>.</p>\n<h4>Priorities</h4>\n<p>Finally, apply your <a href=\"#rule-priorities\" data-rule-id=\"priorities\">Setting Priorities</a> — the trades that let one character start stronger in an area at the cost of being weaker, or more encumbered by circumstance, elsewhere.</p>",
+    "html": "<p>Build a starting character in this order.</p>\n<h4>Attributes</h4>\n<p>Split 80 points among the six <a href=\"#rule-attributes\" data-rule-id=\"attributes\">Attributes</a>. No score may start below 3 or above 18. Race modifiers apply after this spread, and the bonus for a high score is worked out from the final number.</p>\n<h4>Disciplines</h4>\n<p>Spend a budget of 20 points on <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a>. That is enough for Adept in one, or Initiate in several — the first is a specialist, the second a generalist, and both are legitimate opening positions. The grades you buy set which skill groups are focused, unfocused and peripheral, per <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a>.</p>\n<h4>Mastery hit points and skill points</h4>\n<p>You have 30 points for skill ranks and mastery hit points together, spent at the same prices <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a> uses at every later level — there is no special chargen exchange rate. You may start with at most 25 mastery hit points however much you are willing to spend.</p>\n<p>That ceiling is deliberately generous compared with what a level adds later. A starting character has almost no cushion in front of their core hit points, and without a real opening reserve first-level fights end in two exchanges.</p>\n<h4>Powers and money</h4>\n<p>Take 1 power (see <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a>) and 150 gold pieces to equip yourself from <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> and <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>.</p>\n<h4>Priorities</h4>\n<p>Finally, apply your <a href=\"#rule-priorities\" data-rule-id=\"priorities\">Setting Priorities</a> — the trades that let one character start stronger in an area at the cost of being weaker, or more encumbered by circumstance, elsewhere.</p>",
     "tags": [
       "character",
       "setup"
     ],
     "related": [
+      "advancement",
       "armour",
       "attributes",
+      "disciplines",
       "priorities",
       "skills",
       "using-powers",
@@ -65,7 +90,7 @@
     "title": "The Core Roll",
     "summary": "Most actions are a d20 plus bonuses against either a fixed difficulty or an opposed roll. Beating the target by more means a better result.",
     "summary_html": "Most actions are a d20 plus bonuses against either a fixed difficulty or an opposed roll. Beating the target by more means a better result.",
-    "html": "<p>When the outcome of an action is in doubt, you roll for it, and it is almost always the same roll.</p>\n<h4>The roll</h4>\n<p>Roll <code>1d20</code> and add your bonuses — from attributes, from the relevant skill, and from environmental factors the Dungeon Master calls out. Compare the total to a target, which is either:</p>\n<ul><li>a fixed <strong>difficulty</strong> set by the Dungeon Master, or</li><li>an <strong>opposed</strong> roll: someone else's <code>1d20</code></li></ul>\n<p>plus their own bonuses.</p>\n<p>Meet or beat the target and you succeed.</p>\n<h4>Margin matters</h4>\n<p>Beating the target by more points is a better outcome, not just a success: more damage on a blow, less effort spent on a power, a faster or cleaner result. Individual rules say how their own margin is spent — see <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> for the combat case, and <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a> for powers.</p>",
+    "html": "<p>When the outcome of an action is in doubt, you roll for it, and it is almost always the same roll.</p>\n<h4>The roll</h4>\n<p>Roll <code>1d20</code> and add your bonuses — from attributes, from the relevant skill, and from environmental factors the Dungeon Master calls out. Compare the total to a target, which is either:</p>\n<ul><li>a fixed <strong>difficulty</strong> set by the Dungeon Master, or</li><li>an <strong>opposed</strong> roll: someone else's <code>1d20</code></li></ul>\n<p>plus their own bonuses.</p>\n<p>Meet or beat the target and you succeed — a total exactly equal to the target is a success, everywhere in the game. Combat is not an exception: a blow that matches the targeting difficulty lands, just as a power that matches its difficulty works.</p>\n<h4>Margin matters</h4>\n<p>Beating the target by more points is a better outcome, not just a success: more damage on a blow, less effort spent on a power, a faster or cleaner result. Individual rules say how their own margin is spent — see <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> for the combat case, and <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a> for powers.</p>",
     "tags": [
       "core",
       "resolution"
@@ -84,7 +109,7 @@
     "title": "Working Out Damage",
     "summary": "Damage is the weapon's rating plus half the amount the attack beat the targeting difficulty, then reduced by armour and any block.",
     "summary_html": "Damage is the weapon's rating plus half the amount the attack beat the targeting difficulty, then reduced by armour and any block.",
-    "html": "<p>Damage is only worked out once a blow has landed — see <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a>.</p>\n<h4>The raw figure</h4>\n<p>Take the weapon's <strong>damage rating</strong> and add <code>0.5</code> times the amount by which the attack roll beat the targeting difficulty, rounding down. A weapon that beats a defence cleanly therefore does noticeably more than one that scrapes past it.</p>\n<h4>Reductions</h4>\n<p>The raw figure is then reduced:</p>\n<ul><li>by the <strong>armour rating</strong> of whatever the target is wearing, applied to</li></ul>\n<p>every blow — see <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour</a>;</p>\n<ul><li>and, if the defender was blocking, by the armour points of the weapon</li></ul>\n<p>or shield used to block.</p>\n<h4>Applying it</h4>\n<p>Whatever is left comes off the target's hit points, taking <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">mastery hit points</a> first and reaching core hit points only once mastery is gone.</p>",
+    "html": "<p>Damage is only worked out once a blow has landed — see <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a>.</p>\n<h4>The raw figure</h4>\n<p>Take the weapon's <strong>damage rating</strong> and add <code>0.5</code> times the amount by which the attack roll beat the targeting difficulty, rounding down. A weapon that beats a defence cleanly therefore does noticeably more than one that scrapes past it.</p>\n<h4>Skill in the blow</h4>\n<p>Add one further point of damage for every 8 full ranks of the attack skill you used, counting the bonus from its governing attribute.</p>\n<p>This is the term that keeps the game moving. Attack and defence rise together as characters advance, so the margin on a typical hit does not grow — without a term tied directly to skill, a veteran's blows would land exactly as hard as a novice's while everyone's <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">mastery hit points</a> climbed every level, and every fight would take longer than the last one. A more practised fighter does not merely connect more often; they land blows that matter.</p>\n<h4>Reductions</h4>\n<p>The raw figure is then reduced:</p>\n<ul><li>by the <strong>armour rating</strong> of whatever the target is wearing, applied to</li></ul>\n<p>every blow — see <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>;</p>\n<ul><li>and, if the defender was blocking, by the armour points of the weapon</li></ul>\n<p>or shield used to block.</p>\n<h4>The half a blow that always lands</h4>\n<p>Armour and a raised shield together may never take more than 0.5 of a blow's raw damage. However heavy the plate and however broad the shield, at least half of what got through the defence gets through the armour too.</p>\n<p>Without this floor the arithmetic breaks at the top end: plate and a great shield subtract more than a sword's entire damage rating, so the best-armoured character in the party stops being hard to kill and becomes impossible to kill, and every light weapon in <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> turns into a prop. The cap keeps heavy armour excellent without letting it leave the game.</p>\n<h4>Applying it</h4>\n<p>Whatever is left comes off the target's hit points, taking <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">mastery hit points</a> first and reaching core hit points only once mastery is gone.</p>",
     "tags": [
       "core",
       "combat",
@@ -93,23 +118,95 @@
     "related": [
       "armour",
       "hit-points",
-      "hitting"
+      "hitting",
+      "weapons"
     ],
     "includes": [],
     "book_anchor": "#rule-damage"
+  },
+  "discipline-list": {
+    "id": "discipline-list",
+    "kind": "rule",
+    "title": "The Five Disciplines",
+    "summary": "Martial, Athletic, Awareness, Magical and Spiritual — each with a skill group, a power pool, and one signature ability at Master grade.",
+    "summary_html": "Martial, Athletic, Awareness, Magical and Spiritual — each with a skill group, a power pool, and one signature ability at Master grade.",
+    "html": "<p>Each discipline names a group of skills from the <a href=\"#rule-skill-list\" data-rule-id=\"skill-list\">The Skill List</a>, draws its powers from one of the two <a href=\"#rule-power-sources\" data-rule-id=\"power-sources\">Stamina and Spirit</a>, and grants a single signature ability at Master grade. Grades and costs are in <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a>.</p>\n<h4>Martial</h4>\n<p><em>Skill group: melee attack, ranged attack, block, fortitude. Source: stamina.</em></p>\n<p>Weapon work, and the endurance to keep doing it. Its powers hit harder and find the weak points in armour.</p>\n<p><strong>Signature — Killing Blow.</strong> You convert the margin by which your attack beat the targeting difficulty into damage at full value instead of half. See <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> for the ordinary conversion.</p>\n<h4>Athletic</h4>\n<p><em>Skill group: dodge, climb, jump, balance, swim, escape artist, move silently. Source: stamina.</em></p>\n<p>Speed and body control. Its powers add attacks, add movement, and make you harder to pin down.</p>\n<p><strong>Signature — Untouchable.</strong> Armour's skill penalty no longer worsens your targeting difficulty when you dodge.</p>\n<h4>Awareness</h4>\n<p><em>Skill group: spot, listen, search, sense motive, appraise, disable device. Source: stamina.</em></p>\n<p>Noticing things in time to act on them.</p>\n<p><strong>Signature — Read the Blow.</strong> You may choose whether to dodge or block <em>after</em> seeing the attack roll, rather than before. See <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a>.</p>\n<h4>Magical</h4>\n<p><em>Skill group: spellcasting, concentration, knowledge (arcana), decipher script, use magic device. Source: spirit.</em></p>\n<p>Constructed magic, learned from books and study. See <a href=\"#rule-spellcasting\" data-rule-id=\"spellcasting\">How Spellcasting Works</a>.</p>\n<p><strong>Signature — School Mastery.</strong> Choose one school of magic. Spells of that school are cast at reduced difficulty.</p>\n<h4>Spiritual</h4>\n<p><em>Skill group: willpower, heal, diplomacy, knowledge (religion). Source: spirit.</em></p>\n<p>Granted magic, and the strength of will that carries it.</p>\n<p><strong>Signature — Granted Domain.</strong> Choose one domain of influence. Spells of that domain are cast at heavily reduced difficulty — this is what a god being your power source is worth. The size of both reductions is given in <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a>.</p>",
+    "tags": [
+      "character",
+      "progression",
+      "reference"
+    ],
+    "related": [
+      "damage",
+      "discipline-powers",
+      "disciplines",
+      "hitting",
+      "power-sources",
+      "skill-list",
+      "spellcasting"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-discipline-list"
+  },
+  "discipline-powers": {
+    "id": "discipline-powers",
+    "kind": "rule",
+    "title": "Discipline Powers",
+    "summary": "The powers each discipline opens, and the signature ability each grants at Master grade. Every power scales — you choose how hard to push it.",
+    "summary_html": "The powers each discipline opens, and the signature ability each grants at Master grade. Every power scales — you choose how hard to push it.",
+    "html": "<p>These powers are opened by holding the matching discipline at the matching grade — see <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a>. The <a href=\"#rule-general-powers\" data-rule-id=\"general-powers\">General Powers</a> stay open to everyone regardless. All of them are used as <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a> describes: you declare a difficulty, roll, and pay for what you asked for.</p>\n<h4>Martial</h4>\n<p><strong>Power Attack</strong> <em>(Initiate; stamina, melee attack, base difficulty 4)</em> — a heavier swing at the cost of control. Each further 2 points of difficulty adds 1 damage to the blow.</p>\n<p><strong>Find the Gap</strong> <em>(Adept; stamina, melee attack, base difficulty 6)</em> — a blow aimed at a join or a strap. Each further 2 points of difficulty ignores 1 point of the target's damage reduction -- worn armour and a raised shield alike, since the whole point is that you are not hitting either of them. This is the answer to heavy armour, and it is deliberately a power rather than a weapon property.</p>\n<p><strong>Killing Blow</strong> <em>(Master signature)</em> — your attacks convert margin into damage at 1 per point instead of the usual half. See <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>.</p>\n<h4>Athletic</h4>\n<p><strong>Redouble</strong> <em>(Initiate; stamina, dodge, base difficulty 4)</em> — thrown weight and a second movement. Each further 3 points of difficulty adds 2 to your targeting difficulty against one attack, if you are dodging.</p>\n<p><strong>Sneak Attack</strong> <em>(Adept; stamina, melee attack, base difficulty 6)</em> — usable only against a target who is unaware of you or already engaged with someone else. Each further 2 points of difficulty adds 2 damage.</p>\n<p><strong>Untouchable</strong> <em>(Master signature)</em> — armour's skill penalty no longer worsens your targeting difficulty while dodging, so you may wear real protection without surrendering your defence. See <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>.</p>\n<h4>Awareness</h4>\n<p><strong>Forewarned</strong> <em>(Initiate; stamina, spot, base difficulty 4)</em> — you saw it coming. Each further 2 points of difficulty adds 2 to your place in the order for the coming fight.</p>\n<p><strong>Read the Blow</strong> <em>(Master signature)</em> — you may choose whether to dodge or block after the attack roll has been made rather than before, inverting the usual guess in <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a>.</p>\n<h4>Magical and Spiritual</h4>\n<p>Both of these disciplines take their powers from the spell lists rather than from a separate pool — a spell <em>is</em> a power, as <a href=\"#rule-spellcasting\" data-rule-id=\"spellcasting\">How Spellcasting Works</a> explains. What their grades buy is reach: an Initiate may hold and cast spells at all, and an Adept's focused spellcasting skill lets them carry a much higher difficulty.</p>\n<p><strong>School Mastery</strong> <em>(Magical, Master signature)</em> — choose one school of magic. Spells of that school are cast at 5 less difficulty.</p>\n<p><strong>Granted Domain</strong> <em>(Spiritual, Master signature)</em> — choose one domain of influence. Spells of that domain are cast at 10 less difficulty. This is the mechanical weight of having a god as your power source, and it is larger than School Mastery because it is narrower: a domain is a subject, a school is a technique.</p>",
+    "tags": [
+      "powers",
+      "progression",
+      "reference"
+    ],
+    "related": [
+      "armour",
+      "damage",
+      "disciplines",
+      "general-powers",
+      "hitting",
+      "spellcasting",
+      "using-powers"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-discipline-powers"
+  },
+  "disciplines": {
+    "id": "disciplines",
+    "kind": "rule",
+    "title": "Disciplines",
+    "summary": "Disciplines replace classes. Each is bought in three named grades, and the grade you hold sets your focus in that discipline's skill group and opens its power pool.",
+    "summary_html": "Disciplines replace classes. Each is bought in three named grades, and the grade you hold sets your focus in that discipline's skill group and opens its power pool.",
+    "html": "<p>Ico has no classes. What a character is good at comes from the <strong>disciplines</strong> they have taken, and a character may hold as many as they can afford.</p>\n<h4>Grades</h4>\n<p>Every discipline is bought in three grades — <strong>Initiate</strong>, <strong>Adept</strong>, then <strong>Master</strong> — in that order, paid for with advancement points (see <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a>):</p>\n<ul><li><strong>Initiate</strong> costs 5 points.</li><li><strong>Adept</strong> costs a further 15 points.</li><li><strong>Master</strong> costs a further 40 points.</li></ul>\n<p>The cost curve is the only limit on how many disciplines you hold. Going wide is cheap and going deep is expensive, deliberately.</p>\n<h4>What a grade does</h4>\n<p>A grade does exactly three things, and nothing else:</p>\n<ul><li>It sets your <strong>focus</strong> in that discipline's skill group. A discipline</li></ul>\n<p>you hold at Initiate makes its group <em>unfocused</em>; at Adept or Master it makes the group <em>focused</em>. Any group you hold no discipline in stays <em>peripheral</em>. Focus governs how far a skill can be raised and what each rank costs — see <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a>.</p>\n<ul><li>It opens that discipline's <strong>power pool</strong> at the matching grade, so</li></ul>\n<p>you may take its powers when you gain one. See <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a>.</p>\n<ul><li>At <strong>Master</strong> only, it grants that discipline's single <strong>signature</strong></li></ul>\n<p>ability.</p>\n<p>Because focus is derived from grade, there is no separate multiclassing rule and nothing to reconcile when a character advances in two directions at once. The five disciplines and their signatures are listed in the <a href=\"#rule-discipline-list\" data-rule-id=\"discipline-list\">The Five Disciplines</a>.</p>\n<h4>The familiar archetypes</h4>\n<p>Nothing stops you building the classic adventuring roles — they are combinations rather than categories. A fighter is Martial and Athletic; a rogue is Athletic and Awareness; a wizard is Magical and Awareness; a priest is Spiritual with a little Martial. A character who spreads Initiate grades across four disciplines is a generalist, and that is a legitimate build rather than a mistake.</p>",
+    "tags": [
+      "core",
+      "character",
+      "progression"
+    ],
+    "related": [
+      "advancement",
+      "discipline-list",
+      "discipline-powers",
+      "skills"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-disciplines"
   },
   "general-powers": {
     "id": "general-powers",
     "kind": "rule",
     "title": "General Powers",
-    "summary": "Powers any character may take, independent of specialisation. Each lists its source, its skill and its difficulty.",
-    "summary_html": "Powers any character may take, independent of specialisation. Each lists its source, its skill and its difficulty.",
-    "html": "<p>These powers are open to any character. Each is written as <em>(power source, skill, difficulty)</em>, and is resolved as <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a> describes. Powers tied to a particular specialisation are not covered here.</p>\n<h4>Fast Melee 1</h4>\n<p><em>(stamina, melee attack, difficulty 1)</em></p>\n<p>Gain an extra melee attack, normally taken straight after your first.</p>\n<p>Roll and modify the extra attack as normal and call the result <code>R</code>. First compare <code>R</code> to the power's difficulty to settle whether the power worked and what stamina it cost. If it worked, resolve the attack using that same <code>R</code> against the target's <a href=\"#rule-hitting\" data-rule-id=\"hitting\">targeting difficulty</a>.</p>\n<h4>Fast Melee 2</h4>\n<p><em>(stamina, melee attack, difficulty 6)</em></p>\n<p>Gain a further extra melee attack. This can only be invoked directly after a Fast Melee 1 that cost no stamina. As before, the roll that tests the power is also the roll for the attack it grants.</p>\n<p>Fast Melee 2 stacks with Fast Melee 1, and using the two together counts as a single power use.</p>\n<h4>Fast Ranged 1</h4>\n<p><em>(stamina, ranged attack, difficulty 1)</em></p>\n<p>Gain an extra ranged attack. This works exactly like Fast Melee 1, but for ranged attacks.</p>",
+    "summary": "Powers open to every character regardless of discipline. Like all powers they scale: you choose how far to push the difficulty.",
+    "summary_html": "Powers open to every character regardless of discipline. Like all powers they scale: you choose how far to push the difficulty.",
+    "html": "<p>These powers are open to any character, whatever <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a> they hold. Each is written with its power source, its skill, and its base difficulty; all are resolved as <a href=\"#rule-using-powers\" data-rule-id=\"using-powers\">Using a Power</a> describes.</p>\n<h4>Fast Attack</h4>\n<p><em>(stamina, the attack skill in use, base difficulty 1; each further 15 points of difficulty grants one more extra attack)</em></p>\n<p>Attack again, after your first. Declare how many extra attacks you are going for, roll once, and use that single roll for two things: first against the declared difficulty to see whether the power worked and what it cost, then against the target's <a href=\"#rule-hitting\" data-rule-id=\"hitting\">targeting difficulty</a> for each attack it granted.</p>\n<p>Melee and ranged both use this one power, taking whichever attack skill the weapon calls for. It replaces the separate Fast Melee and Fast Ranged powers of earlier drafts, which were the same power written three times.</p>\n<h4>Second Wind</h4>\n<p><em>(stamina, fortitude, base difficulty 8; each further 3 points of difficulty recovers 2 more)</em></p>\n<p>Shrug off a near miss and keep going, recovering <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">mastery hit points</a> but never core hit points. Real wounds do not respond to willpower.</p>",
     "tags": [
       "powers",
       "reference"
     ],
     "related": [
+      "disciplines",
+      "hit-points",
       "hitting",
       "using-powers"
     ],
@@ -139,9 +236,9 @@
     "id": "hitting",
     "kind": "rule",
     "title": "Landing a Blow",
-    "summary": "The defender dodges or blocks, which sets the targeting difficulty. The attacker rolls d20 plus attack skill and must exceed it.",
-    "summary_html": "The defender dodges or blocks, which sets the targeting difficulty. The attacker rolls d20 plus attack skill and must exceed it.",
-    "html": "<p>Every blow is one attacker against one defender.</p>\n<h4>The defender chooses</h4>\n<p>Before the attack is rolled, the defender chooses to <strong>dodge</strong> or <strong>block</strong>, and that choice sets the <strong>targeting difficulty</strong> (TD) the attacker must beat.</p>\n<ul><li>Against a <strong>dodging</strong> defender, the TD is</li></ul>\n<p>10 plus the defender's dodge skill, before other modifiers. Most armour carries a dodge penalty, which <em>lowers</em> this number and makes a dodging wearer easier to hit.</p>\n<ul><li>Against a <strong>blocking</strong> defender, the TD is the defender's block skill,</li></ul>\n<p>usually modified by the block bonus or penalty of the weapon or shield being used.</p>\n<h4>The attacker rolls</h4>\n<p>The attacker rolls <code>1d20</code> plus their attack skill and applicable modifiers — see <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">The Core Roll</a>, and <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a> for which attack skill applies to which weapon. If the total is greater than the targeting difficulty, the blow lands and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> is worked out. The amount by which the roll exceeds the TD is carried into that step, so a cleaner hit hurts more.</p>\n<p>Weapon and shield block values used above are listed with the <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> and <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour</a>.</p>",
+    "summary": "The defender dodges or blocks, which sets the targeting difficulty. The attacker rolls d20 plus attack skill and must match or beat it.",
+    "summary_html": "The defender dodges or blocks, which sets the targeting difficulty. The attacker rolls d20 plus attack skill and must match or beat it.",
+    "html": "<p>Every blow is one attacker against one defender.</p>\n<h4>The defender chooses</h4>\n<p>Before the attack is rolled, the defender chooses to <strong>dodge</strong> or <strong>block</strong>, and that choice sets the <strong>targeting difficulty</strong> (TD) the attacker must beat.</p>\n<ul><li>Against a <strong>dodging</strong> defender, the TD is</li></ul>\n<p>10 plus the defender's dodge skill, before other modifiers. Most armour carries a dodge penalty, which <em>lowers</em> this number and makes a dodging wearer easier to hit.</p>\n<ul><li>Against a <strong>blocking</strong> defender, the TD is the defender's block skill,</li></ul>\n<p>usually modified by the block bonus or penalty of the weapon or shield being used.</p>\n<h4>The attacker rolls</h4>\n<p>The attacker rolls <code>1d20</code> plus their attack skill and applicable modifiers — see <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">The Core Roll</a>, and <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a> for which attack skill applies to which weapon. If the total <strong>matches or beats</strong> the targeting difficulty, the blow lands and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> is worked out. A total exactly equal to the TD is a hit that carries no margin: it lands for the weapon's damage and nothing more.</p>\n<p>The amount by which the roll exceeded the TD is carried into the damage step, so a cleaner hit hurts more. Combat uses the same threshold as every other roll in the game — see <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">the core roll</a> — rather than a stricter one of its own.</p>\n<p>Weapon and shield block values used above are listed with the <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> and <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>.</p>",
     "tags": [
       "core",
       "combat"
@@ -213,17 +310,17 @@
     "id": "skills",
     "kind": "rule",
     "title": "Using and Focusing Skills",
-    "summary": "A skill check is d20 plus the skill against a difficulty or an opposed roll. Focus tier — focused, unfocused or peripheral — caps how high the skill can be raised.",
-    "summary_html": "A skill check is d20 plus the skill against a difficulty or an opposed roll. Focus tier — focused, unfocused or peripheral — caps how high the skill can be raised.",
-    "html": "<h4>Making a check</h4>\n<p>A skill check is the <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">core roll</a>: <code>1d20</code> plus the skill's level plus the bonus from its governing attribute, against a fixed difficulty or an opposed roll. Each skill has one governing attribute, listed in the <a href=\"#rule-skill-list\" data-rule-id=\"skill-list\">The Skill List</a>.</p>\n<h4>Focus tiers</h4>\n<p>Skills are organised into groups, and each character's groups sit at one of three tiers:</p>\n<ul><li><strong>Focused</strong> — the character's speciality; skills here can be raised</li></ul>\n<p>the highest.</p>\n<ul><li><strong>Unfocused</strong> — competent but not specialised; a lower ceiling than</li></ul>\n<p>focused.</p>\n<ul><li><strong>Peripheral</strong> — everything else, with the lowest ceiling.</li></ul>\n<p>The tier a group sits in only limits how far its skills can be <em>raised</em>; it does not stop the character attempting anything. Which groups are focused and unfocused is set at <a href=\"#rule-character-creation\" data-rule-id=\"character-creation\">Creating a Character</a>, and the <a href=\"#rule-priorities\" data-rule-id=\"priorities\">Setting Priorities</a> rules can buy an exception for a single skill.</p>",
+    "summary": "A skill check is d20 plus the skill. Focus — set by the disciplines you hold — decides how high a skill can be raised and what each rank costs.",
+    "summary_html": "A skill check is d20 plus the skill. Focus — set by the disciplines you hold — decides how high a skill can be raised and what each rank costs.",
+    "html": "<h4>Making a check</h4>\n<p>A skill check is the <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">core roll</a>: <code>1d20</code> plus the skill's rank plus the bonus from its governing attribute, against a fixed difficulty or an opposed roll. Each skill has one governing attribute, listed in the <a href=\"#rule-skill-list\" data-rule-id=\"skill-list\">The Skill List</a>.</p>\n<h4>Focus</h4>\n<p>Skills are grouped, and each group sits at one of three tiers — <strong>focused</strong>, <strong>unfocused</strong> or <strong>peripheral</strong> — decided entirely by which <a href=\"#rule-disciplines\" data-rule-id=\"disciplines\">Disciplines</a> you hold and at what grade. You never choose a focus tier directly.</p>\n<p>Focus does two things.</p>\n<p><strong>It sets a ceiling.</strong> The highest rank a skill can be raised to is 1 per level, on top of a base that depends on focus: 3 for focused skills, 2 for unfocused, and 0 for peripheral. The gaps are narrow on purpose — a specialist should be reliably better, not the only person in the party who can attempt the thing at all.</p>\n<p><strong>It sets a price.</strong> One rank costs 1 advancement point in a focused skill, 2 in an unfocused one, and 3 in a peripheral one — see <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a>. This is where specialisation is really expressed: a generalist is not forbidden from keeping pace, merely made to spend everything doing it.</p>",
     "tags": [
       "core",
       "character"
     ],
     "related": [
-      "character-creation",
+      "advancement",
       "core-resolution",
-      "priorities",
+      "disciplines",
       "skill-list"
     ],
     "includes": [],
@@ -290,17 +387,20 @@
     "id": "using-powers",
     "kind": "rule",
     "title": "Using a Power",
-    "summary": "Roll the power's listed skill against its difficulty. Success costs 10 from its power source, reduced by 1 for every point the roll beat the difficulty.",
-    "summary_html": "Roll the power's listed skill against its difficulty. Success costs 10 from its power source, reduced by 1 for every point the roll beat the difficulty.",
-    "html": "<h4>The roll</h4>\n<p>Every power lists a <strong>difficulty</strong> and the <strong>skill</strong> used to invoke it. Roll that skill (the <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">core roll</a>) against the difficulty. Meeting it means the power works.</p>\n<h4>The cost</h4>\n<p>A successful power costs 10 points from its <a href=\"#rule-power-sources\" data-rule-id=\"power-sources\">power source</a> — stamina or spirit. Every point by which the roll beat the difficulty reduces that cost by 1, so the cost is <code>10 + difficulty - skill_roll</code>.</p>\n<p>A well-practised character will eventually invoke some powers for no cost at all. A few powers set a minimum cost that this reduction cannot take you below; those say so in their own description.</p>\n<p>The <a href=\"#rule-general-powers\" data-rule-id=\"general-powers\">General Powers</a> are open to every character; others come from a character's chosen area of specialisation.</p>",
+    "summary": "Declare how hard you are pushing, roll the power's skill against that difficulty, and pay 10 plus the difficulty minus your roll — never less than a third of the difficulty.",
+    "summary_html": "Declare how hard you are pushing, roll the power's skill against that difficulty, and pay 10 plus the difficulty minus your roll — never less than a third of the difficulty.",
+    "html": "<h4>Declare, then roll</h4>\n<p>Every power lists a <strong>base difficulty</strong>, a <strong>skill</strong>, and a <strong>step</strong>: how much extra difficulty buys one more increment of effect. Before rolling, you declare the difficulty you are attempting — the base, plus however many steps you want. Then roll that skill as the <a href=\"#rule-core-resolution\" data-rule-id=\"core-resolution\">core roll</a>. Meeting the declared difficulty means the power works, at the scale you asked for.</p>\n<p>This is why a power never becomes free with experience. Growing skill does not make the same effect cheaper; it makes a <em>larger</em> effect reachable at the same price. The scaling steps for each power are given in <a href=\"#rule-general-powers\" data-rule-id=\"general-powers\">General Powers</a> and <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a>; spells work the same way and call it boosting, in <a href=\"#rule-spell-properties\" data-rule-id=\"spell-properties\">Standard Spell Properties</a>.</p>\n<h4>The cost</h4>\n<p>A successful power costs <code>base_cost + difficulty - skill_roll</code> points from its <a href=\"#rule-power-sources\" data-rule-id=\"power-sources\">power source</a>, where the base cost is 10 and every point by which the roll beat the difficulty takes 1 off.</p>\n<p>No power ever costs less than its declared difficulty divided by 3, rounded down. Reaching further always costs more, however good the roll, and this floor is what keeps stamina and spirit meaningful for a veteran.</p>\n<h4>One roll, two jobs</h4>\n<p>When a power is invoked on an action that uses the <em>same</em> skill — a melee attack power rolled on melee attack, say — you make one roll and it serves both purposes: first against the declared difficulty to settle whether the power worked and what it cost, then against the target's <a href=\"#rule-hitting\" data-rule-id=\"hitting\">targeting difficulty</a> to resolve the action itself. You never roll twice for one swing.</p>\n<h4>Failure</h4>\n<p>If the roll misses the declared difficulty, the power does not happen, the action is spent, and you pay the minimum cost anyway. That risk is the reason not to declare the highest difficulty you can imagine every time: pushing further increases the effect, the price, and the chance of getting nothing.</p>",
     "tags": [
       "core",
       "powers"
     ],
     "related": [
       "core-resolution",
+      "discipline-powers",
       "general-powers",
-      "power-sources"
+      "hitting",
+      "power-sources",
+      "spell-properties"
     ],
     "includes": [],
     "book_anchor": "#rule-using-powers"
@@ -309,9 +409,9 @@
     "id": "weapons",
     "kind": "rule",
     "title": "Weapons",
-    "summary": "Weapon statistics: accuracy modifier, damage rating, size, and block value. The list is incomplete.",
-    "summary_html": "Weapon statistics: accuracy modifier, damage rating, size, and block value. The list is incomplete.",
-    "html": "<p>Each weapon is listed with the statistics that feed <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>:</p>\n<ul><li><strong>Accuracy</strong> — a modifier to the attack roll.</li><li><strong>Damage</strong> — the weapon's damage rating, before the margin bonus and</li></ul>\n<p>before <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour</a> reduction.</p>\n<ul><li><strong>Size</strong> — S, M or L.</li><li><strong>Block value</strong> — armour points subtracted from a blow when this</li></ul>\n<p>weapon is used to block.</p>\n<p>Blank entries below are weapons that are named in the draft but not yet given numbers.</p>\n<h4>Simple melee weapons</h4>\n<ul><li><strong>Short sword</strong> — accuracy +1, damage 6, size S, block value 6.</li><li><strong>Hand axe</strong> — size S; other stats not yet set.</li><li><strong>Dagger</strong> — stats not yet set.</li><li><strong>Staff</strong> — stats not yet set.</li></ul>\n<h4>Martial melee weapons</h4>\n<ul><li><strong>Sword</strong> — accuracy +1, damage 8, size M.</li><li><strong>Battle axe</strong> — damage 9, size M.</li><li><strong>Two-handed sword</strong> — damage 12, size L.</li><li><strong>Great axe</strong> — damage 12, size L.</li></ul>",
+    "summary": "Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.",
+    "summary_html": "Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.",
+    "html": "<p>Each weapon carries the statistics that feed <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>: an <strong>accuracy</strong> modifier to the attack roll, a <strong>damage</strong> rating, a <strong>size</strong>, and the <strong>block value</strong> in armour points it subtracts from a blow when you use it to block rather than dodge.</p>\n<h4>Simple melee weapons</h4>\n<ul><li><strong>Dagger</strong> — accuracy +2, damage</li></ul>\n<p>4, size S, block 2, 2gp.</p>\n<ul><li><strong>Short sword</strong> — accuracy +1,</li></ul>\n<p>damage 6, size S, block 6, 10gp.</p>\n<ul><li><strong>Hand axe</strong> — accuracy +0, damage</li></ul>\n<p>7, size S, block 3, 8gp.</p>\n<ul><li><strong>Staff</strong> — accuracy +0, damage</li></ul>\n<p>5, size M, block 7, 1gp.</p>\n<h4>Martial melee weapons</h4>\n<ul><li><strong>Sword</strong> — accuracy +1, damage</li></ul>\n<p>8, size M, block 5, 20gp.</p>\n<ul><li><strong>Battle axe</strong> — accuracy +0,</li></ul>\n<p>damage 9, size M, block 3, 20gp.</p>\n<ul><li><strong>Two-handed sword</strong> — accuracy</li></ul>\n<p>+0, damage 12, size L, block 4, 50gp.</p>\n<ul><li><strong>Great axe</strong> — accuracy +0, damage</li></ul>\n<p>12, size L, block 2, 45gp.</p>\n<p>Ranged weapons are not yet statted. The larger weapons are two-handed and cannot be combined with a shield from <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>.</p>",
     "tags": [
       "equipment",
       "reference",
@@ -324,6 +424,22 @@
     ],
     "includes": [],
     "book_anchor": "#rule-weapons"
+  },
+  "ch-advancement": {
+    "id": "ch-advancement",
+    "kind": "section",
+    "title": "Disciplines and Advancement",
+    "summary": "How a character specialises, and how they grow.",
+    "summary_html": "How a character specialises, and how they grow.",
+    "html": "<p>Ico has no classes. Specialisation is bought in pieces, from a menu that never closes, and a level is simply the next instalment of the budget you spend on that menu.</p>",
+    "tags": [],
+    "related": [],
+    "includes": [
+      "disciplines",
+      "discipline-list",
+      "advancement"
+    ],
+    "book_anchor": "#rule-ch-advancement"
   },
   "ch-characters": {
     "id": "ch-characters",
@@ -414,7 +530,8 @@
     "includes": [
       "power-sources",
       "using-powers",
-      "general-powers"
+      "general-powers",
+      "discipline-powers"
     ],
     "book_anchor": "#rule-ch-powers"
   },
@@ -439,7 +556,7 @@
     "title": "Ico Adventure System",
     "summary": "The Ico rules, in reading order.",
     "summary_html": "The Ico rules, in reading order.",
-    "html": "<p><em>Icosahedron: a polyhedron with twenty faces.</em> Almost everything in this game is settled by rolling one twenty-sided die, adding what your character is good at, and seeing whether it was enough.</p>\n<p>Read this in order the first time. After that, use the contents above — each rule stands on its own well enough to be looked up in isolation, and the in-game help shows the same text you are reading here.</p>\n<p>This book covers character creation, skills, combat, powers, equipment and magic. The experience and progression layer — how characters advance between adventures — is being reworked and is deliberately left out for now.</p>",
+    "html": "<p><em>Icosahedron: a polyhedron with twenty faces.</em> Almost everything in this game is settled by rolling one twenty-sided die, adding what your character is good at, and seeing whether it was enough.</p>\n<p>Read this in order the first time. After that, use the contents above — each rule stands on its own well enough to be looked up in isolation, and the in-game help shows the same text you are reading here.</p>\n<p>There are no classes. A character is the sum of the <strong>disciplines</strong> they have bought into, and a level is simply the next instalment of the budget that buys them.</p>",
     "tags": [],
     "related": [],
     "includes": [
@@ -448,6 +565,7 @@
       "ch-combat",
       "ch-skills",
       "ch-powers",
+      "ch-advancement",
       "ch-equipment",
       "ch-magic"
     ],

@@ -1,30 +1,116 @@
 ---
 id: armour
-title: Armour
+title: Armour and Shields
 tags: [equipment, reference, combat]
 summary: >
-  Armour is rated by armour points, a skill penalty, and cost. Every
-  blow is reduced by the armour points.
+  Armour points reduce every blow that lands, at the price of a skill
+  penalty that also makes a dodging wearer easier to hit. Shields add
+  to a block instead.
 mechanics:
-  stats_incomplete: true
+  unarmoured:
+    ap: 0
+    skill_penalty: 0
+    cost_gp: 0
+  partial_leather:
+    ap: 1
+    skill_penalty: 0
+    cost_gp: 5
+  leather:
+    ap: 2
+    skill_penalty: -1
+    cost_gp: 10
+  studded_leather:
+    ap: 3
+    skill_penalty: -2
+    cost_gp: 25
+  chain_shirt:
+    ap: 4
+    skill_penalty: -3
+    cost_gp: 100
+  scale_mail:
+    ap: 4
+    skill_penalty: -4
+    cost_gp: 50
+  chain_mail:
+    ap: 5
+    skill_penalty: -4
+    cost_gp: 150
+  breastplate:
+    ap: 5
+    skill_penalty: -3
+    cost_gp: 200
+  full_plate:
+    ap: 8
+    skill_penalty: -6
+    cost_gp: 1500
+  buckler:
+    block_td_bonus: 1
+    block_ap: 2
+    skill_penalty: 0
+    cost_gp: 5
+  shield:
+    block_td_bonus: 2
+    block_ap: 3
+    skill_penalty: 0
+    cost_gp: 15
+  great_shield:
+    block_td_bonus: 3
+    block_ap: 5
+    skill_penalty: -1
+    cost_gp: 40
 ---
 
-Armour is worn for its **armour points** (AP), which reduce every blow
-that lands — see [[damage]]. The trade-off is a **skill penalty** that
-applies while it is worn, and which also worsens a dodging defender's
-[[hitting|targeting difficulty]]. Heavier armour is also more expensive
-— see [[weapons]] for what the same purse buys offensively.
+Armour is worn for its **armour points** (AP), subtracted from every
+blow that lands — see [[damage]]. The price is a **skill penalty** that
+applies while it is worn and, because a dodging defender's targeting
+difficulty is built from their dodge skill, makes the wearer easier to
+hit when dodging. See [[hitting]], and the Untouchable signature in
+[[discipline-powers]], which removes exactly that penalty.
 
 ## Light armour
 
-- **Partial leather** — AP 1, skill penalty 0, cost 5gp.
-- **Leather** — AP 2, skill penalty -1, cost 10gp.
-- **Studded leather** — AP 3, skill penalty -2, cost 25gp.
-- **Chain shirt** — AP 4, skill penalty -3, cost 100gp.
+- **Partial leather** — AP {{ mechanics.partial_leather.ap }}, skill
+  penalty {{ mechanics.partial_leather.skill_penalty }},
+  {{ mechanics.partial_leather.cost_gp }}gp.
+- **Leather** — AP {{ mechanics.leather.ap }}, skill penalty
+  {{ mechanics.leather.skill_penalty }},
+  {{ mechanics.leather.cost_gp }}gp.
+- **Studded leather** — AP {{ mechanics.studded_leather.ap }}, skill
+  penalty {{ mechanics.studded_leather.skill_penalty }},
+  {{ mechanics.studded_leather.cost_gp }}gp.
+- **Chain shirt** — AP {{ mechanics.chain_shirt.ap }}, skill penalty
+  {{ mechanics.chain_shirt.skill_penalty }},
+  {{ mechanics.chain_shirt.cost_gp }}gp.
 
-## Medium armour
+## Medium and heavy armour
 
-- **Scale mail** — AP 4, skill penalty -4, cost 50gp.
-- **Chain mail** — AP 5, skill penalty -4, cost 150gp.
-- **Breastplate** — AP 5, skill penalty -3, cost 200gp.
-- **Full plate** — AP 8, skill penalty -6, cost 1500gp.
+- **Scale mail** — AP {{ mechanics.scale_mail.ap }}, skill penalty
+  {{ mechanics.scale_mail.skill_penalty }},
+  {{ mechanics.scale_mail.cost_gp }}gp.
+- **Chain mail** — AP {{ mechanics.chain_mail.ap }}, skill penalty
+  {{ mechanics.chain_mail.skill_penalty }},
+  {{ mechanics.chain_mail.cost_gp }}gp.
+- **Breastplate** — AP {{ mechanics.breastplate.ap }}, skill penalty
+  {{ mechanics.breastplate.skill_penalty }},
+  {{ mechanics.breastplate.cost_gp }}gp.
+- **Full plate** — AP {{ mechanics.full_plate.ap }}, skill penalty
+  {{ mechanics.full_plate.skill_penalty }},
+  {{ mechanics.full_plate.cost_gp }}gp.
+
+## Shields
+
+A shield does nothing while you dodge. While you block, it adds to your
+targeting difficulty and its armour points come off the blow on top of
+your worn armour.
+
+- **Buckler** — block bonus +{{ mechanics.buckler.block_td_bonus }},
+  block AP {{ mechanics.buckler.block_ap }},
+  {{ mechanics.buckler.cost_gp }}gp.
+- **Shield** — block bonus +{{ mechanics.shield.block_td_bonus }},
+  block AP {{ mechanics.shield.block_ap }},
+  {{ mechanics.shield.cost_gp }}gp.
+- **Great shield** — block bonus
+  +{{ mechanics.great_shield.block_td_bonus }}, block AP
+  {{ mechanics.great_shield.block_ap }}, skill penalty
+  {{ mechanics.great_shield.skill_penalty }},
+  {{ mechanics.great_shield.cost_gp }}gp.

@@ -1,8 +1,81 @@
 {
   "_generated": "Built from rules/*.md by tools/build.py - do not edit.",
   "rules": {
+    "advancement": {
+      "points_per_level": 15,
+      "free_mastery_hp_per_level": 3,
+      "mastery_hp_per_point": 2,
+      "max_mastery_hp_bought_per_level": 1,
+      "power_source_per_point": 3,
+      "max_power_source_bought_per_level": 3,
+      "powers_per_level": 1,
+      "attribute_point_every_n_levels": 4,
+      "level_is_only_a_budget_and_a_clock": true
+    },
     "armour": {
-      "stats_incomplete": true
+      "unarmoured": {
+        "ap": 0,
+        "skill_penalty": 0,
+        "cost_gp": 0
+      },
+      "partial_leather": {
+        "ap": 1,
+        "skill_penalty": 0,
+        "cost_gp": 5
+      },
+      "leather": {
+        "ap": 2,
+        "skill_penalty": -1,
+        "cost_gp": 10
+      },
+      "studded_leather": {
+        "ap": 3,
+        "skill_penalty": -2,
+        "cost_gp": 25
+      },
+      "chain_shirt": {
+        "ap": 4,
+        "skill_penalty": -3,
+        "cost_gp": 100
+      },
+      "scale_mail": {
+        "ap": 4,
+        "skill_penalty": -4,
+        "cost_gp": 50
+      },
+      "chain_mail": {
+        "ap": 5,
+        "skill_penalty": -4,
+        "cost_gp": 150
+      },
+      "breastplate": {
+        "ap": 5,
+        "skill_penalty": -3,
+        "cost_gp": 200
+      },
+      "full_plate": {
+        "ap": 8,
+        "skill_penalty": -6,
+        "cost_gp": 1500
+      },
+      "buckler": {
+        "block_td_bonus": 1,
+        "block_ap": 2,
+        "skill_penalty": 0,
+        "cost_gp": 5
+      },
+      "shield": {
+        "block_td_bonus": 2,
+        "block_ap": 3,
+        "skill_penalty": 0,
+        "cost_gp": 15
+      },
+      "great_shield": {
+        "block_td_bonus": 3,
+        "block_ap": 5,
+        "skill_penalty": -1,
+        "cost_gp": 40
+      }
     },
     "attributes": {
       "attribute_count": 6,
@@ -23,9 +96,8 @@
       "attribute_points": 80,
       "attribute_min": 3,
       "attribute_max": 18,
-      "focused_skill_groups": 1,
-      "unfocused_skill_groups": 1,
-      "max_starting_mastery_hp": 15,
+      "starting_discipline_budget": 20,
+      "max_starting_mastery_hp": 25,
       "skill_point_pool": 30,
       "starting_powers": 1,
       "starting_gold": 150
@@ -33,19 +105,170 @@
     "core-resolution": {
       "standard_die": "1d20",
       "higher_beats_lower": true,
+      "success_on_matching_target": true,
       "beating_target_scales_outcome": true
     },
     "damage": {
       "margin_to_damage_fraction": 0.5,
+      "damage_per_attack_skill_step": 8,
       "round": "down",
       "armour_reduces_each_blow": true,
+      "max_reduction_fraction": 0.5,
       "block_reduces_with_armour_points": true,
       "damage_depletes_mastery_first": true
     },
+    "discipline-list": {
+      "martial": {
+        "skills": [
+          "attack_melee",
+          "attack_ranged",
+          "block",
+          "fortitude"
+        ],
+        "source": "stamina",
+        "signature": "killing_blow"
+      },
+      "athletic": {
+        "skills": [
+          "dodge",
+          "climb",
+          "jump",
+          "balance",
+          "swim",
+          "escape_artist",
+          "move_silently"
+        ],
+        "source": "stamina",
+        "signature": "untouchable"
+      },
+      "awareness": {
+        "skills": [
+          "spot",
+          "listen",
+          "search",
+          "sense_motive",
+          "appraise",
+          "disable_device"
+        ],
+        "source": "stamina",
+        "signature": "read_the_blow"
+      },
+      "magical": {
+        "skills": [
+          "spellcasting",
+          "concentration",
+          "know_arcana",
+          "decipher_script",
+          "use_magic_device"
+        ],
+        "source": "spirit",
+        "signature": "school_mastery"
+      },
+      "spiritual": {
+        "skills": [
+          "willpower",
+          "heal",
+          "diplomacy",
+          "know_religion"
+        ],
+        "source": "spirit",
+        "signature": "granted_domain"
+      }
+    },
+    "discipline-powers": {
+      "power_attack": {
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 4,
+        "difficulty_per_step": 2,
+        "damage_per_step": 1
+      },
+      "find_the_gap": {
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 6,
+        "difficulty_per_step": 2,
+        "reduction_ignored_per_step": 1
+      },
+      "redouble": {
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "dodge",
+        "base_difficulty": 4,
+        "difficulty_per_step": 3,
+        "dodge_bonus_per_step": 2
+      },
+      "sneak_attack": {
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 6,
+        "difficulty_per_step": 2,
+        "damage_per_step": 2
+      },
+      "forewarned": {
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "spot",
+        "base_difficulty": 4,
+        "difficulty_per_step": 2,
+        "initiative_bonus_per_step": 2
+      },
+      "killing_blow": {
+        "grade": "master",
+        "margin_to_damage_fraction": 1
+      },
+      "untouchable": {
+        "grade": "master",
+        "ignores_armour_skill_penalty_when_dodging": true
+      },
+      "read_the_blow": {
+        "grade": "master",
+        "choose_stance_after_attack_roll": true
+      },
+      "school_mastery": {
+        "grade": "master",
+        "difficulty_reduction": 5
+      },
+      "granted_domain": {
+        "grade": "master",
+        "difficulty_reduction": 10
+      }
+    },
+    "disciplines": {
+      "initiate_cost": 5,
+      "adept_cost": 15,
+      "master_cost": 40,
+      "grades": [
+        "initiate",
+        "adept",
+        "master"
+      ],
+      "grades_bought_in_order": true,
+      "disciplines_held_is_unlimited": true,
+      "focus_from_grade": {
+        "none": "peripheral",
+        "initiate": "unfocused",
+        "adept": "focused",
+        "master": "focused"
+      }
+    },
     "general-powers": {
-      "fast_melee_1_difficulty": 1,
-      "fast_melee_2_difficulty": 6,
-      "fast_ranged_1_difficulty": 1
+      "fast_attack": {
+        "source": "stamina",
+        "skill": "attack_used",
+        "base_difficulty": 1,
+        "difficulty_per_extra_attack": 15
+      },
+      "second_wind": {
+        "source": "stamina",
+        "skill": "fortitude",
+        "base_difficulty": 8,
+        "difficulty_per_step": 3,
+        "mastery_hp_per_step": 2
+      }
     },
     "hit-points": {
       "core_hp_equals": "constitution",
@@ -59,8 +282,7 @@
     "hitting": {
       "attack_roll": "1d20",
       "dodge_targeting_base": 10,
-      "block_targeting_base": "block_skill",
-      "hit_requires_exceeding_target": true
+      "block_targeting_base": "block_skill"
     },
     "power-sources": {
       "stamina_base": "constitution",
@@ -86,7 +308,14 @@
         "unfocused",
         "peripheral"
       ],
-      "governing_attribute_per_skill": true
+      "governing_attribute_per_skill": true,
+      "cap_base_focused": 3,
+      "cap_base_unfocused": 2,
+      "cap_base_peripheral": 0,
+      "cap_per_level": 1,
+      "rank_cost_focused": 1,
+      "rank_cost_unfocused": 2,
+      "rank_cost_peripheral": 3
     },
     "spell-list": {
       "list_incomplete": true
@@ -123,11 +352,70 @@
     "using-powers": {
       "base_cost": 10,
       "cost_reduction_per_point_over": 1,
-      "cost_formula": "10 + difficulty - skill_roll",
-      "some_powers_have_minimum_cost": true
+      "cost_formula": "base_cost + difficulty - skill_roll",
+      "minimum_cost_divisor": 3,
+      "difficulty_declared_before_rolling": true,
+      "failure_spends_the_action": true,
+      "failure_costs_the_minimum": true,
+      "one_roll_serves_both_when_skills_match": true
     },
     "weapons": {
-      "stats_incomplete": true
+      "dagger": {
+        "accuracy": 2,
+        "damage": 4,
+        "size": "S",
+        "block_ap": 2,
+        "cost_gp": 2
+      },
+      "short_sword": {
+        "accuracy": 1,
+        "damage": 6,
+        "size": "S",
+        "block_ap": 6,
+        "cost_gp": 10
+      },
+      "hand_axe": {
+        "accuracy": 0,
+        "damage": 7,
+        "size": "S",
+        "block_ap": 3,
+        "cost_gp": 8
+      },
+      "staff": {
+        "accuracy": 0,
+        "damage": 5,
+        "size": "M",
+        "block_ap": 7,
+        "cost_gp": 1
+      },
+      "sword": {
+        "accuracy": 1,
+        "damage": 8,
+        "size": "M",
+        "block_ap": 5,
+        "cost_gp": 20
+      },
+      "battle_axe": {
+        "accuracy": 0,
+        "damage": 9,
+        "size": "M",
+        "block_ap": 3,
+        "cost_gp": 20
+      },
+      "two_handed_sword": {
+        "accuracy": 0,
+        "damage": 12,
+        "size": "L",
+        "block_ap": 4,
+        "cost_gp": 50
+      },
+      "great_axe": {
+        "accuracy": 0,
+        "damage": 12,
+        "size": "L",
+        "block_ap": 2,
+        "cost_gp": 45
+      }
     }
   }
 }

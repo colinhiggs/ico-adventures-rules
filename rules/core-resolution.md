@@ -8,6 +8,7 @@ summary: >
 mechanics:
   standard_die: "1d20"
   higher_beats_lower: true
+  success_on_matching_target: true
   beating_target_scales_outcome: true
 ---
 
@@ -25,7 +26,10 @@ either:
 - an **opposed** roll: someone else's `{{ mechanics.standard_die }}`
   plus their own bonuses.
 
-Meet or beat the target and you succeed.
+Meet or beat the target and you succeed — a total exactly equal to the
+target is a success, everywhere in the game. Combat is not an exception:
+a blow that matches the targeting difficulty lands, just as a power that
+matches its difficulty works.
 
 ## Margin matters
 

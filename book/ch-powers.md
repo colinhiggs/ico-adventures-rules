@@ -14,3 +14,5 @@ spells. They draw on one of two internal reserves.
 {% include using-powers %}
 
 {% include general-powers %}
+
+{% include discipline-powers %}

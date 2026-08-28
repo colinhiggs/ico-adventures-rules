@@ -1,51 +1,18 @@
 # ico
 
-Empty on purpose — this is where the ico system's rules will live once
-you start writing them.
-
-## Getting started
-
-Give this directory the same shape as `../demo/` (a working example
-worth looking at before starting):
+The Ico adventure system: a d20 system with no classes, built from the
+`Ico Adventure System.md` draft and extended with a discipline-based
+specialisation and advancement layer.
 
 ```
 rules/ico/
-  rules/           one .md file per rule — mechanics + prose, see below
-  book/
-    rulebook.md     the root document — includes chapters in order
-    ch-*.md         chapters — intro prose + {% include %} of rules
+  rules/     one .md per rule — mechanics in frontmatter, prose interpolates them
+  book/      rulebook.md (the root) plus ch-*.md chapters that include the rules
+  sim/       the balance simulator — see sim/README.md
+  build/     generated; never edit
 ```
 
-A minimal first rule, `rules/ico/rules/example.md`:
-
-```markdown
----
-id: example
-title: Example Rule
-summary: One or two sentences — this is the in-game tooltip text.
-mechanics:
-  some_value: 3
----
-
-Prose goes here. Interpolate values instead of restating them:
-{{ mechanics.some_value }}, not the literal number.
-```
-
-And `rules/ico/book/rulebook.md`, the minimum needed for a buildable
-(if tiny) book:
-
-```markdown
----
-id: rulebook
-title: ico
-kind: section
-summary: The ico rules.
----
-
-{% include example %}
-```
-
-## Build it
+## Build and check
 
 From `rules-toolset/`:
 
@@ -54,11 +21,33 @@ python3 tools/build.py ico
 python3 tools/test_rules.py ico
 ```
 
-Until there's at least a `rulebook.md`, both commands fail with a clear
-message rather than silently doing nothing — see
-`../../rules-toolset/README.md` for what those messages look like and
-why that's the intended behaviour, not a bug to work around.
+From `rules/ico/`, after building:
 
-See `../demo/` for a complete worked example (six rules, three
-chapters, cross-links, mechanics interpolation) and
+```bash
+python3 sim/balance.py --check
+```
+
+The first two prove the book, the snippets and the server data agree.
+The third measures whether the resulting game is balanced. Both matter
+and they catch entirely different things.
+
+## What is and is not here
+
+Present: the core roll, characters and attributes, the two hit point
+pools, character creation and priorities, combat, skills and focus,
+disciplines and advancement, powers, equipment, and spellcasting.
+
+Deliberately partial: the skill list has around thirty skills with no
+governing attribute assigned yet; ranged weapons are unstatted; the
+spell list has two spells; and the Magical and Spiritual disciplines
+lean on spells that mostly do not exist yet.
+
+Not here: the class and levelling system from the original draft. It was
+mid-revamp and internally inconsistent, and disciplines replace it.
+
+## The rule that holds it together
+
+A value exists in exactly one place. Prose never restates a number that
+lives in `mechanics:` — it interpolates it, the linter fails the build
+otherwise, and the simulator reads the same file the server does. See
 `../../rules-toolset/README.md` for the full format reference.
