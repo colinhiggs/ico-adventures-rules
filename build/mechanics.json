@@ -1,0 +1,133 @@
+{
+  "_generated": "Built from rules/*.md by tools/build.py - do not edit.",
+  "rules": {
+    "armour": {
+      "stats_incomplete": true
+    },
+    "attributes": {
+      "attribute_count": 6,
+      "physical": [
+        "strength",
+        "dexterity",
+        "constitution"
+      ],
+      "mental": [
+        "intelligence",
+        "willpower",
+        "charisma"
+      ],
+      "average_score": 10,
+      "points_per_bonus_step": 2
+    },
+    "character-creation": {
+      "attribute_points": 80,
+      "attribute_min": 3,
+      "attribute_max": 18,
+      "focused_skill_groups": 1,
+      "unfocused_skill_groups": 1,
+      "max_starting_mastery_hp": 15,
+      "skill_point_pool": 30,
+      "starting_powers": 1,
+      "starting_gold": 150
+    },
+    "core-resolution": {
+      "standard_die": "1d20",
+      "higher_beats_lower": true,
+      "beating_target_scales_outcome": true
+    },
+    "damage": {
+      "margin_to_damage_fraction": 0.5,
+      "round": "down",
+      "armour_reduces_each_blow": true,
+      "block_reduces_with_armour_points": true,
+      "damage_depletes_mastery_first": true
+    },
+    "general-powers": {
+      "fast_melee_1_difficulty": 1,
+      "fast_melee_2_difficulty": 6,
+      "fast_ranged_1_difficulty": 1
+    },
+    "hit-points": {
+      "core_hp_equals": "constitution",
+      "core_hp_is_real_injury": true,
+      "mastery_hp_is_near_miss": true,
+      "damage_order": [
+        "mastery",
+        "core"
+      ]
+    },
+    "hitting": {
+      "attack_roll": "1d20",
+      "dodge_targeting_base": 10,
+      "block_targeting_base": "block_skill",
+      "hit_requires_exceeding_target": true
+    },
+    "power-sources": {
+      "stamina_base": "constitution",
+      "spirit_base": "will",
+      "physical_powers_cost": "stamina",
+      "magical_powers_cost": "spirit"
+    },
+    "priorities": {
+      "standard_priority_points": 4,
+      "attribute_points_per_point": 4,
+      "skill_points_per_point": 5,
+      "gold_gained_per_point": 500,
+      "gold_lost_per_point": 100,
+      "power_source_bonus_per_point": 3
+    },
+    "skill-list": {
+      "governing_attributes_incomplete": true
+    },
+    "skills": {
+      "skill_check_roll": "1d20",
+      "focus_tiers": [
+        "focused",
+        "unfocused",
+        "peripheral"
+      ],
+      "governing_attribute_per_skill": true
+    },
+    "spell-list": {
+      "list_incomplete": true
+    },
+    "spell-properties": {
+      "grid_square_metres": 2,
+      "long_range_multiplier": 2,
+      "range_extend_squares_per_difficulty": 1,
+      "base_accuracy": 0,
+      "accuracy_bonus_per_difficulty": 1
+    },
+    "spellcasting": {
+      "spells_are_powers": true,
+      "casting_skill": "spellcasting",
+      "power_source": "spirit",
+      "schools": [
+        "life_force",
+        "energy",
+        "matter",
+        "rifts",
+        "influence_and_command",
+        "illusion"
+      ],
+      "domains": [
+        "healing",
+        "war",
+        "trickery",
+        "love",
+        "death",
+        "nature",
+        "magic"
+      ]
+    },
+    "using-powers": {
+      "base_cost": 10,
+      "cost_reduction_per_point_over": 1,
+      "cost_formula": "10 + difficulty - skill_roll",
+      "some_powers_have_minimum_cost": true
+    },
+    "weapons": {
+      "stats_incomplete": true
+    }
+  }
+}
