@@ -45,6 +45,34 @@ lean on spells that mostly do not exist yet.
 Not here: the class and levelling system from the original draft. It was
 mid-revamp and internally inconsistent, and disciplines replace it.
 
+## House style for a rule document
+
+Every rule keeps three kinds of writing visibly separate, in this order,
+so a reader looking something up never has to pick the rule out of a
+discussion about why it was designed that way:
+
+1. **The mechanic itself** — what a player actually does. This is the
+   main text and is not interleaved with commentary.
+2. **`## Example`** — a worked example of the rule in use, always under
+   that heading. Every rule has one.
+3. **`## Design note`** — rationale, history, and why a decision went
+   the way it did. Always last, always under that heading, and always
+   wrapped in `{% book-only %}` … `{% endbook-only %}` so it reaches the
+   printed book but never an in-game tooltip.
+
+When writing an example, put its invented arithmetic — die rolls, a
+sample character's skill values — inside `inline code spans`. The
+linter strips those before checking, so they will not be mistaken for a
+game constant; a literal number in prose that matches one of the
+document's own `mechanics:` values is a hard build error. Where an
+example refers to a number that genuinely *is* a mechanic, interpolate
+it with `{{ mechanics.key }}` like anywhere else. Example text is not
+exempt from the single-source rule.
+
+The examples use a small recurring cast — Ashri the fighter, Dune the
+skirmisher, Sela the priest, and Bramm as the opposition — so the book
+reads as one document rather than twenty unrelated ones.
+
 ## The rule that holds it together
 
 A value exists in exactly one place. Prose never restates a number that

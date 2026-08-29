@@ -39,3 +39,34 @@ described in terms of these schools and domains.
 Beyond its own effect, every spell has a standard set of properties —
 range, duration, area of effect, accuracy — covered in
 [[spell-properties]]. The [[spell-list]] gives the spells themselves.
+
+## Example
+
+Sela is a priest of a god of healing, holding Spiritual at Master. Her
+granted domain is healing.
+
+She casts Cure Wounds. It is a life-force spell of the healing domain,
+and because healing is her granted domain its difficulty drops by the
+amount her signature allows before she declares anything. She then rolls
+her spellcasting skill against that reduced difficulty, exactly as she
+would for any other power, and pays the result out of her spirit.
+
+A wizard with no divine patron may cast the same spell. It costs him a
+great deal more, because he is reaching the full difficulty without a
+god shouldering part of it.
+
+{% book-only %}
+## Design note
+
+Making a spell a power rather than a separate subsystem is the largest
+simplification in the game. There is one resolution procedure, one
+resource rule, one way that reaching further costs more — and spells
+inherit all of it rather than restating it in different words.
+
+School and domain then carry the specialisation without needing access
+lists. Rather than saying who *may* cast what, the rules say what each
+spell *costs* whom, and a caster reaching outside their speciality is
+limited by economics rather than by permission. It also means a new
+spell needs no ruling about who can learn it: tag it with a school and a
+domain and the existing signatures do the rest.
+{% endbook-only %}

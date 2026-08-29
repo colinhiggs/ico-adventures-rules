@@ -15,8 +15,8 @@ mechanics:
 
 Most spells share these properties. Unless a spell says otherwise, each
 can be boosted by choosing to cast at a higher difficulty than the
-minimum — see [[spellcasting]] and [[using-powers]] for what raising the
-difficulty costs.
+minimum — see [[spellcasting]] and [[using-powers]] for what raising
+the difficulty costs.
 
 ## Range
 
@@ -45,3 +45,33 @@ A spell's standard accuracy is
 roll. Accuracy increases by
 `+{{ mechanics.accuracy_bonus_per_difficulty }}` for every point of
 added difficulty.
+
+## Example
+
+Sela casts a bolt at a target `14` squares away. The spell's listed
+range is `10`, which is short range; long range is double that, so `14`
+is within reach but at long range.
+
+She would rather not rely on that, so she boosts the range instead:
+each point of added difficulty extends it by a square, so declaring `4`
+points above the base brings the target inside short range. Those `4`
+points are added to the difficulty she declares, and are paid for in
+spirit exactly as any other reach would be.
+
+Because the bolt needs an attack roll, she uses her ranged attack skill
+to place it, not her spellcasting skill — spellcasting settled whether
+the spell happened at all.
+
+{% book-only %}
+## Design note
+
+Boosting works through the same declared-difficulty mechanism as every
+other power, so there is no separate list of metamagic rules to learn.
+A caster who understands how reaching further works for a physical power
+already understands how it works for range, accuracy and area.
+
+The two-metre square is a deliberate abstraction: it makes range a count
+of squares on the battle grid rather than an arithmetic problem, and
+keeps spell ranges legible next to movement without anyone converting
+units mid-fight.
+{% endbook-only %}

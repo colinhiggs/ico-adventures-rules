@@ -64,8 +64,8 @@ Armour is worn for its **armour points** (AP), subtracted from every
 blow that lands — see [[damage]]. The price is a **skill penalty** that
 applies while it is worn and, because a dodging defender's targeting
 difficulty is built from their dodge skill, makes the wearer easier to
-hit when dodging. See [[hitting]], and the Untouchable signature in
-[[discipline-powers]], which removes exactly that penalty.
+hit when dodging — see [[hitting]]. The Untouchable signature in
+[[discipline-powers]] removes exactly that penalty.
 
 ## Light armour
 
@@ -114,3 +114,31 @@ your worn armour.
   {{ mechanics.great_shield.block_ap }}, skill penalty
   {{ mechanics.great_shield.skill_penalty }},
   {{ mechanics.great_shield.cost_gp }}gp.
+
+## Example
+
+Bramm wears chain mail and carries a shield.
+
+While he dodges, only the chain mail matters: its armour points come off
+every blow that lands, and its skill penalty comes off his targeting
+difficulty, making him easier to hit than he would be unarmoured. The
+shield does nothing at all.
+
+When he switches to blocking, his targeting difficulty is rebuilt from
+his block skill plus the shield's block bonus, and a landing blow is now
+reduced by his chain mail *and* the shield's block armour points
+together — though never by more than the cap in [[damage]] allows.
+
+{% book-only %}
+## Design note
+
+Armour making a dodging wearer easier to hit is the central trade in the
+list, not a quirk. Heavy plate is protection bought at the price of
+agility, and the numbers are set so that the heaviest armour is a poor
+choice for a character who intends to dodge and an excellent one for a
+character who intends to block.
+
+Shields do nothing while dodging for the same reason: a shield is
+something you actively interpose, so it belongs to the stance that
+represents interposing things.
+{% endbook-only %}

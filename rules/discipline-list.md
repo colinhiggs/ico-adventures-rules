@@ -87,3 +87,37 @@ Granted magic, and the strength of will that carries it.
 of that domain are cast at heavily reduced difficulty — this is what a
 god being your power source is worth. The size of both reductions is
 given in [[discipline-powers]].
+
+## Example
+
+Dune is built for speed and observation. He holds Athletic at Adept and
+Awareness at Initiate.
+
+Athletic at Adept makes dodge, climb, jump and the rest *focused*, and
+opens the Athletic powers up to Adept grade — which includes Sneak
+Attack. Awareness at Initiate makes spot, listen and search
+*unfocused*, and opens the Initiate-grade Awareness powers, which
+includes Weak Point.
+
+He holds no Martial discipline at all, so his attack skills are
+peripheral. Carrying a size-S weapon lets him attack on dexterity
+instead of strength — see [[weapons]] — which is what keeps him
+dangerous despite that.
+
+He has no signature yet: neither discipline is at Master.
+
+{% book-only %}
+## Design note
+
+Five disciplines, each with one skill group and one power pool, keeps
+the specialisation space small enough to hold in the head while still
+producing every familiar adventuring role as a combination rather than a
+category.
+
+Each Master signature deliberately breaks a rule the rest of the system
+takes for granted: Killing Blow changes how margin converts, Untouchable
+removes armour's penalty, Read the Blow inverts the stance guess, and
+the two magical signatures cut difficulty rather than adding effect.
+That is what a capstone bought over most of a career should feel like —
+not a bigger number, but a different game.
+{% endbook-only %}

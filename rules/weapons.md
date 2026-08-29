@@ -106,11 +106,37 @@ subtracts from a blow when you use it to block rather than dodge.
 ## Finesse
 
 A weapon of size {{ mechanics.finesse_size }} may use **dexterity**
-instead of strength for its attack skill. Without this the game has no
-nimble fighter in it at all: melee attack is a strength skill while
-dodge is a dexterity one, so a character built around speed was obliged
-to be bad at hitting things no matter which weapon they picked, and the
-whole light-and-quick archetype collapsed into a worse heavy fighter.
+instead of strength for its attack skill.
 
 Ranged weapons are not yet statted. The larger weapons are two-handed
 and cannot be combined with a shield from [[armour]].
+
+## Example
+
+Dune carries a short sword. It is size S, so it is a finesse weapon and
+he attacks with his dexterity bonus of `+4` rather than his strength
+bonus of `+1` — a swing of three points he would otherwise never see.
+
+Its accuracy of `+1` is added to his attack roll on top of that. Its
+damage rating is what a landed blow starts from before margin, skill and
+the target's armour are applied, as [[damage]] describes. And if he
+chooses to block rather than dodge, its block value is subtracted from
+whatever gets through.
+
+Ashri's two-handed sword hits far harder, but it is size L: no finesse,
+and no free hand for a shield.
+
+{% book-only %}
+## Design note
+
+Finesse exists because without it the game has no nimble fighter in it
+at all. Melee attack is a strength skill while dodge is a dexterity one,
+so a character built around speed was obliged to be bad at hitting
+things no matter which weapon they picked, and the whole light-and-quick
+archetype collapsed into a worse heavy fighter.
+
+Restricting it to size S keeps that from erasing the reason to carry a
+big weapon. A light weapon buys accuracy, a good block value and the
+choice of attribute; a heavy one buys damage that armour cannot shrug
+off.
+{% endbook-only %}

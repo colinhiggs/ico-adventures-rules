@@ -77,12 +77,6 @@ Domain]] makes one bolt markedly cheaper than the rest — a priest of war
 throws flame where a druid throws frost, without either of them needing
 a separate rule.
 
-The boost rates above are deliberately poorer than an earlier draft's,
-which gave a bolt an extra point of damage for every single point of
-difficulty. A spell that costs nothing to cast cannot also be the best
-damage in the game; a bolt is the thing a caster does when they have
-nothing left, not the thing they open with.
-
 ## Cure / Cause Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 
 - **School:** {{ mechanics.cure_wounds.school }}
@@ -91,6 +85,44 @@ nothing left, not the thing they open with.
 - **Minimum spirit:** {{ mechanics.cure_wounds.minimum_spirit }}
 
 Restores hit point damage to the recipient. Cast as *Cause Wounds*, the
-same spell instead inflicts damage. This one is a standard spell, not a
-minor one: healing on demand for nothing would empty every fight of
-consequence.
+same spell instead inflicts damage. This is a standard spell, not a
+minor one.
+
+## Example
+
+Sela has a spellcasting skill of `18` and no spirit left at all.
+
+She casts Force Bolt, declaring its base difficulty with no boosts. She
+rolls `7`, for a total of `25` — beating the declared difficulty by far
+more than the base cost, so the bolt costs her nothing. She still has to
+land it: the bolt needs a ranged attack roll, as [[spell-properties]]
+describes.
+
+Fresh, she would have declared much higher. At a difficulty of `14` the
+same spell buys four steps of extra damage, and at `18` she could
+instead have thrown a second bolt. Both would have cost real spirit.
+
+The bolt she throws with an empty reservoir is a fraction of the one she
+opens a fight with — but she is still casting, and still choosing a
+damage type to suit the target.
+
+{% book-only %}
+## Design note
+
+The bolts are one spell written several times because a family of
+identical spells differing only in damage type is a table, not four
+rules. Keeping the shared numbers in one place means the family cannot
+drift apart as it grows, and adding a fifth bolt is an entry rather than
+a rewrite.
+
+Their boost rates are deliberately poorer than an earlier draft's, which
+gave a bolt an extra point of damage for every single point of
+difficulty. A spell that can cost nothing to cast cannot also be the
+best damage in the game; a bolt is the thing a caster does when they
+have nothing left, not the thing they open with.
+
+Cure Wounds stays standard rather than minor for the same reason from
+the other direction. Healing available on demand for nothing would empty
+every fight of consequence, since any damage that did not drop a
+character outright could simply be undone afterwards at no cost.
+{% endbook-only %}

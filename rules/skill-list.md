@@ -9,10 +9,10 @@ mechanics:
   governing_attributes_incomplete: true
 ---
 
-Each entry is a skill and its governing attribute. Entries marked
-*unassigned* are carried over from an earlier draft and still need a
-governing attribute chosen; treat them as Dungeon-Master's-call for now.
-How high any of these can be raised depends on its focus tier — see
+Each entry is a skill and its governing attribute. Where an entry is
+marked *unassigned*, no governing attribute has been chosen yet: treat
+which one applies as the Dungeon Master's call. How high any skill can
+be raised, and what a rank costs, depends on its focus tier — see
 [[skills]].
 
 ## Combat skills
@@ -74,3 +74,33 @@ How high any of these can be raised depends on its focus tier — see
 Each is a separate skill, all currently *unassigned* for governing
 attribute: arcana; architecture and engineering; dungeoneering;
 geography; history; local; nature; nobility; religion; the planes.
+
+## Example
+
+Dune wants to spot a tripwire across a corridor.
+
+Spot is governed by willpower, so he rolls the die, adds his rank in
+spot and adds his willpower bonus. Because he holds Awareness at
+Initiate, spot is unfocused for him: he could have raised it further
+than a character with no Awareness at all, and each rank cost him less.
+
+Had he wanted to disarm the wire once found, that is disable device — a
+different skill, in the same Awareness group, governed by intelligence
+rather than willpower. Being good at noticing traps does not make him
+good at defusing them.
+
+{% book-only %}
+## Design note
+
+Splitting perception from manipulation, and giving each its own
+governing attribute, means no single score turns a character into the
+answer to every problem in a dungeon corridor. Skills sharing a group
+still advance together in cost and ceiling, so the specialisation is
+real without being total.
+
+The unassigned entries are carried over from the system's first draft,
+and leaving them open is honest rather than tidy. Assigning a governing
+attribute changes which characters are good at a skill, and guessing at
+thirty of them in one sitting would bake in decisions that deserve to be
+made a few at a time, in play.
+{% endbook-only %}

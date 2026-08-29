@@ -26,15 +26,39 @@ either:
 - an **opposed** roll: someone else's `{{ mechanics.standard_die }}`
   plus their own bonuses.
 
-Meet or beat the target and you succeed — a total exactly equal to the
-target is a success, everywhere in the game. Combat is not an exception:
-a blow that matches the targeting difficulty lands, just as a power that
-matches its difficulty works.
+Meet or beat the target and you succeed. A total exactly equal to the
+target is a success.
 
 ## Margin matters
 
-Beating the target by more points is a better outcome, not just a
+Beating the target by more points is a better outcome, not merely a
 success: more damage on a blow, less effort spent on a power, a faster
-or cleaner result. Individual rules say how their own margin is spent —
-see [[hitting]] and [[damage]] for the combat case, and [[using-powers]]
+or cleaner result. Each rule says how its own margin is spent — see
+[[hitting]] and [[damage]] for the combat case, and [[using-powers]]
 for powers.
+
+## Example
+
+Ashri wants to force a stuck door. The Dungeon Master sets a difficulty
+of `15`. Ashri has a relevant skill of `+3` and a strength bonus of
+`+2`, so she rolls the die and adds `5`.
+
+She rolls `10`, for a total of `15`. That exactly matches the
+difficulty, so she succeeds — with a margin of `0`. The door gives, but
+only just: no style, no speed, and the Dungeon Master is entitled to
+narrate it as a shoulder-first scramble.
+
+Had she rolled `16`, her total of `21` would have beaten the difficulty
+by `6`, and that margin would be hers to spend on whatever the rule in
+question converts margin into.
+
+{% book-only %}
+## Design note
+
+Combat deliberately uses the same threshold as every other roll. An
+earlier draft had blows land only on a total *greater* than the
+targeting difficulty while powers succeeded on a match, which meant two
+different rules for reading the same die. One threshold is easier to
+remember and, since the value now lives in one place, impossible for
+the two halves of the game to disagree about.
+{% endbook-only %}

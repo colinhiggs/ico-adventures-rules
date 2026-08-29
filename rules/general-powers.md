@@ -37,9 +37,7 @@ it cost, then against the target's [[hitting|targeting difficulty]] for
 each attack it granted.
 
 Melee and ranged both use this one power, taking whichever attack skill
-the weapon calls for. It replaces the separate Fast Melee and Fast
-Ranged powers of earlier drafts, which were the same power written
-three times.
+the weapon calls for.
 
 ## Second Wind
 
@@ -49,5 +47,38 @@ three times.
 recovers {{ mechanics.second_wind.mastery_hp_per_step }} more)*
 
 Shrug off a near miss and keep going, recovering
-[[hit-points|mastery hit points]] but never core hit points. Real
-wounds do not respond to willpower.
+[[hit-points|mastery hit points]] but never core hit points.
+
+## Example
+
+Ashri, with a melee attack skill of `12`, wants a second swing. Fast
+Attack's base difficulty is `1` and one extra attack costs a further
+`15`, so she declares `16`.
+
+She rolls `9`, for a total of `21`. That beats her declared `16`, so the
+power works and she has two attacks this turn. The cost is the base cost
+plus `16` less `21`, which is `5`; the minimum for a difficulty of `16`
+is `5` as well, so she pays `5` either way.
+
+That same total of `21` is then compared to her target's targeting
+difficulty — twice, once for each attack. Both swings hit or neither
+does.
+
+{% book-only %}
+## Design note
+
+Fast Attack replaces the numbered Fast Melee and Fast Ranged powers of
+an earlier draft, which were one power written three times with a fixed
+number of attacks each. Folding them into a single
+scaling power removed two rules and made the ceiling a decision rather
+than a purchase.
+
+Extra attacks are priced far above what a point of damage costs
+elsewhere, because an extra attack is a whole weapon's damage rather
+than an increment of one. Priced to match Power Attack step for step, it
+was strictly the best power in the game at every level.
+
+Second Wind recovers only mastery hit points, never core. Real wounds do
+not respond to willpower, and a power that healed them would remove the
+distinction the two pools exist to draw.
+{% endbook-only %}

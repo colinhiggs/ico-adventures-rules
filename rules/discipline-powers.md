@@ -101,19 +101,14 @@ adds {{ mechanics.power_attack.damage_per_step }} damage to the blow.
 difficulty {{ mechanics.precise_strike.base_difficulty }})* — placing
 the blow rather than forcing it. Each further
 {{ mechanics.precise_strike.difficulty_per_step }} points of difficulty
-adds {{ mechanics.precise_strike.damage_per_step }} damage. It scales
-far more slowly than Power Attack and will never match it, which is the
-trade for a power you can still use with an empty reservoir.
+adds {{ mechanics.precise_strike.damage_per_step }} damage.
 
 **Find the Gap** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.find_the_gap.base_difficulty }})* — a blow aimed at a
 join or a strap. Each further
 {{ mechanics.find_the_gap.difficulty_per_step }} points of difficulty
 ignores {{ mechanics.find_the_gap.reduction_ignored_per_step }} point of
-the target's damage reduction -- worn armour and a raised shield alike,
-since the whole point is that you are not hitting either of them. This
-is the answer to heavy armour, and it is deliberately a power rather
-than a weapon property.
+the target's damage reduction — worn armour and a raised shield alike.
 
 **Killing Blow** *(Master signature)* — your attacks convert margin
 into damage at
@@ -129,12 +124,6 @@ second movement. Each further
 {{ mechanics.redouble.dodge_bonus_per_step }} to your targeting
 difficulty against one attack, if you are dodging.
 
-The price per point looks steep next to Power Attack, and it is:
-a point of targeting difficulty applies to every attack aimed at you
-for as long as you can pay for it, while a point of damage is spent
-once. Priced to match Power Attack point for point, this power made a
-practised dodger effectively unhittable.
-
 **Sidestep** *(Initiate, **minor**; stamina, dodge, base difficulty
 {{ mechanics.sidestep.base_difficulty }})* — a small, cheap shift of
 weight. Each further
@@ -149,8 +138,7 @@ further {{ mechanics.sneak_attack.difficulty_per_step }} points of
 difficulty adds {{ mechanics.sneak_attack.damage_per_step }} damage.
 
 **Untouchable** *(Master signature)* — armour's skill penalty no longer
-worsens your targeting difficulty while dodging, so you may wear real
-protection without surrendering your defence. See [[armour]].
+worsens your targeting difficulty while dodging. See [[armour]].
 
 ## Awareness
 
@@ -186,6 +174,45 @@ magic. Spells of that school are cast at
 **Granted Domain** *(Spiritual, Master signature)* — choose one domain
 of influence. Spells of that domain are cast at
 {{ mechanics.granted_domain.difficulty_reduction }} less difficulty.
-This is the mechanical weight of having a god as your power source, and
-it is larger than School Mastery because it is narrower: a domain is a
-subject, a school is a technique.
+
+## Example
+
+Bramm is in full plate. Ashri, who holds Martial at Adept, has both
+Power Attack and Find the Gap available and must pick one.
+
+Power Attack would add damage to a blow that plate is going to blunt
+heavily. Find the Gap instead strips reduction: declaring a difficulty
+of `14` against its base of `6` buys four steps, ignoring `4` points of
+Bramm's armour.
+
+Against an unarmoured opponent the choice reverses — there is no
+reduction to strip, and every point of difficulty spent on Find the Gap
+would be wasted where Power Attack would have added damage.
+
+Her Martial Master signature, Killing Blow, applies to either: whichever
+power she uses, her margin converts to damage at full value rather than
+half.
+
+{% book-only %}
+## Design note
+
+Find the Gap is deliberately a power rather than a weapon property. Flat
+armour reduction is what makes heavy plate frightening, and the answer
+to it should be something a character *chooses to train*, not something
+that comes free with the right purchase.
+
+Redouble's price per point looks steep next to Power Attack, and it is.
+A point of targeting difficulty applies to every attack aimed at you for
+as long as you can pay for it, while a point of damage is spent once.
+Priced to match Power Attack point for point, it made a practised dodger
+effectively unhittable.
+
+The minor powers — Precise Strike, Sidestep and Weak Point — scale far
+more slowly than their standard counterparts and will never match them.
+That is the trade for a power that still works with an empty reservoir.
+
+Granted Domain cuts more difficulty than School Mastery because it is
+narrower: a domain is a subject, a school is a technique. It is also the
+mechanical weight of having a god as your power source, which should
+feel like more than a discount.
+{% endbook-only %}
