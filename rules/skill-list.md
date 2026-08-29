@@ -98,9 +98,8 @@ answer to every problem in a dungeon corridor. Skills sharing a group
 still advance together in cost and ceiling, so the specialisation is
 real without being total.
 
-The unassigned entries are carried over from the system's first draft,
-and leaving them open is honest rather than tidy. Assigning a governing
-attribute changes which characters are good at a skill, and guessing at
-thirty of them in one sitting would bake in decisions that deserve to be
-made a few at a time, in play.
+Leaving the unassigned entries open is honest rather than tidy.
+Assigning a governing attribute changes which characters are good at a
+skill, and settling thirty of them in one sitting would bake in
+decisions that deserve to be made a few at a time, in play.
 {% endbook-only %}

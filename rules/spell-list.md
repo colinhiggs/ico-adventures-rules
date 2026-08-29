@@ -115,11 +115,10 @@ rules. Keeping the shared numbers in one place means the family cannot
 drift apart as it grows, and adding a fifth bolt is an entry rather than
 a rewrite.
 
-Their boost rates are deliberately poorer than an earlier draft's, which
-gave a bolt an extra point of damage for every single point of
-difficulty. A spell that can cost nothing to cast cannot also be the
-best damage in the game; a bolt is the thing a caster does when they
-have nothing left, not the thing they open with.
+Their boost rates are deliberately poor. A spell that can cost nothing
+to cast cannot also be the best damage in the game; a bolt is the thing
+a caster does when they have nothing left, not the thing they open
+with.
 
 Cure Wounds stays standard rather than minor for the same reason from
 the other direction. Healing available on demand for nothing would empty

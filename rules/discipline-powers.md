@@ -137,8 +137,8 @@ target who is unaware of you or already engaged with someone else. Each
 further {{ mechanics.sneak_attack.difficulty_per_step }} points of
 difficulty adds {{ mechanics.sneak_attack.damage_per_step }} damage.
 
-**Untouchable** *(Master signature)* — armour's skill penalty no longer
-worsens your targeting difficulty while dodging. See [[armour]].
+**Untouchable** *(Master signature)* — armour's skill penalty does not
+worsen your targeting difficulty while dodging. See [[armour]].
 
 ## Awareness
 
@@ -204,8 +204,8 @@ that comes free with the right purchase.
 Redouble's price per point looks steep next to Power Attack, and it is.
 A point of targeting difficulty applies to every attack aimed at you for
 as long as you can pay for it, while a point of damage is spent once.
-Priced to match Power Attack point for point, it made a practised dodger
-effectively unhittable.
+Priced to match Power Attack point for point, it would make a practised
+dodger effectively unhittable.
 
 The minor powers — Precise Strike, Sidestep and Weak Point — scale far
 more slowly than their standard counterparts and will never match them.

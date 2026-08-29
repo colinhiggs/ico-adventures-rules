@@ -55,10 +55,9 @@ question converts margin into.
 {% book-only %}
 ## Design note
 
-Combat deliberately uses the same threshold as every other roll. An
-earlier draft had blows land only on a total *greater* than the
-targeting difficulty while powers succeeded on a match, which meant two
-different rules for reading the same die. One threshold is easier to
-remember and, since the value now lives in one place, impossible for
-the two halves of the game to disagree about.
+Combat uses the same threshold as every other roll. A game that reads
+the die one way for blows and another for powers asks its players to
+remember which is which at exactly the moment they are least inclined
+to check, and buys nothing for it. One threshold, defined once, cannot
+drift out of step with itself.
 {% endbook-only %}

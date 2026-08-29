@@ -53,8 +53,8 @@ silently. Source: stamina.*
 Speed and body control. Its powers add attacks, add movement, and make
 you harder to pin down.
 
-**Signature — Untouchable.** Armour's skill penalty no longer worsens
-your targeting difficulty when you dodge.
+**Signature — Untouchable.** Armour's skill penalty does not worsen your
+targeting difficulty when you dodge.
 
 ## Awareness
 

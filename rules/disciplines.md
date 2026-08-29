@@ -75,10 +75,11 @@ tier of Martial powers, nothing more.
 
 Because focus is derived from grade, there is no separate multiclassing
 rule and nothing to reconcile when a character advances in two
-directions at once. An earlier draft had classes, each granting its own
-focus list, which meant a character with two classes needed a rule for
-whose list applied when — and that rule was where the draft became
-inconsistent.
+directions at once. Where classes each grant their own list of focused
+skills, a character holding two needs a further rule deciding whose list
+applies, and that rule tends to be where such systems come apart. Here
+the question cannot arise: the grades a character holds *are* the
+answer.
 
 Nothing stops you building the classic adventuring roles; they are
 combinations rather than categories. A fighter is Martial and Athletic;

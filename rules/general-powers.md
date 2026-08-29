@@ -67,16 +67,16 @@ does.
 {% book-only %}
 ## Design note
 
-Fast Attack replaces the numbered Fast Melee and Fast Ranged powers of
-an earlier draft, which were one power written three times with a fixed
-number of attacks each. Folding them into a single
-scaling power removed two rules and made the ceiling a decision rather
-than a purchase.
+One scaling power does the work of several. A separate power for each
+number of extra attacks, doubled again to cover melee and ranged, is the
+same rule written out repeatedly with a different constant in it — and
+it makes the ceiling something a character buys rather than something
+they decide in the moment.
 
 Extra attacks are priced far above what a point of damage costs
 elsewhere, because an extra attack is a whole weapon's damage rather
 than an increment of one. Priced to match Power Attack step for step, it
-was strictly the best power in the game at every level.
+would be strictly the best power in the game at every level.
 
 Second Wind recovers only mastery hit points, never core. Real wounds do
 not respond to willpower, and a power that healed them would remove the
