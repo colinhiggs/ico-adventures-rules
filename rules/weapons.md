@@ -6,6 +6,7 @@ summary: >
   Weapon statistics: accuracy modifier, damage rating, size, and the
   armour points it contributes when used to block.
 mechanics:
+  finesse_size: S
   dagger:
     accuracy: 2
     damage: 4
@@ -101,6 +102,15 @@ subtracts from a blow when you use it to block rather than dodge.
   {{ mechanics.great_axe.size }}, block
   {{ mechanics.great_axe.block_ap }},
   {{ mechanics.great_axe.cost_gp }}gp.
+
+## Finesse
+
+A weapon of size {{ mechanics.finesse_size }} may use **dexterity**
+instead of strength for its attack skill. Without this the game has no
+nimble fighter in it at all: melee attack is a strength skill while
+dodge is a dexterity one, so a character built around speed was obliged
+to be bad at hitting things no matter which weapon they picked, and the
+whole light-and-quick archetype collapsed into a worse heavy fighter.
 
 Ranged weapons are not yet statted. The larger weapons are two-handed
 and cannot be combined with a shield from [[armour]].

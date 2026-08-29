@@ -30,6 +30,7 @@ TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
 MIN_POWER_COST = 1.0             # expected stamina per use, at any level
+SURVIVAL_CLAMP_ROUNDS = 25.0     # beyond this a fight is a stalemate
 
 # Each build lists its disciplines in PRIORITY order with the grade it
 # is aiming at. At low level it holds whatever the budget reached, so
@@ -155,13 +156,7 @@ def report_powers(level, chars, M):
     foe = standard_foe(level, M)
     rows = []
     for name, c in chars.items():
-        options = []
-        if c.has("martial", "initiate"):
-            options.append("power_attack")
-        if c.has("martial", "adept"):
-            options.append("find_the_gap")
-        options.append("fast_attack")
-        for power_id in options:
+        for power_id in m.offensive_powers(c):
             difficulty, damage, cost = m.best_difficulty(
                 c, power_id, foe, M, c.stamina / 4.0)
             if difficulty is None:
@@ -197,14 +192,7 @@ def report_dpr(level, chars, M):
         if c is foe:
             continue
         plain, hitrate = m.attack_expectation(c, foe, M)
-        best = plain
-        for power_id in (["power_attack"] if c.has("martial", "initiate") else []) + \
-                        (["find_the_gap"] if c.has("martial", "adept") else []) + \
-                        ["fast_attack"]:
-            difficulty, damage, cost = m.best_difficulty(
-                c, power_id, foe, M, c.stamina / 4.0)
-            if difficulty is not None:
-                best = max(best, damage)
+        best = m.expected_offence(c, foe, M)
         out[name] = best
         print("%-12s plain %5.2f   best power %5.2f   hit rate %.0f%%"
               % (name, plain, best, hitrate * 100))
@@ -285,8 +273,12 @@ def contributions(chars, level, M):
     foe = standard_foe(level, M)
     out = {}
     for name, c in chars.items():
-        taken, _ = m.attack_expectation(foe, c, M)
-        survival = c.total_hp / max(0.1, taken)
+        taken, _ = m.attack_expectation(
+            foe, c, M, dodge_bonus=m.sustained_dodge_bonus(c, M))
+        # Clamped: past this many rounds the fight is a stalemate, not a
+        # win, and an unclamped ratio lets one near-untouchable build
+        # dominate the metric by dividing by almost zero.
+        survival = min(SURVIVAL_CLAMP_ROUNDS, c.total_hp / max(0.1, taken))
         best, _ = m.attack_expectation(c, foe, M)
         for power_id in (["power_attack"] if c.has("martial", "initiate") else []) + \
                         (["find_the_gap"] if c.has("martial", "adept") else []) + \

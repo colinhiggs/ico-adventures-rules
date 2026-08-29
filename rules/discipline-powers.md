@@ -26,8 +26,8 @@ mechanics:
     source: stamina
     skill: dodge
     base_difficulty: 4
-    difficulty_per_step: 3
-    dodge_bonus_per_step: 2
+    difficulty_per_step: 10
+    dodge_bonus_per_step: 1
   sneak_attack:
     grade: adept
     source: stamina
@@ -96,6 +96,12 @@ second movement. Each further
 {{ mechanics.redouble.difficulty_per_step }} points of difficulty adds
 {{ mechanics.redouble.dodge_bonus_per_step }} to your targeting
 difficulty against one attack, if you are dodging.
+
+The price per point looks steep next to Power Attack, and it is:
+a point of targeting difficulty applies to every attack aimed at you
+for as long as you can pay for it, while a point of damage is spent
+once. Priced to match Power Attack point for point, this power made a
+practised dodger effectively unhittable.
 
 **Sneak Attack** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.sneak_attack.base_difficulty }})* — usable only against a

@@ -197,8 +197,8 @@
         "source": "stamina",
         "skill": "dodge",
         "base_difficulty": 4,
-        "difficulty_per_step": 3,
-        "dodge_bonus_per_step": 2
+        "difficulty_per_step": 10,
+        "dodge_bonus_per_step": 1
       },
       "sneak_attack": {
         "grade": "adept",
@@ -360,6 +360,7 @@
       "one_roll_serves_both_when_skills_match": true
     },
     "weapons": {
+      "finesse_size": "S",
       "dagger": {
         "accuracy": 2,
         "damage": 4,

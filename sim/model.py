@@ -33,6 +33,8 @@ ASSUMPTIONS = [
     "A power's difficulty is chosen once per build by expected-value "
     "search, then held fixed, rather than re-judged each round.",
     "Stamina and spirit do not recover during a fight.",
+    "Sneak Attack's condition is met in half of all rounds; "
+    "Redouble is sustained at a rate that lasts the whole fight.",
 ]
 
 
@@ -133,16 +135,23 @@ class Shield:
         )
 
 
+def _entries(M, rule_id):
+    """Only the dict-valued mechanics are gear; scalars alongside them
+    (weapons.finesse_size, say) are rules about the gear, not items."""
+    return {k: v for k, v in M.rules.get(rule_id, {}).items()
+            if isinstance(v, dict)}
+
+
 def weapon_keys(M):
-    return [k for k in M.keys("weapons")]
+    return sorted(_entries(M, "weapons"))
 
 
 def armour_keys(M):
-    return [k for k in M.keys("armour") if "ap" in M.rules["armour"][k]]
+    return sorted(k for k, v in _entries(M, "armour").items() if "ap" in v)
 
 
 def shield_keys(M):
-    return [k for k in M.keys("armour") if "block_ap" in M.rules["armour"][k]]
+    return sorted(k for k, v in _entries(M, "armour").items() if "block_ap" in v)
 
 
 # ---------------------------------------------------------------------
@@ -192,6 +201,15 @@ class Character:
         return self.skills.get(name, 0) + self.attr_bonus(
             SKILL_ATTRIBUTE[name], M
         )
+
+    def attack_bonus(self, M):
+        """Attack skill plus the governing attribute -- dexterity rather
+        than strength if the weapon is finesse (weapons.finesse_size)."""
+        ranks = self.skills.get("attack_melee", 0)
+        best = self.attr_bonus("strength", M)
+        if self.weapon and self.weapon.size == str(M.get("weapons", "finesse_size")):
+            best = max(best, self.attr_bonus("dexterity", M))
+        return ranks + best
 
     def has(self, discipline, grade):
         held = self.disciplines.get(discipline)
@@ -379,7 +397,7 @@ def damage_from(attacker, defender, margin, M, bonus=0, pierce=0):
     weapon_damage = attacker.weapon.damage
     from_margin = int(margin * margin_fraction(attacker, M))
     step = int(M.get("damage", "damage_per_attack_skill_step"))
-    from_skill = attacker.skill("attack_melee", M) // step if step else 0
+    from_skill = attacker.attack_bonus(M) // step if step else 0
     raw = weapon_damage + from_margin + from_skill + bonus
     reduction = defender.armour.ap
     if defender.stance == "block":
@@ -399,7 +417,7 @@ def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0):
     total_damage = 0
     hits = 0
     for face in range(1, 21):
-        total = face + attacker.skill("attack_melee", M) + attacker.weapon.accuracy
+        total = face + attacker.attack_bonus(M) + attacker.weapon.accuracy
         landed = total >= td if on_tie else total > td
         if landed:
             hits += 1
@@ -427,7 +445,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     pierce = steps * int(p.get("reduction_ignored_per_step", 0))
     extra_attacks = steps if "difficulty_per_extra_attack" in p else 0
 
-    skill = char.skill("attack_melee", M) + char.weapon.accuracy
+    skill = char.attack_bonus(M) + char.weapon.accuracy
     td = targeting_difficulty(defender, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
@@ -435,7 +453,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     damage = 0.0
     cost = 0.0
     for face in range(1, 21):
-        roll = face + char.skill("attack_melee", M)
+        roll = face + char.attack_bonus(M)
         total = face + skill
         if roll >= difficulty:
             cost += power_cost(difficulty, roll, M)
@@ -485,6 +503,8 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
 
     plan_a = _plan(spec_a, spec_b, M, rounds_budget)
     plan_b = _plan(spec_b, spec_a, M, rounds_budget)
+    guard_a = redouble_plan(spec_a, M)
+    guard_b = redouble_plan(spec_b, M)
 
     for _ in range(trials):
         a = _fresh(spec_a)
@@ -492,10 +512,10 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
         rounds = 0
         while a.chp > 0 and b.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _act(a, b, plan_a, M)
+            _act(a, b, _pick(plan_a), M, dodge_bonus=_guard(b, guard_b, M))
             if b.chp <= 0:
                 break
-            _act(b, a, plan_b, M)
+            _act(b, a, _pick(plan_b), M, dodge_bonus=_guard(a, guard_a, M))
         rounds_total += rounds
         if rounds >= max_rounds:
             capped += 1
@@ -504,35 +524,141 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     return rounds_total / trials, a_wins / trials, capped / trials
 
 
+def _guard(defender, plan, M):
+    """Spend stamina to raise this defender's targeting difficulty for
+    one incoming attack. Returns the bonus actually bought."""
+    if plan is None:
+        return 0
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    floor = plan["difficulty"] // divisor
+    if defender.stamina < floor:
+        return 0
+    roll = d20() + defender.skill("dodge", M)
+    if roll >= plan["difficulty"]:
+        defender.stamina -= min(power_cost(plan["difficulty"], roll, M),
+                                defender.stamina)
+        return plan["bonus"]
+    defender.stamina = max(0, defender.stamina - floor)
+    return 0
+
+
+def _pick(plans):
+    return plans["flank" if random.random() < SNEAK_AVAILABILITY else "open"]
+
+
 def _fresh(char):
     import copy
     return copy.deepcopy(char)
 
 
-def _plan(char, foe, M, rounds_budget):
-    budget = char.stamina / float(rounds_budget)
+# How often a fight offers the flank or the distracted target that
+# Sneak Attack needs. The rules do not say -- this is a table
+# assumption, and the skirmisher's whole offence hangs off it.
+SNEAK_AVAILABILITY = 0.5
+
+
+def offensive_powers(char, conditional=True):
+    """Every attack power this build may bring. Sneak Attack is listed
+    separately because it needs a condition the rules leave to the
+    fiction; excluding it entirely made Athletic look purely defensive
+    when two of its three powers are not."""
     options = []
     if char.has("martial", "initiate"):
         options.append("power_attack")
     if char.has("martial", "adept"):
         options.append("find_the_gap")
+    if conditional and char.has("athletic", "adept"):
+        options.append("sneak_attack")
     options.append("fast_attack")
-    best = (None, -1.0, 0.0)
-    for power_id in options:
+    return options
+
+
+def redouble_plan(char, M):
+    """The difficulty a dodger should declare for Redouble, and what it
+    costs. Returns None if the build cannot use it."""
+    if char.stance != "dodge" or not char.has("athletic", "initiate"):
+        return None
+    p = M.rules["discipline-powers"]["redouble"]
+    base = int(p["base_difficulty"])
+    step = int(p["difficulty_per_step"])
+    per_step = int(p["dodge_bonus_per_step"])
+    skill = char.skill("dodge", M)
+    best = None
+    for difficulty in range(base, base + 40):
+        chance = max(0.0, min(1.0, (20 - (difficulty - skill) + 1) / 20.0))
+        if chance <= 0:
+            break
+        bonus = ((difficulty - base) // step) * per_step
+        expected_cost = 0.0
+        for face in range(1, 21):
+            roll = face + skill
+            expected_cost += (power_cost(difficulty, roll, M) if roll >= difficulty
+                              else difficulty // int(M.get("using-powers",
+                                                           "minimum_cost_divisor")))
+        expected_cost /= 20.0
+        value = chance * bonus
+        if best is None or value > best["value"]:
+            best = {"difficulty": difficulty, "bonus": bonus,
+                    "value": value, "cost": expected_cost}
+    return best
+
+
+# Roughly how long a fight runs, used to work out how much of one a
+# character can afford to spend a per-attack power on.
+TYPICAL_FIGHT_ROUNDS = 6
+
+
+def sustained_dodge_bonus(char, M):
+    """Redouble is paid for EVERY attack it answers, so a build can only
+    keep it up for as many rounds as its stamina lasts. This returns the
+    average bonus per incoming attack across a whole fight -- not the
+    bonus it could manage for one glorious round."""
+    plan = redouble_plan(char, M)
+    if plan is None or plan["cost"] <= 0:
+        return 0
+    affordable_rounds = char.stamina / plan["cost"]
+    covered = min(1.0, affordable_rounds / TYPICAL_FIGHT_ROUNDS)
+    return int(plan["value"] * covered)
+
+
+def _best_option(char, foe, M, budget, conditional=True):
+    best = (None, -1.0, 0.0, 0)
+    for power_id in offensive_powers(char, conditional):
         difficulty, damage, cost = best_difficulty(char, power_id, foe, M, budget)
         if difficulty is not None and damage > best[1]:
             best = (power_id, damage, cost, difficulty)
+    return best
+
+
+def expected_offence(char, foe, M, rounds_budget=4):
+    """Blended expected damage per round: the conditional power when the
+    fight offers it, the best unconditional one when it does not."""
+    budget = char.stamina / float(rounds_budget)
     plain, _ = attack_expectation(char, foe, M)
-    if best[0] is None or best[1] <= plain:
-        return None
-    return {"power": best[0], "difficulty": best[3]}
+    unconditional = max(plain, _best_option(char, foe, M, budget, False)[1])
+    if not char.has("athletic", "adept"):
+        return unconditional
+    conditional = max(unconditional, _best_option(char, foe, M, budget, True)[1])
+    return (SNEAK_AVAILABILITY * conditional
+            + (1 - SNEAK_AVAILABILITY) * unconditional)
 
 
-def _act(actor, target, plan, M):
+def _plan(char, foe, M, rounds_budget):
+    budget = char.stamina / float(rounds_budget)
+    plain, _ = attack_expectation(char, foe, M)
+    plans = {}
+    for label, conditional in (("open", False), ("flank", True)):
+        best = _best_option(char, foe, M, budget, conditional)
+        plans[label] = (None if best[0] is None or best[1] <= plain
+                        else {"power": best[0], "difficulty": best[3]})
+    return plans
+
+
+def _act(actor, target, plan, M, dodge_bonus=0):
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
-    td = targeting_difficulty(target, M)
+    td = targeting_difficulty(target, M, dodge_bonus)
     face = d20()
-    total = face + actor.skill("attack_melee", M) + actor.weapon.accuracy
+    total = face + actor.attack_bonus(M) + actor.weapon.accuracy
 
     if plan is None:
         if (total >= td) if on_tie else (total > td):
@@ -544,7 +670,7 @@ def _act(actor, target, plan, M):
     difficulty = plan["difficulty"]
     step = int(p.get("difficulty_per_step", p.get("difficulty_per_extra_attack", 1)))
     steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
-    roll = face + actor.skill("attack_melee", M)
+    roll = face + actor.attack_bonus(M)
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
     # Out of stamina: the character simply swings, they do not stand
