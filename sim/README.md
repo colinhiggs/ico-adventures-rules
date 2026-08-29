@@ -44,12 +44,13 @@ matched pair, and raising either alone makes the game worse.
 
 ## Why it lives here and not in the toolset
 
-`rules-toolset/` is generic and contains no game content. This model
-knows that a blow is `d20 + attack` against a targeting difficulty and
-that margin becomes damage — that is Ico's *logic*, not Ico's *values*,
-and the toolset's README is explicit that `mechanics.json` holds data
-and never logic. So the data stays in `rules/`, the logic that consumes
-it sits beside it, and the toolset stays generic.
+The toolset in `rpg-master/rules-toolset/` is generic and contains no
+game content. This model knows that a blow is `d20 + attack` against a
+targeting difficulty and that margin becomes damage — that is Ico's
+*logic*, not Ico's *values*, and the toolset's README is explicit that
+`mechanics.json` holds data and never logic. So the data stays with the
+ruleset, the logic that consumes it sits beside it, and the toolset
+stays generic.
 
 ## The one rule it inherits
 

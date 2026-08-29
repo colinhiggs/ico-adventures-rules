@@ -12,9 +12,15 @@ rules/ico/
   build/     generated; never edit
 ```
 
+This directory is its own git repository and is developed independently
+of the game. It is a **plug-in**: to play it, the whole directory is
+dropped into the game's installed ruleset folder at
+`rpg-master/rpg-master/rules/`. Until then it lives in the outer
+`rules/` working directory, and the build tool finds it in either place.
+
 ## Build and check
 
-From `rules-toolset/`:
+From `rpg-master/rpg-master/rules-toolset/`:
 
 ```bash
 python3 tools/build.py ico
@@ -78,4 +84,5 @@ reads as one document rather than twenty unrelated ones.
 A value exists in exactly one place. Prose never restates a number that
 lives in `mechanics:` — it interpolates it, the linter fails the build
 otherwise, and the simulator reads the same file the server does. See
-`../../rules-toolset/README.md` for the full format reference.
+`../../rpg-master/rules-toolset/README.md` for the full format
+reference.
