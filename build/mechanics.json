@@ -184,6 +184,15 @@
         "difficulty_per_step": 2,
         "damage_per_step": 1
       },
+      "precise_strike": {
+        "grade": "initiate",
+        "tier": "minor",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 2,
+        "difficulty_per_step": 4,
+        "damage_per_step": 1
+      },
       "find_the_gap": {
         "grade": "adept",
         "source": "stamina",
@@ -198,6 +207,15 @@
         "skill": "dodge",
         "base_difficulty": 4,
         "difficulty_per_step": 10,
+        "dodge_bonus_per_step": 1
+      },
+      "sidestep": {
+        "grade": "initiate",
+        "tier": "minor",
+        "source": "stamina",
+        "skill": "dodge",
+        "base_difficulty": 2,
+        "difficulty_per_step": 14,
         "dodge_bonus_per_step": 1
       },
       "sneak_attack": {
@@ -215,6 +233,15 @@
         "base_difficulty": 4,
         "difficulty_per_step": 2,
         "initiative_bonus_per_step": 2
+      },
+      "weak_point": {
+        "grade": "initiate",
+        "tier": "minor",
+        "source": "stamina",
+        "skill": "spot",
+        "base_difficulty": 2,
+        "difficulty_per_step": 6,
+        "reduction_ignored_per_step": 1
       },
       "killing_blow": {
         "grade": "master",
@@ -318,7 +345,42 @@
       "rank_cost_peripheral": 3
     },
     "spell-list": {
-      "list_incomplete": true
+      "list_incomplete": true,
+      "bolt": {
+        "tier": "minor",
+        "base_difficulty": 2,
+        "school": "energy",
+        "range": 10,
+        "needs_attack_roll": true,
+        "damage": 4,
+        "difficulty_per_step": 3,
+        "damage_per_step": 1,
+        "difficulty_per_extra_bolt": 8,
+        "minimum_spirit": 0
+      },
+      "force_bolt": {
+        "damage_type": "force",
+        "domain": "magic"
+      },
+      "flame_bolt": {
+        "damage_type": "fire",
+        "domain": "war"
+      },
+      "frost_bolt": {
+        "damage_type": "cold",
+        "domain": "nature"
+      },
+      "shock_bolt": {
+        "damage_type": "lightning",
+        "domain": "war"
+      },
+      "cure_wounds": {
+        "base_difficulty": 16,
+        "school": "life_force",
+        "domain": "healing",
+        "range": "touch",
+        "minimum_spirit": 1
+      }
     },
     "spell-properties": {
       "grid_square_metres": 2,
@@ -354,6 +416,7 @@
       "cost_reduction_per_point_over": 1,
       "cost_formula": "base_cost + difficulty - skill_roll",
       "minimum_cost_divisor": 3,
+      "minor_powers_ignore_minimum_cost": true,
       "difficulty_declared_before_rolling": true,
       "failure_spends_the_action": true,
       "failure_costs_the_minimum": true,

@@ -14,6 +14,14 @@ mechanics:
     base_difficulty: 4
     difficulty_per_step: 2
     damage_per_step: 1
+  precise_strike:
+    grade: initiate
+    tier: minor
+    source: stamina
+    skill: attack_melee
+    base_difficulty: 2
+    difficulty_per_step: 4
+    damage_per_step: 1
   find_the_gap:
     grade: adept
     source: stamina
@@ -27,6 +35,14 @@ mechanics:
     skill: dodge
     base_difficulty: 4
     difficulty_per_step: 10
+    dodge_bonus_per_step: 1
+  sidestep:
+    grade: initiate
+    tier: minor
+    source: stamina
+    skill: dodge
+    base_difficulty: 2
+    difficulty_per_step: 14
     dodge_bonus_per_step: 1
   sneak_attack:
     grade: adept
@@ -42,6 +58,14 @@ mechanics:
     base_difficulty: 4
     difficulty_per_step: 2
     initiative_bonus_per_step: 2
+  weak_point:
+    grade: initiate
+    tier: minor
+    source: stamina
+    skill: spot
+    base_difficulty: 2
+    difficulty_per_step: 6
+    reduction_ignored_per_step: 1
   killing_blow:
     grade: master
     margin_to_damage_fraction: 1
@@ -73,6 +97,14 @@ cost of control. Each further
 {{ mechanics.power_attack.difficulty_per_step }} points of difficulty
 adds {{ mechanics.power_attack.damage_per_step }} damage to the blow.
 
+**Precise Strike** *(Initiate, **minor**; stamina, melee attack, base
+difficulty {{ mechanics.precise_strike.base_difficulty }})* — placing
+the blow rather than forcing it. Each further
+{{ mechanics.precise_strike.difficulty_per_step }} points of difficulty
+adds {{ mechanics.precise_strike.damage_per_step }} damage. It scales
+far more slowly than Power Attack and will never match it, which is the
+trade for a power you can still use with an empty reservoir.
+
 **Find the Gap** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.find_the_gap.base_difficulty }})* — a blow aimed at a
 join or a strap. Each further
@@ -103,6 +135,13 @@ for as long as you can pay for it, while a point of damage is spent
 once. Priced to match Power Attack point for point, this power made a
 practised dodger effectively unhittable.
 
+**Sidestep** *(Initiate, **minor**; stamina, dodge, base difficulty
+{{ mechanics.sidestep.base_difficulty }})* — a small, cheap shift of
+weight. Each further
+{{ mechanics.sidestep.difficulty_per_step }} points of difficulty adds
+{{ mechanics.sidestep.dodge_bonus_per_step }} to your targeting
+difficulty against one attack, if you are dodging.
+
 **Sneak Attack** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.sneak_attack.base_difficulty }})* — usable only against a
 target who is unaware of you or already engaged with someone else. Each
@@ -120,6 +159,13 @@ protection without surrendering your defence. See [[armour]].
 further {{ mechanics.forewarned.difficulty_per_step }} points of
 difficulty adds {{ mechanics.forewarned.initiative_bonus_per_step }} to
 your place in the order for the coming fight.
+
+**Weak Point** *(Initiate, **minor**; stamina, spot, base difficulty
+{{ mechanics.weak_point.base_difficulty }})* — you spot the strap, the
+gap, the badly-set plate, and say so. Each further
+{{ mechanics.weak_point.difficulty_per_step }} points of difficulty
+ignores {{ mechanics.weak_point.reduction_ignored_per_step }} point of
+the target's damage reduction on your next blow.
 
 **Read the Blow** *(Master signature)* — you may choose whether to
 dodge or block after the attack roll has been made rather than before,

@@ -72,6 +72,12 @@ There is no second place to change a number.
 - **Power economy** — the difficulty each build should declare, what it
   costs, and how many times a fight it can afford. If cost trends to
   zero, the power source has stopped being a resource.
+- **Attrition** — damage per round fresh versus with an empty
+  reservoir, and the percentage kept. This is what the minor-power tier
+  exists to raise: a long adventure should wear a character down, not
+  switch them off. The band is 35-85%; the lower bound applies at every
+  level, the upper only from level 5, since a junior character has
+  barely any reservoir for running dry to matter to.
 - **Stance check** — whether blocking is ever better than dodging.
   A stance nobody should ever pick is a dead rule.
 - **Duels** — Monte Carlo, every build against every other.
@@ -90,6 +96,7 @@ goals stated in the book's opening chapter:
 | `MAX_CONTRIBUTION_SPREAD` | Every build should be worth playing |
 | `MIN_DAMAGE_VS_ANY_ARMOUR` | No weapon should be a prop |
 | `MIN_POWER_COST` | Powers must not become free with experience |
+| `FLOOR_RATIO_BAND` | Empty should mean diminished, never sidelined |
 
 Contribution is deliberately damage per round **times** rounds survived,
 not damage alone: a defensive signature scores zero on a damage-only
@@ -104,7 +111,14 @@ because the design intent moved, never to make the report quiet.
 
 - The model tracks melee only. Ranged attacks, spells and the
   Magical/Spiritual disciplines are not simulated, so those builds are
-  absent from every comparison.
+  absent from every comparison. The bolt spells are minor powers on the
+  same chassis as Precise Strike, so the melee numbers are the best
+  available proxy for them, but they are a proxy.
+- Fresh-versus-empty is measured at the two extremes. A character plans
+  for a sustainable spend across roughly four rounds, so the model never
+  burns its whole reservoir in one climactic fight the way a player
+  might; builds with a small reservoir therefore look closer to their
+  own floor than they would in play.
 - Only five combat skills are tracked, so a build's spare points have
   fewer sinks here than in a real character, which slightly inflates
   what lands in mastery hit points and stamina.

@@ -31,6 +31,11 @@ MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
 MIN_POWER_COST = 1.0             # expected stamina per use, at any level
 SURVIVAL_CLAMP_ROUNDS = 25.0     # beyond this a fight is a stalemate
+# What a character can still do on the fourth fight of a long day, as a
+# fraction of what they manage fresh. Too low and an empty reservoir
+# means sitting the fight out; too high and the reservoir never mattered.
+FLOOR_RATIO_BAND = (0.35, 0.85)
+RESERVOIR_MATTERS_FROM_LEVEL = 5
 
 # Each build lists its disciplines in PRIORITY order with the grade it
 # is aiming at. At low level it holds whatever the budget reached, so
@@ -149,6 +154,27 @@ def report_stances(level, chars, M):
         print("%-12s %-14.2f %-14.2f %s" % (name, dd, db, better))
 
 
+def report_attrition(level, chars, M):
+    """Fresh versus empty. This is the minor-power tier's whole reason
+    for existing: a long adventure should wear a character down, not
+    switch them off."""
+    hr("Attrition at level %d -- damage per round fresh vs empty" % level)
+    foe = standard_foe(level, M)
+    print("%-12s %-8s %-8s %-7s %s"
+          % ("build", "fresh", "empty", "kept", "verdict"))
+    for name, c in chars.items():
+        fresh = m.expected_offence(c, foe, M)
+        floor = m.floor_offence(c, foe, M)
+        ratio = floor / max(0.01, fresh)
+        verdict = "ok"
+        if ratio < FLOOR_RATIO_BAND[0]:
+            verdict = "switches off when empty"
+        elif ratio > FLOOR_RATIO_BAND[1]:
+            verdict = "reservoir barely matters"
+        print("%-12s %-8.1f %-8.1f %-7.0f%% %s"
+              % (name, fresh, floor, ratio * 100, verdict))
+
+
 def report_powers(level, chars, M):
     hr("Power economy at level %d" % level)
     print("%-12s %-14s %-6s %-8s %-8s %s"
@@ -246,6 +272,21 @@ def run_gates(levels, M, trials):
 
         foe = standard_foe(level, M)
         for name, c in chars.items():
+            fresh = m.expected_offence(c, foe, M)
+            ratio = m.floor_offence(c, foe, M) / max(0.01, fresh)
+            # The lower bound applies always -- nobody should ever be
+            # switched off by an empty reservoir. The upper bound only
+            # applies once a character HAS a reservoir worth the name;
+            # below that, powers are rare enough that running dry
+            # genuinely should not change much.
+            floor_only = level < RESERVOIR_MATTERS_FROM_LEVEL
+            low, high = FLOOR_RATIO_BAND
+            if ratio < low or (not floor_only and ratio > high):
+                failures.append(
+                    "L%d %s keeps %.0f%% of its damage with an empty "
+                    "reservoir (band %.0f-%.0f%%)"
+                    % (level, name, ratio * 100, low * 100, high * 100))
+        for name, c in chars.items():
             if not c.has("martial", "initiate"):
                 continue
             difficulty, damage, cost = m.best_difficulty(
@@ -319,6 +360,7 @@ def main():
             continue
         report_sheets(level, chars, M)
         report_dpr(level, chars, M)
+        report_attrition(level, chars, M)
         report_powers(level, chars, M)
         report_stances(level, chars, M)
         report_duels(level, chars, M, args.trials)

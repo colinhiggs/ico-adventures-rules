@@ -427,17 +427,34 @@ def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0):
     return total_damage / 20.0, hits / 20.0
 
 
-def power_cost(difficulty, roll, M):
+def power_cost(difficulty, roll, M, minor=False):
+    """A minor power has no minimum, so it reaches zero once the roll
+    beats the difficulty by the base cost."""
     base = int(M.get("using-powers", "base_cost"))
-    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    return max(difficulty // divisor, base + difficulty - roll)
+    raw = base + difficulty - roll
+    if minor:
+        return max(0, raw)
+    return max(difficulty // int(M.get("using-powers", "minimum_cost_divisor")), raw)
+
+
+def power_def(M, power_id):
+    for rule_id in ("discipline-powers", "general-powers"):
+        if power_id in M.rules.get(rule_id, {}):
+            return M.rules[rule_id][power_id]
+    raise KeyError("no power '%s' in discipline-powers or general-powers"
+                   % power_id)
+
+
+def is_minor(M, power_id):
+    return power_def(M, power_id).get("tier") == "minor"
 
 
 def power_expectation(char, power_id, difficulty, defender, M):
     """Expected damage and stamina for one round using a damage power,
     enumerated over the d20. The power roll and the attack roll are the
     same roll (using-powers: one_roll_serves_both_when_skills_match)."""
-    p = M.rules["discipline-powers"].get(power_id) or M.rules["general-powers"][power_id]
+    p = power_def(M, power_id)
+    minor = p.get("tier") == "minor"
     base_d = int(p["base_difficulty"])
     step = int(p.get("difficulty_per_step", p.get("difficulty_per_extra_attack", 1)))
     steps = max(0, (difficulty - base_d) // step)
@@ -456,7 +473,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
         roll = face + char.attack_bonus(M)
         total = face + skill
         if roll >= difficulty:
-            cost += power_cost(difficulty, roll, M)
+            cost += power_cost(difficulty, roll, M, minor)
             swings = 1 + extra_attacks
             for _ in range(swings):
                 if (total >= td) if on_tie else (total > td):
@@ -464,7 +481,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
                         char, defender, total - td, M, bonus=bonus, pierce=pierce
                     )
         else:
-            cost += difficulty // divisor
+            cost += 0 if minor else difficulty // divisor
             # power failed; the action is spent, so no swing at all
     return damage / 20.0, cost / 20.0
 
@@ -472,7 +489,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
 def best_difficulty(char, power_id, defender, M, stamina_budget):
     """Pick the difficulty maximising expected damage subject to an
     expected stamina spend the character can sustain."""
-    p = M.rules["discipline-powers"].get(power_id) or M.rules["general-powers"][power_id]
+    p = power_def(M, power_id)
     base_d = int(p["base_difficulty"])
     best = (None, -1.0, 0.0)
     for difficulty in range(base_d, base_d + 60):
@@ -564,9 +581,12 @@ def offensive_powers(char, conditional=True):
     when two of its three powers are not."""
     options = []
     if char.has("martial", "initiate"):
+        options.append("precise_strike")
         options.append("power_attack")
     if char.has("martial", "adept"):
         options.append("find_the_gap")
+    if char.has("awareness", "initiate"):
+        options.append("weak_point")
     if conditional and char.has("athletic", "adept"):
         options.append("sneak_attack")
     options.append("fast_attack")
@@ -641,6 +661,43 @@ def expected_offence(char, foe, M, rounds_budget=4):
     conditional = max(unconditional, _best_option(char, foe, M, budget, True)[1])
     return (SNEAK_AVAILABILITY * conditional
             + (1 - SNEAK_AVAILABILITY) * unconditional)
+
+
+def floor_offence(char, foe, M):
+    """Expected damage per round with the reservoir EMPTY.
+
+    This is the number the minor-power tier exists to raise: on the
+    fourth fight of a long day, what can this character still do that is
+    more interesting than swinging? Only outcomes that actually cost
+    nothing count; everything else falls back to a plain attack."""
+    plain, _ = attack_expectation(char, foe, M)
+    best = plain
+    for power_id in offensive_powers(char):
+        if not is_minor(M, power_id):
+            continue
+        p = power_def(M, power_id)
+        base_d = int(p["base_difficulty"])
+        step = int(p.get("difficulty_per_step", 1))
+        skill = char.attack_bonus(M)
+        td = targeting_difficulty(foe, M)
+        on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+        for difficulty in range(base_d, base_d + 60):
+            damage = 0.0
+            for face in range(1, 21):
+                roll = face + char.skill(str(p.get("skill", "attack_melee")), M)                     if p.get("skill") != "attack_melee" else face + skill
+                total = face + skill + char.weapon.accuracy
+                landed = (total >= td) if on_tie else (total > td)
+                if not landed:
+                    continue
+                free = (roll >= difficulty
+                        and power_cost(difficulty, roll, M, minor=True) == 0)
+                steps = max(0, (difficulty - base_d) // step) if free else 0
+                damage += damage_from(
+                    char, foe, total - td, M,
+                    bonus=steps * int(p.get("damage_per_step", 0)),
+                    pierce=steps * int(p.get("reduction_ignored_per_step", 0)))
+            best = max(best, damage / 20.0)
+    return best
 
 
 def _plan(char, foe, M, rounds_budget):
