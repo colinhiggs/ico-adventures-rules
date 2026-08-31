@@ -145,7 +145,9 @@
           "balance",
           "swim",
           "escape_artist",
-          "move_silently"
+          "stealth",
+          "ride",
+          "sleight_of_hand"
         ],
         "source": "stamina",
         "signature": "untouchable"
@@ -157,7 +159,9 @@
           "search",
           "sense_motive",
           "appraise",
-          "disable_device"
+          "disable_device",
+          "survival",
+          "gather_information"
         ],
         "source": "stamina",
         "signature": "read_the_blow"
@@ -165,8 +169,7 @@
       "magical": {
         "skills": [
           "spellcasting",
-          "concentration",
-          "know_arcana",
+          "lore",
           "decipher_script",
           "use_magic_device"
         ],
@@ -175,10 +178,9 @@
       },
       "spiritual": {
         "skills": [
-          "willpower",
+          "resolve",
           "heal",
-          "diplomacy",
-          "know_religion"
+          "diplomacy"
         ],
         "source": "spirit",
         "signature": "granted_domain"
@@ -431,6 +433,12 @@
       "attack_roll": "1d20",
       "dodge_targeting_base": 10,
       "block_targeting_base": "block_skill"
+    },
+    "languages": {
+      "languages_have_ranks": false,
+      "starting_languages_from_background": 2,
+      "advancement_cost_per_language": 1,
+      "fluency_is_binary": true
     },
     "movement": {
       "square_metres": 2,

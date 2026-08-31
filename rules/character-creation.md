@@ -42,6 +42,11 @@ uses at every later level — there is no special chargen exchange rate.
 You may start with at most {{ mechanics.max_starting_mastery_hp }}
 mastery hit points.
 
+## Languages
+
+Take the languages your background gives you — see [[languages]]. They
+are not skills and cost nothing at creation.
+
 ## Powers and money
 
 Take {{ mechanics.starting_powers }} power (see [[using-powers]]) and

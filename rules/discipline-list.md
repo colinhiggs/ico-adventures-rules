@@ -11,19 +11,21 @@ mechanics:
     source: stamina
     signature: killing_blow
   athletic:
-    skills: [dodge, climb, jump, balance, swim, escape_artist, move_silently]
+    skills: [dodge, climb, jump, balance, swim, escape_artist, stealth,
+             ride, sleight_of_hand]
     source: stamina
     signature: untouchable
   awareness:
-    skills: [spot, listen, search, sense_motive, appraise, disable_device]
+    skills: [spot, listen, search, sense_motive, appraise, disable_device,
+             survival, gather_information]
     source: stamina
     signature: read_the_blow
   magical:
-    skills: [spellcasting, concentration, know_arcana, decipher_script, use_magic_device]
+    skills: [spellcasting, lore, decipher_script, use_magic_device]
     source: spirit
     signature: school_mastery
   spiritual:
-    skills: [willpower, heal, diplomacy, know_religion]
+    skills: [resolve, heal, diplomacy]
     source: spirit
     signature: granted_domain
 ---
@@ -47,8 +49,8 @@ of half. See [[damage]] for the ordinary conversion.
 
 ## Athletic
 
-*Skill group: dodge, climb, jump, balance, swim, escape artist, move
-silently. Source: stamina.*
+*Skill group: dodge, climb, jump, balance, swim, escape artist, stealth,
+ride, sleight of hand. Source: stamina.*
 
 Speed and body control. Its powers add attacks, add movement, and make
 you harder to pin down.
@@ -59,7 +61,7 @@ targeting difficulty when you dodge.
 ## Awareness
 
 *Skill group: spot, listen, search, sense motive, appraise, disable
-device. Source: stamina.*
+device, survival, gather information. Source: stamina.*
 
 Noticing things in time to act on them.
 
@@ -68,8 +70,8 @@ Noticing things in time to act on them.
 
 ## Magical
 
-*Skill group: spellcasting, concentration, knowledge (arcana), decipher
-script, use magic device. Source: spirit.*
+*Skill group: spellcasting, lore, decipher script, use magic device.
+Source: spirit.*
 
 Constructed magic, learned from books and study. See [[spellcasting]].
 
@@ -78,8 +80,7 @@ that school are cast at reduced difficulty.
 
 ## Spiritual
 
-*Skill group: willpower, heal, diplomacy, knowledge (religion). Source:
-spirit.*
+*Skill group: resolve, heal, diplomacy. Source: spirit.*
 
 Granted magic, and the strength of will that carries it.
 

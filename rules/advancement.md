@@ -42,6 +42,8 @@ skill ceilings, and it is spent in exactly the same shop as
   {{ mechanics.mastery_hp_per_point }} of them, to a limit of
   {{ mechanics.max_mastery_hp_bought_per_level }} bought per level on
   top of the free grant.
+- **A language** — see [[languages]] for what one costs. Languages have
+  no ranks; you either speak one or you do not.
 - **Stamina or spirit** — one point buys
   {{ mechanics.power_source_per_point }} points of one
   [[power-sources|power source]], to a limit of

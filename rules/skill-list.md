@@ -18,6 +18,8 @@ intuitive load: noticing, reading people, and reading country all run on
 it. **Intelligence** covers what has been learned rather than what is
 sensed.
 
+Languages are not on this list and are not a skill; see [[languages]].
+
 ## Combat skills
 
 - **Attack (melee)** — strength. Used to hit with melee weapons.
@@ -28,7 +30,7 @@ sensed.
   [[hitting|dodging]].
 - **Fortitude** — constitution. Resisting physical duress: poison,
   disease, exhaustion.
-- **Willpower** — willpower. Resisting mental duress: fear, domination,
+- **Resolve** — willpower. Resisting mental duress: fear, domination,
   pain.
 
 ## Magic
@@ -45,43 +47,47 @@ sensed.
 - **Balance** — dexterity.
 - **Bluff** — charisma.
 - **Climb** — strength.
-- **Craft** — intelligence.
+- **Craft** — intelligence. Making and mending, forgery included.
 - **Decipher script** — intelligence.
 - **Diplomacy** — charisma.
-- **Disable device** — intelligence.
+- **Disable device** — intelligence. Traps, mechanisms and locks
+  alike.
 - **Disguise** — charisma.
 - **Escape artist** — dexterity.
-- **Forgery** — intelligence.
 - **Gather information** — charisma. Asking around without being
   resented for it.
 - **Handle animal** — charisma.
 - **Heal** — intelligence. First aid and diagnosis, not magic; for that
   see [[spell-list]].
-- **Hide** — dexterity. Opposed by another creature's Spot.
 - **Intimidate** — charisma.
 - **Jump** — strength.
 - **Listen** — willpower.
-- **Move silently** — dexterity. Opposed by another creature's Listen.
-- **Open lock** — dexterity.
 - **Perform** — charisma.
-- **Profession** — intelligence.
 - **Ride** — dexterity.
 - **Search** — intelligence. Deliberately going over a place, as against
   Spot's noticing without looking.
 - **Sense motive** — willpower.
 - **Sleight of hand** — dexterity.
-- **Speak language** — intelligence.
 - **Spot** — willpower. Noticing without looking for it, and also your
   place in the order of a fight; see [[turn-order]].
+- **Stealth** — dexterity. Moving unseen and unheard, opposed by Spot in
+  the light and Listen in the dark.
 - **Survival** — willpower. Reading weather, ground and tracks.
 - **Swim** — strength.
-- **Use rope** — dexterity.
 
-## Knowledge skills
+## Lore
 
-Every knowledge skill is governed by **intelligence**. Each is separate:
-arcana; architecture and engineering; dungeoneering; geography; history;
-local; nature; nobility; religion; the planes.
+- **Lore** — intelligence. How learned and how widely travelled you are.
+  Roll it when the question is whether your character happens to know
+  something: a heraldic device, what lives in these hills, which god
+  this altar belonged to. The Dungeon Master sets the difficulty by how
+  obscure the fact is.
+
+A specialist's knowledge — the sage who has spent forty years on the
+funerary customs of one dead kingdom — is not on this list. Give such a
+character whatever narrow knowledge skill the story wants, at whatever
+rank makes them impressive, and do not make the players carry a version
+of it.
 
 ## Example
 
@@ -113,10 +119,23 @@ being alert is not the same as being thorough. Hide and Move silently
 are opposed by different senses, which is what makes a torchlit corridor
 and a pitch-dark one different problems.
 
-This list is inherited from an older tradition of skill lists and is
-longer than it needs to be. Around half of it sits in no discipline
-group at all, which means no character can ever focus those skills: they
-are permanently peripheral, at the highest price per rank and the lowest
-ceiling. That is a structural problem with the list rather than with any
-skill on it, and it wants solving before the list grows further.
+Hide and Move silently became one Stealth skill, Open lock folded into
+Disable device, and Forgery and Profession into Craft. Each pair was one
+act split across two lines, and splitting them only ever made a
+character buy the same competence twice.
+
+The ten specialised knowledge skills are gone, replaced by a single
+Lore. Specialist knowledge belongs to the sage the party consults, not
+to the party: a Dungeon Master can invent whatever narrow expertise a
+scene needs, at whatever rank makes the sage impressive, and players
+should not be carrying a version of that list on their sheets against
+the chance it comes up.
+
+What remains unsolved is the shape of the list rather than its length.
+Craft, Bluff, Disguise, Intimidate, Perform and Handle animal still sit
+in no discipline group, so no character can ever focus them: they are
+permanently peripheral, at the highest price per rank and the lowest
+ceiling. Five of the six are charisma skills, which is the real finding
+— the game has no discipline for a character whose expertise is other
+people.
 {% endbook-only %}

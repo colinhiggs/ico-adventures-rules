@@ -15,4 +15,6 @@ the process that sets all of them at the start of play.
 
 {% include character-creation %}
 
+{% include languages %}
+
 {% include priorities %}
