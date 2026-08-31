@@ -15,6 +15,7 @@
 # treat a failure as a question rather than a verdict.
 
 import argparse
+import copy
 import sys
 from pathlib import Path
 
@@ -36,6 +37,23 @@ SURVIVAL_CLAMP_ROUNDS = 25.0     # beyond this a fight is a stalemate
 # means sitting the fight out; too high and the reservoir never mattered.
 FLOOR_RATIO_BAND = (0.35, 0.85)
 RESERVOIR_MATTERS_FROM_LEVEL = 5
+# A mid-level character should be able to deal with rank-and-file
+# opposition briskly and without it costing much.
+SWARM_SIZE = 6
+TRIALS_SWARM = 1200
+SWARM_ROUNDS_BY_LEVEL_10 = 4.0
+SWARM_HP_COST_BY_LEVEL_10 = 0.25
+
+# Every minor power is a weaker twin of a standard one. If a minor twin
+# ever matches its counterpart at the same difficulty, the standard
+# version is dead: same effect, lower floor. The pairing is a design
+# fact rather than something derivable, so it is written down here.
+MINOR_TWINS = {
+    "quick_attack": "fast_attack",
+    "precise_strike": "power_attack",
+    "sidestep": "redouble",
+    "weak_point": "find_the_gap",
+}
 
 # Each build lists its disciplines in PRIORITY order with the grade it
 # is aiming at. At low level it holds whatever the budget reached, so
@@ -154,6 +172,50 @@ def report_stances(level, chars, M):
         print("%-12s %-14.2f %-14.2f %s" % (name, dd, db, better))
 
 
+def report_swarm(level, chars, M):
+    """One character against a crowd of rank and file.
+
+    Damage per creature was never the problem -- a goblin dies to one
+    solid blow -- so this measures whether a build can REACH them all
+    before being surrounded, and what clearing them costs."""
+    hr("Rank and file at level %d -- one character against %d goblins"
+       % (level, SWARM_SIZE))
+    print("%-12s %-8s %-7s %-9s %-9s %s"
+          % ("build", "rounds", "wins", "hp lost", "empty", "plan"))
+    goblin = m.mook("goblin", M)
+    for name, c in chars.items():
+        rounds, win, lost = m.skirmish(c, "goblin", SWARM_SIZE, M, trials=TRIALS_SWARM)
+        drained = copy.deepcopy(c)
+        drained.stamina = 0
+        e_rounds, e_win, _ = m.skirmish(drained, "goblin", SWARM_SIZE, M,
+                                        trials=TRIALS_SWARM)
+        plan = m._swarm_plan(c, goblin, M)
+        label = ("%s @%d" % (plan["power"], plan["difficulty"])) if plan else "plain attack"
+        print("%-12s %-8.1f %-7.0f%% %-9.0f%% %-9s %s"
+              % (name, rounds, win * 100, lost * 100,
+                 "%.1f rd" % e_rounds, label))
+
+
+def free_bands(level, chars, M):
+    """At what difficulty is a minor power certainly free, and how many
+    extra attacks does that buy? This is the 'eventually costs nothing'
+    promise, measured."""
+    hr("Quick Attack free band at level %d" % level)
+    p = m.power_def(M, "quick_attack")
+    base = int(p["base_difficulty"])
+    step = int(p["difficulty_per_extra_attack"])
+    base_cost = int(M.get("using-powers", "base_cost"))
+    print("%-12s %-7s %-14s %-14s %s"
+          % ("build", "skill", "always free", "free half", "extra attacks free"))
+    for name, c in chars.items():
+        skill = c.attack_bonus(M)
+        always = skill - base_cost + 1
+        half = skill
+        n = max(0, (always - base) // step)
+        print("%-12s %-7d %-14s %-14s %d"
+              % (name, skill, "diff <= %d" % always, "diff <= %d" % half, n))
+
+
 def report_attrition(level, chars, M):
     """Fresh versus empty. This is the minor-power tier's whole reason
     for existing: a long adventure should wear a character down, not
@@ -270,6 +332,26 @@ def run_gates(levels, M, trials):
                         "L%d %s vs %s: %.1f rounds (target %.0f-%.0f)"
                         % (level, a, b, rounds, *TARGET_ROUNDS))
 
+        # A minor power must never match its standard twin at the same
+        # difficulty, or the standard one is pointless.
+        for minor_id, standard_id in MINOR_TWINS.items():
+            worse = minor_beaten_by_twin(minor_id, standard_id, level, chars, M)
+            if worse is False:
+                failures.append(
+                    "L%d %s matches or beats %s at equal difficulty -- the "
+                    "standard power is dead" % (level, minor_id, standard_id))
+
+        if level >= 10:
+            for name, c in chars.items():
+                rounds, win, lost = m.skirmish(c, "goblin", SWARM_SIZE, M,
+                                               trials=TRIALS_SWARM)
+                if rounds > SWARM_ROUNDS_BY_LEVEL_10 or lost > SWARM_HP_COST_BY_LEVEL_10:
+                    failures.append(
+                        "L%d %s takes %.1f rounds and %.0f%% of its hit points "
+                        "to clear %d goblins (target <= %.0f rounds, <= %.0f%%)"
+                        % (level, name, rounds, lost * 100, SWARM_SIZE,
+                           SWARM_ROUNDS_BY_LEVEL_10, SWARM_HP_COST_BY_LEVEL_10 * 100))
+
         foe = standard_foe(level, M)
         for name, c in chars.items():
             fresh = m.expected_offence(c, foe, M)
@@ -306,6 +388,42 @@ def run_gates(levels, M, trials):
     return failures
 
 
+def minor_beaten_by_twin(minor_id, standard_id, level, chars, M):
+    """True when the standard twin is better at the same difficulty.
+
+    Attack-granting powers are compared by expected damage against the
+    standard foe, because their extra swings are not the same unit as
+    each other. The rest are compared on raw effect, since a point of
+    dodge bonus is a point of dodge bonus either way."""
+    minor = m.power_def(M, minor_id)
+    standard = m.power_def(M, standard_id)
+    char = chars.get("duellist") or list(chars.values())[0]
+    foe = standard_foe(level, M)
+    base = max(int(minor["base_difficulty"]), int(standard["base_difficulty"]))
+    for difficulty in range(base, base + 60):
+        # Only compare where the STANDARD power actually grants
+        # something. Below its first step it delivers nothing at all,
+        # and "the minor one is better than nothing" is not dominance.
+        std_step = int(standard.get("difficulty_per_step",
+                                    standard.get("difficulty_per_extra_attack", 1)))
+        if (difficulty - int(standard["base_difficulty"])) // std_step < 1:
+            continue
+        if "difficulty_per_extra_attack" in minor:
+            a, _ = m.power_expectation(char, minor_id, difficulty, foe, M)
+            b, _ = m.power_expectation(char, standard_id, difficulty, foe, M)
+        else:
+            def effect(p):
+                step = int(p.get("difficulty_per_step", 1))
+                per = (int(p.get("damage_per_step", 0))
+                       + int(p.get("dodge_bonus_per_step", 0))
+                       + int(p.get("reduction_ignored_per_step", 0)))
+                return max(0, (difficulty - int(p["base_difficulty"])) // step) * per
+            a, b = effect(minor), effect(standard)
+        if a > b:
+            return False
+    return True
+
+
 def contributions(chars, level, M):
     """Offence alone is a bad measure: a defensive signature scores zero
     on it. Contribution is damage dealt per round MULTIPLIED by how many
@@ -336,6 +454,7 @@ def main():
     ap = argparse.ArgumentParser(description="Measure the Ico rules.")
     ap.add_argument("--levels", default="1,5,10")
     ap.add_argument("--trials", type=int, default=3000)
+    ap.add_argument("--swarm-trials", type=int, default=1200)
     ap.add_argument("--check", action="store_true",
                     help="gates only; exit 1 on failure")
     ap.add_argument("--seed", type=int, default=12345)
@@ -345,6 +464,8 @@ def main():
     random.seed(args.seed)
 
     levels = [int(x) for x in args.levels.split(",")]
+    global TRIALS_SWARM
+    TRIALS_SWARM = args.swarm_trials
     M = m.Mechanics()
 
     print("Ico balance report")
@@ -360,6 +481,8 @@ def main():
             continue
         report_sheets(level, chars, M)
         report_dpr(level, chars, M)
+        report_swarm(level, chars, M)
+        free_bands(level, chars, M)
         report_attrition(level, chars, M)
         report_powers(level, chars, M)
         report_stances(level, chars, M)

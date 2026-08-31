@@ -393,12 +393,18 @@ def margin_fraction(attacker, M):
     return float(M.get("damage", "margin_to_damage_fraction"))
 
 
-def damage_from(attacker, defender, margin, M, bonus=0, pierce=0):
+def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
+                weapon_only=False):
+    """weapon_only strips the margin and skill terms, leaving the bare
+    weapon rating -- what Quick Attack's extra swings deal."""
     weapon_damage = attacker.weapon.damage
-    from_margin = int(margin * margin_fraction(attacker, M))
-    step = int(M.get("damage", "damage_per_attack_skill_step"))
-    from_skill = attacker.attack_bonus(M) // step if step else 0
-    raw = weapon_damage + from_margin + from_skill + bonus
+    if weapon_only:
+        raw = weapon_damage
+    else:
+        from_margin = int(margin * margin_fraction(attacker, M))
+        step = int(M.get("damage", "damage_per_attack_skill_step"))
+        from_skill = attacker.attack_bonus(M) // step if step else 0
+        raw = weapon_damage + from_margin + from_skill + bonus
     reduction = defender.armour.ap
     if defender.stance == "block":
         reduction += (defender.shield.block_ap if defender.shield
@@ -461,6 +467,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     bonus = steps * int(p.get("damage_per_step", 0))
     pierce = steps * int(p.get("reduction_ignored_per_step", 0))
     extra_attacks = steps if "difficulty_per_extra_attack" in p else 0
+    weak_extras = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
     skill = char.attack_bonus(M) + char.weapon.accuracy
     td = targeting_difficulty(defender, M)
@@ -474,12 +481,15 @@ def power_expectation(char, power_id, difficulty, defender, M):
         total = face + skill
         if roll >= difficulty:
             cost += power_cost(difficulty, roll, M, minor)
-            swings = 1 + extra_attacks
-            for _ in range(swings):
-                if (total >= td) if on_tie else (total > td):
+            if (total >= td) if on_tie else (total > td):
+                damage += damage_from(
+                    char, defender, total - td, M, bonus=bonus, pierce=pierce)
+                for _ in range(extra_attacks):
                     damage += damage_from(
-                        char, defender, total - td, M, bonus=bonus, pierce=pierce
-                    )
+                        char, defender, total - td, M,
+                        bonus=0 if weak_extras else bonus,
+                        pierce=0 if weak_extras else pierce,
+                        weapon_only=weak_extras)
         else:
             cost += 0 if minor else difficulty // divisor
             # power failed; the action is spent, so no swing at all
@@ -504,6 +514,181 @@ def best_difficulty(char, power_id, defender, M, stamina_budget):
 # ---------------------------------------------------------------------
 # Duels
 # ---------------------------------------------------------------------
+def make_mook(name, M, attack, dodge, hp, weapon, armour):
+    """A rank-and-file opponent, built directly rather than by spending
+    advancement points -- a goblin does not have a character sheet."""
+    flat = {a: int(M.get("attributes", "average_score"))
+            for a in ("strength", "dexterity", "constitution",
+                      "intelligence", "willpower", "charisma")}
+    c = Character(name=name, level=1, disciplines={}, attributes=flat,
+                  stance="dodge")
+    c.skills = {s: 0 for s in TRACKED_SKILLS}
+    c.skills["attack_melee"] = attack
+    c.skills["dodge"] = dodge
+    c.weapon = Weapon.load(M, weapon)
+    c.armour = Armour.load(M, armour)
+    c.shield = None
+    c.chp = hp
+    c.mhp = 0
+    c.stamina = 0
+    return c
+
+
+MOOKS = {
+    # name:        attack dodge hp  weapon      armour
+    "goblin":      (3,     4,    6,  "dagger",     "unarmoured"),
+    "orc":         (5,     3,    12, "hand_axe",   "leather"),
+}
+
+
+def mook(kind, M):
+    return make_mook(kind, M, *MOOKS[kind])
+
+
+def _swarm_plan(hero, foe, M):
+    """Against a crowd the useful measure is not raw damage but damage
+    that actually lands on a fresh body -- overkill on a dying goblin
+    clears nothing. Score each option by damage capped at one mook's
+    hit points per attack."""
+    budget = hero.stamina / 4.0
+    best = (None, -1.0)
+    for power_id in offensive_powers(hero, conditional=False):
+        p = power_def(M, power_id)
+        if "difficulty_per_extra_attack" not in p:
+            continue
+        base_d = int(p["base_difficulty"])
+        step = int(p["difficulty_per_extra_attack"])
+        for extras in range(0, 5):
+            difficulty = base_d + extras * step
+            value = _expected_kills(hero, foe, M, power_id, difficulty, budget)
+            if value > best[1]:
+                best = ({"power": power_id, "difficulty": difficulty}, value)
+    plain = _expected_kills(hero, foe, M, None, 0, budget)
+    if best[0] is None or best[1] <= plain:
+        return None
+    return best[0]
+
+
+def _expected_kills(hero, foe, M, power_id, difficulty, budget):
+    """Expected number of mooks dropped in one round."""
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    td = targeting_difficulty(foe, M)
+    skill = hero.attack_bonus(M)
+    hp = foe.total_hp
+    total_kills = 0.0
+    for face in range(1, 21):
+        roll = face + skill
+        total = roll + hero.weapon.accuracy
+        landed = (total >= td) if on_tie else (total > td)
+        if not landed:
+            continue
+        if power_id is None:
+            total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            continue
+        p = power_def(M, power_id)
+        minor = p.get("tier") == "minor"
+        if roll < difficulty:
+            continue
+        if power_cost(difficulty, roll, M, minor) > budget:
+            total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            continue
+        step = int(p["difficulty_per_extra_attack"])
+        extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
+        weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
+        kills = 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+        each = damage_from(hero, foe, total - td, M, weapon_only=weak)
+        kills += extras * (1 if each >= hp else 0)
+        total_kills += kills
+    return total_kills / 20.0
+
+
+def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
+    """One hero against a crowd. Returns (mean rounds to clear, win
+    rate, mean share of the hero's hit points lost)."""
+    import copy
+    template = mook(kind, M)
+    plan = _swarm_plan(hero_spec, template, M)
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+
+    rounds_total = 0
+    wins = 0
+    lost_total = 0.0
+    start_hp = hero_spec.total_hp
+
+    for _ in range(trials):
+        hero = copy.deepcopy(hero_spec)
+        crowd = [copy.deepcopy(template) for _ in range(count)]
+        rounds = 0
+        while crowd and hero.chp > 0 and rounds < max_rounds:
+            rounds += 1
+            _swarm_act(hero, crowd, plan, M, on_tie, divisor)
+            crowd = [m for m in crowd if m.chp > 0]
+            for m in crowd:
+                td = targeting_difficulty(hero, M)
+                total = d20() + m.attack_bonus(M) + m.weapon.accuracy
+                if (total >= td) if on_tie else (total > td):
+                    apply_damage(hero, damage_from(m, hero, total - td, M))
+        rounds_total += rounds
+        if not crowd and hero.chp > 0:
+            wins += 1
+        lost_total += (start_hp - max(0, hero.total_hp)) / max(1, start_hp)
+    return rounds_total / trials, wins / trials, lost_total / trials
+
+
+def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
+    face = d20()
+    roll = face + hero.attack_bonus(M)
+    total = roll + hero.weapon.accuracy
+
+    def strike(target, weapon_only=False, bonus=0, pierce=0):
+        td = targeting_difficulty(target, M)
+        if (total >= td) if on_tie else (total > td):
+            apply_damage(target, damage_from(hero, target, total - td, M,
+                                             bonus=bonus, pierce=pierce,
+                                             weapon_only=weapon_only))
+
+    living = [m for m in crowd if m.chp > 0]
+    if not living:
+        return
+    if plan is None:
+        strike(living[0])
+        return
+
+    p = power_def(M, plan["power"])
+    minor = is_minor(M, plan["power"])
+    difficulty = plan["difficulty"]
+    floor = 0 if minor else difficulty // divisor
+    step = int(p["difficulty_per_extra_attack"])
+    extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
+    weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
+
+    if hero.stamina < floor or roll < difficulty:
+        if roll < difficulty:
+            hero.stamina = max(0, hero.stamina - floor)
+            return          # action spent on a failed power
+        strike(living[0])
+        return
+
+    cost = power_cost(difficulty, roll, M, minor)
+    if cost > hero.stamina:
+        strike(living[0])   # cannot pay: plain attack
+        return
+    hero.stamina -= cost
+
+    # One shared roll, extra attacks split across distinct targets.
+    strike(living[0])
+    idx = 1
+    for _ in range(extras):
+        living = [m for m in crowd if m.chp > 0]
+        if idx >= len(living):
+            idx = max(0, len(living) - 1)
+        if not living:
+            break
+        strike(living[idx], weapon_only=weak)
+        idx += 1
+
+
 def apply_damage(target, amount):
     """Mastery hit points first, then core -- hit-points.md."""
     from_mhp = min(target.mhp, amount)
@@ -590,6 +775,7 @@ def offensive_powers(char, conditional=True):
     if conditional and char.has("athletic", "adept"):
         options.append("sneak_attack")
     options.append("fast_attack")
+    options.append("quick_attack")
     return options
 
 
@@ -668,34 +854,45 @@ def floor_offence(char, foe, M):
 
     This is the number the minor-power tier exists to raise: on the
     fourth fight of a long day, what can this character still do that is
-    more interesting than swinging? Only outcomes that actually cost
-    nothing count; everything else falls back to a plain attack."""
+    more interesting than swinging? Only outcomes that genuinely cost
+    nothing count -- anything the character cannot pay for falls back to
+    a plain attack, exactly as the rules say."""
     plain, _ = attack_expectation(char, foe, M)
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    td = targeting_difficulty(foe, M)
+    skill = char.attack_bonus(M)
     best = plain
+
     for power_id in offensive_powers(char):
         if not is_minor(M, power_id):
             continue
         p = power_def(M, power_id)
         base_d = int(p["base_difficulty"])
-        step = int(p.get("difficulty_per_step", 1))
-        skill = char.attack_bonus(M)
-        td = targeting_difficulty(foe, M)
-        on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+        # Attack-granting powers step in whole extra attacks; the rest
+        # step in damage, pierce and the like.
+        step = int(p.get("difficulty_per_step",
+                         p.get("difficulty_per_extra_attack", 1)))
+        extras_power = "difficulty_per_extra_attack" in p
+        weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
+
         for difficulty in range(base_d, base_d + 60):
             damage = 0.0
             for face in range(1, 21):
-                roll = face + char.skill(str(p.get("skill", "attack_melee")), M)                     if p.get("skill") != "attack_melee" else face + skill
-                total = face + skill + char.weapon.accuracy
-                landed = (total >= td) if on_tie else (total > td)
-                if not landed:
+                roll = face + skill
+                total = roll + char.weapon.accuracy
+                if not ((total >= td) if on_tie else (total > td)):
                     continue
                 free = (roll >= difficulty
                         and power_cost(difficulty, roll, M, minor=True) == 0)
                 steps = max(0, (difficulty - base_d) // step) if free else 0
                 damage += damage_from(
                     char, foe, total - td, M,
-                    bonus=steps * int(p.get("damage_per_step", 0)),
-                    pierce=steps * int(p.get("reduction_ignored_per_step", 0)))
+                    bonus=0 if extras_power else steps * int(p.get("damage_per_step", 0)),
+                    pierce=0 if extras_power else steps * int(p.get("reduction_ignored_per_step", 0)))
+                if extras_power:
+                    for _ in range(steps):
+                        damage += damage_from(char, foe, total - td, M,
+                                              weapon_only=weak)
             best = max(best, damage / 20.0)
     return best
 
@@ -730,26 +927,38 @@ def _act(actor, target, plan, M, dodge_bonus=0):
     roll = face + actor.attack_bonus(M)
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
-    # Out of stamina: the character simply swings, they do not stand
-    # there failing. Attempting a power you cannot pay for is not a
-    # thing the rules make you do.
-    if actor.stamina < difficulty // divisor:
+    minor = is_minor(M, plan["power"])
+    floor = 0 if minor else difficulty // divisor
+
+    def swing():
         if (total >= td) if on_tie else (total > td):
             apply_damage(target, damage_from(actor, target, total - td, M))
+
+    if actor.stamina < floor:
+        swing()
         return
 
     if roll >= difficulty:
-        actor.stamina -= min(power_cost(difficulty, roll, M), actor.stamina)
+        cost = power_cost(difficulty, roll, M, minor)
+        if cost > actor.stamina:
+            # You cannot spend what you do not have: the power does not
+            # take effect, and the action resolves as a plain attack.
+            swing()
+            return
+        actor.stamina -= cost
         bonus = steps * int(p.get("damage_per_step", 0))
         pierce = steps * int(p.get("reduction_ignored_per_step", 0))
-        swings = 1 + (steps if "difficulty_per_extra_attack" in p else 0)
-        for _ in range(swings):
-            if (total >= td) if on_tie else (total > td):
-                apply_damage(
-                    target,
-                    damage_from(actor, target, total - td, M,
-                                bonus=bonus, pierce=pierce),
-                )
+        weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
+        extras = steps if "difficulty_per_extra_attack" in p else 0
+        if (total >= td) if on_tie else (total > td):
+            apply_damage(target, damage_from(actor, target, total - td, M,
+                                             bonus=bonus, pierce=pierce))
+            for _ in range(extras):
+                apply_damage(target, damage_from(
+                    actor, target, total - td, M,
+                    bonus=0 if weak else bonus,
+                    pierce=0 if weak else pierce,
+                    weapon_only=weak))
     else:
         # Failed the declared difficulty: minimum cost, action spent.
-        actor.stamina = max(0, actor.stamina - difficulty // divisor)
+        actor.stamina = max(0, actor.stamina - floor)

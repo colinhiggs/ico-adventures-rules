@@ -15,6 +15,8 @@ mechanics:
   difficulty_declared_before_rolling: true
   failure_spends_the_action: true
   failure_costs_the_minimum: true
+  unaffordable_power_does_not_take_effect: true
+  max_cost_of_a_successful_power: 10
   one_roll_serves_both_when_skills_match: true
 ---
 
@@ -51,6 +53,20 @@ roll twice for one swing.
 If the roll misses the declared difficulty, the power does not happen,
 the action is spent, and you pay the minimum cost anyway.
 
+## What you cannot afford
+
+You can never spend what you do not have. If the cost comes out higher
+than the stamina or spirit you have left, the power does not take
+effect and the action resolves as though you had not invoked it — an
+attack power still leaves you swinging, it simply gains you nothing.
+
+Note that a *successful* power never costs more than
+{{ mechanics.max_cost_of_a_successful_power }}, however high a
+difficulty you declared: success means the roll reached the difficulty,
+and every point it reached beyond takes another point off the price.
+Reaching further is paid for in the risk of failing, not in a larger
+bill when you succeed.
+
 ## Minor powers
 
 Some powers are marked **minor**. A minor power is declared, rolled and
@@ -60,6 +76,12 @@ power therefore costs only the action.
 
 Minor powers scale more slowly than standard ones — see
 [[discipline-powers]], and the bolt spells in [[spell-list]].
+
+With an empty reservoir a minor power is still worth attempting, and
+the rule above is what makes it work: declare a difficulty low enough
+that the roll is likely to carry the cost to nothing, and you get the
+power for free. Declare higher and you are gambling the action against
+a bigger effect.
 
 ## Example
 

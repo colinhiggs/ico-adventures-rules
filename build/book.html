@@ -333,9 +333,13 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>When a power is invoked on an action that uses the <em>same</em> skill — a melee attack power rolled on melee attack, say — you make one roll and it serves both purposes: first against the declared difficulty to settle whether the power worked and what it cost, then against the target's <a href="#rule-hitting" data-rule-id="hitting">targeting difficulty</a> to resolve the action itself. You never roll twice for one swing.</p>
 <h4>Failure</h4>
 <p>If the roll misses the declared difficulty, the power does not happen, the action is spent, and you pay the minimum cost anyway.</p>
+<h4>What you cannot afford</h4>
+<p>You can never spend what you do not have. If the cost comes out higher than the stamina or spirit you have left, the power does not take effect and the action resolves as though you had not invoked it — an attack power still leaves you swinging, it simply gains you nothing.</p>
+<p>Note that a <em>successful</em> power never costs more than 10, however high a difficulty you declared: success means the roll reached the difficulty, and every point it reached beyond takes another point off the price. Reaching further is paid for in the risk of failing, not in a larger bill when you succeed.</p>
 <h4>Minor powers</h4>
 <p>Some powers are marked <strong>minor</strong>. A minor power is declared, rolled and paid for exactly like any other, with one difference: the minimum cost does not apply to it, so its cost can fall to nothing. A failed minor power therefore costs only the action.</p>
 <p>Minor powers scale more slowly than standard ones — see <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Discipline Powers</a>, and the bolt spells in <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a>.</p>
+<p>With an empty reservoir a minor power is still worth attempting, and the rule above is what makes it work: declare a difficulty low enough that the roll is likely to carry the cost to nothing, and you get the power for free. Declare higher and you are gambling the action against a bigger effect.</p>
 <h4>Example</h4>
 <p>Ashri has a melee attack skill of <code>9</code> and <code>14</code> stamina left. She invokes Power Attack, whose base difficulty is <code>4</code> and which buys <code>1</code> damage per <code>2</code> further points of difficulty. She declares a difficulty of <code>14</code>, going for <code>5</code> extra damage.</p>
 <p>She rolls <code>9</code>, for a total of <code>18</code>. That beats her declared <code>14</code>, so the power works. The cost is the base cost plus <code>14</code> less <code>18</code> — which comes out at <code>6</code>. The minimum for a difficulty of <code>14</code> is <code>4</code>, lower than <code>6</code>, so she pays <code>6</code> and is left with <code>8</code> stamina.</p>
@@ -356,17 +360,25 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Fast Attack</h4>
 <p><em>(stamina, the attack skill in use, base difficulty 1; each further 15 points of difficulty grants one more extra attack)</em></p>
 <p>Attack again, after your first. Declare how many extra attacks you are going for, roll once, and use that single roll for two things: first against the declared difficulty to see whether the power worked and what it cost, then against the target's <a href="#rule-hitting" data-rule-id="hitting">targeting difficulty</a> for each attack it granted.</p>
+<p>The extra attacks need not all fall on the same creature: split them between any targets you can reach, and compare that one roll to each target's own targeting difficulty in turn. A single roll can therefore sail past one opponent's defence and bounce off another's.</p>
 <p>Melee and ranged both use this one power, taking whichever attack skill the weapon calls for.</p>
+<h4>Quick Attack</h4>
+<p><em>(<strong>minor</strong>; stamina, the attack skill in use, base difficulty 1; each further 14 points of difficulty grants one more extra attack)</em></p>
+<p>Attack again, faster and less carefully. Quick Attack works exactly as Fast Attack does — one roll, extra attacks that may be split between targets — with one difference: <strong>its extra attacks deal the weapon's damage rating and nothing else.</strong> No margin is converted, and the attacker's skill adds nothing.</p>
+<p>Being minor, it has no minimum cost, so a practised fighter can expect to use it for nothing at all.</p>
 <h4>Second Wind</h4>
 <p><em>(stamina, fortitude, base difficulty 8; each further 3 points of difficulty recovers 2 more)</em></p>
 <p>Shrug off a near miss and keep going, recovering <a href="#rule-hit-points" data-rule-id="hit-points">mastery hit points</a> but never core hit points.</p>
 <h4>Example</h4>
 <p>Ashri, with a melee attack skill of <code>12</code>, wants a second swing. Fast Attack's base difficulty is <code>1</code> and one extra attack costs a further <code>15</code>, so she declares <code>16</code>.</p>
 <p>She rolls <code>9</code>, for a total of <code>21</code>. That beats her declared <code>16</code>, so the power works and she has two attacks this turn. The cost is the base cost plus <code>16</code> less <code>21</code>, which is <code>5</code>; the minimum for a difficulty of <code>16</code> is <code>5</code> as well, so she pays <code>5</code> either way.</p>
-<p>That same total of <code>21</code> is then compared to her target's targeting difficulty — twice, once for each attack. Both swings hit or neither does.</p>
+<p>That same total of <code>21</code> is then compared to each target's targeting difficulty. She spends one attack on the orc in front of her, whose targeting difficulty is <code>14</code>, and one on the goblin beside it, whose targeting difficulty is <code>11</code>. Both land, and each is resolved as its own blow with its own margin.</p>
+<p>Later, out of stamina entirely, she uses Quick Attack instead. One extra attack costs <code>14</code> above the base, so she declares <code>15</code>. She rolls <code>13</code>, for <code>25</code> — ten clear of her declared difficulty, which matches the base cost, so it costs her nothing. Her second swing deals her sword's damage rating flat: enough to drop a goblin, barely a scratch on anything in armour.</p>
 <h4>Design note</h4>
 <p>One scaling power does the work of several. A separate power for each number of extra attacks, doubled again to cover melee and ranged, is the same rule written out repeatedly with a different constant in it — and it makes the ceiling something a character buys rather than something they decide in the moment.</p>
 <p>Extra attacks are priced far above what a point of damage costs elsewhere, because an extra attack is a whole weapon's damage rather than an increment of one. Priced to match Power Attack step for step, it would be strictly the best power in the game at every level.</p>
+<p>Quick Attack's extra swings are stripped back to the weapon's damage rating on purpose, and that single restriction is what lets it be cheap enough to become free. A blow with no margin and no skill behind it is lethal to something with a handful of hit points and no armour, and close to worthless against anything serious — so the power that a veteran can use every round without paying for it is precisely a crowd-clearing tool, and never an answer to a real opponent.</p>
+<p>Splitting extra attacks between targets matters more than it looks. Against a crowd the difficulty was never damage per creature — one solid blow kills a goblin — it was reaching them all before they surround you.</p>
 <p>Second Wind recovers only mastery hit points, never core. Real wounds do not respond to willpower, and a power that healed them would remove the distinction the two pools exist to draw.</p>
 <p class="related">See also: <a href="#rule-disciplines">Disciplines</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-hitting">Landing a Blow</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>

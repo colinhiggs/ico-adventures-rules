@@ -287,7 +287,17 @@
         "source": "stamina",
         "skill": "attack_used",
         "base_difficulty": 1,
-        "difficulty_per_extra_attack": 15
+        "difficulty_per_extra_attack": 15,
+        "extra_attacks_may_be_split_between_targets": true
+      },
+      "quick_attack": {
+        "tier": "minor",
+        "source": "stamina",
+        "skill": "attack_used",
+        "base_difficulty": 1,
+        "difficulty_per_extra_attack": 14,
+        "extra_attacks_may_be_split_between_targets": true,
+        "extra_attacks_deal_weapon_damage_only": true
       },
       "second_wind": {
         "source": "stamina",
@@ -420,6 +430,8 @@
       "difficulty_declared_before_rolling": true,
       "failure_spends_the_action": true,
       "failure_costs_the_minimum": true,
+      "unaffordable_power_does_not_take_effect": true,
+      "max_cost_of_a_successful_power": 10,
       "one_roll_serves_both_when_skills_match": true
     },
     "weapons": {
