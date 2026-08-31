@@ -394,14 +394,16 @@ def margin_fraction(attacker, M):
 
 
 def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
-                weapon_only=False):
+                weapon_only=False, use_margin=True):
     """weapon_only strips the margin and skill terms, leaving the bare
-    weapon rating -- what Quick Attack's extra swings deal."""
+    weapon rating -- what Quick Attack's extra swings deal. use_margin
+    drops only the margin, keeping the trained arm behind the blow --
+    what a Whirl sweep deals."""
     weapon_damage = attacker.weapon.damage
     if weapon_only:
         raw = weapon_damage
     else:
-        from_margin = int(margin * margin_fraction(attacker, M))
+        from_margin = int(margin * margin_fraction(attacker, M)) if use_margin else 0
         step = int(M.get("damage", "damage_per_attack_skill_step"))
         from_skill = attacker.attack_bonus(M) // step if step else 0
         raw = weapon_damage + from_margin + from_skill + bonus
@@ -545,6 +547,16 @@ def mook(kind, M):
     return make_mook(kind, M, *MOOKS[kind])
 
 
+def sweep_targets(p, difficulty):
+    """How many enemies a sweep power reaches at this difficulty, or 0
+    if the power is not a sweep."""
+    if "extra_targets_per_step" not in p:
+        return 0
+    step = int(p["difficulty_per_step"])
+    steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
+    return int(p["base_targets"]) + steps * int(p["extra_targets_per_step"])
+
+
 def _swarm_plan(hero, foe, M):
     """Against a crowd the useful measure is not raw damage but damage
     that actually lands on a fresh body -- overkill on a dying goblin
@@ -552,13 +564,15 @@ def _swarm_plan(hero, foe, M):
     hit points per attack."""
     budget = hero.stamina / 4.0
     best = (None, -1.0)
-    for power_id in offensive_powers(hero, conditional=False):
+    for power_id in offensive_powers(hero, M, conditional=False):
         p = power_def(M, power_id)
-        if "difficulty_per_extra_attack" not in p:
+        sweep = "extra_targets_per_step" in p
+        if "difficulty_per_extra_attack" not in p and not sweep:
             continue
         base_d = int(p["base_difficulty"])
-        step = int(p["difficulty_per_extra_attack"])
-        for extras in range(0, 5):
+        step = int(p["difficulty_per_extra_attack"] if not sweep
+                   else p["difficulty_per_step"])
+        for extras in range(0, 6):
             difficulty = base_d + extras * step
             value = _expected_kills(hero, foe, M, power_id, difficulty, budget)
             if value > best[1]:
@@ -591,6 +605,11 @@ def _expected_kills(hero, foe, M, power_id, difficulty, budget):
             continue
         if power_cost(difficulty, roll, M, minor) > budget:
             total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            continue
+        if "extra_targets_per_step" in p:
+            reach = sweep_targets(p, difficulty)
+            each = damage_from(hero, foe, total - td, M, use_margin=False)
+            total_kills += reach * (1 if each >= hp else 0)
             continue
         step = int(p["difficulty_per_extra_attack"])
         extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
@@ -659,7 +678,9 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
     minor = is_minor(M, plan["power"])
     difficulty = plan["difficulty"]
     floor = 0 if minor else difficulty // divisor
-    step = int(p["difficulty_per_extra_attack"])
+    sweep = "extra_targets_per_step" in p
+    step = int(p["difficulty_per_extra_attack"] if not sweep
+               else p["difficulty_per_step"])
     extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
     weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
@@ -675,6 +696,15 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
         strike(living[0])   # cannot pay: plain attack
         return
     hero.stamina -= cost
+
+    if sweep:
+        # One sweeping cut: every enemy in reach, no margin converted.
+        for target in living[:sweep_targets(p, difficulty)]:
+            td = targeting_difficulty(target, M)
+            if (total >= td) if on_tie else (total > td):
+                apply_damage(target, damage_from(hero, target, total - td, M,
+                                                 use_margin=False))
+        return
 
     # One shared roll, extra attacks split across distinct targets.
     strike(living[0])
@@ -759,23 +789,42 @@ def _fresh(char):
 SNEAK_AVAILABILITY = 0.5
 
 
-def offensive_powers(char, conditional=True):
-    """Every attack power this build may bring. Sneak Attack is listed
-    separately because it needs a condition the rules leave to the
-    fiction; excluding it entirely made Athletic look purely defensive
-    when two of its three powers are not."""
+# Powers that need a condition the rules leave to the fiction. Excluding
+# them entirely made Athletic look purely defensive when two of its three
+# powers are not.
+CONDITIONAL_POWERS = {"sneak_attack"}
+
+# Which mechanics a power must carry to count as an attack power here.
+ATTACK_EFFECTS = ("damage_per_step", "reduction_ignored_per_step",
+                  "difficulty_per_extra_attack", "extra_targets_per_step")
+
+
+def opens_for(char, power_id, M):
+    """Whether this character has access to a power.
+
+    Access is read from the power's own mechanics -- its `discipline`
+    and `grade` -- rather than hardcoded here, so moving a power between
+    disciplines or grades is a rule-file edit and nothing else."""
+    p = power_def(M, power_id)
+    discipline = p.get("discipline")
+    if discipline is None:
+        return True                      # a general power, open to all
+    return char.has(str(discipline), str(p.get("grade", "initiate")))
+
+
+def offensive_powers(char, M, conditional=True):
+    """Every attack power this build may bring."""
     options = []
-    if char.has("martial", "initiate"):
-        options.append("precise_strike")
-        options.append("power_attack")
-    if char.has("martial", "adept"):
-        options.append("find_the_gap")
-    if char.has("awareness", "initiate"):
-        options.append("weak_point")
-    if conditional and char.has("athletic", "adept"):
-        options.append("sneak_attack")
-    options.append("fast_attack")
-    options.append("quick_attack")
+    for rule_id in ("discipline-powers", "general-powers"):
+        for power_id, p in sorted(M.rules.get(rule_id, {}).items()):
+            if not isinstance(p, dict):
+                continue
+            if not any(k in p for k in ATTACK_EFFECTS):
+                continue
+            if power_id in CONDITIONAL_POWERS and not conditional:
+                continue
+            if opens_for(char, power_id, M):
+                options.append(power_id)
     return options
 
 
@@ -829,7 +878,7 @@ def sustained_dodge_bonus(char, M):
 
 def _best_option(char, foe, M, budget, conditional=True):
     best = (None, -1.0, 0.0, 0)
-    for power_id in offensive_powers(char, conditional):
+    for power_id in offensive_powers(char, M, conditional):
         difficulty, damage, cost = best_difficulty(char, power_id, foe, M, budget)
         if difficulty is not None and damage > best[1]:
             best = (power_id, damage, cost, difficulty)
@@ -863,7 +912,7 @@ def floor_offence(char, foe, M):
     skill = char.attack_bonus(M)
     best = plain
 
-    for power_id in offensive_powers(char):
+    for power_id in offensive_powers(char, M):
         if not is_minor(M, power_id):
             continue
         p = power_def(M, power_id)

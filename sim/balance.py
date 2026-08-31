@@ -244,7 +244,7 @@ def report_powers(level, chars, M):
     foe = standard_foe(level, M)
     rows = []
     for name, c in chars.items():
-        for power_id in m.offensive_powers(c):
+        for power_id in m.offensive_powers(c, M):
             difficulty, damage, cost = m.best_difficulty(
                 c, power_id, foe, M, c.stamina / 4.0)
             if difficulty is None:

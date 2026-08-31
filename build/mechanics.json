@@ -177,6 +177,7 @@
     },
     "discipline-powers": {
       "power_attack": {
+        "discipline": "martial",
         "grade": "initiate",
         "source": "stamina",
         "skill": "attack_melee",
@@ -185,6 +186,7 @@
         "damage_per_step": 1
       },
       "precise_strike": {
+        "discipline": "martial",
         "grade": "initiate",
         "tier": "minor",
         "source": "stamina",
@@ -194,6 +196,7 @@
         "damage_per_step": 1
       },
       "find_the_gap": {
+        "discipline": "martial",
         "grade": "adept",
         "source": "stamina",
         "skill": "attack_melee",
@@ -202,6 +205,7 @@
         "reduction_ignored_per_step": 1
       },
       "redouble": {
+        "discipline": "athletic",
         "grade": "initiate",
         "source": "stamina",
         "skill": "dodge",
@@ -210,6 +214,7 @@
         "dodge_bonus_per_step": 1
       },
       "sidestep": {
+        "discipline": "athletic",
         "grade": "initiate",
         "tier": "minor",
         "source": "stamina",
@@ -218,7 +223,19 @@
         "difficulty_per_step": 14,
         "dodge_bonus_per_step": 1
       },
+      "whirl": {
+        "discipline": "athletic",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 8,
+        "base_targets": 2,
+        "difficulty_per_step": 4,
+        "extra_targets_per_step": 1,
+        "converts_margin_to_damage": false
+      },
       "sneak_attack": {
+        "discipline": "athletic",
         "grade": "adept",
         "source": "stamina",
         "skill": "attack_melee",
@@ -227,6 +244,7 @@
         "damage_per_step": 2
       },
       "forewarned": {
+        "discipline": "awareness",
         "grade": "initiate",
         "source": "stamina",
         "skill": "spot",
@@ -235,6 +253,7 @@
         "initiative_bonus_per_step": 2
       },
       "weak_point": {
+        "discipline": "awareness",
         "grade": "initiate",
         "tier": "minor",
         "source": "stamina",
@@ -244,22 +263,27 @@
         "reduction_ignored_per_step": 1
       },
       "killing_blow": {
+        "discipline": "martial",
         "grade": "master",
         "margin_to_damage_fraction": 1
       },
       "untouchable": {
+        "discipline": "athletic",
         "grade": "master",
         "ignores_armour_skill_penalty_when_dodging": true
       },
       "read_the_blow": {
+        "discipline": "awareness",
         "grade": "master",
         "choose_stance_after_attack_roll": true
       },
       "school_mastery": {
+        "discipline": "magical",
         "grade": "master",
         "difficulty_reduction": 5
       },
       "granted_domain": {
+        "discipline": "spiritual",
         "grade": "master",
         "difficulty_reduction": 10
       }

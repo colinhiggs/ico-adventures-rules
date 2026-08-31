@@ -8,6 +8,7 @@ summary: >
   push it.
 mechanics:
   power_attack:
+    discipline: martial
     grade: initiate
     source: stamina
     skill: attack_melee
@@ -15,6 +16,7 @@ mechanics:
     difficulty_per_step: 2
     damage_per_step: 1
   precise_strike:
+    discipline: martial
     grade: initiate
     tier: minor
     source: stamina
@@ -23,6 +25,7 @@ mechanics:
     difficulty_per_step: 4
     damage_per_step: 1
   find_the_gap:
+    discipline: martial
     grade: adept
     source: stamina
     skill: attack_melee
@@ -30,6 +33,7 @@ mechanics:
     difficulty_per_step: 2
     reduction_ignored_per_step: 1
   redouble:
+    discipline: athletic
     grade: initiate
     source: stamina
     skill: dodge
@@ -37,6 +41,7 @@ mechanics:
     difficulty_per_step: 10
     dodge_bonus_per_step: 1
   sidestep:
+    discipline: athletic
     grade: initiate
     tier: minor
     source: stamina
@@ -44,7 +49,18 @@ mechanics:
     base_difficulty: 2
     difficulty_per_step: 14
     dodge_bonus_per_step: 1
+  whirl:
+    discipline: athletic
+    grade: adept
+    source: stamina
+    skill: attack_melee
+    base_difficulty: 8
+    base_targets: 2
+    difficulty_per_step: 4
+    extra_targets_per_step: 1
+    converts_margin_to_damage: false
   sneak_attack:
+    discipline: athletic
     grade: adept
     source: stamina
     skill: attack_melee
@@ -52,6 +68,7 @@ mechanics:
     difficulty_per_step: 2
     damage_per_step: 2
   forewarned:
+    discipline: awareness
     grade: initiate
     source: stamina
     skill: spot
@@ -59,6 +76,7 @@ mechanics:
     difficulty_per_step: 2
     initiative_bonus_per_step: 2
   weak_point:
+    discipline: awareness
     grade: initiate
     tier: minor
     source: stamina
@@ -67,18 +85,23 @@ mechanics:
     difficulty_per_step: 6
     reduction_ignored_per_step: 1
   killing_blow:
+    discipline: martial
     grade: master
     margin_to_damage_fraction: 1
   untouchable:
+    discipline: athletic
     grade: master
     ignores_armour_skill_penalty_when_dodging: true
   read_the_blow:
+    discipline: awareness
     grade: master
     choose_stance_after_attack_roll: true
   school_mastery:
+    discipline: magical
     grade: master
     difficulty_reduction: 5
   granted_domain:
+    discipline: spiritual
     grade: master
     difficulty_reduction: 10
 ---
@@ -130,6 +153,17 @@ weight. Each further
 {{ mechanics.sidestep.difficulty_per_step }} points of difficulty adds
 {{ mechanics.sidestep.dodge_bonus_per_step }} to your targeting
 difficulty against one attack, if you are dodging.
+
+**Whirl** *(Adept; stamina, melee attack, base difficulty
+{{ mechanics.whirl.base_difficulty }})* — one sweeping cut taken at
+everything within reach. Make a single attack roll and compare it to the
+targeting difficulty of {{ mechanics.whirl.base_targets }} enemies you
+can reach; each further {{ mechanics.whirl.difficulty_per_step }} points
+of difficulty reaches {{ mechanics.whirl.extra_targets_per_step }} more.
+
+A sweep has no time for precision, so **Whirl converts no margin into
+damage**: each blow deals the weapon's rating plus the damage your skill
+adds, and nothing for how cleanly the roll landed.
 
 **Sneak Attack** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.sneak_attack.base_difficulty }})* — usable only against a
@@ -210,6 +244,18 @@ dodger effectively unhittable.
 The minor powers — Precise Strike, Sidestep and Weak Point — scale far
 more slowly than their standard counterparts and will never match them.
 That is the trade for a power that still works with an empty reservoir.
+
+Whirl and Quick Attack answer the same question differently, and the
+difference is the point of specialising. Quick Attack is open to
+everyone, costs nothing once a character is practised enough, and its
+extra swings are stripped back to the bare weapon. Whirl is bought with
+a discipline grade, is paid for every time it is used, and its blows
+land with a trained arm behind them. The generalist can always clear
+rabble slowly; the one who trained for it clears rabble properly.
+
+Whirl scales in reach rather than in force. Pushing the difficulty finds
+one more body, not a heavier cut — which is what makes it a crowd
+answer rather than a better way to fight one opponent.
 
 Granted Domain cuts more difficulty than School Mastery because it is
 narrower: a domain is a subject, a school is a technique. It is also the
