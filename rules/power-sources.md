@@ -14,10 +14,12 @@ mechanics:
 
 There are two power sources, and every power draws on one of them.
 
-- **Stamina** fuels physical powers. Its base value is a character's
-  {{ mechanics.stamina_base }}.
-- **Spirit** fuels magical powers, spells included. Its base value is a
-  character's {{ mechanics.spirit_base }}.
+- **Stamina** is the body's reserve, and fuels physical powers. Its base
+  value is a character's {{ mechanics.stamina_base }}.
+- **Spirit** is the self's reserve, and fuels everything that comes out
+  of who you are rather than what you can lift: spells, granted magic,
+  and the force of personality behind a Social power. Its base value is
+  a character's {{ mechanics.spirit_base }}.
 
 Both can be widened by spending advancement points — see
 [[advancement]] — and possibly by items. [[using-powers]] covers what a

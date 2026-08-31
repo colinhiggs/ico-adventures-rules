@@ -166,6 +166,37 @@ mechanics:
     discipline: awareness
     grade: master
     choose_stance_after_attack_roll: true
+  winning_manner:
+    discipline: social
+    grade: initiate
+    tier: minor
+    source: spirit
+    skill: bluff
+    base_difficulty: 2
+    difficulty_per_step: 6
+    check_bonus_per_step: 1
+  rattle:
+    discipline: social
+    grade: initiate
+    source: spirit
+    skill: intimidate
+    base_difficulty: 4
+    difficulty_per_step: 3
+    penalty_per_step: 1
+  command:
+    discipline: social
+    grade: adept
+    source: spirit
+    skill: diplomacy
+    base_difficulty: 10
+    base_creatures: 1
+    difficulty_per_step: 5
+    extra_creatures_per_step: 1
+    resisted_with: resolve
+  command_the_room:
+    discipline: social
+    grade: master
+    affects_everyone_who_can_see_and_hear: true
   school_mastery:
     discipline: magical
     grade: master
@@ -325,6 +356,36 @@ further {{ mechanics.anticipate.difficulty_per_step }} points.
 dodge or block after the attack roll has been made rather than before,
 inverting the usual guess in [[hitting]].
 
+## Social
+
+**Winning Manner** *(Initiate, **minor**; spirit, bluff, base difficulty
+{{ mechanics.winning_manner.base_difficulty }})* — you are simply easy
+to agree with. Add `+{{ mechanics.winning_manner.check_bonus_per_step }}`
+to one social skill check for each
+{{ mechanics.winning_manner.difficulty_per_step }} points of difficulty
+beyond the base.
+
+**Rattle** *(Initiate; spirit, intimidate, base difficulty
+{{ mechanics.rattle.base_difficulty }})* — a word, a look, a laugh at
+the wrong moment. One creature that can see and hear you takes
+`-{{ mechanics.rattle.penalty_per_step }}` on its next roll for each
+further {{ mechanics.rattle.difficulty_per_step }} points of difficulty.
+This is Social's contribution to a fight, and it works on anything with
+a mind to unsettle.
+
+**Command** *(Adept; spirit, diplomacy, base difficulty
+{{ mechanics.command.base_difficulty }})* — one word, obeyed before the
+creature has decided whether to. Name a single simple instruction —
+*drop it*, *stop*, *run* — and
+{{ mechanics.command.base_creatures }} creature must obey unless it
+resists with {{ mechanics.command.resisted_with }}. Each further
+{{ mechanics.command.difficulty_per_step }} points of difficulty commands
+{{ mechanics.command.extra_creatures_per_step }} more creature.
+
+**Command the Room** *(Master signature)* — a Social power that would
+affect one creature affects every creature that can see and hear you
+instead.
+
 ## Magical and Spiritual
 
 Both of these disciplines take their powers from the spell lists rather
@@ -408,6 +469,18 @@ it were also free there would be no reason for anyone holding a Martial
 grade to ever reach for the general power. Paid for, it is what a
 fighter opens with; Quick Attack is what the same fighter still has on
 the fourth fight of the day.
+
+Social is the only discipline whose powers are worth taking by a
+character who never intends to fight, and Rattle is deliberately the
+exception that keeps it from being a non-combat discipline. A penalty on
+an enemy's next roll is worth roughly what a point of damage is worth,
+except that it can land on a spell, a save or an attack, and it works on
+anything that has a mind to unsettle.
+
+Command the Room turns single-target powers into area ones, which is a
+larger multiplier than any other signature grants. It is priced by being
+the capstone of a discipline that does no damage: a Master of Social has
+spent a career on a power pool that cannot, on its own, kill anything.
 
 Guard, Deflect, Call the Shot and Read the Room are the first powers
 here that do nothing on their own turn and nothing to a target. They

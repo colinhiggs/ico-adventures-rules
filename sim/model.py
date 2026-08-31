@@ -231,14 +231,26 @@ def focus_of(discipline_grade):
     ]
 
 
+FOCUS_ORDER = ("peripheral", "unfocused", "focused")
+
+
 def skill_focus(char, skill_name, M):
     """Which focus tier a skill sits in, from the character's grades and
-    the discipline-list skill groups."""
+    the discipline-list skill groups.
+
+    A skill may belong to more than one group -- spellcasting is both
+    Magical and Spiritual, diplomacy is both Social and Spiritual -- so
+    take the BEST tier the character has any claim to. Returning the
+    first match instead would make a priest's own spellcasting
+    peripheral because Magical sorts earlier."""
+    best = "peripheral"
     for discipline in M.keys("discipline-list"):
         group = M.get("discipline-list", discipline, "skills")
         if skill_name in group:
-            return focus_of(char.disciplines.get(discipline))
-    return "peripheral"
+            tier = focus_of(char.disciplines.get(discipline))
+            if FOCUS_ORDER.index(tier) > FOCUS_ORDER.index(best):
+                best = tier
+    return best
 
 
 def skill_cap(focus, level, M):

@@ -50,7 +50,7 @@ A grade does exactly three things, and nothing else:
 - At **Master** only, it grants that discipline's single **signature**
   ability.
 
-The five disciplines and their signatures are listed in the
+The six disciplines and their signatures are listed in the
 [[discipline-list]].
 
 ## Example
@@ -84,7 +84,8 @@ answer.
 Nothing stops you building the classic adventuring roles; they are
 combinations rather than categories. A fighter is Martial and Athletic;
 a rogue is Athletic and Awareness; a wizard is Magical and Awareness; a
-priest is Spiritual with a little Martial. A character who spreads
+priest is Spiritual with a little Martial; the player who wants to talk
+their way through the dungeon is Social and Awareness. A character who spreads
 Initiate grades across four disciplines is a generalist, and that is a
 legitimate build rather than a mistake.
 

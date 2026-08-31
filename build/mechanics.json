@@ -161,10 +161,23 @@
           "appraise",
           "disable_device",
           "survival",
-          "gather_information"
+          "craft"
         ],
         "source": "stamina",
         "signature": "read_the_blow"
+      },
+      "social": {
+        "skills": [
+          "bluff",
+          "diplomacy",
+          "intimidate",
+          "disguise",
+          "perform",
+          "handle_animal",
+          "gather_information"
+        ],
+        "source": "spirit",
+        "signature": "command_the_room"
       },
       "magical": {
         "skills": [
@@ -180,7 +193,8 @@
         "skills": [
           "resolve",
           "heal",
-          "diplomacy"
+          "diplomacy",
+          "spellcasting"
         ],
         "source": "spirit",
         "signature": "granted_domain"
@@ -365,6 +379,41 @@
         "discipline": "awareness",
         "grade": "master",
         "choose_stance_after_attack_roll": true
+      },
+      "winning_manner": {
+        "discipline": "social",
+        "grade": "initiate",
+        "tier": "minor",
+        "source": "spirit",
+        "skill": "bluff",
+        "base_difficulty": 2,
+        "difficulty_per_step": 6,
+        "check_bonus_per_step": 1
+      },
+      "rattle": {
+        "discipline": "social",
+        "grade": "initiate",
+        "source": "spirit",
+        "skill": "intimidate",
+        "base_difficulty": 4,
+        "difficulty_per_step": 3,
+        "penalty_per_step": 1
+      },
+      "command": {
+        "discipline": "social",
+        "grade": "adept",
+        "source": "spirit",
+        "skill": "diplomacy",
+        "base_difficulty": 10,
+        "base_creatures": 1,
+        "difficulty_per_step": 5,
+        "extra_creatures_per_step": 1,
+        "resisted_with": "resolve"
+      },
+      "command_the_room": {
+        "discipline": "social",
+        "grade": "master",
+        "affects_everyone_who_can_see_and_hear": true
       },
       "school_mastery": {
         "discipline": "magical",

@@ -131,11 +131,11 @@ scene needs, at whatever rank makes the sage impressive, and players
 should not be carrying a version of that list on their sheets against
 the chance it comes up.
 
-What remains unsolved is the shape of the list rather than its length.
-Craft, Bluff, Disguise, Intimidate, Perform and Handle animal still sit
-in no discipline group, so no character can ever focus them: they are
-permanently peripheral, at the highest price per rank and the lowest
-ceiling. Five of the six are charisma skills, which is the real finding
-— the game has no discipline for a character whose expertise is other
-people.
+Every skill on this list now belongs to a discipline group, which was
+not true before the Social discipline existed. Five of the six skills
+stranded by the earlier pass were charisma skills, and that was the
+symptom rather than the problem: the game had no discipline for a
+character whose expertise is other people. Craft went to Awareness,
+already the home of appraise and disable device — careful, attentive
+work with objects.
 {% endbook-only %}

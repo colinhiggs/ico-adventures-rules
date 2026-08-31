@@ -1,10 +1,11 @@
 ---
 id: discipline-list
-title: The Five Disciplines
+title: The Six Disciplines
 tags: [character, progression, reference]
 summary: >
-  Martial, Athletic, Awareness, Magical and Spiritual — each with a
-  skill group, a power pool, and one signature ability at Master grade.
+  Martial, Athletic, Awareness, Social, Magical and Spiritual — each
+  with a skill group, a power pool, and one signature ability at Master
+  grade.
 mechanics:
   martial:
     skills: [attack_melee, attack_ranged, block, fortitude]
@@ -17,15 +18,20 @@ mechanics:
     signature: untouchable
   awareness:
     skills: [spot, listen, search, sense_motive, appraise, disable_device,
-             survival, gather_information]
+             survival, craft]
     source: stamina
     signature: read_the_blow
+  social:
+    skills: [bluff, diplomacy, intimidate, disguise, perform, handle_animal,
+             gather_information]
+    source: spirit
+    signature: command_the_room
   magical:
     skills: [spellcasting, lore, decipher_script, use_magic_device]
     source: spirit
     signature: school_mastery
   spiritual:
-    skills: [resolve, heal, diplomacy]
+    skills: [resolve, heal, diplomacy, spellcasting]
     source: spirit
     signature: granted_domain
 ---
@@ -61,12 +67,26 @@ targeting difficulty when you dodge.
 ## Awareness
 
 *Skill group: spot, listen, search, sense motive, appraise, disable
-device, survival, gather information. Source: stamina.*
+device, survival, craft. Source: stamina.*
 
 Noticing things in time to act on them.
 
 **Signature — Read the Blow.** You may choose whether to dodge or block
 *after* seeing the attack roll, rather than before. See [[hitting]].
+
+## Social
+
+*Skill group: bluff, diplomacy, intimidate, disguise, perform, handle
+animal, gather information. Source: spirit.*
+
+Other people, and what can be done with them. Its powers unsettle,
+command and carry a room.
+
+Awareness and Social divide the same encounter between them: Awareness
+notices the lie, Social tells it.
+
+**Signature — Command the Room.** A Social power that would affect one
+creature affects every creature that can see and hear you instead.
 
 ## Magical
 
@@ -80,7 +100,7 @@ that school are cast at reduced difficulty.
 
 ## Spiritual
 
-*Skill group: resolve, heal, diplomacy. Source: spirit.*
+*Skill group: resolve, heal, diplomacy, spellcasting. Source: spirit.*
 
 Granted magic, and the strength of will that carries it.
 
