@@ -17,3 +17,5 @@ if the blow lands its damage is worked out and applied.
 {% include hitting %}
 
 {% include damage %}
+
+{% include recovery %}

@@ -108,6 +108,29 @@ These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
 because the design intent moved, never to make the report quiet.
 
+## The adventuring day
+
+A single fight from full is not the question a dungeon asks. `model.py`
+can run a sequence of encounters with recovery between them:
+
+```python
+import model as m, balance as b
+M = m.Mechanics()
+hero = b.build_all(10, M)["duellist"]
+hard = [("orc", 4), ("orc", 6), ("orc", 6), ("orc", 8), ("orc", 8)]
+m.adventuring_day(hero, M, schedule=hard, tier="breather")
+```
+
+It returns, per encounter, the share of the character's fresh offence
+they bring to it, the share of their hit points left, and the share of
+days they are still standing for it. `tier` is `"breather"`, `"rest"` or
+`None`, and reads its fractions from the recovery rule like everything
+else.
+
+Offence is looked up from a cache keyed on stamina rather than
+recomputed per trial; the difficulty search is far too slow to run
+inside the loop, and stamina is what actually varies.
+
 ## Known limits
 
 - The model tracks melee only. Ranged attacks, spells and the
@@ -123,6 +146,10 @@ because the design intent moved, never to make the report quiet.
 - Only five combat skills are tracked, so a build's spare points have
   fewer sinks here than in a real character, which slightly inflates
   what lands in mastery hit points and stamina.
+- The day model is melee only, like everything else here, so it cannot
+  see a spellcaster spending spirit on every spell. The bolts are a
+  caster's equivalent of the free minor attack powers, so the same
+  mechanism probably protects them — but probably is the honest word.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.

@@ -529,6 +529,19 @@
       "gold_lost_per_point": 100,
       "power_source_bonus_per_point": 3
     },
+    "recovery": {
+      "recovery_is_once_per_encounter": true,
+      "fraction_of_maximum": true,
+      "breather_percent": 25,
+      "rest_percent": 50,
+      "night_restores_all_of": [
+        "stamina",
+        "spirit",
+        "mastery_hit_points"
+      ],
+      "core_hit_points_per_night": 1,
+      "core_hit_points_recover_between_fights": false
+    },
     "skill-list": {
       "governing_attributes_incomplete": false
     },

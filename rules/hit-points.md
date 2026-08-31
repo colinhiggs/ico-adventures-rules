@@ -30,6 +30,11 @@ rolling with it, a fight-ending strike that turned out to graze. They
 are bought as a character is built and advanced — see
 [[character-creation]] and [[advancement]].
 
+## Getting them back
+
+Mastery hit points come back between fights; core hit points very nearly
+do not. See [[recovery]].
+
 ## Which pool takes the hit
 
 Harm comes off mastery hit points first, and reaches core hit points

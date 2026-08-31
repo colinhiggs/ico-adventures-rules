@@ -683,6 +683,112 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     return rounds_total / trials, wins / trials, lost_total / trials
 
 
+# ---------------------------------------------------------------------
+# The adventuring day
+#
+# Every measurement above is a single fight from full. A dungeon is not
+# one fight, and the question this answers is whether a character is
+# still worth playing at the fourth one -- and whether the boss, which
+# should be the most interesting fight of the day, is fought by people
+# who can still afford to do anything.
+# ---------------------------------------------------------------------
+def maxima(char):
+    return {"stamina": char.stamina, "mhp": char.mhp, "chp": char.chp}
+
+
+def recover(char, caps, M, tier):
+    """Give back a share of MAXIMUM stamina, spirit and mastery hit
+    points -- never a share of what is left, which pays nothing to the
+    character who has run dry. Core hit points are not on the list."""
+    if tier is None:
+        return
+    pct = int(M.get("recovery", "%s_percent" % tier))
+    char.stamina = min(caps["stamina"], char.stamina + caps["stamina"] * pct // 100)
+    char.mhp = min(caps["mhp"], char.mhp + caps["mhp"] * pct // 100)
+
+
+def run_encounter(hero, kind, count, M, max_rounds=40):
+    """One fight, fought by THIS hero, spending their actual resources.
+    Mutates the hero and returns (rounds, survived)."""
+    import copy
+    template = mook(kind, M)
+    plan = _swarm_plan(hero, template, M)
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    crowd = [copy.deepcopy(template) for _ in range(count)]
+    rounds = 0
+    while crowd and hero.chp > 0 and rounds < max_rounds:
+        rounds += 1
+        _swarm_act(hero, crowd, plan, M, on_tie, divisor)
+        crowd = [m for m in crowd if m.chp > 0]
+        for m in crowd:
+            td = targeting_difficulty(hero, M)
+            total = d20() + m.attack_bonus(M) + m.weapon.accuracy
+            if (total >= td) if on_tie else (total > td):
+                apply_damage(hero, damage_from(m, hero, total - td, M))
+    return rounds, hero.chp > 0
+
+
+DEFAULT_DAY = [("goblin", 4), ("orc", 3), ("goblin", 6), ("orc", 4), ("orc", 6)]
+
+
+def adventuring_day(hero_spec, M, schedule=None, tier="breather", trials=300):
+    """Run a day of encounters with recovery between each.
+
+    Returns, per encounter: the mean share of the character's fresh
+    offence they bring to it, the mean share of their hit points left,
+    and the share of days they are still standing for it.
+
+    Offence is looked up from a small cache keyed on stamina rather than
+    recomputed per trial -- the difficulty search is far too expensive to
+    run inside the loop, and stamina is what actually varies."""
+    import copy
+    schedule = schedule or DEFAULT_DAY
+    foe = standard_foe_for(hero_spec, M)
+    cache = {}
+
+    def offence_at(stamina):
+        key = int(stamina)
+        if key not in cache:
+            probe = copy.deepcopy(hero_spec)
+            probe.stamina = key
+            cache[key] = expected_offence(probe, foe, M)
+        return cache[key]
+
+    fresh = offence_at(hero_spec.stamina)
+    n = len(schedule)
+    stam = [0.0] * n
+    hp = [0.0] * n
+    alive = [0] * n
+
+    for _ in range(trials):
+        hero = copy.deepcopy(hero_spec)
+        caps = maxima(hero)
+        full_hp = caps["mhp"] + caps["chp"]
+        for i, (kind, count) in enumerate(schedule):
+            if hero.chp <= 0:
+                break
+            alive[i] += 1
+            stam[i] += hero.stamina
+            hp[i] += (hero.mhp + hero.chp) / max(1, full_hp)
+            run_encounter(hero, kind, count, M)
+            recover(hero, caps, M, tier)
+
+    out = []
+    for i in range(n):
+        a = max(1, alive[i])
+        out.append((offence_at(stam[i] / a) / max(0.01, fresh),
+                    hp[i] / a,
+                    alive[i] / trials))
+    return out
+
+
+def standard_foe_for(hero, M):
+    """A yardstick opponent at the hero's own level, for measuring
+    offence without importing balance.py."""
+    return mook("orc", M)
+
+
 def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
     face = d20()
     roll = face + hero.attack_bonus(M)

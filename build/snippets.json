@@ -225,7 +225,7 @@
     "title": "Core and Mastery Hit Points",
     "summary": "Core hit points are your body and equal your constitution. Mastery hit points are luck and skill, and soak harm first.",
     "summary_html": "Core hit points are your body and equal your constitution. Mastery hit points are luck and skill, and soak harm first.",
-    "html": "<p>Characters have two separate pools of hit points, and they mean different things.</p>\n<h4>Core hit points</h4>\n<p>Core hit points (CHP) are physical hardiness and the sheer will to keep going. A character's core hit points equal their constitution. Losing core hit points means real damage — a wound that actually landed.</p>\n<h4>Mastery hit points</h4>\n<p>Mastery hit points (MHP) are an accumulated cushion of luck, skill and experience. Losing mastery hit points is a near miss, a blow softened by rolling with it, a fight-ending strike that turned out to graze. They are bought as a character is built and advanced — see <a href=\"#rule-character-creation\" data-rule-id=\"character-creation\">Creating a Character</a> and <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a>.</p>\n<h4>Which pool takes the hit</h4>\n<p>Harm comes off mastery hit points first, and reaches core hit points only once mastery is exhausted. <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> covers how the size of a hit is worked out before it is applied here.</p>\n<h4>Example</h4>\n<p>Dune has constitution <code>13</code>, so <code>13</code> core hit points, and has bought <code>22</code> mastery hit points. He takes a blow for <code>9</code>.</p>\n<p>All <code>9</code> come off mastery, leaving him on <code>13</code> mastery and <code>13</code> core. He is untouched in the fiction: the axe went past his ear.</p>\n<p>Later in the same fight he takes another <code>17</code>. The first <code>13</code> empty his mastery pool; the remaining <code>4</code> come off core. Now he is genuinely cut, and the Dungeon Master should describe it that way — the first wound of the fight arrives at the moment his luck runs out, not before.</p>",
+    "html": "<p>Characters have two separate pools of hit points, and they mean different things.</p>\n<h4>Core hit points</h4>\n<p>Core hit points (CHP) are physical hardiness and the sheer will to keep going. A character's core hit points equal their constitution. Losing core hit points means real damage — a wound that actually landed.</p>\n<h4>Mastery hit points</h4>\n<p>Mastery hit points (MHP) are an accumulated cushion of luck, skill and experience. Losing mastery hit points is a near miss, a blow softened by rolling with it, a fight-ending strike that turned out to graze. They are bought as a character is built and advanced — see <a href=\"#rule-character-creation\" data-rule-id=\"character-creation\">Creating a Character</a> and <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a>.</p>\n<h4>Getting them back</h4>\n<p>Mastery hit points come back between fights; core hit points very nearly do not. See <a href=\"#rule-recovery\" data-rule-id=\"recovery\">Recovery Between Fights</a>.</p>\n<h4>Which pool takes the hit</h4>\n<p>Harm comes off mastery hit points first, and reaches core hit points only once mastery is exhausted. <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> covers how the size of a hit is worked out before it is applied here.</p>\n<h4>Example</h4>\n<p>Dune has constitution <code>13</code>, so <code>13</code> core hit points, and has bought <code>22</code> mastery hit points. He takes a blow for <code>9</code>.</p>\n<p>All <code>9</code> come off mastery, leaving him on <code>13</code> mastery and <code>13</code> core. He is untouched in the fiction: the axe went past his ear.</p>\n<p>Later in the same fight he takes another <code>17</code>. The first <code>13</code> empty his mastery pool; the remaining <code>4</code> come off core. Now he is genuinely cut, and the Dungeon Master should describe it that way — the first wound of the fight arrives at the moment his luck runs out, not before.</p>",
     "tags": [
       "core",
       "character",
@@ -234,7 +234,8 @@
     "related": [
       "advancement",
       "character-creation",
-      "damage"
+      "damage",
+      "recovery"
     ],
     "includes": [],
     "book_anchor": "#rule-hit-points"
@@ -334,6 +335,25 @@
     ],
     "includes": [],
     "book_anchor": "#rule-priorities"
+  },
+  "recovery": {
+    "id": "recovery",
+    "kind": "rule",
+    "title": "Recovery Between Fights",
+    "summary": "After a fight, characters get back a share of their stamina, spirit and mastery hit points. The Dungeon Master says whether the interval was a breather or a rest. Core hit points are not on the list.",
+    "summary_html": "After a fight, characters get back a share of their stamina, spirit and mastery hit points. The Dungeon Master says whether the interval was a breather or a rest. Core hit points are not on the list.",
+    "html": "<p>A fight ends. Before the next one begins, everyone gets something back.</p>\n<h4>What comes back</h4>\n<p>Each character recovers a share of their <strong>maximum</strong> stamina, spirit and mastery hit points — not a share of what is left, which would give nothing at all to the character who most needs it.</p>\n<p>The Dungeon Master says which of two intervals has passed:</p>\n<ul><li>A <strong>breather</strong> returns 25% of each</li></ul>\n<p>maximum. Long enough to stop shaking and re-strap a shield, and no longer.</p>\n<ul><li>A <strong>rest</strong> returns 50% of each maximum. An</li></ul>\n<p>hour or more, somewhere the party is not expecting to be found.</p>\n<p>Recovery happens <strong>once</strong> between one fight and the next. Sitting around a second time does not pay again; sitting around longer is what turns a breather into a rest.</p>\n<p>A <strong>night's sleep</strong>, somewhere safe, restores stamina, spirit and mastery hit points completely.</p>\n<h4>What does not</h4>\n<p>Core hit points are not recovered this way at all. They are real wounds — see <a href=\"#rule-hit-points\" data-rule-id=\"hit-points\">Core and Mastery Hit Points</a> — and a night's sleep mends 1 of them. An adventuring party that is losing core hit points faster than that needs a healer, and Cure Wounds in <a href=\"#rule-spell-list\" data-rule-id=\"spell-list\">The Spell List</a> is the reason one travels with them.</p>\n<h4>Guidance for the Dungeon Master</h4>\n<p>Ask what the party actually did, not how many minutes passed:</p>\n<ul><li><strong>Breather</strong> — they pressed on. They are still in hostile ground,</li></ul>\n<p>still lit, still audible. Wounds bound in a doorway.</p>\n<ul><li><strong>Rest</strong> — they stopped properly. A barred door, a spiked corridor, a</li></ul>\n<p>watch set. Food, water, and enough quiet to think.</p>\n<ul><li><strong>Neither</strong> — the next fight arrives before they have caught their</li></ul>\n<p>breath at all. Reinforcements, a pursuing patrol, a second wave.</p>\n<p>The last of those is the one worth remembering. Denying recovery is how a Dungeon Master makes a fight frightening without making the enemies stronger, and a dungeon that never denies it will find its later fights easier than its earlier ones.</p>\n<h4>Example</h4>\n<p>Ashri has <code>40</code> maximum stamina and has spent all but <code>4</code> of it clearing a guardroom.</p>\n<p>The party bars the door, binds wounds and listens for ten minutes before moving on. The Dungeon Master calls that a breather, so Ashri gets back a quarter of <code>40</code> — <code>10</code> — and starts the next fight on <code>14</code>.</p>\n<p>Later they find a storeroom, spike both doors and set a watch for an hour. That is a rest: half of <code>40</code>, so <code>20</code> back. Sitting there for a second hour gains her nothing more; the hour is what made it a rest rather than a breather in the first place.</p>\n<p>She also took <code>6</code> core hit points of damage from a spear in the guardroom. None of that comes back tonight beyond a single point, and Sela's Cure Wounds is the only thing that will fix it before the week is out.</p>",
+    "tags": [
+      "core",
+      "combat",
+      "health"
+    ],
+    "related": [
+      "hit-points",
+      "spell-list"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-recovery"
   },
   "skill-list": {
     "id": "skill-list",
@@ -545,7 +565,8 @@
       "turn-order",
       "movement",
       "hitting",
-      "damage"
+      "damage",
+      "recovery"
     ],
     "book_anchor": "#rule-ch-combat"
   },
