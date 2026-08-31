@@ -14,46 +14,55 @@
     },
     "armour": {
       "unarmoured": {
+        "move_penalty": 0,
         "ap": 0,
         "skill_penalty": 0,
         "cost_gp": 0
       },
       "partial_leather": {
+        "move_penalty": 0,
         "ap": 1,
         "skill_penalty": 0,
         "cost_gp": 5
       },
       "leather": {
+        "move_penalty": 0,
         "ap": 2,
         "skill_penalty": -1,
         "cost_gp": 10
       },
       "studded_leather": {
+        "move_penalty": 0,
         "ap": 3,
         "skill_penalty": -2,
         "cost_gp": 25
       },
       "chain_shirt": {
+        "move_penalty": 0,
         "ap": 4,
         "skill_penalty": -3,
         "cost_gp": 100
       },
       "scale_mail": {
+        "move_penalty": 1,
         "ap": 4,
         "skill_penalty": -4,
         "cost_gp": 50
       },
       "chain_mail": {
+        "move_penalty": 1,
         "ap": 5,
         "skill_penalty": -4,
         "cost_gp": 150
       },
       "breastplate": {
+        "move_penalty": 1,
         "ap": 5,
         "skill_penalty": -3,
         "cost_gp": 200
       },
       "full_plate": {
+        "move_penalty": 2,
         "ap": 8,
         "skill_penalty": -6,
         "cost_gp": 1500
@@ -423,6 +432,32 @@
       "dodge_targeting_base": 10,
       "block_targeting_base": "block_skill"
     },
+    "movement": {
+      "square_metres": 2,
+      "square_yards": 2,
+      "feet_per_yard": 3,
+      "move_base_by_size": {
+        "small": 3,
+        "medium": 4,
+        "large": 5,
+        "huge": 6
+      },
+      "move_bonus_by_gait": {
+        "shambling": -1,
+        "upright": 0,
+        "quadruped": 2
+      },
+      "move_bonus_attribute": "dexterity",
+      "diagonal_cost_squares": 1,
+      "difficult_ground_multiplier": 2,
+      "reach_by_size": {
+        "small": 1,
+        "medium": 1,
+        "large": 2,
+        "huge": 3
+      },
+      "large_weapon_reach_bonus": 1
+    },
     "power-sources": {
       "stamina_base": "constitution",
       "spirit_base": "will",
@@ -495,7 +530,6 @@
       }
     },
     "spell-properties": {
-      "grid_square_metres": 2,
       "long_range_multiplier": 2,
       "range_extend_squares_per_difficulty": 1,
       "base_accuracy": 0,
@@ -522,6 +556,15 @@
         "nature",
         "magic"
       ]
+    },
+    "turn-order": {
+      "initiative_roll": "1d20",
+      "initiative_skill": "spot",
+      "order_fixed_for_the_fight": true,
+      "actions_per_turn": 1,
+      "moves_per_turn": 1,
+      "reactions_per_round": 1,
+      "ties_broken_by": "dexterity"
     },
     "using-powers": {
       "base_cost": 10,

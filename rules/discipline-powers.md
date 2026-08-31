@@ -211,15 +211,15 @@ to opposition you can drop in a single blow.
 **Guard** *(Initiate; stamina, block, base difficulty
 {{ mechanics.guard.base_difficulty }})* — you place yourself between an
 ally and what is coming. Until your next turn, attacks aimed at
-{{ mechanics.guard.base_allies }} ally you can reach are aimed at you
-instead, resolved against your own targeting difficulty. Each further
+{{ mechanics.guard.base_allies }} ally within your reach (see
+[[movement]]) are aimed at you instead, resolved against your own targeting difficulty. Each further
 {{ mechanics.guard.difficulty_per_step }} points of difficulty covers
 {{ mechanics.guard.extra_allies_per_step }} more ally.
 
-**Riposte** *(Adept; stamina, melee attack, base difficulty
+**Riposte** *(Adept, **reaction**; stamina, melee attack, base difficulty
 {{ mechanics.riposte.base_difficulty }})* — a defence that answers back.
-When an attack against you misses, make an immediate attack against
-whoever made it. You may answer
+When an attack against you misses, spend your reaction (see
+[[turn-order]]) to make an immediate attack against whoever made it. You may answer
 {{ mechanics.riposte.base_ripostes }} attack this way, and
 {{ mechanics.riposte.extra_ripostes_per_step }} more for each further
 {{ mechanics.riposte.difficulty_per_step }} points of difficulty.
@@ -263,10 +263,10 @@ A sweep has no time for precision, so **Whirl converts no margin into
 damage**: each blow deals the weapon's rating plus the damage your skill
 adds, and nothing for how cleanly the roll landed.
 
-**Deflect** *(Initiate; stamina, dodge, base difficulty
+**Deflect** *(Initiate, **reaction**; stamina, dodge, base difficulty
 {{ mechanics.deflect.base_difficulty }})* — you cannot avoid the blow,
-so you take it at an angle. Reduce the damage of one blow that has
-already landed by {{ mechanics.deflect.damage_reduced_per_step }}, and
+so you take it at an angle. Spend your reaction (see [[turn-order]]) to
+reduce the damage of one blow that has already landed by {{ mechanics.deflect.damage_reduced_per_step }}, and
 by {{ mechanics.deflect.damage_reduced_per_step }} more for each further
 {{ mechanics.deflect.difficulty_per_step }} points of difficulty. This
 reduction is not armour and is not subject to the cap in [[damage]].
@@ -286,7 +286,7 @@ worsen your targeting difficulty while dodging. See [[armour]].
 {{ mechanics.forewarned.base_difficulty }})* — you saw it coming. Each
 further {{ mechanics.forewarned.difficulty_per_step }} points of
 difficulty adds {{ mechanics.forewarned.initiative_bonus_per_step }} to
-your place in the order for the coming fight.
+your place in the order for the coming fight — see [[turn-order]].
 
 **Weak Point** *(Initiate, **minor**; stamina, spot, base difficulty
 {{ mechanics.weak_point.base_difficulty }})* — you spot the strap, the
@@ -312,9 +312,10 @@ and said so in time. An ally's next attack gains
 {{ mechanics.call_the_shot.difficulty_per_step }} points of difficulty
 beyond the base.
 
-**Anticipate** *(Adept; stamina, spot, base difficulty
+**Anticipate** *(Adept, **reaction**; stamina, spot, base difficulty
 {{ mechanics.anticipate.base_difficulty }})* — you were already moving.
-Act immediately, out of turn, interrupting whoever is acting.
+Spend your reaction (see [[turn-order]]) to act immediately, out of
+turn, interrupting whoever is acting.
 {{ mechanics.anticipate.base_interruptions }} interruption comes with
 the base difficulty, and
 {{ mechanics.anticipate.extra_interruptions_per_step }} more for each
@@ -392,12 +393,6 @@ extra swings are stripped back to the bare weapon. Whirl is bought with
 a discipline grade, is paid for every time it is used, and its blows
 land with a trained arm behind them. The generalist can always clear
 rabble slowly; the one who trained for it clears rabble properly.
-
-Several of these powers lean on ideas the rules have not yet written
-down — whose turn it is, what counts as within reach, and when a
-character may act out of order. Until those exist as rules of their own,
-treat reach and interruption as the Dungeon Master's call, in the same
-way the game already handles anything it does not cover.
 
 Follow Through and Turn Undead are crowd answers of a third and fourth
 kind, and it is worth noticing that none of the four works the same way.

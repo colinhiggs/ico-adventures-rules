@@ -54,7 +54,7 @@ be raised, and what a rank costs, depends on its focus tier — see
 - **Hide** — unassigned.
 - **Intimidate** — unassigned.
 - **Jump** — unassigned.
-- **Listen** — unassigned.
+- **Listen** — willpower.
 - **Move silently** — unassigned.
 - **Open lock** — unassigned.
 - **Perform** — unassigned.
@@ -64,7 +64,8 @@ be raised, and what a rank costs, depends on its focus tier — see
 - **Sense motive** — unassigned.
 - **Sleight of hand** — unassigned.
 - **Speak language** — unassigned.
-- **Spot** — unassigned.
+- **Spot** — willpower. Also sets your place in the order of a fight;
+  see [[turn-order]].
 - **Survival** — unassigned.
 - **Swim** — unassigned.
 - **Use rope** — unassigned.

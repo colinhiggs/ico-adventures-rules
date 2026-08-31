@@ -6,7 +6,6 @@ summary: >
   Range, duration, area and accuracy work the same across almost all
   spells, and can usually be boosted by casting at a higher difficulty.
 mechanics:
-  grid_square_metres: 2
   long_range_multiplier: 2
   range_extend_squares_per_difficulty: 1
   base_accuracy: 0
@@ -25,9 +24,8 @@ A spell's range is **self**, **touch**, or a **number**.
 - **Self** — the spell only ever affects the caster.
 - **Touch** — the caster affects themselves or another recipient by
   touching them. Touching an unwilling target needs a melee attack roll.
-- **A number** — a range in grid squares, each square being
-  {{ mechanics.grid_square_metres }} metres (roughly
-  {{ mechanics.grid_square_metres }} yards). If the spell needs an
+- **A number** — a range in grid squares, measured exactly as
+  [[movement]] measures them. If the spell needs an
   attack roll to land, the listed number is short range and long range
   is {{ mechanics.long_range_multiplier }} times it; use the ranged
   attack skill to hit. Range can be extended by
@@ -70,8 +68,7 @@ other power, so there is no separate list of metamagic rules to learn.
 A caster who understands how reaching further works for a physical power
 already understands how it works for range, accuracy and area.
 
-The two-metre square is a deliberate abstraction: it makes range a count
-of squares on the battle grid rather than an arithmetic problem, and
-keeps spell ranges legible next to movement without anyone converting
-units mid-fight.
+Spell ranges count the same squares movement does, rather than carrying
+a measure of their own. A caster who knows how far they can walk knows
+how far they can reach, and nobody converts units mid-fight.
 {% endbook-only %}

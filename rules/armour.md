@@ -8,38 +8,47 @@ summary: >
   to a block instead.
 mechanics:
   unarmoured:
+    move_penalty: 0
     ap: 0
     skill_penalty: 0
     cost_gp: 0
   partial_leather:
+    move_penalty: 0
     ap: 1
     skill_penalty: 0
     cost_gp: 5
   leather:
+    move_penalty: 0
     ap: 2
     skill_penalty: -1
     cost_gp: 10
   studded_leather:
+    move_penalty: 0
     ap: 3
     skill_penalty: -2
     cost_gp: 25
   chain_shirt:
+    move_penalty: 0
     ap: 4
     skill_penalty: -3
     cost_gp: 100
   scale_mail:
+    move_penalty: 1
     ap: 4
     skill_penalty: -4
     cost_gp: 50
   chain_mail:
+    move_penalty: 1
     ap: 5
     skill_penalty: -4
     cost_gp: 150
   breastplate:
+    move_penalty: 1
     ap: 5
     skill_penalty: -3
     cost_gp: 200
   full_plate:
+    move_penalty: 2
     ap: 8
     skill_penalty: -6
     cost_gp: 1500
@@ -61,7 +70,9 @@ mechanics:
 ---
 
 Armour is worn for its **armour points** (AP), subtracted from every
-blow that lands — see [[damage]]. The price is a **skill penalty** that
+blow that lands — see [[damage]]. It also carries a **movement
+penalty**, in squares, taken off every move — see [[movement]]. The
+further price is a **skill penalty** that
 applies while it is worn and, because a dodging defender's targeting
 difficulty is built from their dodge skill, makes the wearer easier to
 hit when dodging — see [[hitting]]. The Untouchable signature in
@@ -69,31 +80,31 @@ hit when dodging — see [[hitting]]. The Untouchable signature in
 
 ## Light armour
 
-- **Partial leather** — AP {{ mechanics.partial_leather.ap }}, skill
+- **Partial leather** — AP {{ mechanics.partial_leather.ap }}, move {{ mechanics.partial_leather.move_penalty }}, skill
   penalty {{ mechanics.partial_leather.skill_penalty }},
   {{ mechanics.partial_leather.cost_gp }}gp.
-- **Leather** — AP {{ mechanics.leather.ap }}, skill penalty
+- **Leather** — AP {{ mechanics.leather.ap }}, move {{ mechanics.leather.move_penalty }}, skill penalty
   {{ mechanics.leather.skill_penalty }},
   {{ mechanics.leather.cost_gp }}gp.
-- **Studded leather** — AP {{ mechanics.studded_leather.ap }}, skill
+- **Studded leather** — AP {{ mechanics.studded_leather.ap }}, move {{ mechanics.studded_leather.move_penalty }}, skill
   penalty {{ mechanics.studded_leather.skill_penalty }},
   {{ mechanics.studded_leather.cost_gp }}gp.
-- **Chain shirt** — AP {{ mechanics.chain_shirt.ap }}, skill penalty
+- **Chain shirt** — AP {{ mechanics.chain_shirt.ap }}, move {{ mechanics.chain_shirt.move_penalty }}, skill penalty
   {{ mechanics.chain_shirt.skill_penalty }},
   {{ mechanics.chain_shirt.cost_gp }}gp.
 
 ## Medium and heavy armour
 
-- **Scale mail** — AP {{ mechanics.scale_mail.ap }}, skill penalty
+- **Scale mail** — AP {{ mechanics.scale_mail.ap }}, move {{ mechanics.scale_mail.move_penalty }}, skill penalty
   {{ mechanics.scale_mail.skill_penalty }},
   {{ mechanics.scale_mail.cost_gp }}gp.
-- **Chain mail** — AP {{ mechanics.chain_mail.ap }}, skill penalty
+- **Chain mail** — AP {{ mechanics.chain_mail.ap }}, move {{ mechanics.chain_mail.move_penalty }}, skill penalty
   {{ mechanics.chain_mail.skill_penalty }},
   {{ mechanics.chain_mail.cost_gp }}gp.
-- **Breastplate** — AP {{ mechanics.breastplate.ap }}, skill penalty
+- **Breastplate** — AP {{ mechanics.breastplate.ap }}, move {{ mechanics.breastplate.move_penalty }}, skill penalty
   {{ mechanics.breastplate.skill_penalty }},
   {{ mechanics.breastplate.cost_gp }}gp.
-- **Full plate** — AP {{ mechanics.full_plate.ap }}, skill penalty
+- **Full plate** — AP {{ mechanics.full_plate.ap }}, move {{ mechanics.full_plate.move_penalty }}, skill penalty
   {{ mechanics.full_plate.skill_penalty }},
   {{ mechanics.full_plate.cost_gp }}gp.
 
