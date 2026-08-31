@@ -195,6 +195,36 @@
         "difficulty_per_step": 4,
         "damage_per_step": 1
       },
+      "follow_through": {
+        "discipline": "martial",
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 4,
+        "difficulty_per_step": 8,
+        "extra_follow_through_per_step": 1,
+        "triggers_on_dropping_a_target": true
+      },
+      "guard": {
+        "discipline": "martial",
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "block",
+        "base_difficulty": 6,
+        "base_allies": 1,
+        "difficulty_per_step": 5,
+        "extra_allies_per_step": 1
+      },
+      "riposte": {
+        "discipline": "martial",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 6,
+        "base_ripostes": 1,
+        "difficulty_per_step": 4,
+        "extra_ripostes_per_step": 1
+      },
       "find_the_gap": {
         "discipline": "martial",
         "grade": "adept",
@@ -234,6 +264,15 @@
         "extra_targets_per_step": 1,
         "converts_margin_to_damage": false
       },
+      "deflect": {
+        "discipline": "athletic",
+        "grade": "initiate",
+        "source": "stamina",
+        "skill": "dodge",
+        "base_difficulty": 5,
+        "difficulty_per_step": 3,
+        "damage_reduced_per_step": 2
+      },
       "sneak_attack": {
         "discipline": "athletic",
         "grade": "adept",
@@ -261,6 +300,45 @@
         "base_difficulty": 2,
         "difficulty_per_step": 6,
         "reduction_ignored_per_step": 1
+      },
+      "read_the_room": {
+        "discipline": "awareness",
+        "grade": "initiate",
+        "tier": "minor",
+        "source": "stamina",
+        "skill": "spot",
+        "base_difficulty": 2,
+        "difficulty_per_step": 5,
+        "facts_per_step": 1
+      },
+      "call_the_shot": {
+        "discipline": "awareness",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "spot",
+        "base_difficulty": 6,
+        "difficulty_per_step": 3,
+        "ally_bonus_per_step": 1
+      },
+      "anticipate": {
+        "discipline": "awareness",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "spot",
+        "base_difficulty": 10,
+        "base_interruptions": 1,
+        "difficulty_per_step": 5,
+        "extra_interruptions_per_step": 1
+      },
+      "turn_undead": {
+        "discipline": "spiritual",
+        "grade": "adept",
+        "source": "spirit",
+        "skill": "willpower",
+        "base_difficulty": 8,
+        "base_undead": 2,
+        "difficulty_per_step": 3,
+        "extra_undead_per_step": 1
       },
       "killing_blow": {
         "discipline": "martial",

@@ -24,6 +24,33 @@ mechanics:
     base_difficulty: 2
     difficulty_per_step: 4
     damage_per_step: 1
+  follow_through:
+    discipline: martial
+    grade: initiate
+    source: stamina
+    skill: attack_melee
+    base_difficulty: 4
+    difficulty_per_step: 8
+    extra_follow_through_per_step: 1
+    triggers_on_dropping_a_target: true
+  guard:
+    discipline: martial
+    grade: initiate
+    source: stamina
+    skill: block
+    base_difficulty: 6
+    base_allies: 1
+    difficulty_per_step: 5
+    extra_allies_per_step: 1
+  riposte:
+    discipline: martial
+    grade: adept
+    source: stamina
+    skill: attack_melee
+    base_difficulty: 6
+    base_ripostes: 1
+    difficulty_per_step: 4
+    extra_ripostes_per_step: 1
   find_the_gap:
     discipline: martial
     grade: adept
@@ -59,6 +86,14 @@ mechanics:
     difficulty_per_step: 4
     extra_targets_per_step: 1
     converts_margin_to_damage: false
+  deflect:
+    discipline: athletic
+    grade: initiate
+    source: stamina
+    skill: dodge
+    base_difficulty: 5
+    difficulty_per_step: 3
+    damage_reduced_per_step: 2
   sneak_attack:
     discipline: athletic
     grade: adept
@@ -84,6 +119,41 @@ mechanics:
     base_difficulty: 2
     difficulty_per_step: 6
     reduction_ignored_per_step: 1
+  read_the_room:
+    discipline: awareness
+    grade: initiate
+    tier: minor
+    source: stamina
+    skill: spot
+    base_difficulty: 2
+    difficulty_per_step: 5
+    facts_per_step: 1
+  call_the_shot:
+    discipline: awareness
+    grade: adept
+    source: stamina
+    skill: spot
+    base_difficulty: 6
+    difficulty_per_step: 3
+    ally_bonus_per_step: 1
+  anticipate:
+    discipline: awareness
+    grade: adept
+    source: stamina
+    skill: spot
+    base_difficulty: 10
+    base_interruptions: 1
+    difficulty_per_step: 5
+    extra_interruptions_per_step: 1
+  turn_undead:
+    discipline: spiritual
+    grade: adept
+    source: spirit
+    skill: willpower
+    base_difficulty: 8
+    base_undead: 2
+    difficulty_per_step: 3
+    extra_undead_per_step: 1
   killing_blow:
     discipline: martial
     grade: master
@@ -126,6 +196,34 @@ the blow rather than forcing it. Each further
 {{ mechanics.precise_strike.difficulty_per_step }} points of difficulty
 adds {{ mechanics.precise_strike.damage_per_step }} damage.
 
+**Follow Through** *(Initiate; stamina, melee attack, base
+difficulty {{ mechanics.follow_through.base_difficulty }})* — when your
+attack drops a target outright, carry the same swing into another enemy
+you can reach and resolve it as a fresh attack. The chain runs
+{{ mechanics.follow_through.extra_follow_through_per_step }} body deep
+for the base difficulty, and
+{{ mechanics.follow_through.extra_follow_through_per_step }} deeper for
+each further {{ mechanics.follow_through.difficulty_per_step }} points.
+
+Nothing happens unless a target actually falls, which limits the power
+to opposition you can drop in a single blow.
+
+**Guard** *(Initiate; stamina, block, base difficulty
+{{ mechanics.guard.base_difficulty }})* — you place yourself between an
+ally and what is coming. Until your next turn, attacks aimed at
+{{ mechanics.guard.base_allies }} ally you can reach are aimed at you
+instead, resolved against your own targeting difficulty. Each further
+{{ mechanics.guard.difficulty_per_step }} points of difficulty covers
+{{ mechanics.guard.extra_allies_per_step }} more ally.
+
+**Riposte** *(Adept; stamina, melee attack, base difficulty
+{{ mechanics.riposte.base_difficulty }})* — a defence that answers back.
+When an attack against you misses, make an immediate attack against
+whoever made it. You may answer
+{{ mechanics.riposte.base_ripostes }} attack this way, and
+{{ mechanics.riposte.extra_ripostes_per_step }} more for each further
+{{ mechanics.riposte.difficulty_per_step }} points of difficulty.
+
 **Find the Gap** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.find_the_gap.base_difficulty }})* — a blow aimed at a
 join or a strap. Each further
@@ -165,6 +263,14 @@ A sweep has no time for precision, so **Whirl converts no margin into
 damage**: each blow deals the weapon's rating plus the damage your skill
 adds, and nothing for how cleanly the roll landed.
 
+**Deflect** *(Initiate; stamina, dodge, base difficulty
+{{ mechanics.deflect.base_difficulty }})* — you cannot avoid the blow,
+so you take it at an angle. Reduce the damage of one blow that has
+already landed by {{ mechanics.deflect.damage_reduced_per_step }}, and
+by {{ mechanics.deflect.damage_reduced_per_step }} more for each further
+{{ mechanics.deflect.difficulty_per_step }} points of difficulty. This
+reduction is not armour and is not subject to the cap in [[damage]].
+
 **Sneak Attack** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.sneak_attack.base_difficulty }})* — usable only against a
 target who is unaware of you or already engaged with someone else. Each
@@ -189,6 +295,31 @@ gap, the badly-set plate, and say so. Each further
 ignores {{ mechanics.weak_point.reduction_ignored_per_step }} point of
 the target's damage reduction on your next blow.
 
+**Read the Room** *(Initiate, **minor**; stamina, spot, base difficulty
+{{ mechanics.read_the_room.base_difficulty }})* — a moment spent working
+out who actually matters. Learn
+{{ mechanics.read_the_room.facts_per_step }} true thing about the
+opposition — which of them is the most dangerous, which is the least
+armoured, which is about to break — and
+{{ mechanics.read_the_room.facts_per_step }} more for each further
+{{ mechanics.read_the_room.difficulty_per_step }} points of difficulty.
+The Dungeon Master answers honestly.
+
+**Call the Shot** *(Adept; stamina, spot, base difficulty
+{{ mechanics.call_the_shot.base_difficulty }})* — you saw the opening
+and said so in time. An ally's next attack gains
+`+{{ mechanics.call_the_shot.ally_bonus_per_step }}` for each
+{{ mechanics.call_the_shot.difficulty_per_step }} points of difficulty
+beyond the base.
+
+**Anticipate** *(Adept; stamina, spot, base difficulty
+{{ mechanics.anticipate.base_difficulty }})* — you were already moving.
+Act immediately, out of turn, interrupting whoever is acting.
+{{ mechanics.anticipate.base_interruptions }} interruption comes with
+the base difficulty, and
+{{ mechanics.anticipate.extra_interruptions_per_step }} more for each
+further {{ mechanics.anticipate.difficulty_per_step }} points.
+
 **Read the Blow** *(Master signature)* — you may choose whether to
 dodge or block after the attack roll has been made rather than before,
 inverting the usual guess in [[hitting]].
@@ -200,6 +331,15 @@ than from a separate pool — a spell *is* a power, as [[spellcasting]]
 explains. What their grades buy is reach: an Initiate may hold and cast
 spells at all, and an Adept's focused spellcasting skill lets them
 carry a much higher difficulty.
+
+**Turn Undead** *(Spiritual, Adept; spirit, willpower, base difficulty
+{{ mechanics.turn_undead.base_difficulty }})* — you hold up what you
+believe in and the dead give ground. {{ mechanics.turn_undead.base_undead }}
+undead creatures within sight flee from you, and
+{{ mechanics.turn_undead.extra_undead_per_step }} more for each further
+{{ mechanics.turn_undead.difficulty_per_step }} points of difficulty.
+Undead substantially mightier than the caster are unmoved; the Dungeon
+Master decides which those are.
 
 **School Mastery** *(Magical, Master signature)* — choose one school of
 magic. Spells of that school are cast at
@@ -252,6 +392,33 @@ extra swings are stripped back to the bare weapon. Whirl is bought with
 a discipline grade, is paid for every time it is used, and its blows
 land with a trained arm behind them. The generalist can always clear
 rabble slowly; the one who trained for it clears rabble properly.
+
+Several of these powers lean on ideas the rules have not yet written
+down — whose turn it is, what counts as within reach, and when a
+character may act out of order. Until those exist as rules of their own,
+treat reach and interruption as the Dungeon Master's call, in the same
+way the game already handles anything it does not cover.
+
+Follow Through and Turn Undead are crowd answers of a third and fourth
+kind, and it is worth noticing that none of the four works the same way.
+Quick Attack allocates weak swings, Whirl sweeps everything at once,
+Follow Through cascades out of a body that has already fallen, and Turn
+Undead removes a crowd without killing any of it. A discipline that has
+trained for rabble should feel unlike the others doing it.
+
+Follow Through is a standard power rather than a minor one, and that is
+what keeps [[general-powers|Quick Attack]] worth having. A cascade of
+full blows is far stronger than a handful of bare weapon swings, so if
+it were also free there would be no reason for anyone holding a Martial
+grade to ever reach for the general power. Paid for, it is what a
+fighter opens with; Quick Attack is what the same fighter still has on
+the fourth fight of the day.
+
+Guard, Deflect, Call the Shot and Read the Room are the first powers
+here that do nothing on their own turn and nothing to a target. They
+exist because a party is not four characters taking turns at the same
+problem, and a discipline whose only expression is damage has nothing to
+offer the fight it is not built for.
 
 Whirl scales in reach rather than in force. Pushing the difficulty finds
 one more body, not a heavier cut — which is what makes it a crowd

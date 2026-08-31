@@ -547,6 +547,16 @@ def mook(kind, M):
     return make_mook(kind, M, *MOOKS[kind])
 
 
+def chain_length(p, difficulty):
+    """How many further bodies a Follow Through cascades into."""
+    if "extra_follow_through_per_step" not in p:
+        return 0
+    step = int(p["difficulty_per_step"])
+    steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
+    per = int(p["extra_follow_through_per_step"])
+    return per + steps * per
+
+
 def sweep_targets(p, difficulty):
     """How many enemies a sweep power reaches at this difficulty, or 0
     if the power is not a sweep."""
@@ -567,10 +577,11 @@ def _swarm_plan(hero, foe, M):
     for power_id in offensive_powers(hero, M, conditional=False):
         p = power_def(M, power_id)
         sweep = "extra_targets_per_step" in p
-        if "difficulty_per_extra_attack" not in p and not sweep:
+        chain = "extra_follow_through_per_step" in p
+        if "difficulty_per_extra_attack" not in p and not sweep and not chain:
             continue
         base_d = int(p["base_difficulty"])
-        step = int(p["difficulty_per_extra_attack"] if not sweep
+        step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
                    else p["difficulty_per_step"])
         for extras in range(0, 6):
             difficulty = base_d + extras * step
@@ -605,6 +616,11 @@ def _expected_kills(hero, foe, M, power_id, difficulty, budget):
             continue
         if power_cost(difficulty, roll, M, minor) > budget:
             total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            continue
+        if "extra_follow_through_per_step" in p:
+            each = damage_from(hero, foe, total - td, M)
+            if each >= hp:
+                total_kills += 1 + chain_length(p, difficulty)
             continue
         if "extra_targets_per_step" in p:
             reach = sweep_targets(p, difficulty)
@@ -679,7 +695,8 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
     difficulty = plan["difficulty"]
     floor = 0 if minor else difficulty // divisor
     sweep = "extra_targets_per_step" in p
-    step = int(p["difficulty_per_extra_attack"] if not sweep
+    chain = "extra_follow_through_per_step" in p
+    step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
                else p["difficulty_per_step"])
     extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
     weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
@@ -696,6 +713,21 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
         strike(living[0])   # cannot pay: plain attack
         return
     hero.stamina -= cost
+
+    if "extra_follow_through_per_step" in p:
+        # Nothing happens unless a target actually falls; then the swing
+        # carries on into the next one.
+        remaining = chain_length(p, difficulty)
+        idx = 0
+        while idx < len(living):
+            target = living[idx]
+            before = target.chp
+            strike(target)
+            if target.chp > 0 or remaining <= 0:
+                break
+            remaining -= 1
+            idx += 1
+        return
 
     if sweep:
         # One sweeping cut: every enemy in reach, no margin converted.
@@ -796,7 +828,8 @@ CONDITIONAL_POWERS = {"sneak_attack"}
 
 # Which mechanics a power must carry to count as an attack power here.
 ATTACK_EFFECTS = ("damage_per_step", "reduction_ignored_per_step",
-                  "difficulty_per_extra_attack", "extra_targets_per_step")
+                  "difficulty_per_extra_attack", "extra_targets_per_step",
+                  "extra_follow_through_per_step")
 
 
 def opens_for(char, power_id, M):
