@@ -6,14 +6,17 @@ summary: >
   Every skill and the attribute that governs it. Some governing
   attributes are not yet assigned.
 mechanics:
-  governing_attributes_incomplete: true
+  governing_attributes_incomplete: false
 ---
 
-Each entry is a skill and its governing attribute. Where an entry is
-marked *unassigned*, no governing attribute has been chosen yet: treat
-which one applies as the Dungeon Master's call. How high any skill can
-be raised, and what a rank costs, depends on its focus tier — see
-[[skills]].
+Each entry is a skill and the attribute that governs it. How high a
+skill can be raised, and what a rank costs, depends on its focus tier —
+see [[skills]].
+
+Ico has no wisdom attribute, so **willpower** carries the perceptive and
+intuitive load: noticing, reading people, and reading country all run on
+it. **Intelligence** covers what has been learned rather than what is
+sensed.
 
 ## Combat skills
 
@@ -33,7 +36,8 @@ be raised, and what a rank costs, depends on its focus tier — see
 - **Spellcasting** — intelligence or willpower. The single skill used to
   cast every spell; see [[spellcasting]].
 - **Concentration** — constitution.
-- **Use magic device** — unassigned.
+- **Use magic device** — intelligence. Making something magical work
+  when you do not understand it.
 
 ## General skills
 
@@ -48,33 +52,36 @@ be raised, and what a rank costs, depends on its focus tier — see
 - **Disguise** — charisma.
 - **Escape artist** — dexterity.
 - **Forgery** — intelligence.
-- **Gather information** — unassigned.
-- **Handle animal** — unassigned.
-- **Heal** — unassigned.
-- **Hide** — unassigned.
-- **Intimidate** — unassigned.
-- **Jump** — unassigned.
+- **Gather information** — charisma. Asking around without being
+  resented for it.
+- **Handle animal** — charisma.
+- **Heal** — intelligence. First aid and diagnosis, not magic; for that
+  see [[spell-list]].
+- **Hide** — dexterity. Opposed by another creature's Spot.
+- **Intimidate** — charisma.
+- **Jump** — strength.
 - **Listen** — willpower.
-- **Move silently** — unassigned.
-- **Open lock** — unassigned.
-- **Perform** — unassigned.
-- **Profession** — unassigned.
-- **Ride** — unassigned.
-- **Search** — unassigned.
-- **Sense motive** — unassigned.
-- **Sleight of hand** — unassigned.
-- **Speak language** — unassigned.
-- **Spot** — willpower. Also sets your place in the order of a fight;
-  see [[turn-order]].
-- **Survival** — unassigned.
-- **Swim** — unassigned.
-- **Use rope** — unassigned.
+- **Move silently** — dexterity. Opposed by another creature's Listen.
+- **Open lock** — dexterity.
+- **Perform** — charisma.
+- **Profession** — intelligence.
+- **Ride** — dexterity.
+- **Search** — intelligence. Deliberately going over a place, as against
+  Spot's noticing without looking.
+- **Sense motive** — willpower.
+- **Sleight of hand** — dexterity.
+- **Speak language** — intelligence.
+- **Spot** — willpower. Noticing without looking for it, and also your
+  place in the order of a fight; see [[turn-order]].
+- **Survival** — willpower. Reading weather, ground and tracks.
+- **Swim** — strength.
+- **Use rope** — dexterity.
 
 ## Knowledge skills
 
-Each is a separate skill, all currently *unassigned* for governing
-attribute: arcana; architecture and engineering; dungeoneering;
-geography; history; local; nature; nobility; religion; the planes.
+Every knowledge skill is governed by **intelligence**. Each is separate:
+arcana; architecture and engineering; dungeoneering; geography; history;
+local; nature; nobility; religion; the planes.
 
 ## Example
 
@@ -99,8 +106,17 @@ answer to every problem in a dungeon corridor. Skills sharing a group
 still advance together in cost and ceiling, so the specialisation is
 real without being total.
 
-Leaving the unassigned entries open is honest rather than tidy.
-Assigning a governing attribute changes which characters are good at a
-skill, and settling thirty of them in one sitting would bake in
-decisions that deserve to be made a few at a time, in play.
+Two pairs are deliberately kept apart rather than merged. Spot is
+noticing something without looking for it; Search is going over a place
+on purpose — so the first is willpower and the second intelligence, and
+being alert is not the same as being thorough. Hide and Move silently
+are opposed by different senses, which is what makes a torchlit corridor
+and a pitch-dark one different problems.
+
+This list is inherited from an older tradition of skill lists and is
+longer than it needs to be. Around half of it sits in no discipline
+group at all, which means no character can ever focus those skills: they
+are permanently peripheral, at the highest price per rank and the lowest
+ceiling. That is a structural problem with the list rather than with any
+skill on it, and it wants solving before the list grows further.
 {% endbook-only %}

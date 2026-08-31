@@ -473,7 +473,7 @@
       "power_source_bonus_per_point": 3
     },
     "skill-list": {
-      "governing_attributes_incomplete": true
+      "governing_attributes_incomplete": false
     },
     "skills": {
       "skill_check_roll": "1d20",
