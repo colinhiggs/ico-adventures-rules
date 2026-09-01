@@ -27,11 +27,12 @@ mechanics:
     source: spirit
     signature: command_the_room
   magical:
-    skills: [spellcasting, lore, decipher_script, use_magic_device]
+    skills: [spellcasting, concentration, lore, decipher_script,
+             use_magic_device]
     source: spirit
     signature: school_mastery
   spiritual:
-    skills: [resolve, heal, diplomacy, spellcasting]
+    skills: [resolve, heal, diplomacy, spellcasting, concentration]
     source: spirit
     signature: granted_domain
 ---
@@ -90,8 +91,8 @@ creature affects every creature that can see and hear you instead.
 
 ## Magical
 
-*Skill group: spellcasting, lore, decipher script, use magic device.
-Source: spirit.*
+*Skill group: spellcasting, concentration, lore, decipher script, use
+magic device. Source: spirit.*
 
 Constructed magic, learned from books and study. See [[spellcasting]].
 
@@ -100,7 +101,8 @@ that school are cast at reduced difficulty.
 
 ## Spiritual
 
-*Skill group: resolve, heal, diplomacy, spellcasting. Source: spirit.*
+*Skill group: resolve, heal, diplomacy, spellcasting, concentration.
+Source: spirit.*
 
 Granted magic, and the strength of will that carries it.
 

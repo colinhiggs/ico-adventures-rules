@@ -37,7 +37,8 @@ Languages are not on this list and are not a skill; see [[languages]].
 
 - **Spellcasting** — intelligence or willpower. The single skill used to
   cast every spell; see [[spellcasting]].
-- **Concentration** — constitution.
+- **Concentration** — constitution. Holding a maintained spell
+  together when something disturbs you; see [[spell-duration]].
 - **Use magic device** — intelligence. Making something magical work
   when you do not understand it.
 

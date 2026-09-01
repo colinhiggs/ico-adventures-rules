@@ -32,9 +32,11 @@ A spell's range is **self**, **touch**, or a **number**.
   {{ mechanics.range_extend_squares_per_difficulty }} square per point
   of added difficulty.
 
-## Duration and area of effect
+## Duration and area
 
-These are defined per spell for now; there is no general rule yet.
+Both have rules of their own: [[spell-duration]] for how long a spell
+lasts, and [[spell-area]] for the shapes an area spell can take and what
+each square of it costs.
 
 ## Accuracy
 

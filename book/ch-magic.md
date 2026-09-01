@@ -13,4 +13,8 @@ its own effect on top.
 
 {% include spell-properties %}
 
+{% include spell-duration %}
+
+{% include spell-area %}
+
 {% include spell-list %}

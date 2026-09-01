@@ -186,6 +186,7 @@
       "magical": {
         "skills": [
           "spellcasting",
+          "concentration",
           "lore",
           "decipher_script",
           "use_magic_device"
@@ -198,7 +199,8 @@
           "resolve",
           "heal",
           "diplomacy",
-          "spellcasting"
+          "spellcasting",
+          "concentration"
         ],
         "source": "spirit",
         "signature": "granted_domain"
@@ -564,6 +566,56 @@
       "rank_cost_focused": 1,
       "rank_cost_unfocused": 2,
       "rank_cost_peripheral": 3
+    },
+    "spell-area": {
+      "templates": [
+        "circle",
+        "cone",
+        "line",
+        "square",
+        "rectangle"
+      ],
+      "default_archetype": "balanced",
+      "archetypes": {
+        "diffuse": {
+          "difficulty_per_square": 1,
+          "difficulty_per_damage": 6
+        },
+        "balanced": {
+          "difficulty_per_square": 2,
+          "difficulty_per_damage": 3
+        },
+        "concentrated": {
+          "difficulty_per_square": 3,
+          "difficulty_per_damage": 2
+        }
+      },
+      "circle_squares": {
+        "radius_1": 5,
+        "radius_2": 13,
+        "radius_3": 29,
+        "radius_4": 49,
+        "radius_5": 81
+      },
+      "cone_squares": {
+        "length_2": 3,
+        "length_3": 6,
+        "length_4": 10,
+        "length_5": 15
+      }
+    },
+    "spell-duration": {
+      "kinds": [
+        "instantaneous",
+        "rounds",
+        "maintained",
+        "permanent"
+      ],
+      "rounds_extended_per_difficulty": 1,
+      "maintained_spells_at_once": 1,
+      "maintaining_costs_an_action": false,
+      "concentration_difficulty_equals_damage_taken": true,
+      "permanent_fades_after_years": 1000
     },
     "spell-list": {
       "list_incomplete": true,
