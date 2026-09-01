@@ -465,7 +465,8 @@
     "disciplines": {
       "initiate_cost": 5,
       "adept_cost": 15,
-      "master_cost": 40,
+      "master_cost": 20,
+      "master_minimum_level": 8,
       "grades": [
         "initiate",
         "adept",

@@ -9,7 +9,8 @@ summary: >
 mechanics:
   initiate_cost: 5
   adept_cost: 15
-  master_cost: 40
+  master_cost: 20
+  master_minimum_level: 8
   grades: [initiate, adept, master]
   grades_bought_in_order: true
   disciplines_held_is_unlimited: true
@@ -32,9 +33,16 @@ then **Master** — in that order, paid for with advancement points (see
 
 - **Initiate** costs {{ mechanics.initiate_cost }} points.
 - **Adept** costs a further {{ mechanics.adept_cost }} points.
-- **Master** costs a further {{ mechanics.master_cost }} points.
+- **Master** costs a further {{ mechanics.master_cost }} points, and
+  cannot be taken before **level
+  {{ mechanics.master_minimum_level }}**.
 
-The cost curve is the only limit on how many disciplines you hold.
+Master is the only grade with a level requirement. Holding Adept is
+already required, since grades are bought in order; the level is a
+second gate on top of it, and there is no way to buy past either.
+
+The cost curve is what limits how many disciplines you hold; the level
+requirement is what stops any of them running ahead of your career.
 
 ## What a grade does
 
@@ -65,10 +73,12 @@ Dodge, climb and the rest are now *unfocused* rather than peripheral:
 cheaper to raise and with a higher ceiling, though still short of her
 Martial skills.
 
-Much later she takes Martial to Master, gaining Killing Blow. Her focus
-does not change — Adept had already made the group focused — so what the
-final and most expensive grade buys her is the signature and the deepest
-tier of Martial powers, nothing more.
+She could not take Martial to Master before level
+{{ mechanics.master_minimum_level }} however she spent her points, so
+she reaches it there and gains Killing Blow. Her focus does not change —
+Adept had already made the group focused — so what the final and most
+expensive grade buys her is the signature and the deepest tier of
+Martial powers, nothing more.
 
 {% book-only %}
 ## Design note
@@ -89,7 +99,21 @@ their way through the dungeon is Social and Awareness. A character who spreads
 Initiate grades across four disciplines is a generalist, and that is a
 legitimate build rather than a mistake.
 
-Going wide is cheap and going deep is expensive, deliberately. The
-specialist pays most of a career for one signature, so the signature has
-to be worth a career.
+Going wide is cheap and going deep is gated, and those are two different
+tools doing two different jobs.
+
+Price is a poor gate on depth. A price high enough to keep Master out of
+reach early is also high enough to be paid the moment a character has
+saved for it, so it delays the grade by a while and prevents it never;
+and for as long as it is being saved for, it is taking points out of
+everything else. A character who spends the equivalent of several levels
+on one grade arrives at their deepest powers with the skill ranks and
+the power source of someone junior to them — worse, for a while, at the
+very thing they have just mastered. That is the opposite of what the
+grade is for.
+
+A level requirement holds depth back exactly, and holds nothing else
+back at all. With it doing that job, the price has only one left —
+keeping Master the largest single purchase in the game — and can be set
+where nobody has to gut a character to pay it.
 {% endbook-only %}

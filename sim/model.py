@@ -317,7 +317,17 @@ def discipline_cost(grade, M):
     return total
 
 
-def buy_disciplines(priorities, budget, M):
+def grade_minimum_level(M, grade):
+    """The level a grade cannot be taken below. Only Master has one:
+    depth is held back by time rather than by price, so that paying for
+    it does not eat the skill ranks its powers need to be used."""
+    key = "%s_minimum_level" % grade
+    if key not in M.keys("disciplines"):
+        return 1
+    return int(M.get("disciplines", key))
+
+
+def buy_disciplines(priorities, budget, M, level=1):
     """Spend a discipline budget depth-first down a priority list.
 
     `priorities` is [(discipline, target_grade), ...] in the order the
@@ -329,6 +339,8 @@ def buy_disciplines(priorities, budget, M):
     for discipline, target in priorities:
         for grade in GRADE_ORDER:
             if GRADE_ORDER.index(grade) > GRADE_ORDER.index(target):
+                break
+            if level < grade_minimum_level(M, grade):
                 break
             if spent + costs[grade] > budget:
                 break
@@ -349,7 +361,8 @@ def build_character(name, spec, level, M):
     per_level = int(M.get("advancement", "points_per_level"))
 
     disc_budget = chargen_disc + (level - 1) * per_level
-    held, disc_spend = buy_disciplines(spec["disciplines"], disc_budget, M)
+    held, disc_spend = buy_disciplines(spec["disciplines"], disc_budget, M,
+                                       level)
 
     char = Character(
         name=name,
