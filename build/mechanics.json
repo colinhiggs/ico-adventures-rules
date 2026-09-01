@@ -111,6 +111,31 @@
       "starting_powers": 1,
       "starting_gold": 150
     },
+    "conditions": {
+      "resisted_by_opposed_roll": true,
+      "physical_resistance_skill": "fortitude",
+      "mental_resistance_skill": "resolve",
+      "base_rounds": 1,
+      "margin_per_extra_round": 5,
+      "conditions": {
+        "stunned": {
+          "resisted_with": "fortitude",
+          "margin_per_extra_round": 15
+        },
+        "burning": {
+          "resisted_with": "fortitude",
+          "margin_per_extra_round": 4
+        },
+        "slowed": {
+          "resisted_with": "fortitude",
+          "movement_fraction": 0.5
+        },
+        "dazed": {
+          "resisted_with": "resolve",
+          "attack_penalty": 2
+        }
+      }
+    },
     "core-resolution": {
       "standard_die": "1d20",
       "higher_beats_lower": true,
@@ -625,27 +650,67 @@
         "school": "energy",
         "range": 10,
         "needs_attack_roll": true,
-        "damage": 4,
+        "damage": 6,
         "difficulty_per_step": 3,
         "damage_per_step": 1,
         "difficulty_per_extra_bolt": 8,
         "minimum_spirit": 0
       },
       "force_bolt": {
+        "family": "bolt",
         "damage_type": "force",
         "domain": "magic"
       },
       "flame_bolt": {
+        "family": "bolt",
         "damage_type": "fire",
         "domain": "war"
       },
       "frost_bolt": {
+        "family": "bolt",
         "damage_type": "cold",
         "domain": "nature"
       },
       "shock_bolt": {
+        "family": "bolt",
         "damage_type": "lightning",
         "domain": "war"
+      },
+      "lance": {
+        "school": "energy",
+        "base_difficulty": 8,
+        "damage": 10,
+        "difficulty_per_step": 2,
+        "damage_per_step": 1,
+        "difficulty_per_extra_bolt": 20,
+        "minimum_spirit": 2,
+        "needs_attack_roll": true,
+        "range": 10,
+        "applies_condition": true
+      },
+      "force_lance": {
+        "family": "lance",
+        "damage_type": "force",
+        "domain": "magic",
+        "condition": "stunned"
+      },
+      "flame_lance": {
+        "family": "lance",
+        "damage_type": "fire",
+        "domain": "war",
+        "condition": "burning"
+      },
+      "frost_lance": {
+        "family": "lance",
+        "damage_type": "cold",
+        "domain": "nature",
+        "condition": "slowed"
+      },
+      "storm_lance": {
+        "family": "lance",
+        "damage_type": "lightning",
+        "domain": "war",
+        "condition": "dazed"
       },
       "flame_burst": {
         "school": "energy",

@@ -13,23 +13,58 @@ mechanics:
     school: energy
     range: 10
     needs_attack_roll: true
-    damage: 4
+    damage: 6
     difficulty_per_step: 3
     damage_per_step: 1
     difficulty_per_extra_bolt: 8
     minimum_spirit: 0
   force_bolt:
+    family: bolt
     damage_type: force
     domain: magic
   flame_bolt:
+    family: bolt
     damage_type: fire
     domain: war
   frost_bolt:
+    family: bolt
     damage_type: cold
     domain: nature
   shock_bolt:
+    family: bolt
     damage_type: lightning
     domain: war
+  lance:
+    school: energy
+    base_difficulty: 8
+    damage: 10
+    difficulty_per_step: 2
+    damage_per_step: 1
+    difficulty_per_extra_bolt: 20
+    minimum_spirit: 2
+    needs_attack_roll: true
+    range: 10
+    applies_condition: true
+  force_lance:
+    family: lance
+    damage_type: force
+    domain: magic
+    condition: stunned
+  flame_lance:
+    family: lance
+    damage_type: fire
+    domain: war
+    condition: burning
+  frost_lance:
+    family: lance
+    damage_type: cold
+    domain: nature
+    condition: slowed
+  storm_lance:
+    family: lance
+    damage_type: lightning
+    domain: war
+    condition: dazed
   flame_burst:
     school: energy
     domain: war
@@ -86,6 +121,44 @@ Domain]] makes one bolt markedly cheaper than the rest — a priest of war
 throws flame where a druid throws frost, without either of them needing
 a separate rule.
 
+## The lances
+
+Where a bolt is what a caster throws when there is nothing left, a
+**lance** is what they open with. One spell again written four times,
+sharing a chassis:
+
+- **School:** {{ mechanics.lance.school }}
+- **Range:** {{ mechanics.lance.range }}, aimed with the casting roll
+- **Base difficulty:** {{ mechanics.lance.base_difficulty }}
+- **Damage:** {{ mechanics.lance.damage }}, plus
+  {{ mechanics.lance.damage_per_step }} for each further
+  {{ mechanics.lance.difficulty_per_step }} points of difficulty
+- **Minimum spirit:** {{ mechanics.lance.minimum_spirit }}
+
+A lance that hits also applies a **condition**, which the target may
+resist — see [[conditions]]. That is what a lance buys over a bolt, and
+why it is worth the spirit a bolt does not cost.
+
+The variants differ in damage type, domain, and which condition they
+carry:
+
+- **Force Lance** — {{ mechanics.force_lance.damage_type }} damage,
+  domain of {{ mechanics.force_lance.domain }}, leaves the target
+  **{{ mechanics.force_lance.condition }}**.
+- **Flame Lance** — {{ mechanics.flame_lance.damage_type }} damage,
+  domain of {{ mechanics.flame_lance.domain }}, leaves the target
+  **{{ mechanics.flame_lance.condition }}**.
+- **Frost Lance** — {{ mechanics.frost_lance.damage_type }} damage,
+  domain of {{ mechanics.frost_lance.domain }}, leaves the target
+  **{{ mechanics.frost_lance.condition }}**.
+- **Storm Lance** — {{ mechanics.storm_lance.damage_type }} damage,
+  domain of {{ mechanics.storm_lance.domain }}, leaves the target
+  **{{ mechanics.storm_lance.condition }}**.
+
+Which lance to carry is a question about the fight rather than about the
+numbers: they deal the same damage, and the condition is the whole
+difference.
+
 ## Flame Burst ({{ mechanics.flame_burst.base_difficulty }})
 
 - **School:** {{ mechanics.flame_burst.school }}
@@ -140,10 +213,17 @@ rules. Keeping the shared numbers in one place means the family cannot
 drift apart as it grows, and adding a fifth bolt is an entry rather than
 a rewrite.
 
-Their boost rates are deliberately poor. A spell that can cost nothing
-to cast cannot also be the best damage in the game; a bolt is the thing
-a caster does when they have nothing left, not the thing they open
-with.
+Their boost rate is deliberately poor while their base damage is not.
+That combination is what makes a bolt a floor rather than a ceiling: it
+opens respectably and then barely improves however hard it is pushed, so
+it is worth having with an empty reservoir and never worth preferring to
+a lance when there is spirit to spend.
+
+The base was raised once the lances existed. Measured against a caster's
+new best turn, the old bolt left an empty caster on under a quarter of
+their output -- past diminished and into sidelined, which is exactly what
+the minor tier exists to prevent. The rate was left alone, because the
+rate is what keeps minor and standard apart.
 
 Cure Wounds stays standard rather than minor for the same reason from
 the other direction. Healing available on demand for nothing would empty

@@ -18,4 +18,6 @@ if the blow lands its damage is worked out and applied.
 
 {% include damage %}
 
+{% include conditions %}
+
 {% include recovery %}

@@ -537,19 +537,27 @@ def spell_def(M, spell_id):
     if spell_id not in spells or not isinstance(spells[spell_id], dict):
         raise KeyError("no spell '%s' in spell-list" % spell_id)
     entry = dict(spells[spell_id])
-    if spell_id.endswith("_bolt"):
-        chassis = dict(spells["bolt"])
+    family = entry.get("family")
+    if family:
+        chassis = dict(spells[str(family)])
         chassis.update(entry)
         entry = chassis
     return entry
+
+
+def spell_families(M):
+    """Chassis entries are not castable spells in their own right."""
+    return {str(e["family"]) for e in M.rules["spell-list"].values()
+            if isinstance(e, dict) and "family" in e}
 
 
 def combat_spells(M):
     """Spells this model can resolve: the ones that deal damage. Cure
     Wounds and anything narrative is out of scope by design."""
     out = []
+    families = spell_families(M)
     for spell_id, entry in sorted(M.rules["spell-list"].items()):
-        if not isinstance(entry, dict):
+        if not isinstance(entry, dict) or spell_id in families:
             continue
         merged = spell_def(M, spell_id)
         if "damage" in merged or "area_archetype" in merged:
