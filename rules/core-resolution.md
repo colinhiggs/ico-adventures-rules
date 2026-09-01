@@ -10,6 +10,10 @@ mechanics:
   higher_beats_lower: true
   success_on_matching_target: true
   beating_target_scales_outcome: true
+  critical_on: 20
+  critical_rerolls_and_adds: true
+  critical_chains: true
+  critical_power_effect_steps: 1
 ---
 
 When the outcome of an action is in doubt, you roll for it, and it is
@@ -37,6 +41,27 @@ or cleaner result. Each rule says how its own margin is spent — see
 [[hitting]] and [[damage]] for the combat case, and [[using-powers]]
 for powers.
 
+## Criticals
+
+Roll the highest face the die has —
+{{ mechanics.critical_on }} — and it is a **critical**: roll the die
+again and add the new result to it. If that roll is also
+{{ mechanics.critical_on }}, roll again and keep adding, for as long as
+your luck holds.
+
+A critical needs no separate rule for what it does, because the game
+already pays out on margin. A bigger total is a bigger margin, and a
+bigger margin is more damage on a blow, a cheaper power, a longer reach
+on a spell, a cleaner success on anything else — whatever the rule in
+question already converts margin into.
+
+The one thing margin does not already reach is the *size* of a power's
+effect, which is fixed when you declare its difficulty rather than when
+you roll. So a critical also grants
+{{ mechanics.critical_power_effect_steps }} extra step of that power's
+effect, free: one more point of damage on Power Attack, one more body in
+a Whirl, one more attack from Fast Attack. See [[using-powers]].
+
 ## Example
 
 Ashri wants to force a stuck door. The Dungeon Master sets a difficulty
@@ -51,6 +76,12 @@ narrate it as a shoulder-first scramble.
 Had she rolled `16`, her total of `21` would have beaten the difficulty
 by `6`, and that margin would be hers to spend on whatever the rule in
 question converts margin into.
+
+Later, swinging at an orc, she rolls the highest face on the die. That
+is a critical, so she rolls again and adds: an `11`, for a roll of `31`
+before her bonuses. Nothing special happens to the blow as such — it is
+simply an enormous margin, and [[damage]] turns margin into damage the
+way it always does.
 
 {% book-only %}
 ## Design note

@@ -115,7 +115,11 @@
       "standard_die": "1d20",
       "higher_beats_lower": true,
       "success_on_matching_target": true,
-      "beating_target_scales_outcome": true
+      "beating_target_scales_outcome": true,
+      "critical_on": 20,
+      "critical_rerolls_and_adds": true,
+      "critical_chains": true,
+      "critical_power_effect_steps": 1
     },
     "damage": {
       "margin_to_damage_fraction": 0.5,

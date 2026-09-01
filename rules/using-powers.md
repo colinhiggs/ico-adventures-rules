@@ -53,6 +53,15 @@ roll twice for one swing.
 If the roll misses the declared difficulty, the power does not happen,
 the action is spent, and you pay the minimum cost anyway.
 
+## Criticals
+
+A critical on a power roll does two things. The high total drives the
+cost down as any high roll would, and it grants one extra step of the
+power's effect for nothing — see [[core-resolution]]. Without that
+second part a critical would be nearly worthless to a character whose
+strength is powers, since a power's size is fixed when you declare its
+difficulty and only its price depends on the roll.
+
 ## What you cannot afford
 
 You can never spend what you do not have. If the cost comes out higher

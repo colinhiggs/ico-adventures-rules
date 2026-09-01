@@ -376,8 +376,50 @@ def build_character(name, spec, level, M):
 # ---------------------------------------------------------------------
 # Resolution
 # ---------------------------------------------------------------------
-def d20():
-    return random.randint(1, 20)
+def d20(M, depth=6):
+    """An exploding d20: the highest face rerolls and adds, for as long
+    as the luck holds. Returns (total, was_critical)."""
+    crit_on = int(M.get("core-resolution", "critical_on"))
+    chains = bool(M.get("core-resolution", "critical_chains"))
+    total = 0
+    first = None
+    for _ in range(depth):
+        r = random.randint(1, 20)
+        total += r
+        if first is None:
+            first = r
+        if r != crit_on or not chains and first != r:
+            break
+        if r != crit_on:
+            break
+    return total, first == crit_on
+
+
+def d20_faces(M, depth=4):
+    """Every outcome of an exploding d20 as (total, weight, is_critical).
+
+    The exact enumeration the expectation functions rely on cannot just
+    walk 1..20 any more, because the top face reopens the die. Depth 4
+    leaves under one part in a hundred thousand unaccounted for, which is
+    far below the noise in everything else here."""
+    crit_on = int(M.get("core-resolution", "critical_on"))
+    chains = bool(M.get("core-resolution", "critical_chains"))
+    out = []
+
+    def walk(total, weight, level, is_crit):
+        for face in range(1, 21):
+            w = weight / 20.0
+            if face == crit_on and (level == 0 or chains) and level < depth:
+                walk(total + face, w, level + 1, True)
+            else:
+                out.append((total + face, w, is_crit or face == crit_on))
+
+    walk(0, 1.0, 0, False)
+    return out
+
+
+def critical_bonus_steps(M):
+    return int(M.get("core-resolution", "critical_power_effect_steps"))
 
 
 def targeting_difficulty(defender, M, dodge_bonus=0):
@@ -434,17 +476,17 @@ def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0):
     """Exact expected damage of one swing, enumerated over the d20."""
     td = targeting_difficulty(defender, M, dodge_bonus)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
-    total_damage = 0
-    hits = 0
-    for face in range(1, 21):
+    total_damage = 0.0
+    hits = 0.0
+    for face, weight, _crit in d20_faces(M):
         total = face + attacker.attack_bonus(M) + attacker.weapon.accuracy
         landed = total >= td if on_tie else total > td
         if landed:
-            hits += 1
-            total_damage += damage_from(
+            hits += weight
+            total_damage += weight * damage_from(
                 attacker, defender, total - td, M, bonus=bonus, pierce=pierce
             )
-    return total_damage / 20.0, hits / 20.0
+    return total_damage, hits
 
 
 def power_cost(difficulty, roll, M, minor=False):
@@ -488,26 +530,36 @@ def power_expectation(char, power_id, difficulty, defender, M):
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
+    per_step_damage = int(p.get("damage_per_step", 0))
+    per_step_pierce = int(p.get("reduction_ignored_per_step", 0))
+    crit_steps = critical_bonus_steps(M)
+
     damage = 0.0
     cost = 0.0
-    for face in range(1, 21):
+    for face, weight, is_crit in d20_faces(M):
         roll = face + char.attack_bonus(M)
         total = face + skill
         if roll >= difficulty:
-            cost += power_cost(difficulty, roll, M, minor)
+            cost += weight * power_cost(difficulty, roll, M, minor)
+            # A critical grants extra steps of the power's own effect,
+            # which is the only thing margin does not already reach.
+            extra = crit_steps if is_crit else 0
+            b = bonus + extra * per_step_damage
+            pc = pierce + extra * per_step_pierce
+            swings = extra_attacks + (extra if extra_attacks else 0)
             if (total >= td) if on_tie else (total > td):
-                damage += damage_from(
-                    char, defender, total - td, M, bonus=bonus, pierce=pierce)
-                for _ in range(extra_attacks):
-                    damage += damage_from(
+                damage += weight * damage_from(
+                    char, defender, total - td, M, bonus=b, pierce=pc)
+                for _ in range(swings):
+                    damage += weight * damage_from(
                         char, defender, total - td, M,
-                        bonus=0 if weak_extras else bonus,
-                        pierce=0 if weak_extras else pierce,
+                        bonus=0 if weak_extras else b,
+                        pierce=0 if weak_extras else pc,
                         weapon_only=weak_extras)
         else:
-            cost += 0 if minor else difficulty // divisor
+            cost += weight * (0 if minor else difficulty // divisor)
             # power failed; the action is spent, so no swing at all
-    return damage / 20.0, cost / 20.0
+    return damage, cost
 
 
 def best_difficulty(char, power_id, defender, M, stamina_budget):
@@ -613,31 +665,31 @@ def _expected_kills(hero, foe, M, power_id, difficulty, budget):
     skill = hero.attack_bonus(M)
     hp = foe.total_hp
     total_kills = 0.0
-    for face in range(1, 21):
+    for face, weight, _crit in d20_faces(M):
         roll = face + skill
         total = roll + hero.weapon.accuracy
         landed = (total >= td) if on_tie else (total > td)
         if not landed:
             continue
         if power_id is None:
-            total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            total_kills += weight * (1 if damage_from(hero, foe, total - td, M) >= hp else 0)
             continue
         p = power_def(M, power_id)
         minor = p.get("tier") == "minor"
         if roll < difficulty:
             continue
         if power_cost(difficulty, roll, M, minor) > budget:
-            total_kills += 1 if damage_from(hero, foe, total - td, M) >= hp else 0
+            total_kills += weight * (1 if damage_from(hero, foe, total - td, M) >= hp else 0)
             continue
         if "extra_follow_through_per_step" in p:
             each = damage_from(hero, foe, total - td, M)
             if each >= hp:
-                total_kills += 1 + chain_length(p, difficulty)
+                total_kills += weight * (1 + chain_length(p, difficulty))
             continue
         if "extra_targets_per_step" in p:
             reach = sweep_targets(p, difficulty)
             each = damage_from(hero, foe, total - td, M, use_margin=False)
-            total_kills += reach * (1 if each >= hp else 0)
+            total_kills += weight * reach * (1 if each >= hp else 0)
             continue
         step = int(p["difficulty_per_extra_attack"])
         extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
@@ -645,8 +697,8 @@ def _expected_kills(hero, foe, M, power_id, difficulty, budget):
         kills = 1 if damage_from(hero, foe, total - td, M) >= hp else 0
         each = damage_from(hero, foe, total - td, M, weapon_only=weak)
         kills += extras * (1 if each >= hp else 0)
-        total_kills += kills
-    return total_kills / 20.0
+        total_kills += weight * kills
+    return total_kills
 
 
 def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
@@ -673,7 +725,7 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
             crowd = [m for m in crowd if m.chp > 0]
             for m in crowd:
                 td = targeting_difficulty(hero, M)
-                total = d20() + m.attack_bonus(M) + m.weapon.accuracy
+                total = d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
                 if (total >= td) if on_tie else (total > td):
                     apply_damage(hero, damage_from(m, hero, total - td, M))
         rounds_total += rounds
@@ -723,7 +775,7 @@ def run_encounter(hero, kind, count, M, max_rounds=40):
         crowd = [m for m in crowd if m.chp > 0]
         for m in crowd:
             td = targeting_difficulty(hero, M)
-            total = d20() + m.attack_bonus(M) + m.weapon.accuracy
+            total = d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
             if (total >= td) if on_tie else (total > td):
                 apply_damage(hero, damage_from(m, hero, total - td, M))
     return rounds, hero.chp > 0
@@ -790,7 +842,7 @@ def standard_foe_for(hero, M):
 
 
 def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
-    face = d20()
+    face, was_crit = d20(M)
     roll = face + hero.attack_bonus(M)
     total = roll + hero.weapon.accuracy
 
@@ -915,7 +967,7 @@ def _guard(defender, plan, M):
     floor = plan["difficulty"] // divisor
     if defender.stamina < floor:
         return 0
-    roll = d20() + defender.skill("dodge", M)
+    roll = d20(M)[0] + defender.skill("dodge", M)
     if roll >= plan["difficulty"]:
         defender.stamina -= min(power_cost(plan["difficulty"], roll, M),
                                 defender.stamina)
@@ -996,12 +1048,11 @@ def redouble_plan(char, M):
             break
         bonus = ((difficulty - base) // step) * per_step
         expected_cost = 0.0
-        for face in range(1, 21):
+        for face, weight, _crit in d20_faces(M):
             roll = face + skill
-            expected_cost += (power_cost(difficulty, roll, M) if roll >= difficulty
-                              else difficulty // int(M.get("using-powers",
-                                                           "minimum_cost_divisor")))
-        expected_cost /= 20.0
+            expected_cost += weight * (
+                power_cost(difficulty, roll, M) if roll >= difficulty
+                else difficulty // int(M.get("using-powers", "minimum_cost_divisor")))
         value = chance * bonus
         if best is None or value > best["value"]:
             best = {"difficulty": difficulty, "bonus": bonus,
@@ -1077,7 +1128,7 @@ def floor_offence(char, foe, M):
 
         for difficulty in range(base_d, base_d + 60):
             damage = 0.0
-            for face in range(1, 21):
+            for face, weight, _crit in d20_faces(M):
                 roll = face + skill
                 total = roll + char.weapon.accuracy
                 if not ((total >= td) if on_tie else (total > td)):
@@ -1085,15 +1136,15 @@ def floor_offence(char, foe, M):
                 free = (roll >= difficulty
                         and power_cost(difficulty, roll, M, minor=True) == 0)
                 steps = max(0, (difficulty - base_d) // step) if free else 0
-                damage += damage_from(
+                damage += weight * damage_from(
                     char, foe, total - td, M,
                     bonus=0 if extras_power else steps * int(p.get("damage_per_step", 0)),
                     pierce=0 if extras_power else steps * int(p.get("reduction_ignored_per_step", 0)))
                 if extras_power:
                     for _ in range(steps):
-                        damage += damage_from(char, foe, total - td, M,
-                                              weapon_only=weak)
-            best = max(best, damage / 20.0)
+                        damage += weight * damage_from(char, foe, total - td, M,
+                                                       weapon_only=weak)
+            best = max(best, damage)
     return best
 
 
@@ -1111,7 +1162,7 @@ def _plan(char, foe, M, rounds_budget):
 def _act(actor, target, plan, M, dodge_bonus=0):
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     td = targeting_difficulty(target, M, dodge_bonus)
-    face = d20()
+    face, was_crit = d20(M)
     total = face + actor.attack_bonus(M) + actor.weapon.accuracy
 
     if plan is None:
