@@ -127,6 +127,7 @@ class Armour:
     name: str
     ap: int
     skill_penalty: int
+    move_penalty: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -134,6 +135,7 @@ class Armour:
             name=key,
             ap=int(M.get("armour", key, "ap")),
             skill_penalty=int(M.get("armour", key, "skill_penalty")),
+            move_penalty=int(M.get("armour", key, "move_penalty")),
         )
 
 
@@ -691,10 +693,36 @@ def targeting_difficulty(defender, M, dodge_bonus=0):
     penalty = defender.armour.skill_penalty
     if defender.shield:
         penalty += defender.shield.skill_penalty
-    # Untouchable (Athletic master) cancels armour's penalty when dodging.
-    if not defender.has("athletic", "master"):
-        td += penalty
+    # Untouchable (Athletic master) takes armour's dodge penalty off.
+    # How much of it comes off is read from the power, so the shape of
+    # the relief can be changed in the rule rather than here.
+    td += penalty + untouchable_relief(defender, penalty, M)
     return td + dodge_bonus
+
+
+def untouchable_relief(defender, penalty, M):
+    """How many points of armour's dodge penalty Untouchable gives back.
+
+    `penalty` is negative, and the relief is the positive number that
+    cancels some or all of it. Three optional keys on the power shape
+    it, and with none of them present it cancels the lot:
+
+      untouchable_max_move_penalty   only armour this light qualifies
+      untouchable_penalty_fraction   this share of the penalty comes off
+      untouchable_max_points         at most this many points come off
+    """
+    if not defender.has("athletic", "master") or penalty >= 0:
+        return 0
+    p = M.get("discipline-powers", "untouchable")
+    if "untouchable_max_move_penalty" in p:
+        if defender.armour.move_penalty > int(p["untouchable_max_move_penalty"]):
+            return 0
+    relief = -penalty
+    if "untouchable_penalty_fraction" in p:
+        relief = int(relief * float(p["untouchable_penalty_fraction"]))
+    if "untouchable_max_points" in p:
+        relief = min(relief, int(p["untouchable_max_points"]))
+    return relief
 
 
 def margin_fraction(attacker, M):

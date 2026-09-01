@@ -238,6 +238,16 @@ land the thing at least half the time before it counts.
   by survival, so a build that raises both at once is the worst case the
   metric can be shown. Read its numbers as a bound, not as a build
   anybody would play.
+- **Every build's gear is fixed in its archetype, and that quietly
+  flatters any rule change aimed at gear.** A change that makes full
+  plate a bad idea looks decisive while the build is still wearing full
+  plate, and gives most of its gain back the moment the build is allowed
+  to put on a chain shirt instead. Untouchable's shape is tunable
+  through three optional keys on the power -- `untouchable_max_move_
+  penalty`, `untouchable_penalty_fraction`, `untouchable_max_points`,
+  with none of them present meaning it cancels the lot -- and any
+  measurement of them has to let the build re-equip, or it is measuring
+  the wrong thing.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.
