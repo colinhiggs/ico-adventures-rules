@@ -162,6 +162,32 @@ The report prints what every build bought, and which weapons nobody
 bought. A weapon nobody chooses is dead content the same way a weapon
 that cannot hurt anybody is; a weapon *everybody* chooses is the more
 expensive problem, because it makes the rest of the table decoration.
+The gate is the mirror of `MIN_DAMAGE_VS_ANY_ARMOUR`: that one asks
+whether any weapon is useless, this one whether any is redundant.
+
+### Interference, as a lever
+
+Ico does not forbid a caster plate or an acrobat a great axe; it lets
+equipment get in the way of what the character is good at, and lets them
+decline it themselves. Two optional keys make that measurable, and both
+are absent by default, so the model behaves as the book reads until one
+is switched on:
+
+- `weapons.size_skill_penalty` -- a map from weapon size to what
+  carrying one costs the skills it gets in the way of. It comes off
+  defending, whichever way you defend.
+- `armour.hampers_casting` -- when true, armour's skill penalty comes
+  off spellcasting as well as off dodging.
+
+**A trap worth knowing about**, because the first measurement of the
+second lever quietly reported nothing at all. `choose_gear` works
+offence out once per weapon, on the reasoning that a character's own
+armour is read when it is struck and never when it strikes. Armour that
+interferes with casting breaks that reasoning: it changes what a caster
+deals. The cache key now widens to include the armour whenever the
+interference is switched on and the character can cast. Any further
+interference that touches offence has to widen it again, or it will be
+priced at zero and look harmless.
 
 ## The adventuring day
 

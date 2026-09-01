@@ -178,7 +178,11 @@ def _entries(M, rule_id):
 
 
 def weapon_keys(M):
-    return sorted(_entries(M, "weapons"))
+    # A dict alongside the weapons is not necessarily a weapon -- a rule
+    # about them keyed by size is a dict too. An item is what has an
+    # accuracy, the same way armour is what has an ap.
+    return sorted(k for k, v in _entries(M, "weapons").items()
+                  if "accuracy" in v)
 
 
 def armour_keys(M):
@@ -258,10 +262,18 @@ class Character:
 
     def casting_bonus(self, M):
         """Spellcasting takes intelligence OR willpower, whichever is
-        better -- see skill-list."""
+        better -- see skill-list.
+
+        Armour may get in the way of it, if the armour rule says so. The
+        key is optional and absent by default, so a caster in plate is
+        currently no worse at casting than a caster in a shirt."""
         ranks = self.skills.get("spellcasting", 0)
-        return ranks + max(self.attr_bonus("intelligence", M),
-                           self.attr_bonus("willpower", M))
+        bonus = ranks + max(self.attr_bonus("intelligence", M),
+                            self.attr_bonus("willpower", M))
+        if self.armour and "hampers_casting" in M.keys("armour"):
+            if bool(M.get("armour", "hampers_casting")):
+                bonus += self.armour.skill_penalty
+        return bonus
 
     def has(self, discipline, grade):
         held = self.disciplines.get(discipline)
@@ -411,21 +423,29 @@ def choose_gear(char, foe, M, budget):
     defends is part of what the build IS, and the stance report exists
     to ask whether that choice is a real one.
 
-    What a character carries changes what it deals only through the
-    WEAPON -- its own armour and shield are read when it is struck, never
-    when it strikes -- so offence is worked out once per weapon rather
-    than once per kit. That is the difference between a report that runs
-    in a minute and one that runs in an hour."""
+    What a character carries usually changes what it deals only through
+    the WEAPON -- its own armour and shield are read when it is struck,
+    never when it strikes -- so offence is worked out once per weapon
+    rather than once per kit. That is the difference between a report
+    that runs in a minute and one that runs in an hour.
+
+    "Usually" is doing work in that sentence. Armour that interferes
+    with casting is armour that changes what a caster deals, and the
+    shortcut has to know it, or the interference is silently priced at
+    nothing."""
     guard = sustained_dodge_bonus(char, M)
+    armour_matters = (can_cast(char, M)
+                      and "hampers_casting" in M.keys("armour")
+                      and bool(M.get("armour", "hampers_casting")))
     offence = {}
     best = (None, -1.0)
     for weapon, armour, shield in gear_options(M, budget):
-        if weapon.name not in offence:
-            char.weapon, char.armour, char.shield = weapon, armour, shield
-            offence[weapon.name] = expected_offence(char, foe, M)
         char.weapon, char.armour, char.shield = weapon, armour, shield
+        key = (weapon.name, armour.name if armour_matters else None)
+        if key not in offence:
+            offence[key] = expected_offence(char, foe, M)
         taken, _ = attack_expectation(foe, char, M, dodge_bonus=guard)
-        score = offence[weapon.name] * (char.total_hp / max(0.1, taken))
+        score = offence[key] * (char.total_hp / max(0.1, taken))
         if score > best[1]:
             best = ((weapon, armour, shield), score)
     char.weapon, char.armour, char.shield = best[0]
@@ -774,6 +794,9 @@ def targeting_difficulty(defender, M, dodge_bonus=0):
     points off the defender's attacks takes the same off the difficulty
     of hitting them -- dazed says so explicitly."""
     slack = condition_attack_penalty(defender, M)
+    # A weapon gets in the way of defending with it in hand, whichever
+    # way you defend.
+    slack -= weapon_skill_penalty(defender.weapon, M)
     if defender.stance == "block":
         td = defender.skill("block", M)
         if defender.shield:
@@ -789,6 +812,19 @@ def targeting_difficulty(defender, M, dodge_bonus=0):
     # the relief can be changed in the rule rather than here.
     td += penalty + untouchable_relief(defender, penalty, M)
     return td + dodge_bonus
+
+
+def weapon_skill_penalty(weapon, M):
+    """What carrying this weapon costs the skills it gets in the way of.
+
+    Armour already interferes with skills by weight; a weapon can too,
+    and a big one plausibly should. Read from an optional
+    `size_skill_penalty` map on the weapons rule, so with the map absent
+    a weapon interferes with nothing and the model behaves as before."""
+    if "size_skill_penalty" not in M.keys("weapons"):
+        return 0
+    table = M.get("weapons", "size_skill_penalty")
+    return int(table.get(weapon.size, 0))
 
 
 def untouchable_relief(defender, penalty, M):

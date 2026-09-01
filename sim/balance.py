@@ -425,11 +425,13 @@ def report_dpr(level, chars, M):
 def run_gates(levels, M, trials):
     hr("Gates")
     failures = []
+    ever_chosen = set()
 
     for level in levels:
         chars = build_all(level, M)
         if not chars:
             continue
+        ever_chosen.update(c.weapon.name for c in chars.values())
 
         if level >= 5:
             for wkey in m.weapon_keys(M):
@@ -541,6 +543,17 @@ def run_gates(levels, M, trials):
                     "L%d %s power_attack costs %.2f stamina (target >= %.1f) "
                     "-- the resource has stopped mattering"
                     % (level, name, cost, MIN_POWER_COST))
+
+    # The mirror of MIN_DAMAGE_VS_ANY_ARMOUR. That gate asks whether any
+    # weapon is useless; this one asks whether any weapon is redundant,
+    # which is the cheaper defect to miss and the more expensive one to
+    # have. A weapon no build would carry at any level is a row of the
+    # table that exists only to be read past.
+    unchosen = [w for w in m.weapon_keys(M) if w not in ever_chosen]
+    if unchosen:
+        failures.append(
+            "no build chose %s at any level -- dead weapon%s"
+            % (", ".join(unchosen), "" if len(unchosen) == 1 else "s"))
 
     if failures:
         for f in failures:
