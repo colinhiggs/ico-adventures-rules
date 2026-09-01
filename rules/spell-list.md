@@ -142,12 +142,45 @@ mechanics:
     family: field
     damage_type: lightning
     domain: war
+  heal_order: [core, mastery]
+  mend:
+    tier: minor
+    base_difficulty: 4
+    school: life_force
+    domain: healing
+    range: touch
+    restores: 4
+    difficulty_per_step: 3
+    restored_per_step: 1
+    pools: [mastery]
+    minimum_spirit: 0
   cure_wounds:
     base_difficulty: 16
     school: life_force
     domain: healing
     range: touch
-    minimum_spirit: 1
+    restores: 3
+    difficulty_per_step: 4
+    restored_per_step: 1
+    pools: [core, mastery]
+    minimum_spirit: 3
+    minimum_spirit_per_point: 3
+  cleanse:
+    base_difficulty: 10
+    school: life_force
+    domain: healing
+    range: touch
+    ends_conditions: true
+    ends_lasting: false
+    minimum_spirit: 2
+  restoration:
+    base_difficulty: 14
+    school: life_force
+    domain: healing
+    range: touch
+    ends_conditions: true
+    ends_lasting: true
+    minimum_spirit: 4
 ---
 
 Difficulty, cost and boosting all work as [[spellcasting]] and
@@ -306,16 +339,129 @@ deny ground by what they do rather than by what they deal, and those are
 the ones the archetype's cheap spread was written for.
 {% endbook-only %}
 
-## Cure / Cause Wounds ({{ mechanics.cure_wounds.base_difficulty }})
+## The restorative spells
+
+Harm is undone in the reverse of the order it was done. [[hit-points]]
+sends damage through mastery first and into core only when mastery is
+gone; healing goes to **core first**, and reaches mastery only once the
+real wound has closed. A wound mends before the luck comes back.
+
+That is why there are two spells and not one. Mastery hit points return
+between fights on their own, and core hit points return at the rate
+[[recovery]] gives them, which is barely at all — so the shallow pool is
+worth a cheap spell cast often, and the deep pool is worth an expensive
+one cast rarely.
+
+### Mend ({{ mechanics.mend.base_difficulty }})
+
+- **Tier:** {{ mechanics.mend.tier }}
+- **School:** {{ mechanics.mend.school }}
+- **Domain:** {{ mechanics.mend.domain }}
+- **Range:** {{ mechanics.mend.range }}
+- **Minimum spirit:** {{ mechanics.mend.minimum_spirit }}
+
+Restores {{ mechanics.mend.restores }} mastery hit points, plus
+{{ mechanics.mend.restored_per_step }} for each further
+{{ mechanics.mend.difficulty_per_step }} points of difficulty. It cannot
+touch core hit points: it puts back the cushion, not the wound.
+
+Being a minor spell it has no minimum cost, so a caster who has run dry
+can still mend — which is the point of it. It is to healing what a bolt
+is to harm.
+
+### Cure Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 
 - **School:** {{ mechanics.cure_wounds.school }}
 - **Domain:** {{ mechanics.cure_wounds.domain }}, or harm when reversed
 - **Range:** {{ mechanics.cure_wounds.range }}
 - **Minimum spirit:** {{ mechanics.cure_wounds.minimum_spirit }}
 
-Restores hit point damage to the recipient. Cast as *Cause Wounds*, the
-same spell instead inflicts damage. This is a standard spell, not a
-minor one.
+Restores {{ mechanics.cure_wounds.restores }} hit points, plus
+{{ mechanics.cure_wounds.restored_per_step }} for each further
+{{ mechanics.cure_wounds.difficulty_per_step }} points of difficulty,
+to core hit points first and to mastery once core is full.
+
+However well you roll, this spell costs at least
+{{ mechanics.cure_wounds.minimum_spirit_per_point }} spirit for every
+hit point it puts back. A good roll makes an ordinary spell cheaper; it
+does not make this one cheaper, because what it is buying is not
+measured in difficulty.
+
+It restores far less per point than Mend and costs a great deal more.
+That is not a mistake. A point of core is a night's rest, and this is
+the only thing in the game that gives one back in the middle of an
+adventure.
+
+Cast as *Cause Wounds*, the same spell inflicts that much damage
+instead, applied the ordinary way round.
+
+### Cleanse ({{ mechanics.cleanse.base_difficulty }})
+
+- **School:** {{ mechanics.cleanse.school }}
+- **Domain:** {{ mechanics.cleanse.domain }}
+- **Range:** {{ mechanics.cleanse.range }}
+- **Minimum spirit:** {{ mechanics.cleanse.minimum_spirit }}
+
+Ends one condition on the creature you touch, if the difficulty you
+declare meets or beats the difficulty that imposed it. It cannot touch a
+lasting condition — see [[conditions]].
+
+You are undoing somebody else's work, and the price is that you have to
+match it. A stun laid on at difficulty `30` needs a Cleanse at `30`, and
+the caster who laid it on paid for that difficulty too.
+
+### Restoration ({{ mechanics.restoration.base_difficulty }})
+
+- **School:** {{ mechanics.restoration.school }}
+- **Domain:** {{ mechanics.restoration.domain }}
+- **Range:** {{ mechanics.restoration.range }}
+- **Minimum spirit:** {{ mechanics.restoration.minimum_spirit }}
+
+The same, for the conditions Cleanse cannot reach: blindness, disease, a
+curse. Ends one lasting condition on the creature you touch, again if
+your declared difficulty meets or beats the difficulty that imposed it.
+
+Nothing else in the rules ends a lasting condition. Waiting does not.
+
+{% book-only %}
+### Design note
+
+Undoing a condition by matching the difficulty that imposed it needed no
+new machinery at all, and it prices itself. The difficulty a caster
+declared is already the number the victim had to beat, already what the
+caster paid for, and already recorded in the fiction as how hard the
+effect was to shrug off. Asking a healer to meet the same number makes a
+powerful affliction genuinely hard to lift and a casual one easy, with
+no table of removal difficulties to write or look up.
+
+Splitting the two hit point pools between two spells does the same
+trick with the recovery rules rather than the condition rules. The
+question "how much healing is too much" has an answer already: mastery
+hit points come back on their own between fights, so restoring them
+cheaply changes the pace of a fight and nothing else. Core hit points do
+not come back, so restoring them changes the length of the adventuring
+day — which is the resource the whole day model turns on, and the reason
+Cure Wounds is priced where a caster feels it.
+
+Pinning the price to the hit point rather than to the roll is what stops
+the spell running away. Every other cost in the game falls as a caster's
+skill rises, which is correct where the effect is measured in
+difficulty: you are getting better at the same trick. Core hit points
+are not measured in difficulty. They are a fixed, small pool that
+scarcely refills, and a reservoir that grows sixfold over a career would
+otherwise turn into six times as much healing at a steadily better rate
+-- a senior caster undoing several characters' worth of real injury in
+an afternoon, which is precisely what [[recovery]] exists to prevent.
+An exchange rate that holds at every level leaves magic as the exception
+to that rule without letting it swallow the rule.
+
+Reversing the order harm travels in is the small piece that makes both
+of them behave. If healing filled mastery first, a badly wounded
+character would get their luck back before their wound closed, and a
+healer could keep somebody nominally upright for ever without ever
+mending them. Core first means healing a hurt character is expensive
+precisely when it matters.
+{% endbook-only %}
 
 ## Example
 

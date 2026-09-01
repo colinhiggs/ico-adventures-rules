@@ -55,6 +55,11 @@ MIN_FIELD_SUCCESS = 0.5
 # The smallest area worth calling denial: anything narrower is a blast
 # that happens to linger.
 MIN_FIELD_SQUARES = 13
+# Healing must not outrun harm, or a fight with a healer in it does not
+# end. The comparison is against what ONE comparable attacker deals per
+# round, not against what the healer's own build happens to take, which
+# depends far too much on the armour it is standing in.
+MAX_HEAL_FRACTION_OF_ATTACK = 0.5
 
 # Every minor power is a weaker twin of a standard one. If a minor twin
 # ever matches its counterpart at the same difficulty, the standard
@@ -362,6 +367,59 @@ def report_fields(level, chars, M):
     return out
 
 
+def healing_picture(level, chars, M):
+    """(per caster: sustainable heal, free heal), and the yardstick."""
+    foe = standard_foe(level, M)
+    attack = max([m.expected_offence(c, foe, M)
+                  for n, c in chars.items() if not m.can_cast(c, M)]
+                 or [1.0])
+    out = {}
+    for name, c in sorted(chars.items()):
+        if not m.can_cast(c, M):
+            continue
+        out[name] = (m.best_heal(c, M, c.spirit / 4.0),
+                     m.best_heal(c, M, 0, free_only=True))
+    return out, attack
+
+
+def report_healing(level, chars, M):
+    hr("Healing at level %d -- does it outrun harm?" % level)
+    picture, attack = healing_picture(level, chars, M)
+    if not picture:
+        print("no caster at this level")
+        return
+    print("one attacker deals %.1f per round; healing has to stay under it"
+          % attack)
+    print("%-12s %-26s %-22s %s"
+          % ("build", "sustainable", "with nothing left", "share of an attack"))
+    for name, (paid, free) in picture.items():
+        print("%-12s %-26s %-22s %.0f%%"
+              % (name,
+                 "%s @%d = %.1f hp (%.1f sp)" % (paid[0], paid[3], paid[1],
+                                                 paid[2]),
+                 "%s @%d = %.1f hp" % (free[0], free[3], free[1]),
+                 100 * paid[1] / attack))
+
+    # Mend always wins on raw hit points, because it restores the pool
+    # that costs least to restore. Cure Wounds is worth reporting on its
+    # own terms: it is the only thing in the game that gives back a core
+    # hit point, and a core hit point is a night's rest.
+    print()
+    print("%-12s %s" % ("", "core healing, which nothing else provides"))
+    for name, c in sorted(chars.items()):
+        if not m.can_cast(c, M):
+            continue
+        best = (0, 0.0, 0.0)
+        for difficulty in range(16, 90):
+            restored, cost = m.heal_expectation(c, "cure_wounds",
+                                                difficulty, M)
+            if cost <= c.spirit / 4.0 and restored > best[1]:
+                best = (difficulty, restored, cost)
+        print("%-12s cure_wounds @%d = %.1f core hp (%.1f sp), %.1f casts "
+              "a fight" % (name, best[0], best[1], best[2],
+                           c.spirit / max(0.1, best[2]) / 4))
+
+
 def report_attrition(level, chars, M):
     """Fresh versus empty. This is the minor-power tier's whole reason
     for existing: a long adventure should wear a character down, not
@@ -488,6 +546,18 @@ def run_gates(levels, M, trials):
                     "points to cross (target >= %.0f%%)"
                     % (level, name, SWARM_MOOK, cross * 100,
                        MIN_FIELD_BITE_FRACTION * 100))
+
+        # Healing must not outrun harm, or a fight with a healer in it
+        # simply does not end.
+        picture, attack = healing_picture(level, chars, M)
+        for name, (paid, free) in picture.items():
+            share = paid[1] / max(0.1, attack)
+            if share > MAX_HEAL_FRACTION_OF_ATTACK:
+                failures.append(
+                    "L%d %s heals %.1f a round against an attack of %.1f "
+                    "(%.0f%%, target <= %.0f%%)"
+                    % (level, name, paid[1], attack, share * 100,
+                       MAX_HEAL_FRACTION_OF_ATTACK * 100))
 
         contrib = contributions(chars, level, M)
         if len(contrib) > 1:
@@ -676,6 +746,7 @@ def main():
         report_dpr(level, chars, M)
         report_swarm(level, chars, M)
         report_fields(level, chars, M)
+        report_healing(level, chars, M)
         free_bands(level, chars, M)
         report_attrition(level, chars, M)
         report_powers(level, chars, M)

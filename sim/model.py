@@ -1039,6 +1039,85 @@ def combat_spells(M):
     return out
 
 
+def healing_spells(M):
+    """Spells that put hit points back. Read by what they carry, like
+    everything else here."""
+    out = []
+    for spell_id, entry in sorted(M.rules["spell-list"].items()):
+        if isinstance(entry, dict) and "restores" in spell_def(M, spell_id):
+            out.append(spell_id)
+    return out
+
+
+def heal_amount(M, spell_id, difficulty):
+    sp = spell_def(M, spell_id)
+    spare = max(0, difficulty - int(sp["base_difficulty"]))
+    steps = spare // int(sp["difficulty_per_step"])
+    return int(sp["restores"]) + steps * int(sp["restored_per_step"])
+
+
+def heal_expectation(char, spell_id, difficulty, M):
+    """(expected hit points restored, expected spirit cost) for one cast.
+
+    Healing needs no attack roll and meets no armour, so the only thing
+    the die decides is whether the spell happens and what it costs."""
+    sp = spell_def(M, spell_id)
+    minor = sp.get("tier") == "minor"
+    minimum = int(sp.get("minimum_spirit", 0))
+    per_point = int(sp.get("minimum_spirit_per_point", 0))
+    amount = heal_amount(M, spell_id, difficulty)
+    skill = char.casting_bonus(M)
+    restored = 0.0
+    cost = 0.0
+    for face, weight, _crit in d20_faces(M):
+        roll = face + skill
+        if roll >= difficulty:
+            # A spell may price itself by what it restores rather than
+            # by what it declared. Rolling well makes an ordinary spell
+            # cheaper; it does not discount a hit point.
+            floor = max(minimum, amount * per_point)
+            restored += weight * amount
+            cost += weight * max(floor,
+                                 power_cost(difficulty, roll, M, minor))
+        else:
+            cost += weight * (0 if minor else minimum)
+    return restored, cost
+
+
+def best_heal(char, M, spirit_budget, free_only=False):
+    """The most hit points a round of healing can put back inside a
+    sustainable spend. `free_only` asks the question that actually
+    matters for balance: what can a caster with nothing left still do
+    every round, for ever?"""
+    best = (None, 0.0, 0.0, 0)
+    if not can_cast(char, M):
+        return best
+    skill = char.casting_bonus(M)
+    for spell_id in healing_spells(M):
+        sp = spell_def(M, spell_id)
+        minor = sp.get("tier") == "minor"
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 70):
+            if free_only:
+                if not minor:
+                    continue
+                # Only outcomes that genuinely cost nothing count.
+                amount = heal_amount(M, spell_id, difficulty)
+                total = sum(w for face, w, _c in d20_faces(M)
+                            if face + skill >= difficulty
+                            and power_cost(difficulty, face + skill,
+                                           M, True) == 0)
+                restored, cost = total * amount, 0.0
+            else:
+                restored, cost = heal_expectation(char, spell_id,
+                                                  difficulty, M)
+                if cost > spirit_budget:
+                    continue
+            if restored > best[1]:
+                best = (spell_id, restored, cost, difficulty)
+    return best
+
+
 def can_cast(char, M):
     """Knowing how, and having a hand to do it with. free-hands.md makes
     the second half a real condition: a caster holding a two-handed
@@ -1452,6 +1531,11 @@ def maxima(char):
     return {"stamina": char.stamina, "mhp": char.mhp, "chp": char.chp}
 
 
+def prevents_recovery(char, M):
+    return any(condition_def(M, n).get("prevents_recovery")
+               for n in char.conditions)
+
+
 def recover(char, caps, M, tier):
     """Give back a share of MAXIMUM stamina, spirit and mastery hit
     points -- never a share of what is left, which pays nothing to the
@@ -1459,7 +1543,10 @@ def recover(char, caps, M, tier):
     if tier is None:
         return
     pct = int(M.get("recovery", "%s_percent" % tier))
-    char.stamina = min(caps["stamina"], char.stamina + caps["stamina"] * pct // 100)
+    char.stamina = min(caps["stamina"],
+                       char.stamina + caps["stamina"] * pct // 100)
+    if prevents_recovery(char, M):
+        return          # ill, and rest does not mend you -- conditions.md
     char.mhp = min(caps["mhp"], char.mhp + caps["mhp"] * pct // 100)
 
 

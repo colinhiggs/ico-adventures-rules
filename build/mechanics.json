@@ -138,6 +138,21 @@
         "dazed": {
           "resisted_with": "resolve",
           "attack_penalty": 2
+        },
+        "blinded": {
+          "resisted_with": "fortitude",
+          "attack_penalty": 5,
+          "lasting": true
+        },
+        "diseased": {
+          "resisted_with": "fortitude",
+          "prevents_recovery": true,
+          "lasting": true
+        },
+        "cursed": {
+          "resisted_with": "resolve",
+          "loses_ties": true,
+          "lasting": true
         }
       }
     },
@@ -830,12 +845,56 @@
         "damage_type": "lightning",
         "domain": "war"
       },
+      "heal_order": [
+        "core",
+        "mastery"
+      ],
+      "mend": {
+        "tier": "minor",
+        "base_difficulty": 4,
+        "school": "life_force",
+        "domain": "healing",
+        "range": "touch",
+        "restores": 4,
+        "difficulty_per_step": 3,
+        "restored_per_step": 1,
+        "pools": [
+          "mastery"
+        ],
+        "minimum_spirit": 0
+      },
       "cure_wounds": {
         "base_difficulty": 16,
         "school": "life_force",
         "domain": "healing",
         "range": "touch",
-        "minimum_spirit": 1
+        "restores": 3,
+        "difficulty_per_step": 4,
+        "restored_per_step": 1,
+        "pools": [
+          "core",
+          "mastery"
+        ],
+        "minimum_spirit": 3,
+        "minimum_spirit_per_point": 3
+      },
+      "cleanse": {
+        "base_difficulty": 10,
+        "school": "life_force",
+        "domain": "healing",
+        "range": "touch",
+        "ends_conditions": true,
+        "ends_lasting": false,
+        "minimum_spirit": 2
+      },
+      "restoration": {
+        "base_difficulty": 14,
+        "school": "life_force",
+        "domain": "healing",
+        "range": "touch",
+        "ends_conditions": true,
+        "ends_lasting": true,
+        "minimum_spirit": 4
       }
     },
     "spell-properties": {

@@ -30,6 +30,18 @@ mechanics:
     dazed:
       resisted_with: resolve
       attack_penalty: 2
+    blinded:
+      resisted_with: fortitude
+      attack_penalty: 5
+      lasting: true
+    diseased:
+      resisted_with: fortitude
+      prevents_recovery: true
+      lasting: true
+    cursed:
+      resisted_with: resolve
+      loses_ties: true
+      lasting: true
 ---
 
 Some effects do more than damage. Being set alight, knocked senseless or
@@ -110,6 +122,34 @@ reaction. Resisted with
 `-{{ mechanics.conditions.dazed.attack_penalty }}` on attack rolls, and
 your targeting difficulty drops by the same. Resisted with
 {{ mechanics.conditions.dazed.resisted_with }}.
+
+## Lasting conditions
+
+A few conditions have no duration at all. They do not count down and
+waiting does not help; they last until something is done about them,
+which in practice means a spell — see [[spell-list]].
+
+They land the same way as anything else: an opposed roll against the
+difficulty declared, and beating it means nothing happens to you. What
+is different is what happens next, which is nothing, for as long as
+nobody addresses it.
+
+**Blinded** — you cannot see. You take
+`-{{ mechanics.conditions.blinded.attack_penalty }}` on attack rolls and
+your targeting difficulty drops by the same, and you cannot be the one
+to choose a target you would have had to see. Resisted with
+{{ mechanics.conditions.blinded.resisted_with }}.
+
+**Diseased** — you are ill, and rest does not mend you. You recover no
+mastery hit points between fights at all, whatever [[recovery]] would
+otherwise have given you, and a night's sleep restores only what it
+restores to anyone. Resisted with
+{{ mechanics.conditions.diseased.resisted_with }}.
+
+**Cursed** — luck has turned against you. You lose ties: a total that
+exactly matches a target succeeds for everyone else and fails for you,
+wherever [[core-resolution]] would have let it stand. Resisted with
+{{ mechanics.conditions.cursed.resisted_with }}.
 
 ## Example
 
