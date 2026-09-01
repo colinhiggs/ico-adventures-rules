@@ -98,6 +98,7 @@ goals stated in the book's opening chapter:
 | `MIN_DAMAGE_VS_ANY_ARMOUR` | No weapon should be a prop |
 | `MIN_POWER_COST` | Powers must not become free with experience |
 | `FLOOR_RATIO_BAND` | Empty should mean diminished, never sidelined |
+| `MIN_FIELD_BITE_FRACTION` | Area denial has to actually deny |
 
 Contribution is deliberately damage per round **times** rounds survived,
 not damage alone: a defensive signature scores zero on a damage-only
@@ -148,11 +149,17 @@ inside the loop, and stamina is what actually varies.
 ## Conditions and persistence
 
 Conditions are read out of `conditions.md` and resolved the way the book
-resolves them: the casting roll already made is the number to beat, the
+resolves them: the **declared difficulty** is the number to beat, the
 defender rolls Fortitude or Resolve against it, and the margin sets the
-duration. What each condition then *does* is read from its own mechanics
-entry rather than switched on its name, so a new condition needs no code
-here as long as it is described in the same vocabulary -- an entry with
+duration. Because the difficulty is the target, a caster who wants an
+effect to stick buys that the same way they buy damage or area -- which
+is also why measuring conditions was worth doing, since the version that
+resolved against the roll rewarded declaring the lowest difficulty that
+worked and hoping.
+
+What each condition then *does* is read from its own mechanics entry
+rather than switched on its name, so a new condition needs no code here
+as long as it is described in the same vocabulary -- an entry with
 `loses_action` gates the action, one with `attack_penalty` comes off the
 roll and off the difficulty of hitting that creature, one with
 `movement_fraction` costs the action whenever movement was what the
@@ -168,8 +175,22 @@ A field stays on the ground. `FIELD_LINGER` is the chance a creature it
 caught is still standing in it at the start of its next turn -- the
 midpoint between a crowd that must cross the field to reach the caster
 and one that simply walks around it. It is the number to argue with
-first if fields look wrong, and today it is what keeps them from ever
-being the best crowd spell.
+first if fields look wrong.
+
+`FIELD_LINGER` is also what the area-denial test is built on: crossing a
+field costs one certain tick plus whatever lingering keeps, and
+`MIN_FIELD_BITE_FRACTION` is the share of a rank-and-file creature's hit
+points that has to cost before anybody would rather go round. The test
+only asks it of builds holding Adept or better in a casting discipline,
+and only against the same rank-and-file the swarm gates use. Note what
+it does *not* say: a field that deals no damage at all is out of scope
+here, since a fog or a tangle denies ground by what it does rather than
+by what it deals.
+
+Affordability alone is not a good enough filter for that test. Expected
+cost *falls* as a declared difficulty runs away, because the spell
+simply stops going off, so `MIN_FIELD_SUCCESS` requires the caster to
+land the thing at least half the time before it counts.
 
 ## Known limits
 
@@ -187,6 +208,12 @@ being the best crowd spell.
 - A burn is counted for its full expected duration, as though the target
   lives to take every tick. Nothing here models overkill, for spells or
   for swings, so fire is flattered exactly as much as a great axe is.
+  Since a burn now shrinks by half a round at a time, the tail it
+  overstates is small.
+- Whether a burning creature smothers the flames is a judgement the
+  rules leave to the player, so the model makes one: it puts itself out
+  when what the fire will still take off it is worth more than the turn.
+  A cannier or more reckless opponent would do differently.
 - Ranged weapons are still not modelled, only ranged *spells*.
 - Fresh-versus-empty is measured at the two extremes. A character plans
   for a sustainable spend across roughly four rounds, so the model never

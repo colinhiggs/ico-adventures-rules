@@ -8,6 +8,7 @@ summary: >
   margin.
 mechanics:
   resisted_by_opposed_roll: true
+  resist_target_is_declared_difficulty: true
   physical_resistance_skill: fortitude
   mental_resistance_skill: resolve
   base_rounds: 1
@@ -21,6 +22,8 @@ mechanics:
       resisted_with: fortitude
       margin_per_extra_round: 4
       repeats_damage: true
+      damage_fraction_per_round: 0.5
+      smothered_by_action: true
     slowed:
       resisted_with: fortitude
       movement_fraction: 0.5
@@ -36,8 +39,9 @@ resist one.
 ## Resisting
 
 Resisting is an opposed roll, exactly as [[core-resolution]] describes.
-The effect's own total — for a spell, the casting roll that was already
-made — is the target to beat. The defender rolls
+The number to beat is the **difficulty declared** for the effect — the
+one its user chose and paid for under [[using-powers]], not the roll
+they happened to make. The defender rolls
 `{{ core-resolution:mechanics.standard_die }}` and adds whichever skill
 the effect names:
 
@@ -46,15 +50,28 @@ the effect names:
 - **{{ mechanics.mental_resistance_skill }}** for anything the mind
   fights off: fear, confusion, compulsion.
 
-Beat the effect's total and nothing happens to you. Fail and the
-condition lands.
+Beat the difficulty and nothing happens to you. Fail and the condition
+lands.
+
+## Spending to make it stick
+
+Because the difficulty is the number to beat, anyone using a resistable
+effect can make it harder to shrug off the same way they make anything
+else bigger: by declaring a higher difficulty and paying for it. A
+Command spoken at difficulty `10` is a suggestion; the same word at
+difficulty `25` is very hard to refuse, and costs accordingly.
+
+This is the only lever, and it is deliberately the same lever that buys
+damage, area and reach. You cannot buy an unresistable effect cheaply by
+rolling well — a good roll makes the effect *affordable*, not
+*irresistible*.
 
 ## How long it lasts
 
 A condition that lands lasts {{ mechanics.base_rounds }} round, plus one
 more for every {{ mechanics.margin_per_extra_round }} points by which
-the effect's total beat your resistance roll. Some conditions are harder
-to sustain than that and say so.
+the difficulty beat your resistance roll. Some conditions are harder to
+sustain than that and say so.
 
 Margin decides duration for the same reason it decides everything else:
 a near-thing should be brief and an overwhelming one should stick.
@@ -68,11 +85,21 @@ defend yourself. Resisted with
 margin to hold someone stunned for a second round, because taking a
 character's turn away is the harshest thing an effect can do.
 
-**Burning** — you take the effect's damage again at the start of each
-of your turns. Resisted with
+**Burning** — the fire keeps eating at the start of each of your turns,
+but it is eating what is left of itself: each time it deals
+{{ mechanics.conditions.burning.damage_fraction_per_round }} of what it
+dealt the time before, rounding down, and when that reaches nothing the
+fire is out. You may instead spend your action to smother it, which ends
+it at once and needs no roll. Resisted with
 {{ mechanics.conditions.burning.resisted_with }}, and it spreads easily:
 {{ mechanics.conditions.burning.margin_per_extra_round }} points of
 margin buys another round of it.
+
+Burning therefore adds up to about as much again as the blow that
+started it, however long it lasts — a fire spell is the one that deals
+the most damage, and the price of that is that it shapes the fight
+least. What it does offer is a choice: keep swinging and keep burning,
+or lose a turn putting yourself out.
 
 **Slowed** — your movement is multiplied by
 {{ mechanics.conditions.slowed.movement_fraction }} and you have no
@@ -86,21 +113,30 @@ your targeting difficulty drops by the same. Resisted with
 
 ## Example
 
-Sela casts a Force Lance at an orc and rolls `27` in total. The lance
-hits, deals its damage, and tries to stun.
+Sela casts a Force Lance at an orc, declaring a difficulty of `27`. She
+rolls `29`, so the spell goes off and is cheap; but `27` is the number
+the orc has to beat, and rolling well has not made the stun any harder
+to resist.
 
 The orc rolls to resist with Fortitude: `11` on the die plus a Fortitude
-of `6`, for `17`. Sela beat that by `10` — but stunning needs `15`
-points of margin for each extra round, so the orc is stunned for a
+of `6`, for `17`. The difficulty beat that by `10` — but stunning needs
+`15` points of margin for each extra round, so the orc is stunned for a
 single round. It loses its action, though it may still back away.
 
 Had the orc rolled `28`, it would have shrugged the effect off
 completely and taken only the damage.
 
-Against a Flame Lance the same margin of `10` would have set it burning
-for three rounds, since fire needs only `4` points of margin a round —
-which is the difference between the two spells, and the reason to carry
-both.
+Had Sela wanted the stun to stick, the way to buy it was to declare a
+higher difficulty in the first place — at `42` the same orc roll would
+have been fifteen points short and lost two rounds instead of one. That
+is an expensive spell, and it should be.
+
+Against a Flame Lance the same margin of `10` would have set the orc
+burning for three rounds, since fire needs only `4` points of margin a
+round. If the lance dealt `9` damage, the fire then deals `4`, then `2`,
+then `1` — about as much again as the lance itself, spread out and
+shrinking. The orc may spend a turn beating the flames out instead,
+which is the whole of what a fire spell does to the shape of a fight.
 
 {% book-only %}
 ## Design note
@@ -112,11 +148,19 @@ them. An opposed roll against the skill that already claims the job is
 one less subsystem than a saving throw, and it means a character who
 invested in Fortitude finds out why.
 
-Using the caster's existing roll as the target is the same economy that
-runs through the rest of the game. That single roll already settled
-whether the spell happened, what it cost and whether it landed; asking
-it to also stand as the number to beat costs nothing and keeps a spell
-to one roll on the caster's side.
+The number to beat is the declared difficulty because that is where
+every other decision about a power's size is made. Damage, area, reach
+and the number of creatures affected are all bought by declaring a
+difficulty and paying for it; how hard an effect is to shrug off had
+been the one exception, settled by a roll instead. That exception had a
+cost: a caster who wanted a stun to stick could not buy one, and was
+better off declaring the lowest difficulty that worked and hoping. One
+lever, used the same way everywhere, removes both the oddity and the
+tactic.
+
+The roll still does its two jobs — whether the spell happens, and what
+it costs. It simply no longer decides how strong the effect is, which
+keeps a good roll a matter of economy rather than of power.
 
 Duration by margin rather than a flat number is what stops every
 condition being equally decisive. Stun is the extreme case and is priced
@@ -124,4 +168,18 @@ as one: it needs three times the margin of anything else to last a
 second round, because removing a character's turn is the harshest thing
 in the game and a spell that reliably removes several is the only
 spell anyone would ever cast.
+
+Burning is the opposite case, and had the opposite problem. A condition
+that repeats the whole of a spell's damage every round for as long as it
+lasts is not a secondary effect, it is a damage multiplier, and it made
+the fire spell in every family strictly the best one to cast. Halving
+the damage each round bounds the total at roughly one extra blow however
+long the fire burns, which is the profile fire ought to have: the most
+damage of any element, and the least say in how the fight goes.
+
+Letting the victim smother the flames is the one piece of shape a fire
+spell does have, and it belongs to the victim rather than the caster. A
+burning creature that keeps fighting keeps burning; one that stops to
+put itself out has lost a turn to a spell that never took one. Neither
+is a stun, and the choice is better than either.
 {% endbook-only %}

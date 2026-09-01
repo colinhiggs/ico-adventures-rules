@@ -51,6 +51,8 @@ ASSUMPTIONS = [
     "of its next turn half the time.",
     "A burn is counted for its full expected duration, as though the "
     "target lives long enough to take every tick.",
+    "A burning creature smothers the flames when what the fire will "
+    "still take off it is worth more than the turn it spends doing so.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -506,12 +508,15 @@ def condition_duration(M, name, margin):
 _CONDITION_CACHE = {}
 
 
-def condition_expectation(M, name, effect_total, resist_bonus):
+def condition_expectation(M, name, difficulty, resist_bonus):
     """(chance it lands, mean rounds it then lasts).
 
-    The defender has to BEAT the effect's total; a tie goes to the
-    caster, exactly as core-resolution gives ties to the actor."""
-    key = (name, effect_total, resist_bonus)
+    The number to beat is the DECLARED DIFFICULTY, not the roll that was
+    made against it -- conditions.md puts how hard an effect is to shrug
+    off on the same lever as everything else a power's user pays for. A
+    tie goes to the user, exactly as core-resolution gives ties to the
+    actor."""
+    key = (name, difficulty, resist_bonus)
     got = _CONDITION_CACHE.get(key)
     if got is not None:
         return got
@@ -519,26 +524,74 @@ def condition_expectation(M, name, effect_total, resist_bonus):
     rounds = 0.0
     for face, weight, _crit in d20_faces(M):
         total = face + resist_bonus
-        if total > effect_total:
+        if total > difficulty:
             continue
         landed += weight
-        rounds += weight * condition_duration(M, name, effect_total - total)
+        rounds += weight * condition_duration(M, name, difficulty - total)
     got = (landed, rounds / landed if landed else 0.0)
     _CONDITION_CACHE[key] = got
     return got
 
 
-def try_condition(target, name, effect_total, M, damage=0):
+def try_condition(target, name, difficulty, M, damage=0):
     """Roll this defender's resistance for real. Returns the rounds the
     condition lasts, or 0 if it was shrugged off."""
     roll = d20(M)[0] + target.skill(resist_skill(M, name), M)
-    if roll > effect_total:
+    if roll > difficulty:
         return 0
-    rounds = condition_duration(M, name, effect_total - roll)
+    rounds = condition_duration(M, name, difficulty - roll)
     target.conditions[name] = max(target.conditions.get(name, 0), rounds)
     if condition_def(M, name).get("repeats_damage"):
         target.burning_damage = max(target.burning_damage, damage)
     return rounds
+
+
+def burn_schedule(M, name, damage, rounds):
+    """What a burn deals on each of the turns it lasts. Each tick is a
+    fraction of the one before, rounding down, and the fire is out when
+    that reaches nothing -- so a burn adds up to about one more blow
+    however long it burns."""
+    frac = float(condition_def(M, name).get("damage_fraction_per_round", 1.0))
+    out = []
+    current = damage
+    for _ in range(max(0, rounds)):
+        current = int(current * frac)
+        if current <= 0:
+            break
+        out.append(current)
+    return out
+
+
+def burn_remaining(char, M):
+    """What the burn on this creature will still deal if it is left to
+    run its course, before armour."""
+    total = 0
+    for name, left in char.conditions.items():
+        if condition_def(M, name).get("repeats_damage"):
+            total += sum(burn_schedule(M, name, char.burning_damage, left))
+    return total
+
+
+def would_smother(char, M, action_value):
+    """Whether this creature should spend its action putting itself out.
+
+    The rules give it the choice and say nothing about how to make it;
+    the model weighs what the fire will still take off it against what
+    it would have done with the turn."""
+    if not any(condition_def(M, n).get("smothered_by_action")
+               for n in char.conditions):
+        return False
+    left = burn_remaining(char, M)
+    if left <= 0:
+        return False
+    return reduce_by_armour(left, char, M) > action_value
+
+
+def smother(char, M):
+    for name in list(char.conditions):
+        if condition_def(M, name).get("smothered_by_action"):
+            del char.conditions[name]
+    char.burning_damage = 0
 
 
 def condition_attack_penalty(char, M):
@@ -581,8 +634,15 @@ def tick_conditions(char, M):
         if not condition_def(M, name).get("repeats_damage"):
             continue
         if char.burning_damage:
-            apply_damage(char, reduce_by_armour(char.burning_damage, char, M))
-            break
+            frac = float(condition_def(M, name)
+                         .get("damage_fraction_per_round", 1.0))
+            char.burning_damage = int(char.burning_damage * frac)
+            if char.burning_damage <= 0:
+                char.conditions[name] = 0     # the fire has gone out
+            else:
+                apply_damage(char,
+                             reduce_by_armour(char.burning_damage, char, M))
+        break
     acts = True
     for name in char.conditions:
         # A condition that works as a penalty on the roll is applied
@@ -726,10 +786,19 @@ def can_cast(char, M):
     return char.has("magical", "initiate") or char.has("spiritual", "initiate")
 
 
-def area_rates(M, archetype):
-    """(squares covered per point of difficulty, difficulty per damage)."""
+def area_rates(M, archetype, spell=None):
+    """(squares covered per point of difficulty, difficulty per damage).
+
+    A spell may override either rate. A field spreads at the diffuse
+    rate but buys its damage at the blast rate, because a field nobody
+    minds crossing denies nothing."""
     a = M.get("spell-area", "archetypes", archetype)
-    return int(a["squares_per_difficulty"]), int(a["difficulty_per_damage"])
+    per_square = int(a["squares_per_difficulty"])
+    per_damage = int(a["difficulty_per_damage"])
+    if spell:
+        per_square = int(spell.get("squares_per_difficulty", per_square))
+        per_damage = int(spell.get("difficulty_per_damage", per_damage))
+    return per_square, per_damage
 
 
 def area_cost(squares, per_point):
@@ -940,9 +1009,6 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
                 value = success * bodies
                 if cond is not None and loss > 0:
                     # Every body it catches also loses part of the fight.
-                    # The number the defender has to beat is the casting
-                    # roll, which is at least the declared difficulty
-                    # whenever the spell goes off at all.
                     chance, held = condition_expectation(M, cond, difficulty,
                                                          resist)
                     value += (success * bodies * chance * held * loss
@@ -1041,6 +1107,9 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     import copy
     template = mook(kind, M)
     plan = _swarm_plan(hero_spec, template, M)
+    # What one of these creatures gives up by stopping to put itself
+    # out, which is the only thing it can weigh the fire against.
+    action_value, _ = attack_expectation(template, hero_spec, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
@@ -1067,6 +1136,9 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
                 # Burning bites and stun bites before the swing does.
                 if not tick_conditions(m, M):
                     continue
+                if would_smother(m, M, action_value):
+                    smother(m, M)
+                    continue        # the turn went on the flames
                 td = targeting_difficulty(hero, M)
                 total = (d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
                          - condition_attack_penalty(m, M))
@@ -1602,7 +1674,7 @@ def spell_options(M, spell_id, difficulty, duration_points=0):
         damage = int(sp["damage"]) + (spare // step) * int(sp["damage_per_step"])
         return [(damage, 0)]
 
-    per_point, per_damage = area_rates(M, str(sp["area_archetype"]))
+    per_point, per_damage = area_rates(M, str(sp["area_archetype"]), sp)
     out = []
     for radius in range(1, 6):
         squares = circle_squares(M, radius)
@@ -1660,13 +1732,24 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
     ticks = (field_ticks(spell_rounds(M, spell_id, duration_points))
              if persists(M, spell_id) else 1.0)
 
+    # The condition is settled by the declared difficulty, so it does
+    # not vary with the roll and is worked out once, up here.
     cond = spell_condition(M, spell_id)
+    burn = 0.0
+    control_each = 0.0
     if cond is not None:
         resist = defender.skill(resist_skill(M, cond), M)
-        loss = action_loss(M, cond)
-        repeats = bool(condition_def(M, cond).get("repeats_damage"))
+        chance, held = condition_expectation(M, cond, difficulty, resist)
+        if condition_def(M, cond).get("repeats_damage"):
+            # A burn deals a shrinking share of the blow that started
+            # it. Armour bites every tick, so the schedule is reduced
+            # tick by tick rather than in one lump.
+            burn_ticks = burn_schedule(M, cond, damage, int(round(held)))
+            burn = chance * sum(reduce_by_armour(t, defender, M)
+                                for t in burn_ticks)
         # What the defender would have done with the rounds it loses.
         foe_dpr, _ = attack_expectation(defender, char, M)
+        control_each = chance * held * action_loss(M, cond) * foe_dpr
 
     # A spell that needs an attack roll is aimed with the casting roll
     # itself -- one roll, two jobs, as spell-properties now says.
@@ -1690,17 +1773,8 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
             aimed = (not needs_aim) or ((roll >= td) if on_tie else (roll > td))
             if aimed:
                 landed = reduce_by_armour(damage + bonus, defender, M)
-                expected_damage += weight * landed * ticks
-                if cond is not None:
-                    # The casting roll is the number the defender has to
-                    # beat -- conditions.md reuses it rather than asking
-                    # for a second roll.
-                    chance, rounds = condition_expectation(M, cond, roll,
-                                                           resist)
-                    if repeats:
-                        expected_damage += weight * chance * rounds * landed
-                    expected_control += (weight * chance * rounds
-                                         * loss * foe_dpr)
+                expected_damage += weight * (landed * ticks + burn)
+                expected_control += weight * control_each
         else:
             expected_cost += weight * (0 if minor else minimum)
     return expected_damage, expected_cost, expected_control
@@ -1709,7 +1783,7 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
 def _spell_step(M, spell_id):
     sp = spell_def(M, spell_id)
     if "area_archetype" in sp:
-        return area_rates(M, str(sp["area_archetype"]))[1]
+        return area_rates(M, str(sp["area_archetype"]), sp)[1]
     return int(sp["difficulty_per_step"])
 
 

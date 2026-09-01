@@ -113,6 +113,7 @@
     },
     "conditions": {
       "resisted_by_opposed_roll": true,
+      "resist_target_is_declared_difficulty": true,
       "physical_resistance_skill": "fortitude",
       "mental_resistance_skill": "resolve",
       "base_rounds": 1,
@@ -126,7 +127,9 @@
         "burning": {
           "resisted_with": "fortitude",
           "margin_per_extra_round": 4,
-          "repeats_damage": true
+          "repeats_damage": true,
+          "damage_fraction_per_round": 0.5,
+          "smothered_by_action": true
         },
         "slowed": {
           "resisted_with": "fortitude",
@@ -736,6 +739,7 @@
         "base_difficulty": 8,
         "template": "circle",
         "area_archetype": "diffuse",
+        "difficulty_per_damage": 2,
         "minimum_spirit": 3,
         "needs_attack_roll": false,
         "duration_rounds": 2,

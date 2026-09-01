@@ -336,30 +336,38 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="summary">An effect that does more than damage is resisted with an opposed roll against Fortitude or Resolve, and how long it lasts depends on the margin.</p>
 <p>Some effects do more than damage. Being set alight, knocked senseless or thrown off your stride are <strong>conditions</strong>, and a creature always gets to resist one.</p>
 <h4>Resisting</h4>
-<p>Resisting is an opposed roll, exactly as <a href="#rule-core-resolution" data-rule-id="core-resolution">The Core Roll</a> describes. The effect's own total — for a spell, the casting roll that was already made — is the target to beat. The defender rolls <code>1d20</code> and adds whichever skill the effect names:</p>
+<p>Resisting is an opposed roll, exactly as <a href="#rule-core-resolution" data-rule-id="core-resolution">The Core Roll</a> describes. The number to beat is the <strong>difficulty declared</strong> for the effect — the one its user chose and paid for under <a href="#rule-using-powers" data-rule-id="using-powers">Using a Power</a>, not the roll they happened to make. The defender rolls <code>1d20</code> and adds whichever skill the effect names:</p>
 <ul><li><strong>fortitude</strong> for anything the body</li></ul>
 <p>fights off: fire, cold, poison, a blow that rattles the skull.</p>
 <ul><li><strong>resolve</strong> for anything the mind</li></ul>
 <p>fights off: fear, confusion, compulsion.</p>
-<p>Beat the effect's total and nothing happens to you. Fail and the condition lands.</p>
+<p>Beat the difficulty and nothing happens to you. Fail and the condition lands.</p>
+<h4>Spending to make it stick</h4>
+<p>Because the difficulty is the number to beat, anyone using a resistable effect can make it harder to shrug off the same way they make anything else bigger: by declaring a higher difficulty and paying for it. A Command spoken at difficulty <code>10</code> is a suggestion; the same word at difficulty <code>25</code> is very hard to refuse, and costs accordingly.</p>
+<p>This is the only lever, and it is deliberately the same lever that buys damage, area and reach. You cannot buy an unresistable effect cheaply by rolling well — a good roll makes the effect <em>affordable</em>, not <em>irresistible</em>.</p>
 <h4>How long it lasts</h4>
-<p>A condition that lands lasts 1 round, plus one more for every 5 points by which the effect's total beat your resistance roll. Some conditions are harder to sustain than that and say so.</p>
+<p>A condition that lands lasts 1 round, plus one more for every 5 points by which the difficulty beat your resistance roll. Some conditions are harder to sustain than that and say so.</p>
 <p>Margin decides duration for the same reason it decides everything else: a near-thing should be brief and an overwhelming one should stick.</p>
 <h4>The conditions</h4>
 <p><strong>Stunned</strong> — you lose your action. You may still move, and you still defend yourself. Resisted with fortitude, and it takes 15 points of margin to hold someone stunned for a second round, because taking a character's turn away is the harshest thing an effect can do.</p>
-<p><strong>Burning</strong> — you take the effect's damage again at the start of each of your turns. Resisted with fortitude, and it spreads easily: 4 points of margin buys another round of it.</p>
+<p><strong>Burning</strong> — the fire keeps eating at the start of each of your turns, but it is eating what is left of itself: each time it deals 0.5 of what it dealt the time before, rounding down, and when that reaches nothing the fire is out. You may instead spend your action to smother it, which ends it at once and needs no roll. Resisted with fortitude, and it spreads easily: 4 points of margin buys another round of it.</p>
+<p>Burning therefore adds up to about as much again as the blow that started it, however long it lasts — a fire spell is the one that deals the most damage, and the price of that is that it shapes the fight least. What it does offer is a choice: keep swinging and keep burning, or lose a turn putting yourself out.</p>
 <p><strong>Slowed</strong> — your movement is multiplied by 0.5 and you have no reaction. Resisted with fortitude.</p>
 <p><strong>Dazed</strong> — you take <code>-2</code> on attack rolls, and your targeting difficulty drops by the same. Resisted with resolve.</p>
 <h4>Example</h4>
-<p>Sela casts a Force Lance at an orc and rolls <code>27</code> in total. The lance hits, deals its damage, and tries to stun.</p>
-<p>The orc rolls to resist with Fortitude: <code>11</code> on the die plus a Fortitude of <code>6</code>, for <code>17</code>. Sela beat that by <code>10</code> — but stunning needs <code>15</code> points of margin for each extra round, so the orc is stunned for a single round. It loses its action, though it may still back away.</p>
+<p>Sela casts a Force Lance at an orc, declaring a difficulty of <code>27</code>. She rolls <code>29</code>, so the spell goes off and is cheap; but <code>27</code> is the number the orc has to beat, and rolling well has not made the stun any harder to resist.</p>
+<p>The orc rolls to resist with Fortitude: <code>11</code> on the die plus a Fortitude of <code>6</code>, for <code>17</code>. The difficulty beat that by <code>10</code> — but stunning needs <code>15</code> points of margin for each extra round, so the orc is stunned for a single round. It loses its action, though it may still back away.</p>
 <p>Had the orc rolled <code>28</code>, it would have shrugged the effect off completely and taken only the damage.</p>
-<p>Against a Flame Lance the same margin of <code>10</code> would have set it burning for three rounds, since fire needs only <code>4</code> points of margin a round — which is the difference between the two spells, and the reason to carry both.</p>
+<p>Had Sela wanted the stun to stick, the way to buy it was to declare a higher difficulty in the first place — at <code>42</code> the same orc roll would have been fifteen points short and lost two rounds instead of one. That is an expensive spell, and it should be.</p>
+<p>Against a Flame Lance the same margin of <code>10</code> would have set the orc burning for three rounds, since fire needs only <code>4</code> points of margin a round. If the lance dealt <code>9</code> damage, the fire then deals <code>4</code>, then <code>2</code>, then <code>1</code> — about as much again as the lance itself, spread out and shrinking. The orc may spend a turn beating the flames out instead, which is the whole of what a fire spell does to the shape of a fight.</p>
 <h4>Design note</h4>
 <p>Ico did not need saving throws. It already had two skills whose written purpose was resisting duress — Fortitude against the physical and Resolve against the mental — and no rule anywhere that used either of them. An opposed roll against the skill that already claims the job is one less subsystem than a saving throw, and it means a character who invested in Fortitude finds out why.</p>
-<p>Using the caster's existing roll as the target is the same economy that runs through the rest of the game. That single roll already settled whether the spell happened, what it cost and whether it landed; asking it to also stand as the number to beat costs nothing and keeps a spell to one roll on the caster's side.</p>
+<p>The number to beat is the declared difficulty because that is where every other decision about a power's size is made. Damage, area, reach and the number of creatures affected are all bought by declaring a difficulty and paying for it; how hard an effect is to shrug off had been the one exception, settled by a roll instead. That exception had a cost: a caster who wanted a stun to stick could not buy one, and was better off declaring the lowest difficulty that worked and hoping. One lever, used the same way everywhere, removes both the oddity and the tactic.</p>
+<p>The roll still does its two jobs — whether the spell happens, and what it costs. It simply no longer decides how strong the effect is, which keeps a good roll a matter of economy rather than of power.</p>
 <p>Duration by margin rather than a flat number is what stops every condition being equally decisive. Stun is the extreme case and is priced as one: it needs three times the margin of anything else to last a second round, because removing a character's turn is the harshest thing in the game and a spell that reliably removes several is the only spell anyone would ever cast.</p>
-<p class="related">See also: <a href="#rule-core-resolution">The Core Roll</a></p>
+<p>Burning is the opposite case, and had the opposite problem. A condition that repeats the whole of a spell's damage every round for as long as it lasts is not a secondary effect, it is a damage multiplier, and it made the fire spell in every family strictly the best one to cast. Halving the damage each round bounds the total at roughly one extra blow however long the fire burns, which is the profile fire ought to have: the most damage of any element, and the least say in how the fight goes.</p>
+<p>Letting the victim smother the flames is the one piece of shape a fire spell does have, and it belongs to the victim rather than the caster. A burning creature that keeps fighting keeps burning; one that stops to put itself out has lost a turn to a spell that never took one. Neither is a stun, and the choice is better than either.</p>
+<p class="related">See also: <a href="#rule-core-resolution">The Core Roll</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>
 <section class="doc" id="rule-recovery">
 <h3>Recovery Between Fights</h3>
@@ -994,8 +1002,12 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Force, Flame, Frost and Storm Blast differ only in damage type and domain.</p>
 <h5>Fields — diffuse</h5>
 <p><em>Base difficulty 8, circle, minimum spirit 3.</em></p>
-<p>A field does not go off; it stays. It lasts 2 rounds, plus 1 for each further point of difficulty spent on duration, and anything inside it takes the damage at the start of its turn. Wide, weak, and the only way a caster denies ground rather than clearing it.</p>
+<p>A field does not go off; it stays. It lasts 2 rounds, plus 1 for each further point of difficulty spent on duration, and anything inside it takes the damage at the start of its turn. It is the only way a caster denies ground rather than clearing it.</p>
+<p>A field spreads at the diffuse rate, so it covers more ground per point than anything else in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a> — but it pays for its damage at 2 points each, the same rate a blast pays, rather than the diffuse rate. A field that nobody minds walking through is not denying anything.</p>
 <p>Force, Flame, Frost and Storm Field differ only in damage type and domain.</p>
+<h5>Design note</h5>
+<p>Wide and weak was the original idea, and it does not work: a field that deals a scratch is a field the enemy walks straight across, which leaves the spell with no job at all. Area denial only denies if crossing costs something worth avoiding, so a damaging field buys its damage at the same rate a blast does and simply pays a great deal of difficulty for covering so much ground.</p>
+<p>That makes the damaging fields expensive, which is correct — most fields will not be damaging at all. Fog, tangling ground, silence and the rest deny ground by what they do rather than by what they deal, and those are the ones the archetype's cheap spread was written for.</p>
 <h4>Cure / Cause Wounds (16)</h4>
 <ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing, or harm when reversed</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 1</li></ul>
 <p>Restores hit point damage to the recipient. Cast as <em>Cause Wounds</em>, the same spell instead inflicts damage. This is a standard spell, not a minor one.</p>

@@ -40,9 +40,21 @@ RESERVOIR_MATTERS_FROM_LEVEL = 5
 # A mid-level character should be able to deal with rank-and-file
 # opposition briskly and without it costing much.
 SWARM_SIZE = 6
+SWARM_MOOK = "goblin"
 TRIALS_SWARM = 1200
 SWARM_ROUNDS_BY_LEVEL_10 = 4.0
 SWARM_HP_COST_BY_LEVEL_10 = 0.25
+# A damaging field is area denial, and denial only denies if crossing
+# costs something worth avoiding. One tick must take at least this much
+# of a rank-and-file creature's hit points through its armour -- a field
+# nobody minds walking through is not doing the job the spell exists for.
+MIN_FIELD_BITE_FRACTION = 0.25
+# A field the caster cannot land is not a field. Only spells they make
+# at least this often count towards the test.
+MIN_FIELD_SUCCESS = 0.5
+# The smallest area worth calling denial: anything narrower is a blast
+# that happens to linger.
+MIN_FIELD_SQUARES = 13
 
 # Every minor power is a weaker twin of a standard one. If a minor twin
 # ever matches its counterpart at the same difficulty, the standard
@@ -230,6 +242,72 @@ def free_bands(level, chars, M):
               % (name, skill, "diff <= %d" % always, "diff <= %d" % half, n))
 
 
+def best_field(char, foe, M, budget):
+    """The hardest-biting field this caster can actually land and pay
+    for, over an area wide enough to be worth walking around.
+
+    Affordability alone is not enough: expected cost FALLS as the
+    declared difficulty runs away, because the spell simply stops going
+    off, so a success floor has to be part of the question."""
+    best = None
+    for spell_id in m.combat_spells(M):
+        if not m.persists(M, spell_id):
+            continue
+        base = int(m.spell_def(M, spell_id)["base_difficulty"])
+        for extra in range(0, 5):
+            for difficulty in range(base, base + 70):
+                success = sum(w for face, w, _c in m.d20_faces(M)
+                              if face + char.casting_bonus(M) >= difficulty)
+                if success < MIN_FIELD_SUCCESS:
+                    continue
+                _dmg, cost, _ctl = m.cast_expectation(
+                    char, spell_id, difficulty, foe, M, extra)
+                if cost > budget:
+                    continue
+                for damage, squares in m.spell_options(M, spell_id,
+                                                       difficulty, extra):
+                    if squares < MIN_FIELD_SQUARES:
+                        continue
+                    bite = m.reduce_by_armour(damage, foe, M)
+                    if bite <= 0:
+                        continue        # a field that deals nothing is none
+                    if best is None or bite > best["bite"]:
+                        best = {"spell": spell_id, "difficulty": difficulty,
+                                "bite": bite, "squares": squares,
+                                "rounds": m.spell_rounds(M, spell_id, extra)}
+    return best
+
+
+def report_fields(level, chars, M):
+    """Would anybody go round? Crossing a field costs about one tick
+    plus whatever FIELD_LINGER keeps, so that is what gets compared to
+    the creature's hit points."""
+    hr("Area denial at level %d -- is a field worth walking around?" % level)
+    casters = {n: c for n, c in chars.items() if m.can_cast(c, M)}
+    if not casters:
+        print("no caster at this level")
+        return {}
+    out = {}
+    for name, c in sorted(casters.items()):
+        for kind in sorted(m.MOOKS):
+            foe = m.mook(kind, M)
+            field = best_field(c, foe, M, c.spirit / 4.0)
+            if field is None:
+                print("%-12s vs %-7s no field it can both land and afford"
+                      % (name, kind))
+                out[(name, kind)] = None
+                continue
+            cross = field["bite"] * (1 + m.FIELD_LINGER)
+            share = cross / foe.total_hp
+            print("%-12s vs %-7s %s @%d: %d over %d squares for %d rounds; "
+                  "crossing costs %.1f of %d hp (%.0f%%)"
+                  % (name, kind, field["spell"], field["difficulty"],
+                     field["bite"], field["squares"], field["rounds"],
+                     cross, foe.total_hp, share * 100))
+            out[(name, kind)] = share
+    return out
+
+
 def report_attrition(level, chars, M):
     """Fresh versus empty. This is the minor-power tier's whole reason
     for existing: a long adventure should wear a character down, not
@@ -326,6 +404,34 @@ def run_gates(levels, M, trials):
                             "L%d %s vs %s: %.2f expected damage per swing "
                             "(target >= %.1f)"
                             % (level, wkey, akey, damage, MIN_DAMAGE_VS_ANY_ARMOUR))
+
+        # Area denial has to deny. A field a rank-and-file creature is
+        # happy to stroll across is a spell with no job, so the test is
+        # whether crossing costs a worthwhile share of its hit points.
+        # Only a build with real magic behind it is asked this: an
+        # Initiate dabbler has no business laying down a field, and the
+        # test is measured against the same rank-and-file the swarm
+        # gates use rather than against something out of its weight.
+        for name, c in sorted(chars.items()):
+            if not (c.has("magical", "adept") or c.has("spiritual", "adept")):
+                continue
+            foe = m.mook(SWARM_MOOK, M)
+            field = best_field(c, foe, M, c.spirit / 4.0)
+            if field is None:
+                # Not a verdict on the field rates: this caster cannot
+                # land or afford one at all, which is a question about
+                # its reservoir.
+                failures.append(
+                    "L%d %s can neither land nor afford any field"
+                    % (level, name))
+                continue
+            cross = field["bite"] * (1 + m.FIELD_LINGER) / foe.total_hp
+            if cross < MIN_FIELD_BITE_FRACTION:
+                failures.append(
+                    "L%d %s's best field costs a %s %.0f%% of its hit "
+                    "points to cross (target >= %.0f%%)"
+                    % (level, name, SWARM_MOOK, cross * 100,
+                       MIN_FIELD_BITE_FRACTION * 100))
 
         contrib = contributions(chars, level, M)
         if len(contrib) > 1:
@@ -502,6 +608,7 @@ def main():
         report_sheets(level, chars, M)
         report_dpr(level, chars, M)
         report_swarm(level, chars, M)
+        report_fields(level, chars, M)
         free_bands(level, chars, M)
         report_attrition(level, chars, M)
         report_powers(level, chars, M)

@@ -85,6 +85,7 @@ mechanics:
     base_difficulty: 8
     template: circle
     area_archetype: diffuse
+    difficulty_per_damage: 2
     minimum_spirit: 3
     needs_attack_roll: false
     duration_rounds: 2
@@ -277,11 +278,33 @@ A field does not go off; it stays. It lasts
 {{ mechanics.field.duration_rounds }} rounds, plus
 {{ mechanics.field.rounds_per_difficulty }} for each further point of
 difficulty spent on duration, and anything inside it takes the damage at
-the start of its turn. Wide, weak, and the only way a caster denies
-ground rather than clearing it.
+the start of its turn. It is the only way a caster denies ground rather
+than clearing it.
+
+A field spreads at the {{ mechanics.field.area_archetype }} rate, so it
+covers more ground per point than anything else in [[spell-area]] — but
+it pays for its damage at {{ mechanics.field.difficulty_per_damage }}
+points each, the same rate a blast pays, rather than the diffuse rate.
+A field that nobody minds walking through is not denying anything.
 
 Force, Flame, Frost and Storm Field differ only in damage type and
 domain.
+
+{% book-only %}
+### Design note
+
+Wide and weak was the original idea, and it does not work: a field that
+deals a scratch is a field the enemy walks straight across, which leaves
+the spell with no job at all. Area denial only denies if crossing costs
+something worth avoiding, so a damaging field buys its damage at the
+same rate a blast does and simply pays a great deal of difficulty for
+covering so much ground.
+
+That makes the damaging fields expensive, which is correct — most fields
+will not be damaging at all. Fog, tangling ground, silence and the rest
+deny ground by what they do rather than by what they deal, and those are
+the ones the archetype's cheap spread was written for.
+{% endbook-only %}
 
 ## Cure / Cause Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 
