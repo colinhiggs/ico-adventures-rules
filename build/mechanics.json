@@ -891,6 +891,7 @@
     "weapons": {
       "finesse_size": "S",
       "two_handed_size": "L",
+      "large_weapon_skill_penalty": -2,
       "dagger": {
         "accuracy": 2,
         "damage": 4,

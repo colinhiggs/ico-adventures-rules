@@ -906,16 +906,14 @@ def targeting_difficulty(defender, M, dodge_bonus=0):
 
 
 def weapon_skill_penalty(weapon, M):
-    """What carrying this weapon costs the skills it gets in the way of.
+    """What carrying this weapon costs your defence.
 
-    Armour already interferes with skills by weight; a weapon can too,
-    and a big one plausibly should. Read from an optional
-    `size_skill_penalty` map on the weapons rule, so with the map absent
-    a weapon interferes with nothing and the model behaves as before."""
-    if "size_skill_penalty" not in M.keys("weapons"):
+    Armour interferes with skills by weight and a large weapon does the
+    same, which is what pays for the reach it gets in reach.md. The
+    value is negative, like armour's."""
+    if not two_handed(weapon, M):
         return 0
-    table = M.get("weapons", "size_skill_penalty")
-    return int(table.get(weapon.size, 0))
+    return int(M.get("weapons", "large_weapon_skill_penalty"))
 
 
 def untouchable_relief(defender, penalty, M):

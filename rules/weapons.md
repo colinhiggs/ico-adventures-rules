@@ -8,6 +8,7 @@ summary: >
 mechanics:
   finesse_size: S
   two_handed_size: L
+  large_weapon_skill_penalty: -2
   dagger:
     accuracy: 2
     damage: 4
@@ -118,11 +119,17 @@ smaller weapon takes one. A two-handed weapon cannot be carried with a
 shield from [[armour]], and it leaves no hand free for anything that
 needs one — see [[free-hands]].
 
-## Reach
+## Reach, and what it costs
 
 A weapon of size {{ mechanics.two_handed_size }} extends its wielder's
 reach; smaller weapons do not. What that is worth in a fight is in
 [[reach]], and how reach is measured is in [[movement]].
+
+It is long because it is big, and being big is not free. A weapon of
+that size takes `{{ mechanics.large_weapon_skill_penalty }}` off your
+defence, whichever way you defend — the same kind of interference heavy
+[[armour]] causes, and for the same reason. You are carrying something
+that gets in your way.
 
 ## Quick weapons
 
@@ -152,6 +159,18 @@ and no free hand for a shield.
 
 {% book-only %}
 ## Design note
+
+A large weapon is the best of the table on damage and the only one that
+reaches. Left there it would be the only weapon anybody carried, and the
+rest of this list would be scenery. The penalty to defence is what buys
+the reach, and it is deliberately steep enough to be a decision rather
+than a formality: you are choosing to be harder to get near and easier
+to hit once somebody is near.
+
+That is how the rest of the table stays alive. A weapon is not chosen by
+finding the largest damage figure but by asking what a fight is going to
+look like — whether you expect to keep people off you, or to be reached
+anyway and want to be hard to land a blow on when you are.
 
 Finesse exists because without it the game has no nimble fighter in it
 at all. Melee attack is a strength skill while dodge is a dexterity one,

@@ -338,6 +338,12 @@ land the thing at least half the time before it counts.
   by survival, so a build that raises both at once is the worst case the
   metric can be shown. Read its numbers as a bound, not as a build
   anybody would play.
+- **Level 1 duels sit on the floor of `TARGET_ROUNDS` and always have.**
+  They average barely above three rounds before any weapon rule is
+  applied, so anything that makes anybody easier to hit tips several
+  pairings under it at once. When a change fails the round-length gate
+  at level 1 and passes or improves it everywhere else, suspect the
+  level rather than the change.
 - **Reach and quickness reach duels and the gear chooser, not the
   skirmish loop.** A crowd closing on one character is exactly where
   reach should matter most, and the crowd model has no positions at all.
