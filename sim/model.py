@@ -1669,39 +1669,63 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     plans = {id(spec_a): (plan_a, guard_a), id(spec_b): (plan_b, guard_b)}
     open_a = opening_attacks(spec_a, spec_b, M)
     open_b = opening_attacks(spec_b, spec_a, M)
+    # What each side gives up by stopping to beat out flames.
+    worth = {id(spec_a): expected_offence(spec_a, spec_b, M),
+             id(spec_b): expected_offence(spec_b, spec_a, M)}
 
     for _ in range(trials):
         a = _fresh(spec_a)
         b = _fresh(spec_b)
         rounds = 0
+        fields = []             # persisting spells still on the ground
 
         # Reach is paid once, as the fight is joined: whoever reaches
         # further strikes while the other closes, and after that closing
         # and withdrawing cancel.
         for _ in range(open_a):
-            _act(a, b, _pick(plan_a), M, dodge_bonus=_guard(b, guard_b, M))
+            _deliver(a, b, _pick(plan_a), M, _guard(b, guard_b, M), fields)
         for _ in range(open_b):
             if a.chp > 0:
-                _act(b, a, _pick(plan_b), M, dodge_bonus=_guard(a, guard_a, M))
+                _deliver(b, a, _pick(plan_b), M, _guard(a, guard_a, M),
+                         fields)
 
         first, second = initiative_order(a, b, M)
-        f_plan, f_guard = plans[id(spec_a) if first is a else id(spec_b)]
-        s_plan, s_guard = plans[id(spec_a) if second is a else id(spec_b)]
+        f_key = id(spec_a) if first is a else id(spec_b)
+        s_key = id(spec_a) if second is a else id(spec_b)
+        f_plan, f_guard = plans[f_key]
+        s_plan, s_guard = plans[s_key]
 
         while a.chp > 0 and b.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _act(first, second, _pick(f_plan), M,
-                 dodge_bonus=_guard(second, s_guard, M))
+            _turn(first, second, _pick(f_plan), s_guard, M, fields,
+                  worth[f_key])
             if second.chp <= 0:
                 break
-            _act(second, first, _pick(s_plan), M,
-                 dodge_bonus=_guard(first, f_guard, M))
+            _turn(second, first, _pick(s_plan), f_guard, M, fields,
+                  worth[s_key])
+            _age_fields(fields)
         rounds_total += rounds
         if rounds >= max_rounds:
             capped += 1
         elif b.chp <= 0:
             a_wins += 1
     return rounds_total / trials, a_wins / trials, capped / trials
+
+
+def _turn(actor, other, plan, other_guard, M, fields, action_value):
+    """One combatant's turn: what the ground and the conditions do to
+    them first, then what they do about it."""
+    if actor.chp <= 0:
+        return
+    _stand_in_fields(actor, fields, M)
+    if actor.chp <= 0:
+        return
+    if not tick_conditions(actor, M):
+        return                          # stunned, or slowed out of reach
+    if would_smother(actor, M, action_value):
+        smother(actor, M)
+        return                          # the turn went on the flames
+    _deliver(actor, other, plan, M, _guard(other, other_guard, M), fields)
 
 
 def _cast_at_crowd(hero, crowd, plan, M, fields=None):
@@ -2224,14 +2248,89 @@ def floor_offence(char, foe, M):
 
 
 def _plan(char, foe, M, rounds_budget):
+    """What this character means to do with its action each round.
+
+    A caster's best turn is a spell, and until this asked, every duel in
+    the report measured a wizard on whatever it happened to be holding.
+    Spell and power are weighed in the same currency the contribution
+    gate uses -- damage plus control -- because a stun the foe spends a
+    round shaking off is worth what the foe would have done with it."""
     budget = char.stamina / float(rounds_budget)
     plain, _ = attack_expectation(char, foe, M)
+
+    spell = None
+    if can_cast(char, M):
+        pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
+        if pick[0] is not None and pick[1] + pick[4] > plain:
+            spell = {"spell": pick[0], "difficulty": pick[3],
+                     "duration_points": pick[5], "value": pick[1] + pick[4]}
+
     plans = {}
     for label, conditional in (("open", False), ("flank", True)):
         best = _best_option(char, foe, M, budget, conditional)
-        plans[label] = (None if best[0] is None or best[1] <= plain
-                        else {"power": best[0], "difficulty": best[3]})
+        chosen = (None if best[0] is None or best[1] <= plain
+                  else {"power": best[0], "difficulty": best[3]})
+        if spell is not None:
+            martial = best[1] if chosen is not None else plain
+            if spell["value"] > martial:
+                chosen = spell
+        plans[label] = chosen
     return plans
+
+
+def _cast_at(actor, target, plan, M, fields=None):
+    """One spell, at one target, in a duel. The same roll settles
+    whether it goes off, what it costs and -- for a spell that needs
+    aiming -- whether it lands, exactly as spell-properties says."""
+    spell_id = plan["spell"]
+    sp = spell_def(M, spell_id)
+    difficulty = plan["difficulty"]
+    extra = plan.get("duration_points", 0)
+    minor = sp.get("tier") == "minor"
+    minimum = int(sp.get("minimum_spirit", 0))
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+
+    damage, _squares = spell_shape(M, spell_id, difficulty, extra)
+    face, was_crit = d20(M)
+    roll = face + actor.casting_bonus(M)
+
+    if roll < difficulty:
+        actor.spirit = max(0, actor.spirit - (0 if minor else minimum))
+        return
+    cost = max(minimum, power_cost(difficulty, roll, M, minor))
+    if cost > actor.spirit:
+        return                      # cannot spend what you do not have
+    actor.spirit -= cost
+
+    if bool(sp.get("needs_attack_roll")):
+        td = targeting_difficulty(target, M)
+        if not ((roll >= td) if on_tie else (roll > td)):
+            return                  # cast, aimed, missed
+
+    if was_crit:
+        more, _sq = spell_shape(M, spell_id, difficulty
+                                + critical_bonus_steps(M)
+                                * _spell_step(M, spell_id), extra)
+        damage = max(damage, more)
+
+    apply_damage(target, reduce_by_armour(damage, target, M))
+
+    cond = spell_condition(M, spell_id)
+    if cond is not None and target.chp > 0:
+        try_condition(target, cond, difficulty, M, damage=damage)
+
+    if persists(M, spell_id) and fields is not None and target.chp > 0:
+        fields.append({"damage": damage,
+                       "rounds": spell_rounds(M, spell_id, extra) - 1,
+                       "caught": {id(target)}})
+
+
+def _deliver(actor, target, plan, M, dodge_bonus=0, fields=None):
+    """Spend the action, whichever kind of action it is."""
+    if plan is not None and "spell" in plan:
+        _cast_at(actor, target, plan, M, fields)
+    else:
+        _act(actor, target, plan, M, dodge_bonus=dodge_bonus)
 
 
 def _act(actor, target, plan, M, dodge_bonus=0):

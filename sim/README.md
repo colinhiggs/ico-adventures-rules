@@ -223,6 +223,15 @@ initiative skill, fixed for the fight, and overridden by a quick weapon
 inside a longer one. Before this, `a` simply always struck first, which
 was a quiet thumb on the scale in every duel the report printed.
 
+Duels also **cast**. A caster's plan is weighed in the same currency the
+contribution gate uses, damage plus control, and resolved with the
+conditions and persisting fields the crowd loop already understood: a
+burn bites at the start of a turn, a stun takes it away, and a burning
+combatant may spend the turn putting itself out. Until this was added,
+every duel in the report measured a wizard on whatever it happened to be
+holding -- which mattered much more once the gear chooser started
+handing it a dagger for its free hand.
+
 ## The adventuring day
 
 A single fight from full is not the question a dungeon asks. `model.py`
@@ -344,6 +353,12 @@ land the thing at least half the time before it counts.
   pairings under it at once. When a change fails the round-length gate
   at level 1 and passes or improves it everywhere else, suspect the
   level rather than the change.
+- **A caster duels toe to toe, which is the last place it would
+  choose.** Its spells reach ten squares and the model has no positions,
+  so it cannot back away and make a melee build spend the fight
+  closing. Every caster duel in the report is therefore the worst case
+  for the caster, and the win rates should be read as a floor rather
+  than an estimate.
 - **Reach and quickness reach duels and the gear chooser, not the
   skirmish loop.** A crowd closing on one character is exactly where
   reach should matter most, and the crowd model has no positions at all.
