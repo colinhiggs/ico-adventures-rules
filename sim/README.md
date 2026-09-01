@@ -104,6 +104,15 @@ not damage alone: a defensive signature scores zero on a damage-only
 measure, which made the most over-powered build in an early run look
 like the weakest.
 
+**Contribution is a single-target, melee-range measure, and a caster
+fails it for reasons that are not faults.** It counts damage to one
+creature and how long the build survives being stood next to. It does
+not count clearing six goblins in a round, and it does not count doing
+so from thirty metres away without being hit at all. A caster scoring
+three or four times below a fighter on this gate is the metric's blind
+spot as much as the build's weakness -- read the rank-and-file table
+alongside it before concluding anything.
+
 These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
 because the design intent moved, never to make the report quiet.

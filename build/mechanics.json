@@ -603,16 +603,16 @@
       "default_archetype": "balanced",
       "archetypes": {
         "diffuse": {
-          "difficulty_per_square": 1,
-          "difficulty_per_damage": 6
+          "squares_per_difficulty": 6,
+          "difficulty_per_damage": 4
         },
         "balanced": {
-          "difficulty_per_square": 2,
-          "difficulty_per_damage": 3
+          "squares_per_difficulty": 3,
+          "difficulty_per_damage": 2
         },
         "concentrated": {
-          "difficulty_per_square": 3,
-          "difficulty_per_damage": 2
+          "squares_per_difficulty": 1,
+          "difficulty_per_damage": 1
         }
       },
       "circle_squares": {
@@ -712,15 +712,96 @@
         "domain": "war",
         "condition": "dazed"
       },
-      "flame_burst": {
+      "burst": {
         "school": "energy",
-        "domain": "war",
-        "damage_type": "fire",
-        "base_difficulty": 4,
+        "base_difficulty": 6,
         "template": "circle",
         "area_archetype": "concentrated",
-        "minimum_spirit": 1,
+        "minimum_spirit": 2,
+        "needs_attack_roll": false,
+        "applies_condition": true
+      },
+      "blast": {
+        "school": "energy",
+        "base_difficulty": 6,
+        "template": "any",
+        "area_archetype": "balanced",
+        "minimum_spirit": 2,
         "needs_attack_roll": false
+      },
+      "field": {
+        "school": "energy",
+        "base_difficulty": 8,
+        "template": "circle",
+        "area_archetype": "diffuse",
+        "minimum_spirit": 3,
+        "needs_attack_roll": false,
+        "duration_rounds": 2,
+        "rounds_per_difficulty": 1
+      },
+      "force_burst": {
+        "family": "burst",
+        "damage_type": "force",
+        "domain": "magic",
+        "condition": "stunned"
+      },
+      "flame_burst": {
+        "family": "burst",
+        "damage_type": "fire",
+        "domain": "war",
+        "condition": "burning"
+      },
+      "frost_burst": {
+        "family": "burst",
+        "damage_type": "cold",
+        "domain": "nature",
+        "condition": "slowed"
+      },
+      "storm_burst": {
+        "family": "burst",
+        "damage_type": "lightning",
+        "domain": "war",
+        "condition": "dazed"
+      },
+      "force_blast": {
+        "family": "blast",
+        "damage_type": "force",
+        "domain": "magic"
+      },
+      "flame_blast": {
+        "family": "blast",
+        "damage_type": "fire",
+        "domain": "war"
+      },
+      "frost_blast": {
+        "family": "blast",
+        "damage_type": "cold",
+        "domain": "nature"
+      },
+      "storm_blast": {
+        "family": "blast",
+        "damage_type": "lightning",
+        "domain": "war"
+      },
+      "force_field": {
+        "family": "field",
+        "damage_type": "force",
+        "domain": "magic"
+      },
+      "flame_field": {
+        "family": "field",
+        "damage_type": "fire",
+        "domain": "war"
+      },
+      "frost_field": {
+        "family": "field",
+        "damage_type": "cold",
+        "domain": "nature"
+      },
+      "storm_field": {
+        "family": "field",
+        "damage_type": "lightning",
+        "domain": "war"
       },
       "cure_wounds": {
         "base_difficulty": 16,

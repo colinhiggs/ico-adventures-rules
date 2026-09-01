@@ -910,16 +910,16 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Beyond the listed sizes, count the squares on the map. The tables exist to save arithmetic at the common sizes, not to cap the shapes.</p>
 <h4>The two rates</h4>
 <p>Every area spell lists two rates of its own:</p>
-<ul><li><strong>Per square</strong> — the difficulty each covered square costs.</li><li><strong>Per damage</strong> — the difficulty each point of damage costs, dealt to</li></ul>
+<ul><li><strong>Coverage</strong> — how many squares one point of difficulty covers.</li><li><strong>Per damage</strong> — the difficulty each point of damage costs, dealt to</li></ul>
 <p>everything the area covers.</p>
-<p>Total difficulty is the spell's base, plus squares times the first rate, plus damage times the second. A spell that deals no damage pays only for its squares.</p>
+<p>Total difficulty is the spell's base, plus the squares divided by the coverage rate and rounded up, plus damage times the second rate. A spell that deals no damage pays only for its squares.</p>
 <p>The two rates move against each other, and their balance <em>is</em> the spell's character. Three shapes cover almost everything:</p>
-<ul><li><strong>Diffuse</strong> — 1</li></ul>
-<p>per square, 6 per damage. Cheap to spread, dear to sharpen: a spell that blankets ground and barely stings.</p>
+<ul><li><strong>Diffuse</strong> —</li></ul>
+<p>6 squares per point, 4 per damage. Cheap to spread, dear to sharpen: a spell that blankets ground and barely stings.</p>
 <ul><li><strong>Balanced</strong> —</li></ul>
-<p>2 per square, 3 per damage.</p>
+<p>3 squares per point, 2 per damage.</p>
 <ul><li><strong>Concentrated</strong> —</li></ul>
-<p>3 per square, 2 per damage. Dear to spread, cheap to sharpen: a small, fierce burst.</p>
+<p>1 square per point, 1 per damage. Dear to spread, cheap to sharpen: a small, fierce burst.</p>
 <p>A spell that names no rates uses the balanced pair.</p>
 <h4>Example</h4>
 <p>Sela has <code>36</code> points of difficulty to spend on a burst with a base of <code>4</code>, and three orcs are standing close together.</p>
@@ -929,7 +929,9 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Design note</h4>
 <p>Charging by the square rather than by the template is what keeps area magic honest. A spell that catches a dozen creatures is worth roughly a dozen times one that catches a single creature, and pricing per <em>shape</em> instead invites the caster to always take the largest version of whichever shape is cheapest.</p>
 <p>Two rates rather than one, moving inversely, is the part that took measuring. A single per-square dial does not produce a trade-off at all: cheaper squares are simply better, since the cost only ever subtracts from the budget, and a designer choosing an expensive rate would just be writing a worse spell. It is only when cheap coverage is paid for with expensive damage that "wide and weak" and "small and fierce" become two real options rather than one good one and one bad one.</p>
-<p>The rates are set so that <strong>no area spell beats a bolt against a single target</strong>, at any budget. Checked across the three archetypes at low, middle and high difficulty, every configuration loses on one creature and wins on two or more. That is the invariant worth protecting: area magic should be the answer to a crowd, never a strictly better way to hurt one person, or single-target spells stop being worth writing.</p>
+<p>Two invariants hold the rates in place, and both are checked by measurement rather than argued.</p>
+<p><strong>No area spell beats a lance against a single target.</strong> Area magic should be the answer to a crowd, never a better way to hurt one person, or the single-target spells stop being worth writing at all.</p>
+<p><strong>A caster clears a crowd at least as fast as a melee character built to do it.</strong> That is the point of the family, and it was not true when these rates were first written: they were calibrated against whether an area spell beat a bolt if it caught two creatures, and nobody checked whether a caster could afford a useful radius in the first place. They could not. At level fifteen no archetype could reach radius two with enough damage left to kill anything, which is why the rates are now expressed as squares covered per point rather than points per square — coverage had to get several times cheaper before the family worked at all.</p>
 <p>The tables cover the sizes that actually come up, so that nobody multiplies by pi at the table. Past radius five, a caster who can afford something that large can afford to count it.</p>
 <p class="related">See also: <a href="#rule-movement">Movement and Distance</a></p>
 </section>
@@ -972,12 +974,28 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <ul><li><strong>Storm Lance</strong> — lightning damage,</li></ul>
 <p>domain of war, leaves the target <strong>dazed</strong>.</p>
 <p>Which lance to carry is a question about the fight rather than about the numbers: they deal the same damage, and the condition is the whole difference.</p>
-<h4>Flame Burst (4)</h4>
-<ul><li><strong>School:</strong> energy</li><li><strong>Domain:</strong> war</li><li><strong>Template:</strong> circle, priced as a</li></ul>
-<p>concentrated area — see <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></p>
-<ul><li><strong>Damage type:</strong> fire</li><li><strong>Minimum spirit:</strong> 1</li></ul>
-<p>Fire blooms outward from a point the caster can see. Everything in the circle takes the damage; there is no attack roll to make and nothing to dodge, which is what an area spell buys with its difficulty.</p>
-<p>Being concentrated, it is dear to spread and cheap to sharpen: a small fierce burst rather than a blanket of flame.</p>
+<h4>The area spells</h4>
+<p>Three families, and each of the four damage types appears in all three. None of them needs an attack roll: everything under the template takes the damage, and having nothing to dodge is what an area spell buys with its difficulty.</p>
+<p>The family decides what kind of spell it is; the damage type decides how it looks and, for a burst, what it leaves behind.</p>
+<h5>Bursts — concentrated</h5>
+<p><em>Base difficulty 6, circle, minimum spirit 2.</em></p>
+<p>Small and fierce, and the only area family that applies a condition — the same conditions the lances carry, resisted the same way. See <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
+<ul><li><strong>Force Burst</strong> — force damage,</li></ul>
+<p>leaves the target <strong>stunned</strong>.</p>
+<ul><li><strong>Flame Burst</strong> — fire damage,</li></ul>
+<p>leaves the target <strong>burning</strong>.</p>
+<ul><li><strong>Frost Burst</strong> — cold damage,</li></ul>
+<p>leaves the target <strong>slowed</strong>.</p>
+<ul><li><strong>Storm Burst</strong> — lightning damage,</li></ul>
+<p>leaves the target <strong>dazed</strong>.</p>
+<h5>Blasts — balanced</h5>
+<p><em>Base difficulty 6, minimum spirit 2.</em></p>
+<p>A blast takes <strong>any template in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></strong> — circle, cone, line, square or rectangle — chosen as it is cast. That flexibility is the family's whole character: a blast carries no condition and lasts no time, but it is the only area spell that can be poured down a corridor or swept across a rank.</p>
+<p>Force, Flame, Frost and Storm Blast differ only in damage type and domain.</p>
+<h5>Fields — diffuse</h5>
+<p><em>Base difficulty 8, circle, minimum spirit 3.</em></p>
+<p>A field does not go off; it stays. It lasts 2 rounds, plus 1 for each further point of difficulty spent on duration, and anything inside it takes the damage at the start of its turn. Wide, weak, and the only way a caster denies ground rather than clearing it.</p>
+<p>Force, Flame, Frost and Storm Field differ only in damage type and domain.</p>
 <h4>Cure / Cause Wounds (16)</h4>
 <ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing, or harm when reversed</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 1</li></ul>
 <p>Restores hit point damage to the recipient. Cast as <em>Cause Wounds</em>, the same spell instead inflicts damage. This is a standard spell, not a minor one.</p>

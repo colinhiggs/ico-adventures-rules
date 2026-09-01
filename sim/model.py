@@ -570,8 +570,14 @@ def can_cast(char, M):
 
 
 def area_rates(M, archetype):
+    """(squares covered per point of difficulty, difficulty per damage)."""
     a = M.get("spell-area", "archetypes", archetype)
-    return int(a["difficulty_per_square"]), int(a["difficulty_per_damage"])
+    return int(a["squares_per_difficulty"]), int(a["difficulty_per_damage"])
+
+
+def area_cost(squares, per_point):
+    """Squares divided by the coverage rate, rounded up."""
+    return -(-squares // per_point)
 
 
 def circle_squares(M, radius):
@@ -724,6 +730,15 @@ def area_catch(squares, count):
     return max(1, min(count, squares // SQUARES_PER_BODY))
 
 
+def _hp_needed(foe, M, spell_id, difficulty):
+    """How much raw damage it takes to drop this creature through its
+    armour, so the planner can tell a killing shape from a scratch."""
+    for raw in range(1, 200):
+        if reduce_by_armour(raw, foe, M) >= foe.total_hp:
+            return raw
+    return 200
+
+
 def _spell_swarm_plan(hero, foe, M, count, budget):
     """The best area spell against a crowd, scored on bodies dropped."""
     if not can_cast(hero, M):
@@ -737,20 +752,21 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
             continue
         base = int(sp["base_difficulty"])
         for difficulty in range(base, base + 70):
-            damage, squares = spell_shape(M, spell_id, difficulty)
-            if squares == 0:
+            # Pick the shape that kills, not the one that covers most.
+            damage, squares, bodies = spell_best_for_crowd(
+                M, spell_id, difficulty,
+                _hp_needed(foe, M, spell_id, difficulty), count)
+            if bodies <= 0:
                 continue
             _, cost = cast_expectation(hero, spell_id, difficulty, foe, M)
             if cost > budget:
                 continue
-            landed = reduce_by_armour(damage, foe, M)
-            if landed < hp:
-                continue
             success = sum(w for face, w, _c in d20_faces(M)
                           if face + hero.casting_bonus(M) >= difficulty)
-            kills = success * area_catch(squares, count)
+            kills = success * bodies
             if kills > best[1]:
-                best = ({"spell": spell_id, "difficulty": difficulty}, kills, squares)
+                best = ({"spell": spell_id, "difficulty": difficulty,
+                         "squares": squares}, kills, squares)
     return best[0]
 
 
@@ -1102,7 +1118,15 @@ def _cast_at_crowd(hero, crowd, plan, M):
     difficulty = plan["difficulty"]
     minor = sp.get("tier") == "minor"
     minimum = int(sp.get("minimum_spirit", 0))
-    damage, squares = spell_shape(M, plan["spell"], difficulty)
+    living0 = [x for x in crowd if x.chp > 0]
+    if living0:
+        need = _hp_needed(living0[0], M, plan["spell"], difficulty)
+        damage, squares, _bodies = spell_best_for_crowd(
+            M, plan["spell"], difficulty, need, len(living0))
+        if squares == 0:
+            damage, squares = spell_shape(M, plan["spell"], difficulty)
+    else:
+        damage, squares = spell_shape(M, plan["spell"], difficulty)
 
     roll, _crit = d20(M)
     roll += hero.casting_bonus(M)
@@ -1268,34 +1292,48 @@ def expected_offence(char, foe, M, rounds_budget=4):
             + (1 - SNEAK_AVAILABILITY) * unconditional)
 
 
-def spell_shape(M, spell_id, difficulty):
-    """What a spell actually delivers at a declared difficulty.
-
-    Returns (damage, squares) -- squares is 0 for a single-target spell.
-    An area spell spends its budget on coverage first at the archetype's
-    per-square rate, then turns what is left into damage at its
-    per-damage rate; a bolt has no area and buys damage directly."""
+def spell_options(M, spell_id, difficulty):
+    """Every (damage, squares) a spell can be shaped into at this
+    difficulty. An area spell trades coverage against damage, and which
+    trade is right depends entirely on what is being shot at -- so the
+    choice belongs to the caller, not to a heuristic buried here."""
     sp = spell_def(M, spell_id)
     base = int(sp["base_difficulty"])
     spare = max(0, difficulty - base)
 
-    if "area_archetype" in sp:
-        per_square, per_damage = area_rates(M, str(sp["area_archetype"]))
-        best = (0, 0)
-        for radius in range(1, 6):
-            squares = circle_squares(M, radius)
-            left = spare - squares * per_square
-            if left < 0:
-                break
-            damage = left // per_damage
-            # More bodies covered beats more damage per body, up to the
-            # point where the damage stops being worth anything.
-            if damage > 0 and squares >= best[1]:
-                best = (damage, squares)
-        return best
+    if "area_archetype" not in sp:
+        step = int(sp["difficulty_per_step"])
+        damage = int(sp["damage"]) + (spare // step) * int(sp["damage_per_step"])
+        return [(damage, 0)]
 
-    step = int(sp["difficulty_per_step"])
-    return int(sp["damage"]) + (spare // step) * int(sp["damage_per_step"]), 0
+    per_point, per_damage = area_rates(M, str(sp["area_archetype"]))
+    out = []
+    for radius in range(1, 6):
+        squares = circle_squares(M, radius)
+        left = spare - area_cost(squares, per_point)
+        if left < 0:
+            break
+        out.append((left // per_damage, squares))
+    return out or [(0, 0)]
+
+
+def spell_shape(M, spell_id, difficulty):
+    """The hardest-hitting shape, which is what a single target cares
+    about."""
+    return max(spell_options(M, spell_id, difficulty), key=lambda o: o[0])
+
+
+def spell_best_for_crowd(M, spell_id, difficulty, target_hp, count):
+    """The shape that drops the most bodies: wide enough to reach them,
+    still hard enough to kill them."""
+    best = (0, 0, 0.0)
+    for damage, squares in spell_options(M, spell_id, difficulty):
+        if damage < target_hp:
+            continue
+        bodies = area_catch(squares, count)
+        if bodies > best[2]:
+            best = (damage, squares, bodies)
+    return best
 
 
 def cast_expectation(char, spell_id, difficulty, defender, M):

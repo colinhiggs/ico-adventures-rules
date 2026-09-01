@@ -65,15 +65,82 @@ mechanics:
     damage_type: lightning
     domain: war
     condition: dazed
-  flame_burst:
+  burst:
     school: energy
-    domain: war
-    damage_type: fire
-    base_difficulty: 4
+    base_difficulty: 6
     template: circle
     area_archetype: concentrated
-    minimum_spirit: 1
+    minimum_spirit: 2
     needs_attack_roll: false
+    applies_condition: true
+  blast:
+    school: energy
+    base_difficulty: 6
+    template: any
+    area_archetype: balanced
+    minimum_spirit: 2
+    needs_attack_roll: false
+  field:
+    school: energy
+    base_difficulty: 8
+    template: circle
+    area_archetype: diffuse
+    minimum_spirit: 3
+    needs_attack_roll: false
+    duration_rounds: 2
+    rounds_per_difficulty: 1
+  force_burst:
+    family: burst
+    damage_type: force
+    domain: magic
+    condition: stunned
+  flame_burst:
+    family: burst
+    damage_type: fire
+    domain: war
+    condition: burning
+  frost_burst:
+    family: burst
+    damage_type: cold
+    domain: nature
+    condition: slowed
+  storm_burst:
+    family: burst
+    damage_type: lightning
+    domain: war
+    condition: dazed
+  force_blast:
+    family: blast
+    damage_type: force
+    domain: magic
+  flame_blast:
+    family: blast
+    damage_type: fire
+    domain: war
+  frost_blast:
+    family: blast
+    damage_type: cold
+    domain: nature
+  storm_blast:
+    family: blast
+    damage_type: lightning
+    domain: war
+  force_field:
+    family: field
+    damage_type: force
+    domain: magic
+  flame_field:
+    family: field
+    damage_type: fire
+    domain: war
+  frost_field:
+    family: field
+    damage_type: cold
+    domain: nature
+  storm_field:
+    family: field
+    damage_type: lightning
+    domain: war
   cure_wounds:
     base_difficulty: 16
     school: life_force
@@ -159,21 +226,62 @@ Which lance to carry is a question about the fight rather than about the
 numbers: they deal the same damage, and the condition is the whole
 difference.
 
-## Flame Burst ({{ mechanics.flame_burst.base_difficulty }})
+## The area spells
 
-- **School:** {{ mechanics.flame_burst.school }}
-- **Domain:** {{ mechanics.flame_burst.domain }}
-- **Template:** {{ mechanics.flame_burst.template }}, priced as a
-  {{ mechanics.flame_burst.area_archetype }} area — see [[spell-area]]
-- **Damage type:** {{ mechanics.flame_burst.damage_type }}
-- **Minimum spirit:** {{ mechanics.flame_burst.minimum_spirit }}
+Three families, and each of the four damage types appears in all three.
+None of them needs an attack roll: everything under the template takes
+the damage, and having nothing to dodge is what an area spell buys with
+its difficulty.
 
-Fire blooms outward from a point the caster can see. Everything in the
-circle takes the damage; there is no attack roll to make and nothing to
-dodge, which is what an area spell buys with its difficulty.
+The family decides what kind of spell it is; the damage type decides how
+it looks and, for a burst, what it leaves behind.
 
-Being concentrated, it is dear to spread and cheap to sharpen: a small
-fierce burst rather than a blanket of flame.
+### Bursts — {{ mechanics.burst.area_archetype }}
+
+*Base difficulty {{ mechanics.burst.base_difficulty }}, circle,
+minimum spirit {{ mechanics.burst.minimum_spirit }}.*
+
+Small and fierce, and the only area family that applies a condition —
+the same conditions the lances carry, resisted the same way. See
+[[conditions]].
+
+- **Force Burst** — {{ mechanics.force_burst.damage_type }} damage,
+  leaves the target **{{ mechanics.force_burst.condition }}**.
+- **Flame Burst** — {{ mechanics.flame_burst.damage_type }} damage,
+  leaves the target **{{ mechanics.flame_burst.condition }}**.
+- **Frost Burst** — {{ mechanics.frost_burst.damage_type }} damage,
+  leaves the target **{{ mechanics.frost_burst.condition }}**.
+- **Storm Burst** — {{ mechanics.storm_burst.damage_type }} damage,
+  leaves the target **{{ mechanics.storm_burst.condition }}**.
+
+### Blasts — {{ mechanics.blast.area_archetype }}
+
+*Base difficulty {{ mechanics.blast.base_difficulty }}, minimum spirit
+{{ mechanics.blast.minimum_spirit }}.*
+
+A blast takes **any template in [[spell-area]]** — circle, cone, line,
+square or rectangle — chosen as it is cast. That flexibility is the
+family's whole character: a blast carries no condition and lasts no
+time, but it is the only area spell that can be poured down a corridor
+or swept across a rank.
+
+Force, Flame, Frost and Storm Blast differ only in damage type and
+domain.
+
+### Fields — {{ mechanics.field.area_archetype }}
+
+*Base difficulty {{ mechanics.field.base_difficulty }}, circle,
+minimum spirit {{ mechanics.field.minimum_spirit }}.*
+
+A field does not go off; it stays. It lasts
+{{ mechanics.field.duration_rounds }} rounds, plus
+{{ mechanics.field.rounds_per_difficulty }} for each further point of
+difficulty spent on duration, and anything inside it takes the damage at
+the start of its turn. Wide, weak, and the only way a caster denies
+ground rather than clearing it.
+
+Force, Flame, Frost and Storm Field differ only in damage type and
+domain.
 
 ## Cure / Cause Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 

@@ -12,14 +12,14 @@ mechanics:
   default_archetype: balanced
   archetypes:
     diffuse:
-      difficulty_per_square: 1
-      difficulty_per_damage: 6
+      squares_per_difficulty: 6
+      difficulty_per_damage: 4
     balanced:
-      difficulty_per_square: 2
-      difficulty_per_damage: 3
-    concentrated:
-      difficulty_per_square: 3
+      squares_per_difficulty: 3
       difficulty_per_damage: 2
+    concentrated:
+      squares_per_difficulty: 1
+      difficulty_per_damage: 1
   circle_squares:
     radius_1: 5
     radius_2: 13
@@ -70,27 +70,29 @@ to save arithmetic at the common sizes, not to cap the shapes.
 
 Every area spell lists two rates of its own:
 
-- **Per square** — the difficulty each covered square costs.
+- **Coverage** — how many squares one point of difficulty covers.
 - **Per damage** — the difficulty each point of damage costs, dealt to
   everything the area covers.
 
-Total difficulty is the spell's base, plus squares times the first rate,
-plus damage times the second. A spell that deals no damage pays only for
-its squares.
+Total difficulty is the spell's base, plus the squares divided by the
+coverage rate and rounded up, plus damage times the second rate. A spell
+that deals no damage pays only for its squares.
 
 The two rates move against each other, and their balance *is* the
 spell's character. Three shapes cover almost everything:
 
-- **Diffuse** — {{ mechanics.archetypes.diffuse.difficulty_per_square }}
-  per square, {{ mechanics.archetypes.diffuse.difficulty_per_damage }}
-  per damage. Cheap to spread, dear to sharpen: a spell that blankets
-  ground and barely stings.
+- **Diffuse** —
+  {{ mechanics.archetypes.diffuse.squares_per_difficulty }} squares per
+  point, {{ mechanics.archetypes.diffuse.difficulty_per_damage }} per
+  damage. Cheap to spread, dear to sharpen: a spell that blankets ground
+  and barely stings.
 - **Balanced** —
-  {{ mechanics.archetypes.balanced.difficulty_per_square }} per square,
-  {{ mechanics.archetypes.balanced.difficulty_per_damage }} per damage.
+  {{ mechanics.archetypes.balanced.squares_per_difficulty }} squares per
+  point, {{ mechanics.archetypes.balanced.difficulty_per_damage }} per
+  damage.
 - **Concentrated** —
-  {{ mechanics.archetypes.concentrated.difficulty_per_square }} per
-  square,
+  {{ mechanics.archetypes.concentrated.squares_per_difficulty }} square
+  per point,
   {{ mechanics.archetypes.concentrated.difficulty_per_damage }} per
   damage. Dear to spread, cheap to sharpen: a small, fierce burst.
 
@@ -132,12 +134,23 @@ writing a worse spell. It is only when cheap coverage is paid for with
 expensive damage that "wide and weak" and "small and fierce" become two
 real options rather than one good one and one bad one.
 
-The rates are set so that **no area spell beats a bolt against a single
-target**, at any budget. Checked across the three archetypes at low,
-middle and high difficulty, every configuration loses on one creature
-and wins on two or more. That is the invariant worth protecting: area
-magic should be the answer to a crowd, never a strictly better way to
-hurt one person, or single-target spells stop being worth writing.
+Two invariants hold the rates in place, and both are checked by
+measurement rather than argued.
+
+**No area spell beats a lance against a single target.** Area magic
+should be the answer to a crowd, never a better way to hurt one person,
+or the single-target spells stop being worth writing at all.
+
+**A caster clears a crowd at least as fast as a melee character built
+to do it.** That is the point of the family, and it was not true when
+these rates were first written: they were calibrated against whether an
+area spell beat a bolt if it caught two creatures, and nobody checked
+whether a caster could afford a useful radius in the first place. They
+could not. At level fifteen no archetype could reach radius two with
+enough damage left to kill anything, which is why the rates are now
+expressed as squares covered per point rather than points per square —
+coverage had to get several times cheaper before the family worked at
+all.
 
 The tables cover the sizes that actually come up, so that nobody
 multiplies by pi at the table. Past radius five, a caster who can afford
