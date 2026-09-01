@@ -30,6 +30,15 @@ mechanics:
   shock_bolt:
     damage_type: lightning
     domain: war
+  flame_burst:
+    school: energy
+    domain: war
+    damage_type: fire
+    base_difficulty: 4
+    template: circle
+    area_archetype: concentrated
+    minimum_spirit: 1
+    needs_attack_roll: false
   cure_wounds:
     base_difficulty: 16
     school: life_force
@@ -76,6 +85,22 @@ Because the domain differs, a caster's [[discipline-powers|Granted
 Domain]] makes one bolt markedly cheaper than the rest — a priest of war
 throws flame where a druid throws frost, without either of them needing
 a separate rule.
+
+## Flame Burst ({{ mechanics.flame_burst.base_difficulty }})
+
+- **School:** {{ mechanics.flame_burst.school }}
+- **Domain:** {{ mechanics.flame_burst.domain }}
+- **Template:** {{ mechanics.flame_burst.template }}, priced as a
+  {{ mechanics.flame_burst.area_archetype }} area — see [[spell-area]]
+- **Damage type:** {{ mechanics.flame_burst.damage_type }}
+- **Minimum spirit:** {{ mechanics.flame_burst.minimum_spirit }}
+
+Fire blooms outward from a point the caster can see. Everything in the
+circle takes the damage; there is no attack roll to make and nothing to
+dodge, which is what an area spell buys with its difficulty.
+
+Being concentrated, it is dear to spread and cheap to sharpen: a small
+fierce burst rather than a blanket of flame.
 
 ## Cure / Cause Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 

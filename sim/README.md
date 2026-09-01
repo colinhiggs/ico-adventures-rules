@@ -133,11 +133,13 @@ inside the loop, and stamina is what actually varies.
 
 ## Known limits
 
-- The model tracks melee only. Ranged attacks, spells and the
-  Magical/Spiritual disciplines are not simulated, so those builds are
-  absent from every comparison. The bolt spells are minor powers on the
-  same chassis as Precise Strike, so the melee numbers are the best
-  available proxy for them, but they are a proxy.
+- **Damaging spells are modelled; nothing else about magic is.** A
+  caster's spells are read from the spell list, priced through the same
+  declared-difficulty machinery as any power, and paid for out of
+  spirit. Healing and every spell cast for a narrative reason are out of
+  scope, and always will be -- there is no way to score "talked the door
+  open" against damage per round.
+- Ranged weapons are still not modelled, only ranged *spells*.
 - Fresh-versus-empty is measured at the two extremes. A character plans
   for a sustainable spend across roughly four rounds, so the model never
   burns its whole reservoir in one climactic fight the way a player

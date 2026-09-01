@@ -27,8 +27,8 @@ A spell's range is **self**, **touch**, or a **number**.
 - **A number** — a range in grid squares, measured exactly as
   [[movement]] measures them. If the spell needs an
   attack roll to land, the listed number is short range and long range
-  is {{ mechanics.long_range_multiplier }} times it; use the ranged
-  attack skill to hit. Range can be extended by
+  is {{ mechanics.long_range_multiplier }} times it, and the casting
+  roll is the attack roll — see below. Range can be extended by
   {{ mechanics.range_extend_squares_per_difficulty }} square per point
   of added difficulty.
 
@@ -37,6 +37,13 @@ A spell's range is **self**, **touch**, or a **number**.
 Both have rules of their own: [[spell-duration]] for how long a spell
 lasts, and [[spell-area]] for the shapes an area spell can take and what
 each square of it costs.
+
+## Aiming a spell
+
+A spell that needs an attack roll is aimed with the **casting roll
+itself**. You do not roll twice: the one roll settles whether the spell
+happened, what it cost, and whether it landed, exactly as a melee power
+rolled on melee attack does — see [[using-powers]].
 
 ## Accuracy
 
@@ -58,9 +65,9 @@ points above the base brings the target inside short range. Those `4`
 points are added to the difficulty she declares, and are paid for in
 spirit exactly as any other reach would be.
 
-Because the bolt needs an attack roll, she uses her ranged attack skill
-to place it, not her spellcasting skill — spellcasting settled whether
-the spell happened at all.
+Because the bolt needs an attack roll, that same casting roll is what
+places it: one roll, compared first to the difficulty she declared and
+then to her target's targeting difficulty.
 
 {% book-only %}
 ## Design note
@@ -69,6 +76,15 @@ Boosting works through the same declared-difficulty mechanism as every
 other power, so there is no separate list of metamagic rules to learn.
 A caster who understands how reaching further works for a physical power
 already understands how it works for range, accuracy and area.
+
+Aiming with the casting roll rather than with the ranged attack skill
+is not a convenience. A caster's discipline does not grant the ranged
+attack skill at all, so under the alternative every bolt-thrower in the
+game was aiming with a peripheral skill: measured, a Master of the
+Magical discipline landed sixty per cent of their bolts at level fifteen
+and could do nothing about it except buy a skill their discipline
+charges them triple for. A spell is a power, and a power rolled on its
+own skill hits with that roll.
 
 Spell ranges count the same squares movement does, rather than carrying
 a measure of their own. A caster who knows how far they can walk knows

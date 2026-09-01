@@ -87,6 +87,16 @@ ARCHETYPES = {
         "weapon": "sword", "armour": "full_plate", "shield": "great_shield",
         "stance": "block",
     },
+    "evoker": {
+        "disciplines": [("magical", "master"), ("awareness", "initiate")],
+        "attributes": {"strength": 10, "dexterity": 12, "constitution": 12,
+                       "intelligence": 16, "willpower": 16, "charisma": 14},
+        "weapon": "staff", "armour": "leather", "shield": None,
+        "stance": "dodge", "casts": True,
+        # A caster buys none of the melee skills; spellcasting is the
+        # only one that pays them back every round.
+        "skill_priority": ["spellcasting", "attack_ranged", "dodge", "spot"],
+    },
     "generalist": {
         "disciplines": [("martial", "initiate"), ("athletic", "initiate"),
                         ("awareness", "initiate"), ("spiritual", "initiate")],
@@ -190,7 +200,11 @@ def report_swarm(level, chars, M):
         e_rounds, e_win, _ = m.skirmish(drained, "goblin", SWARM_SIZE, M,
                                         trials=TRIALS_SWARM)
         plan = m._swarm_plan(c, goblin, M)
-        label = ("%s @%d" % (plan["power"], plan["difficulty"])) if plan else "plain attack"
+        if not plan:
+            label = "plain attack"
+        else:
+            what = plan.get("power") or plan["spell"]
+            label = "%s @%d" % (what, plan["difficulty"])
         print("%-12s %-8.1f %-7.0f%% %-9.0f%% %-9s %s"
               % (name, rounds, win * 100, lost * 100,
                  "%.1f rd" % e_rounds, label))
@@ -438,15 +452,11 @@ def contributions(chars, level, M):
         # win, and an unclamped ratio lets one near-untouchable build
         # dominate the metric by dividing by almost zero.
         survival = min(SURVIVAL_CLAMP_ROUNDS, c.total_hp / max(0.1, taken))
-        best, _ = m.attack_expectation(c, foe, M)
-        for power_id in (["power_attack"] if c.has("martial", "initiate") else []) + \
-                        (["find_the_gap"] if c.has("martial", "adept") else []) + \
-                        ["fast_attack"]:
-            difficulty, damage, cost = m.best_difficulty(
-                c, power_id, foe, M, c.stamina / 4.0)
-            if difficulty is not None:
-                best = max(best, damage)
-        out[name] = best * survival
+        # expected_offence knows every power the build can bring AND
+        # its spells. An earlier version of this function carried its
+        # own hardcoded list of martial powers, which measured a wizard
+        # on the staff it was holding and scored it near zero.
+        out[name] = m.expected_offence(c, foe, M) * survival
     return out
 
 

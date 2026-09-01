@@ -647,6 +647,16 @@
         "damage_type": "lightning",
         "domain": "war"
       },
+      "flame_burst": {
+        "school": "energy",
+        "domain": "war",
+        "damage_type": "fire",
+        "base_difficulty": 4,
+        "template": "circle",
+        "area_archetype": "concentrated",
+        "minimum_spirit": 1,
+        "needs_attack_roll": false
+      },
       "cure_wounds": {
         "base_difficulty": 16,
         "school": "life_force",

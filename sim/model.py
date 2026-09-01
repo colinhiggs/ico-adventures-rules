@@ -35,6 +35,15 @@ ASSUMPTIONS = [
     "Stamina and spirit do not recover during a fight.",
     "Sneak Attack's condition is met in half of all rounds; "
     "Redouble is sustained at a rate that lasts the whole fight.",
+    "Only damaging spells are modelled. Healing, and everything cast for "
+    "a narrative reason, is out of scope and always will be.",
+    "An area spell catches one creature per two squares it covers, since "
+    "bodies do not pack one to a square in a real fight.",
+    "Spell damage meets armour like any other damage, capped the same "
+    "way; nothing in the rules exempts it.",
+    "A spell's damage comes from the difficulty declared, not from the "
+    "margin on the roll -- margin buys a caster a lower price, not a "
+    "bigger effect.",
 ]
 
 
@@ -172,6 +181,10 @@ SKILL_ATTRIBUTE = {
     "block": "strength",
     "fortitude": "constitution",
     "spot": "willpower",
+    # Spellcasting is "intelligence or willpower" per skill-list, so it
+    # is handled by Character.casting_bonus() rather than by this map.
+    "spellcasting": "willpower",
+    "attack_ranged": "dexterity",
 }
 
 
@@ -189,6 +202,7 @@ class Character:
     mhp: int = 0
     chp: int = 0
     stamina: int = 0
+    spirit: int = 0
     power_plan: dict = field(default_factory=dict)
     spent: dict = field(default_factory=dict)
 
@@ -210,6 +224,13 @@ class Character:
         if self.weapon and self.weapon.size == str(M.get("weapons", "finesse_size")):
             best = max(best, self.attr_bonus("dexterity", M))
         return ranks + best
+
+    def casting_bonus(self, M):
+        """Spellcasting takes intelligence OR willpower, whichever is
+        better -- see skill-list."""
+        ranks = self.skills.get("spellcasting", 0)
+        return ranks + max(self.attr_bonus("intelligence", M),
+                           self.attr_bonus("willpower", M))
 
     def has(self, discipline, grade):
         held = self.disciplines.get(discipline)
@@ -338,9 +359,10 @@ def build_character(name, spec, level, M):
     mhp_points = min(points, -(-mhp_ceiling // per_point))
     points -= mhp_points
 
-    order = list(TRACKED_SKILLS)
-    lead = "block" if char.stance == "block" else "dodge"
-    order.sort(key=lambda s: (s != "attack_melee", s != lead))
+    order = list(spec.get("skill_priority") or TRACKED_SKILLS)
+    if not spec.get("skill_priority"):
+        lead = "block" if char.stance == "block" else "dodge"
+        order.sort(key=lambda s: (s != "attack_melee", s != lead))
 
     for skill_name in order:
         focus = skill_focus(char, skill_name, M)
@@ -356,6 +378,7 @@ def build_character(name, spec, level, M):
     bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
     source_per_point = int(M.get("advancement", "power_source_per_point"))
+    uses_spirit = bool(spec.get("casts"))
     source_ceiling = int(
         M.get("advancement", "max_power_source_bought_per_level")) * level
     source_points = min(points, source_ceiling)
@@ -363,7 +386,12 @@ def build_character(name, spec, level, M):
 
     char.mhp = free_mhp + bought_mhp
     char.chp = char.attributes["constitution"]
-    char.stamina = char.attributes["constitution"] + source_points * source_per_point
+    char.stamina = char.attributes["constitution"]
+    char.spirit = char.attributes["willpower"]
+    if uses_spirit:
+        char.spirit += source_points * source_per_point
+    else:
+        char.stamina += source_points * source_per_point
     char.spent = {
         "disciplines": disc_spend,
         "mhp_points": mhp_points,
@@ -499,6 +527,49 @@ def power_cost(difficulty, roll, M, minor=False):
     return max(difficulty // int(M.get("using-powers", "minimum_cost_divisor")), raw)
 
 
+def spell_def(M, spell_id):
+    """A spell's full definition, with the bolt chassis merged in.
+
+    The bolt variants carry only a damage type and a domain; everything
+    else -- difficulty, damage, the scaling rates -- lives once on the
+    `bolt` entry, so a variant has to inherit it rather than repeat it."""
+    spells = M.rules["spell-list"]
+    if spell_id not in spells or not isinstance(spells[spell_id], dict):
+        raise KeyError("no spell '%s' in spell-list" % spell_id)
+    entry = dict(spells[spell_id])
+    if spell_id.endswith("_bolt"):
+        chassis = dict(spells["bolt"])
+        chassis.update(entry)
+        entry = chassis
+    return entry
+
+
+def combat_spells(M):
+    """Spells this model can resolve: the ones that deal damage. Cure
+    Wounds and anything narrative is out of scope by design."""
+    out = []
+    for spell_id, entry in sorted(M.rules["spell-list"].items()):
+        if not isinstance(entry, dict):
+            continue
+        merged = spell_def(M, spell_id)
+        if "damage" in merged or "area_archetype" in merged:
+            out.append(spell_id)
+    return out
+
+
+def can_cast(char, M):
+    return char.has("magical", "initiate") or char.has("spiritual", "initiate")
+
+
+def area_rates(M, archetype):
+    a = M.get("spell-area", "archetypes", archetype)
+    return int(a["difficulty_per_square"]), int(a["difficulty_per_damage"])
+
+
+def circle_squares(M, radius):
+    return int(M.get("spell-area", "circle_squares", "radius_%d" % radius))
+
+
 def power_def(M, power_id):
     for rule_id in ("discipline-powers", "general-powers"):
         if power_id in M.rules.get(rule_id, {}):
@@ -631,6 +702,50 @@ def sweep_targets(p, difficulty):
     return int(p["base_targets"]) + steps * int(p["extra_targets_per_step"])
 
 
+# How many creatures a spell area actually catches. Bodies do not pack
+# one to a square in a real fight, so half the covered squares is the
+# working assumption -- generous enough that area magic is worth casting,
+# mean enough that it is not free.
+SQUARES_PER_BODY = 2
+# How large a crowd the swarm planner assumes when weighing an area
+# spell against a swing.
+SWARM_CROWD_ASSUMED = 6
+
+
+def area_catch(squares, count):
+    return max(1, min(count, squares // SQUARES_PER_BODY))
+
+
+def _spell_swarm_plan(hero, foe, M, count, budget):
+    """The best area spell against a crowd, scored on bodies dropped."""
+    if not can_cast(hero, M):
+        return None
+    best = (None, 0.0, 0)
+    hp = foe.total_hp
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    for spell_id in combat_spells(M):
+        sp = spell_def(M, spell_id)
+        if "area_archetype" not in sp:
+            continue
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 70):
+            damage, squares = spell_shape(M, spell_id, difficulty)
+            if squares == 0:
+                continue
+            _, cost = cast_expectation(hero, spell_id, difficulty, foe, M)
+            if cost > budget:
+                continue
+            landed = reduce_by_armour(damage, foe, M)
+            if landed < hp:
+                continue
+            success = sum(w for face, w, _c in d20_faces(M)
+                          if face + hero.casting_bonus(M) >= difficulty)
+            kills = success * area_catch(squares, count)
+            if kills > best[1]:
+                best = ({"spell": spell_id, "difficulty": difficulty}, kills, squares)
+    return best[0]
+
+
 def _swarm_plan(hero, foe, M):
     """Against a crowd the useful measure is not raw damage but damage
     that actually lands on a fresh body -- overkill on a dying goblin
@@ -653,6 +768,16 @@ def _swarm_plan(hero, foe, M):
             if value > best[1]:
                 best = ({"power": power_id, "difficulty": difficulty}, value)
     plain = _expected_kills(hero, foe, M, None, 0, budget)
+
+    spell_plan = _spell_swarm_plan(hero, foe, M, SWARM_CROWD_ASSUMED,
+                                   hero.spirit / 4.0)
+    if spell_plan is not None:
+        damage, squares = spell_shape(M, spell_plan["spell"],
+                                      spell_plan["difficulty"])
+        bodies = area_catch(squares, SWARM_CROWD_ASSUMED)
+        if bodies > max(best[1], plain):
+            return spell_plan
+
     if best[0] is None or best[1] <= plain:
         return None
     return best[0]
@@ -860,6 +985,10 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
         strike(living[0])
         return
 
+    if "spell" in plan:
+        _cast_at_crowd(hero, crowd, plan, M)
+        return
+
     p = power_def(M, plan["power"])
     minor = is_minor(M, plan["power"])
     difficulty = plan["difficulty"]
@@ -956,6 +1085,30 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
         elif b.chp <= 0:
             a_wins += 1
     return rounds_total / trials, a_wins / trials, capped / trials
+
+
+def _cast_at_crowd(hero, crowd, plan, M):
+    """Resolve an area spell against a crowd: one casting roll, and
+    everything under the template takes it."""
+    sp = spell_def(M, plan["spell"])
+    difficulty = plan["difficulty"]
+    minor = sp.get("tier") == "minor"
+    minimum = int(sp.get("minimum_spirit", 0))
+    damage, squares = spell_shape(M, plan["spell"], difficulty)
+
+    roll, _crit = d20(M)
+    roll += hero.casting_bonus(M)
+    if roll < difficulty:
+        hero.spirit = max(0, hero.spirit - (0 if minor else minimum))
+        return                                  # the spell fails outright
+    cost = max(minimum, power_cost(difficulty, roll, M, minor))
+    if cost > hero.spirit:
+        return                                  # cannot pay: nothing happens
+    hero.spirit -= cost
+
+    living = [x for x in crowd if x.chp > 0]
+    for target in living[:area_catch(squares, len(living))]:
+        apply_damage(target, reduce_by_armour(damage, target, M))
 
 
 def _guard(defender, plan, M):
@@ -1089,15 +1242,154 @@ def _best_option(char, foe, M, budget, conditional=True):
 
 def expected_offence(char, foe, M, rounds_budget=4):
     """Blended expected damage per round: the conditional power when the
-    fight offers it, the best unconditional one when it does not."""
+    fight offers it, the best unconditional one when it does not.
+
+    A caster's best turn is a spell, not a swing, so casting is folded in
+    here -- without it a wizard is measured on the staff they are holding
+    and looks like a very bad fighter."""
     budget = char.stamina / float(rounds_budget)
     plain, _ = attack_expectation(char, foe, M)
     unconditional = max(plain, _best_option(char, foe, M, budget, False)[1])
+    if can_cast(char, M):
+        spell = best_spell(char, foe, M, char.spirit / float(rounds_budget))
+        unconditional = max(unconditional, spell[1])
     if not char.has("athletic", "adept"):
         return unconditional
     conditional = max(unconditional, _best_option(char, foe, M, budget, True)[1])
     return (SNEAK_AVAILABILITY * conditional
             + (1 - SNEAK_AVAILABILITY) * unconditional)
+
+
+def spell_shape(M, spell_id, difficulty):
+    """What a spell actually delivers at a declared difficulty.
+
+    Returns (damage, squares) -- squares is 0 for a single-target spell.
+    An area spell spends its budget on coverage first at the archetype's
+    per-square rate, then turns what is left into damage at its
+    per-damage rate; a bolt has no area and buys damage directly."""
+    sp = spell_def(M, spell_id)
+    base = int(sp["base_difficulty"])
+    spare = max(0, difficulty - base)
+
+    if "area_archetype" in sp:
+        per_square, per_damage = area_rates(M, str(sp["area_archetype"]))
+        best = (0, 0)
+        for radius in range(1, 6):
+            squares = circle_squares(M, radius)
+            left = spare - squares * per_square
+            if left < 0:
+                break
+            damage = left // per_damage
+            # More bodies covered beats more damage per body, up to the
+            # point where the damage stops being worth anything.
+            if damage > 0 and squares >= best[1]:
+                best = (damage, squares)
+        return best
+
+    step = int(sp["difficulty_per_step"])
+    return int(sp["damage"]) + (spare // step) * int(sp["damage_per_step"]), 0
+
+
+def cast_expectation(char, spell_id, difficulty, defender, M):
+    """Expected damage to ONE defender and expected spirit cost.
+
+    A bolt needs a ranged attack roll on top of the casting check, which
+    is the price of its efficiency; an area spell needs none, which is
+    what its difficulty buys."""
+    sp = spell_def(M, spell_id)
+    minor = sp.get("tier") == "minor"
+    minimum = int(sp.get("minimum_spirit", 0))
+    damage, _squares = spell_shape(M, spell_id, difficulty)
+    skill = char.casting_bonus(M)
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    crit_steps = critical_bonus_steps(M)
+
+    # A spell that needs an attack roll is aimed with the casting roll
+    # itself -- one roll, two jobs, as spell-properties now says.
+    needs_aim = bool(sp.get("needs_attack_roll"))
+    td = targeting_difficulty(defender, M) if needs_aim else 0
+
+    expected_damage = 0.0
+    expected_cost = 0.0
+    for face, weight, is_crit in d20_faces(M):
+        roll = face + skill
+        if roll >= difficulty:
+            cost = max(minimum, power_cost(difficulty, roll, M, minor))
+            expected_cost += weight * cost
+            bonus = 0
+            if is_crit:
+                more, _ = spell_shape(M, spell_id, difficulty + crit_steps *
+                                      _spell_step(M, spell_id))
+                bonus = max(0, more - damage)
+            aimed = (not needs_aim) or ((roll >= td) if on_tie else (roll > td))
+            if aimed:
+                expected_damage += weight * reduce_by_armour(
+                    damage + bonus, defender, M)
+        else:
+            expected_cost += weight * (0 if minor else minimum)
+    return expected_damage, expected_cost
+
+
+def _spell_step(M, spell_id):
+    sp = spell_def(M, spell_id)
+    if "area_archetype" in sp:
+        return area_rates(M, str(sp["area_archetype"]))[1]
+    return int(sp["difficulty_per_step"])
+
+
+def reduce_by_armour(raw, defender, M):
+    """Spell damage meets armour like anything else, capped the same
+    way. Nothing in the rules exempts it."""
+    if raw <= 0:
+        return 0
+    reduction = defender.armour.ap
+    if defender.stance == "block":
+        reduction += (defender.shield.block_ap if defender.shield
+                      else defender.weapon.block_ap)
+    cap = raw * float(M.get("damage", "max_reduction_fraction"))
+    return max(0, int(raw - min(reduction, cap)))
+
+
+def best_spell(char, foe, M, spirit_budget):
+    """The spell and difficulty giving the most expected damage to one
+    target within a sustainable spirit spend."""
+    best = (None, -1.0, 0.0, 0)
+    for spell_id in combat_spells(M):
+        sp = spell_def(M, spell_id)
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 70):
+            damage, cost = cast_expectation(char, spell_id, difficulty, foe, M)
+            if cost > spirit_budget:
+                continue
+            if damage > best[1]:
+                best = (spell_id, damage, cost, difficulty)
+    return best
+
+
+def best_spell_free(char, spell_id, foe, M):
+    """Expected damage from a minor spell using only outcomes that cost
+    nothing, which is all an empty caster can pay for."""
+    sp = spell_def(M, spell_id)
+    base = int(sp["base_difficulty"])
+    needs_aim = bool(sp.get("needs_attack_roll"))
+    td = targeting_difficulty(foe, M) if needs_aim else 0
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    skill = char.casting_bonus(M)
+    best = 0.0
+    for difficulty in range(base, base + 60):
+        damage, _sq = spell_shape(M, spell_id, difficulty)
+        total = 0.0
+        for face, weight, _crit in d20_faces(M):
+            roll = face + skill
+            if roll < difficulty:
+                continue
+            if power_cost(difficulty, roll, M, minor=True) != 0:
+                continue
+            if needs_aim and not ((roll >= td) if on_tie else (roll > td)):
+                continue
+            total += weight * reduce_by_armour(damage, foe, M)
+        best = max(best, total)
+    return best
 
 
 def floor_offence(char, foe, M):
@@ -1113,6 +1405,16 @@ def floor_offence(char, foe, M):
     td = targeting_difficulty(foe, M)
     skill = char.attack_bonus(M)
     best = plain
+
+    # A caster's floor is a bolt. Minor spells have no minimum cost, so
+    # they are exactly what is left when the reservoir is empty -- the
+    # same role Quick Attack plays for a fighter.
+    if can_cast(char, M):
+        for spell_id in combat_spells(M):
+            if spell_def(M, spell_id).get("tier") != "minor":
+                continue
+            free = best_spell_free(char, spell_id, foe, M)
+            best = max(best, free)
 
     for power_id in offensive_powers(char, M):
         if not is_minor(M, power_id):

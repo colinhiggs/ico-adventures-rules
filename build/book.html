@@ -819,17 +819,20 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <ul><li><strong>Self</strong> — the spell only ever affects the caster.</li><li><strong>Touch</strong> — the caster affects themselves or another recipient by</li></ul>
 <p>touching them. Touching an unwilling target needs a melee attack roll.</p>
 <ul><li><strong>A number</strong> — a range in grid squares, measured exactly as</li></ul>
-<p><a href="#rule-movement" data-rule-id="movement">Movement and Distance</a> measures them. If the spell needs an attack roll to land, the listed number is short range and long range is 2 times it; use the ranged attack skill to hit. Range can be extended by 1 square per point of added difficulty.</p>
+<p><a href="#rule-movement" data-rule-id="movement">Movement and Distance</a> measures them. If the spell needs an attack roll to land, the listed number is short range and long range is 2 times it, and the casting roll is the attack roll — see below. Range can be extended by 1 square per point of added difficulty.</p>
 <h4>Duration and area</h4>
 <p>Both have rules of their own: <a href="#rule-spell-duration" data-rule-id="spell-duration">Spell Duration</a> for how long a spell lasts, and <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a> for the shapes an area spell can take and what each square of it costs.</p>
+<h4>Aiming a spell</h4>
+<p>A spell that needs an attack roll is aimed with the <strong>casting roll itself</strong>. You do not roll twice: the one roll settles whether the spell happened, what it cost, and whether it landed, exactly as a melee power rolled on melee attack does — see <a href="#rule-using-powers" data-rule-id="using-powers">Using a Power</a>.</p>
 <h4>Accuracy</h4>
 <p>A spell's standard accuracy is <code>0</code> — no bonus or penalty to the attack roll. Accuracy increases by <code>+1</code> for every point of added difficulty.</p>
 <h4>Example</h4>
 <p>Sela casts a bolt at a target <code>14</code> squares away. The spell's listed range is <code>10</code>, which is short range; long range is double that, so <code>14</code> is within reach but at long range.</p>
 <p>She would rather not rely on that, so she boosts the range instead: each point of added difficulty extends it by a square, so declaring <code>4</code> points above the base brings the target inside short range. Those <code>4</code> points are added to the difficulty she declares, and are paid for in spirit exactly as any other reach would be.</p>
-<p>Because the bolt needs an attack roll, she uses her ranged attack skill to place it, not her spellcasting skill — spellcasting settled whether the spell happened at all.</p>
+<p>Because the bolt needs an attack roll, that same casting roll is what places it: one roll, compared first to the difficulty she declared and then to her target's targeting difficulty.</p>
 <h4>Design note</h4>
 <p>Boosting works through the same declared-difficulty mechanism as every other power, so there is no separate list of metamagic rules to learn. A caster who understands how reaching further works for a physical power already understands how it works for range, accuracy and area.</p>
+<p>Aiming with the casting roll rather than with the ranged attack skill is not a convenience. A caster's discipline does not grant the ranged attack skill at all, so under the alternative every bolt-thrower in the game was aiming with a peripheral skill: measured, a Master of the Magical discipline landed sixty per cent of their bolts at level fifteen and could do nothing about it except buy a skill their discipline charges them triple for. A spell is a power, and a power rolled on its own skill hits with that roll.</p>
 <p>Spell ranges count the same squares movement does, rather than carrying a measure of their own. A caster who knows how far they can walk knows how far they can reach, and nobody converts units mid-fight.</p>
 <p class="related">See also: <a href="#rule-movement">Movement and Distance</a>, <a href="#rule-spell-area">Spell Areas</a>, <a href="#rule-spell-duration">Spell Duration</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>
@@ -922,6 +925,12 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <ul><li><strong>Shock Bolt</strong> — lightning damage, domain</li></ul>
 <p>of war.</p>
 <p>Because the domain differs, a caster's <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Granted Domain</a> makes one bolt markedly cheaper than the rest — a priest of war throws flame where a druid throws frost, without either of them needing a separate rule.</p>
+<h4>Flame Burst (4)</h4>
+<ul><li><strong>School:</strong> energy</li><li><strong>Domain:</strong> war</li><li><strong>Template:</strong> circle, priced as a</li></ul>
+<p>concentrated area — see <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></p>
+<ul><li><strong>Damage type:</strong> fire</li><li><strong>Minimum spirit:</strong> 1</li></ul>
+<p>Fire blooms outward from a point the caster can see. Everything in the circle takes the damage; there is no attack roll to make and nothing to dodge, which is what an area spell buys with its difficulty.</p>
+<p>Being concentrated, it is dear to spread and cheap to sharpen: a small fierce burst rather than a blanket of flame.</p>
 <h4>Cure / Cause Wounds (16)</h4>
 <ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing, or harm when reversed</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 1</li></ul>
 <p>Restores hit point damage to the recipient. Cast as <em>Cause Wounds</em>, the same spell instead inflicts damage. This is a standard spell, not a minor one.</p>
@@ -934,7 +943,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>The bolts are one spell written several times because a family of identical spells differing only in damage type is a table, not four rules. Keeping the shared numbers in one place means the family cannot drift apart as it grows, and adding a fifth bolt is an entry rather than a rewrite.</p>
 <p>Their boost rates are deliberately poor. A spell that can cost nothing to cast cannot also be the best damage in the game; a bolt is the thing a caster does when they have nothing left, not the thing they open with.</p>
 <p>Cure Wounds stays standard rather than minor for the same reason from the other direction. Healing available on demand for nothing would empty every fight of consequence, since any damage that did not drop a character outright could simply be undone afterwards at no cost.</p>
-<p class="related">See also: <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-spell-properties">Standard Spell Properties</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-using-powers">Using a Power</a></p>
+<p class="related">See also: <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-spell-area">Spell Areas</a>, <a href="#rule-spell-properties">Standard Spell Properties</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>
 </section>
 <footer>Compiled from 36 source documents, ordered by the include tree
