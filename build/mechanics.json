@@ -870,6 +870,7 @@
     },
     "weapons": {
       "finesse_size": "S",
+      "two_handed_size": "L",
       "dagger": {
         "accuracy": 2,
         "damage": 4,

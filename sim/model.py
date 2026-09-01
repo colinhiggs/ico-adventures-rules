@@ -53,6 +53,12 @@ ASSUMPTIONS = [
     "target lives long enough to take every tick.",
     "A burning creature smothers the flames when what the fire will "
     "still take off it is worth more than the turn it spends doing so.",
+    "A character's purse grows by one starting purse per level. The "
+    "rules give a starting sum and say nothing about what is earned "
+    "afterwards, and gear cannot be chosen without a budget.",
+    "A build buys the kit that maximises damage per round times rounds "
+    "survived against the standard foe of its level, and re-equips at "
+    "every level.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -110,6 +116,7 @@ class Weapon:
     damage: int
     size: str
     block_ap: int
+    cost_gp: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -119,6 +126,7 @@ class Weapon:
             damage=int(M.get("weapons", key, "damage")),
             size=str(M.get("weapons", key, "size")),
             block_ap=int(M.get("weapons", key, "block_ap")),
+            cost_gp=int(M.get("weapons", key, "cost_gp")),
         )
 
 
@@ -128,6 +136,7 @@ class Armour:
     ap: int
     skill_penalty: int
     move_penalty: int = 0
+    cost_gp: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -136,6 +145,7 @@ class Armour:
             ap=int(M.get("armour", key, "ap")),
             skill_penalty=int(M.get("armour", key, "skill_penalty")),
             move_penalty=int(M.get("armour", key, "move_penalty")),
+            cost_gp=int(M.get("armour", key, "cost_gp")),
         )
 
 
@@ -145,6 +155,7 @@ class Shield:
     block_td_bonus: int
     block_ap: int
     skill_penalty: int
+    cost_gp: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -155,6 +166,7 @@ class Shield:
             block_td_bonus=int(M.get("armour", key, "block_td_bonus")),
             block_ap=int(M.get("armour", key, "block_ap")),
             skill_penalty=int(M.get("armour", key, "skill_penalty")),
+            cost_gp=int(M.get("armour", key, "cost_gp")),
         )
 
 
@@ -220,6 +232,7 @@ class Character:
     spirit: int = 0
     power_plan: dict = field(default_factory=dict)
     spent: dict = field(default_factory=dict)
+    gold: int = 0
     # {condition name: rounds left}, and the damage a burn repeats.
     conditions: dict = field(default_factory=dict)
     burning_damage: int = 0
@@ -351,7 +364,75 @@ def buy_disciplines(priorities, budget, M, level=1):
     return held, spent
 
 
-def build_character(name, spec, level, M):
+# A character starts with one purse and the rules say nothing about what
+# they earn after that. The model assumes one more starting purse per
+# level, which invents no number the rules do not already give: a level 1
+# character can afford a sword, a chain shirt and a shield; full plate
+# arrives at level 11. It is the assumption to argue with first if gear
+# choices look wrong at a level.
+def gear_budget(level, M):
+    return int(M.get("character-creation", "starting_gold")) * level
+
+
+def two_handed(weapon, M):
+    return weapon.size == str(M.get("weapons", "two_handed_size"))
+
+
+def gear_options(M, budget):
+    """Every affordable (weapon, armour, shield) a character could carry.
+    A two-handed weapon leaves no hand for a shield."""
+    weapons = [Weapon.load(M, k) for k in weapon_keys(M)]
+    armours = [Armour.load(M, k) for k in armour_keys(M)]
+    shields = [None] + [Shield.load(M, k) for k in shield_keys(M)]
+    out = []
+    for w in weapons:
+        for a in armours:
+            for sh in shields:
+                if sh is not None and two_handed(w, M):
+                    continue
+                spend = w.cost_gp + a.cost_gp + (sh.cost_gp if sh else 0)
+                if spend > budget:
+                    continue
+                out.append((w, a, sh))
+    return out
+
+
+def choose_gear(char, foe, M, budget):
+    """Equip the character with the best kit its purse can reach.
+
+    Gear does not affect how a character spends its advancement points,
+    so it can be chosen against a finished sheet -- which is the whole
+    reason this is affordable to do at all.
+
+    The objective is the one the contribution gate uses, damage per
+    round times rounds survived, because equipping for offence alone
+    puts everybody in no armour and equipping for defence alone puts
+    everybody in plate. Stance is NOT chosen here: which way a character
+    defends is part of what the build IS, and the stance report exists
+    to ask whether that choice is a real one.
+
+    What a character carries changes what it deals only through the
+    WEAPON -- its own armour and shield are read when it is struck, never
+    when it strikes -- so offence is worked out once per weapon rather
+    than once per kit. That is the difference between a report that runs
+    in a minute and one that runs in an hour."""
+    guard = sustained_dodge_bonus(char, M)
+    offence = {}
+    best = (None, -1.0)
+    for weapon, armour, shield in gear_options(M, budget):
+        if weapon.name not in offence:
+            char.weapon, char.armour, char.shield = weapon, armour, shield
+            offence[weapon.name] = expected_offence(char, foe, M)
+        char.weapon, char.armour, char.shield = weapon, armour, shield
+        taken, _ = attack_expectation(foe, char, M, dodge_bonus=guard)
+        score = offence[weapon.name] * (char.total_hp / max(0.1, taken))
+        if score > best[1]:
+            best = ((weapon, armour, shield), score)
+    char.weapon, char.armour, char.shield = best[0]
+    return best[0]
+
+
+def build_character(name, spec, level, M, shopping_foe=None):
     """Spend a level's worth of points into a playable sheet.
 
     Priority order is the ASSUMPTION listed at the top: disciplines
@@ -373,8 +454,11 @@ def build_character(name, spec, level, M):
         attributes=dict(spec["attributes"]),
         stance=spec.get("stance", "dodge"),
     )
-    char.weapon = Weapon.load(M, spec["weapon"])
-    char.armour = Armour.load(M, spec["armour"])
+    # Pinned gear is for opponents and for the weapon-by-armour matrix,
+    # where the point is to hold gear still. A build that leaves it out
+    # goes shopping once its sheet is finished.
+    char.weapon = Weapon.load(M, spec.get("weapon") or "staff")
+    char.armour = Armour.load(M, spec.get("armour") or "unarmoured")
     char.shield = Shield.load(M, spec.get("shield"))
 
     points = chargen_disc + chargen_pool + (level - 1) * per_level - disc_spend
@@ -429,6 +513,13 @@ def build_character(name, spec, level, M):
         "power_source_points": source_points,
         "unspent": points,
     }
+
+    # Shopping happens last, because a purse buys the same sword whatever
+    # was done with the advancement points, and choose_gear needs a
+    # finished sheet to weigh a kit against.
+    if shopping_foe is not None and not spec.get("weapon"):
+        char.gold = gear_budget(level, M)
+        choose_gear(char, shopping_foe, M, char.gold)
     return char
 
 

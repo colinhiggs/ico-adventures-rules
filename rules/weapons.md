@@ -7,6 +7,7 @@ summary: >
   armour points it contributes when used to block.
 mechanics:
   finesse_size: S
+  two_handed_size: L
   dagger:
     accuracy: 2
     damage: 4
@@ -108,8 +109,14 @@ subtracts from a blow when you use it to block rather than dodge.
 A weapon of size {{ mechanics.finesse_size }} may use **dexterity**
 instead of strength for its attack skill.
 
-Ranged weapons are not yet statted. The larger weapons are two-handed
-and cannot be combined with a shield from [[armour]].
+## Two hands
+
+A weapon of size {{ mechanics.two_handed_size }} takes both hands, and
+cannot be carried with a shield from [[armour]]. That is the whole of
+what size does beyond finesse: the two ends of the scale each carry a
+rule, and the middle carries neither.
+
+Ranged weapons are not yet statted.
 
 ## Example
 

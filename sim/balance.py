@@ -75,35 +75,30 @@ ARCHETYPES = {
         "disciplines": [("martial", "master"), ("athletic", "initiate")],
         "attributes": {"strength": 16, "dexterity": 12, "constitution": 14,
                        "intelligence": 10, "willpower": 14, "charisma": 14},
-        "weapon": "sword", "armour": "chain_shirt", "shield": "shield",
         "stance": "block",
     },
     "berserker": {
         "disciplines": [("martial", "adept"), ("athletic", "adept")],
         "attributes": {"strength": 18, "dexterity": 12, "constitution": 16,
                        "intelligence": 8, "willpower": 12, "charisma": 14},
-        "weapon": "two_handed_sword", "armour": "leather", "shield": None,
         "stance": "dodge",
     },
     "skirmisher": {
         "disciplines": [("athletic", "master"), ("martial", "initiate")],
         "attributes": {"strength": 12, "dexterity": 18, "constitution": 12,
                        "intelligence": 12, "willpower": 12, "charisma": 14},
-        "weapon": "short_sword", "armour": "studded_leather", "shield": None,
         "stance": "dodge",
     },
     "sentinel": {
         "disciplines": [("martial", "adept"), ("awareness", "adept")],
         "attributes": {"strength": 16, "dexterity": 10, "constitution": 16,
                        "intelligence": 10, "willpower": 14, "charisma": 14},
-        "weapon": "sword", "armour": "full_plate", "shield": "great_shield",
         "stance": "block",
     },
     "evoker": {
         "disciplines": [("magical", "master"), ("awareness", "initiate")],
         "attributes": {"strength": 10, "dexterity": 12, "constitution": 12,
                        "intelligence": 16, "willpower": 16, "charisma": 14},
-        "weapon": "staff", "armour": "leather", "shield": None,
         "stance": "dodge", "casts": True,
         # A caster buys none of the melee skills; spellcasting is the
         # only one that pays them back every round.
@@ -120,7 +115,6 @@ ARCHETYPES = {
         "disciplines": [("martial", "master"), ("athletic", "master")],
         "attributes": {"strength": 16, "dexterity": 16, "constitution": 12,
                        "intelligence": 8, "willpower": 14, "charisma": 14},
-        "weapon": "two_handed_sword", "armour": "full_plate", "shield": None,
         "stance": "dodge",
     },
     "generalist": {
@@ -128,13 +122,16 @@ ARCHETYPES = {
                         ("awareness", "initiate"), ("spiritual", "initiate")],
         "attributes": {"strength": 13, "dexterity": 13, "constitution": 14,
                        "intelligence": 13, "willpower": 13, "charisma": 14},
-        "weapon": "sword", "armour": "scale_mail", "shield": "buckler",
         "stance": "dodge",
     },
 }
 
 # The yardstick every build is measured against, so the numbers are
 # comparable across builds and levels.
+# The one build whose kit stays pinned. Everybody else shops against it,
+# so it has to be the same opponent whatever anybody buys -- and a
+# standard of comparison that re-equips itself in response to what it is
+# being compared with is no standard at all.
 STANDARD_FOE = {
     "disciplines": [("martial", "initiate"), ("athletic", "initiate")],
     "attributes": {"strength": 14, "dexterity": 14, "constitution": 14,
@@ -154,9 +151,12 @@ def hr(title):
 
 
 def build_all(level, M):
+    """Build every archetype, each of them shopping for its own kit
+    against the standard foe of its level."""
+    foe = standard_foe(level, M)
     out = {}
     for name, spec in ARCHETYPES.items():
-        char = m.build_character(name, spec, level, M)
+        char = m.build_character(name, spec, level, M, shopping_foe=foe)
         if char is not None:
             out[name] = char
     return out
@@ -172,6 +172,28 @@ def report_sheets(level, chars, M):
               % (name, c.skill("attack_melee", M), c.skill("dodge", M),
                  c.skill("block", M), c.stamina, c.mhp, c.chp,
                  c.spent["disciplines"], c.spent["unspent"]))
+
+    hr("What each build bought, on %dgp (level %d)"
+       % (m.gear_budget(level, M), level))
+    print("%-12s %-18s %-16s %-14s %s"
+          % ("build", "weapon", "armour", "shield", "spent"))
+    for name, c in chars.items():
+        spend = (c.weapon.cost_gp + c.armour.cost_gp
+                 + (c.shield.cost_gp if c.shield else 0))
+        print("%-12s %-18s %-16s %-14s %dgp"
+              % (name, c.weapon.name, c.armour.name,
+                 c.shield.name if c.shield else "-", spend))
+
+    # Letting builds shop is only worth doing if the answers are read.
+    # A weapon nobody buys is dead content the same way a weapon that
+    # cannot hurt anybody is, and one that EVERYBODY buys is the more
+    # expensive problem: it means the rest of the table is decoration.
+    taken = [c.weapon.name for c in chars.values()]
+    unbought = [w for w in m.weapon_keys(M) if w not in taken]
+    if unbought:
+        print("not chosen by anybody: " + ", ".join(unbought))
+    if len(set(taken)) == 1:
+        print("every build chose the same weapon (%s)" % taken[0])
 
 
 def report_weapon_matrix(level, chars, M):
@@ -197,9 +219,14 @@ def report_stances(level, chars, M):
     hr("Stance check: is blocking ever the right choice? (level %d)" % level)
     attacker = chars["berserker"] if "berserker" in chars else list(chars.values())[0]
     print("%-12s %-14s %-14s %s" % ("defender", "dmg taken/dodge", "dmg taken/block", "better"))
+    foe = standard_foe(level, M)
     for name, spec in ARCHETYPES.items():
-        d_dodge = m.build_character(name, dict(spec, stance="dodge"), level, M)
-        d_block = m.build_character(name, dict(spec, stance="block"), level, M)
+        # Each stance shops for itself: a blocker who cannot buy a shield
+        # is not a fair test of blocking.
+        d_dodge = m.build_character(name, dict(spec, stance="dodge"), level,
+                                    M, shopping_foe=foe)
+        d_block = m.build_character(name, dict(spec, stance="block"), level,
+                                    M, shopping_foe=foe)
         if d_dodge is None or d_block is None:
             continue
         dd, _ = m.attack_expectation(attacker, d_dodge, M)

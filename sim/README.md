@@ -123,6 +123,46 @@ These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
 because the design intent moved, never to make the report quiet.
 
+## Shopping
+
+Builds are not handed their gear; they buy it. An archetype names
+disciplines, attributes and a stance -- what the character *is* -- and
+the kit is chosen afterwards, against the standard foe of its level, on
+the objective the contribution gate uses: damage per round times rounds
+survived. Equipping for offence alone puts everybody in no armour, and
+equipping for defence alone puts everybody in plate.
+
+This matters beyond tidiness. **Fixed gear quietly flatters any rule
+change aimed at gear.** A change that makes full plate a bad idea looks
+decisive while the build is still wearing full plate, and gives most of
+its gain back the moment it is allowed to put on a chain shirt instead.
+
+Two things are deliberately not shopped for. **Stance** stays in the
+archetype, because how a character defends is part of what the build is,
+and the stance report exists to ask whether that choice is real -- each
+stance does shop separately, since a blocker who cannot buy a shield is
+no test of blocking. **The standard foe** keeps its kit pinned, because
+everybody shops against it and a standard of comparison that re-equips
+in response to what it is being compared with is no standard at all.
+
+The purse is the one number the rules do not supply. Character creation
+gives a starting sum and says nothing about what is earned afterwards,
+so the model assumes one more starting purse per level -- inventing no
+number the rules do not already give. A level 1 character can afford a
+sword, a chain shirt and a shield; full plate arrives at level 11. It is
+the assumption to argue with first if gear choices look wrong.
+
+Shopping is cheap because what a character carries changes what it deals
+only through the **weapon** -- its own armour and shield are read when
+it is struck, never when it strikes. Offence is therefore worked out
+once per weapon rather than once per kit, which is the difference
+between a report that runs in a minute and one that runs in an hour.
+
+The report prints what every build bought, and which weapons nobody
+bought. A weapon nobody chooses is dead content the same way a weapon
+that cannot hurt anybody is; a weapon *everybody* chooses is the more
+expensive problem, because it makes the rest of the table decoration.
+
 ## The adventuring day
 
 A single fight from full is not the question a dungeon asks. `model.py`
@@ -238,16 +278,6 @@ land the thing at least half the time before it counts.
   by survival, so a build that raises both at once is the worst case the
   metric can be shown. Read its numbers as a bound, not as a build
   anybody would play.
-- **Every build's gear is fixed in its archetype, and that quietly
-  flatters any rule change aimed at gear.** A change that makes full
-  plate a bad idea looks decisive while the build is still wearing full
-  plate, and gives most of its gain back the moment the build is allowed
-  to put on a chain shirt instead. Untouchable's shape is tunable
-  through three optional keys on the power -- `untouchable_max_move_
-  penalty`, `untouchable_penalty_fraction`, `untouchable_max_points`,
-  with none of them present meaning it cancels the lot -- and any
-  measurement of them has to let the build re-equip, or it is measuring
-  the wrong thing.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.
