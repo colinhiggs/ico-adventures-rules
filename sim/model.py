@@ -44,6 +44,16 @@ ASSUMPTIONS = [
     "A spell's damage comes from the difficulty declared, not from the "
     "margin on the roll -- margin buys a caster a lower price, not a "
     "bigger effect.",
+    "Halved movement costs a creature its action half the time it "
+    "applies, since the model has no positions and cannot ask whether "
+    "the creature could still reach anybody.",
+    "A creature caught by a field is still standing in it at the start "
+    "of its next turn half the time.",
+    "A burn is counted for its full expected duration, as though the "
+    "target lives long enough to take every tick.",
+    "A round taken off an enemy is worth the damage that enemy would "
+    "have dealt in it, which is how a stun and a sword swing are "
+    "quoted in the same currency.",
 ]
 
 
@@ -185,6 +195,7 @@ SKILL_ATTRIBUTE = {
     # is handled by Character.casting_bonus() rather than by this map.
     "spellcasting": "willpower",
     "attack_ranged": "dexterity",
+    "resolve": "willpower",
 }
 
 
@@ -205,6 +216,9 @@ class Character:
     spirit: int = 0
     power_plan: dict = field(default_factory=dict)
     spent: dict = field(default_factory=dict)
+    # {condition name: rounds left}, and the damage a burn repeats.
+    conditions: dict = field(default_factory=dict)
+    burning_damage: int = 0
 
     def attr_bonus(self, attribute, M):
         step = int(M.get("attributes", "points_per_bonus_step"))
@@ -430,6 +444,9 @@ def d20_faces(M, depth=4):
     walk 1..20 any more, because the top face reopens the die. Depth 4
     leaves under one part in a hundred thousand unaccounted for, which is
     far below the noise in everything else here."""
+    cached = _FACES_CACHE.get(depth)
+    if cached is not None:
+        return cached
     crit_on = int(M.get("core-resolution", "critical_on"))
     chains = bool(M.get("core-resolution", "critical_chains"))
     out = []
@@ -443,21 +460,161 @@ def d20_faces(M, depth=4):
                 out.append((total + face, w, is_crit or face == crit_on))
 
     walk(0, 1.0, 0, False)
+    _FACES_CACHE[depth] = out
     return out
+
+
+_FACES_CACHE = {}
 
 
 def critical_bonus_steps(M):
     return int(M.get("core-resolution", "critical_power_effect_steps"))
 
 
+# ---------------------------------------------------------------------
+# Conditions
+#
+# conditions.md gives every effect that does more than damage the same
+# shape: an opposed roll against Fortitude or Resolve, and a duration
+# read off the margin. What each one then DOES is read from its own
+# mechanics entry rather than switched on its name, so a new condition
+# needs no code here as long as it is described in the same vocabulary.
+# ---------------------------------------------------------------------
+def condition_def(M, name):
+    return M.get("conditions", "conditions", name)
+
+
+def resist_skill(M, name):
+    return str(condition_def(M, name)["resisted_with"])
+
+
+def margin_per_round(M, name):
+    """How much margin buys another round. A condition may price itself
+    above the general rate; stun does, and that is the whole reason it
+    is not the only spell anyone ever casts."""
+    c = condition_def(M, name)
+    if "margin_per_extra_round" in c:
+        return int(c["margin_per_extra_round"])
+    return int(M.get("conditions", "margin_per_extra_round"))
+
+
+def condition_duration(M, name, margin):
+    return (int(M.get("conditions", "base_rounds"))
+            + margin // margin_per_round(M, name))
+
+
+_CONDITION_CACHE = {}
+
+
+def condition_expectation(M, name, effect_total, resist_bonus):
+    """(chance it lands, mean rounds it then lasts).
+
+    The defender has to BEAT the effect's total; a tie goes to the
+    caster, exactly as core-resolution gives ties to the actor."""
+    key = (name, effect_total, resist_bonus)
+    got = _CONDITION_CACHE.get(key)
+    if got is not None:
+        return got
+    landed = 0.0
+    rounds = 0.0
+    for face, weight, _crit in d20_faces(M):
+        total = face + resist_bonus
+        if total > effect_total:
+            continue
+        landed += weight
+        rounds += weight * condition_duration(M, name, effect_total - total)
+    got = (landed, rounds / landed if landed else 0.0)
+    _CONDITION_CACHE[key] = got
+    return got
+
+
+def try_condition(target, name, effect_total, M, damage=0):
+    """Roll this defender's resistance for real. Returns the rounds the
+    condition lasts, or 0 if it was shrugged off."""
+    roll = d20(M)[0] + target.skill(resist_skill(M, name), M)
+    if roll > effect_total:
+        return 0
+    rounds = condition_duration(M, name, effect_total - roll)
+    target.conditions[name] = max(target.conditions.get(name, 0), rounds)
+    if condition_def(M, name).get("repeats_damage"):
+        target.burning_damage = max(target.burning_damage, damage)
+    return rounds
+
+
+def condition_attack_penalty(char, M):
+    """What every condition on this creature takes off its attack rolls
+    -- and, by the same rule, off the difficulty of hitting it."""
+    if not char.conditions:
+        return 0
+    return sum(int(condition_def(M, n).get("attack_penalty", 0))
+               for n in char.conditions)
+
+
+# How often reaching the target is what limits a crowd member's swing.
+# The rules do not model position, so halved movement cannot be resolved
+# literally; this is the share of a creature's rounds in which closing
+# the distance, rather than the swing itself, is the binding constraint.
+MOVEMENT_GATES_ATTACK = 0.5
+
+
+def action_loss(M, name):
+    """The share of a creature's actions this condition costs it. Stun
+    takes the whole action; halved movement costs an action only when
+    the creature needed that movement to reach anybody."""
+    c = condition_def(M, name)
+    if c.get("loses_action"):
+        return 1.0
+    if "movement_fraction" in c:
+        return MOVEMENT_GATES_ATTACK * (1.0 - float(c["movement_fraction"]))
+    if "attack_penalty" in c:
+        # A flat penalty on a d20 removes exactly that many faces.
+        return int(c["attack_penalty"]) / 20.0
+    return 0.0
+
+
+def tick_conditions(char, M):
+    """Start of this creature's turn: a burn bites, then everything
+    counts down. Returns True if the creature can still act."""
+    if not char.conditions:
+        return True
+    for name in char.conditions:
+        if not condition_def(M, name).get("repeats_damage"):
+            continue
+        if char.burning_damage:
+            apply_damage(char, reduce_by_armour(char.burning_damage, char, M))
+            break
+    acts = True
+    for name in char.conditions:
+        # A condition that works as a penalty on the roll is applied
+        # there, by condition_attack_penalty, and must not also be
+        # charged an action here. Only the ones that gate the action
+        # outright -- stun, and movement that fails to close -- do this.
+        if "attack_penalty" in condition_def(M, name):
+            continue
+        loss = action_loss(M, name)
+        if loss >= 1.0 or random.random() < loss:
+            acts = False
+    for name in list(char.conditions):
+        char.conditions[name] -= 1
+        if char.conditions[name] <= 0:
+            del char.conditions[name]
+            if condition_def(M, name).get("repeats_damage"):
+                char.burning_damage = 0
+    return acts and char.chp > 0
+
+
 def targeting_difficulty(defender, M, dodge_bonus=0):
-    """TD the attacker must beat, per hitting.md."""
+    """TD the attacker must beat, per hitting.md. A condition that takes
+    points off the defender's attacks takes the same off the difficulty
+    of hitting them -- dazed says so explicitly."""
+    slack = condition_attack_penalty(defender, M)
     if defender.stance == "block":
         td = defender.skill("block", M)
         if defender.shield:
             td += defender.shield.block_td_bonus
-        return td
+        return td - slack
     td = int(M.get("hitting", "dodge_targeting_base")) + defender.skill("dodge", M)
+    td -= slack
     penalty = defender.armour.skill_penalty
     if defender.shield:
         penalty += defender.shield.skill_penalty
@@ -665,7 +822,7 @@ def best_difficulty(char, power_id, defender, M, stamina_budget):
 # ---------------------------------------------------------------------
 # Duels
 # ---------------------------------------------------------------------
-def make_mook(name, M, attack, dodge, hp, weapon, armour):
+def make_mook(name, M, attack, dodge, hp, weapon, armour, resist=0):
     """A rank-and-file opponent, built directly rather than by spending
     advancement points -- a goblin does not have a character sheet."""
     flat = {a: int(M.get("attributes", "average_score"))
@@ -676,6 +833,8 @@ def make_mook(name, M, attack, dodge, hp, weapon, armour):
     c.skills = {s: 0 for s in TRACKED_SKILLS}
     c.skills["attack_melee"] = attack
     c.skills["dodge"] = dodge
+    c.skills["fortitude"] = resist
+    c.skills["resolve"] = resist
     c.weapon = Weapon.load(M, weapon)
     c.armour = Armour.load(M, armour)
     c.shield = None
@@ -686,9 +845,9 @@ def make_mook(name, M, attack, dodge, hp, weapon, armour):
 
 
 MOOKS = {
-    # name:        attack dodge hp  weapon      armour
-    "goblin":      (3,     4,    6,  "dagger",     "unarmoured"),
-    "orc":         (5,     3,    12, "hand_axe",   "leather"),
+    # name:        attack dodge hp  weapon      armour        resist
+    "goblin":      (3,     4,    6,  "dagger",     "unarmoured", 2),
+    "orc":         (5,     3,    12, "hand_axe",   "leather",    4),
 }
 
 
@@ -730,43 +889,68 @@ def area_catch(squares, count):
     return max(1, min(count, squares // SQUARES_PER_BODY))
 
 
-def _hp_needed(foe, M, spell_id, difficulty):
-    """How much raw damage it takes to drop this creature through its
-    armour, so the planner can tell a killing shape from a scratch."""
+def _hp_needed(foe, M, spell_id, difficulty, ticks=1.0):
+    """How much raw damage per tick it takes to drop this creature
+    through its armour, so the planner can tell a killing shape from a
+    scratch. Armour bites every tick, so a field that lands three times
+    is not the same as one blow of three times the size."""
     for raw in range(1, 200):
-        if reduce_by_armour(raw, foe, M) >= foe.total_hp:
+        if reduce_by_armour(raw, foe, M) * ticks >= foe.total_hp:
             return raw
     return 200
 
 
 def _spell_swarm_plan(hero, foe, M, count, budget):
-    """The best area spell against a crowd, scored on bodies dropped."""
+    """The best area spell against a crowd, scored on bodies neutralised.
+
+    A body is neutralised by being killed, and partly neutralised by
+    being stunned or slowed: a creature that loses two of the fight's
+    rounds has been taken out of two thirds of a six-round fight. That
+    is the only way a burst that stuns and a blast that kills can be
+    compared without preferring one by definition."""
     if not can_cast(hero, M):
         return None
-    best = (None, 0.0, 0)
-    hp = foe.total_hp
-    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    best = (None, 0.0)
+    skill = hero.casting_bonus(M)
     for spell_id in combat_spells(M):
         sp = spell_def(M, spell_id)
         if "area_archetype" not in sp:
             continue
         base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 70):
-            # Pick the shape that kills, not the one that covers most.
-            damage, squares, bodies = spell_best_for_crowd(
-                M, spell_id, difficulty,
-                _hp_needed(foe, M, spell_id, difficulty), count)
-            if bodies <= 0:
-                continue
-            _, cost = cast_expectation(hero, spell_id, difficulty, foe, M)
-            if cost > budget:
-                continue
-            success = sum(w for face, w, _c in d20_faces(M)
-                          if face + hero.casting_bonus(M) >= difficulty)
-            kills = success * bodies
-            if kills > best[1]:
-                best = ({"spell": spell_id, "difficulty": difficulty,
-                         "squares": squares}, kills, squares)
+        durations = range(0, 5) if persists(M, spell_id) else (0,)
+        cond = spell_condition(M, spell_id)
+        resist = (foe.skill(resist_skill(M, cond), M) if cond else 0)
+        loss = action_loss(M, cond) if cond else 0.0
+        for extra in durations:
+            rounds = spell_rounds(M, spell_id, extra)
+            ticks = field_ticks(rounds) if persists(M, spell_id) else 1.0
+            for difficulty in range(base, base + 70):
+                # Pick the shape that kills, not the one that covers most.
+                need = _hp_needed(foe, M, spell_id, difficulty, ticks)
+                damage, squares, bodies = spell_best_for_crowd(
+                    M, spell_id, difficulty, need, count, extra)
+                if bodies <= 0:
+                    continue
+                _d, cost, _c = cast_expectation(hero, spell_id, difficulty,
+                                                foe, M, extra)
+                if cost > budget:
+                    continue
+                success = sum(w for face, w, _c in d20_faces(M)
+                              if face + skill >= difficulty)
+                value = success * bodies
+                if cond is not None and loss > 0:
+                    # Every body it catches also loses part of the fight.
+                    # The number the defender has to beat is the casting
+                    # roll, which is at least the declared difficulty
+                    # whenever the spell goes off at all.
+                    chance, held = condition_expectation(M, cond, difficulty,
+                                                         resist)
+                    value += (success * bodies * chance * held * loss
+                              / TYPICAL_FIGHT_ROUNDS)
+                if value > best[1]:
+                    best = ({"spell": spell_id, "difficulty": difficulty,
+                             "squares": squares, "duration_points": extra},
+                            value)
     return best[0]
 
 
@@ -797,7 +981,8 @@ def _swarm_plan(hero, foe, M):
                                    hero.spirit / 4.0)
     if spell_plan is not None:
         damage, squares = spell_shape(M, spell_plan["spell"],
-                                      spell_plan["difficulty"])
+                                      spell_plan["difficulty"],
+                                      spell_plan["duration_points"])
         bodies = area_catch(squares, SWARM_CROWD_ASSUMED)
         if bodies > max(best[1], plain):
             return spell_plan
@@ -867,16 +1052,28 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     for _ in range(trials):
         hero = copy.deepcopy(hero_spec)
         crowd = [copy.deepcopy(template) for _ in range(count)]
+        fields = []             # persisting spells still on the ground
         rounds = 0
         while crowd and hero.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _swarm_act(hero, crowd, plan, M, on_tie, divisor)
+            _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields)
             crowd = [m for m in crowd if m.chp > 0]
             for m in crowd:
+                if m.chp <= 0:
+                    continue
+                _stand_in_fields(m, fields, M)
+                if m.chp <= 0:
+                    continue
+                # Burning bites and stun bites before the swing does.
+                if not tick_conditions(m, M):
+                    continue
                 td = targeting_difficulty(hero, M)
-                total = d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
+                total = (d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
+                         - condition_attack_penalty(m, M))
                 if (total >= td) if on_tie else (total > td):
                     apply_damage(hero, damage_from(m, hero, total - td, M))
+            crowd = [m for m in crowd if m.chp > 0]
+            _age_fields(fields)
         rounds_total += rounds
         if not crowd and hero.chp > 0:
             wins += 1
@@ -893,6 +1090,28 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
 # should be the most interesting fight of the day, is fought by people
 # who can still afford to do anything.
 # ---------------------------------------------------------------------
+def _stand_in_fields(creature, fields, M):
+    """A field damages anything inside it at the start of that
+    creature's turn. With no positions to consult, a creature caught by
+    a field stays in it with probability FIELD_LINGER and is out of it
+    for good otherwise."""
+    for f in fields:
+        # Identity, not equality: Character is a dataclass, so two fresh
+        # goblins compare equal and a membership test would burn the
+        # wrong one.
+        if id(creature) not in f["caught"]:
+            continue
+        apply_damage(creature, reduce_by_armour(f["damage"], creature, M))
+        if random.random() >= FIELD_LINGER:
+            f["caught"].discard(id(creature))
+
+
+def _age_fields(fields):
+    for f in fields:
+        f["rounds"] -= 1
+    fields[:] = [f for f in fields if f["rounds"] > 0 and f["caught"]]
+
+
 def maxima(char):
     return {"stamina": char.stamina, "mhp": char.mhp, "chp": char.chp}
 
@@ -990,7 +1209,7 @@ def standard_foe_for(hero, M):
     return mook("orc", M)
 
 
-def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
+def _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields=None):
     face, was_crit = d20(M)
     roll = face + hero.attack_bonus(M)
     total = roll + hero.weapon.accuracy
@@ -1010,7 +1229,7 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor):
         return
 
     if "spell" in plan:
-        _cast_at_crowd(hero, crowd, plan, M)
+        _cast_at_crowd(hero, crowd, plan, M, fields)
         return
 
     p = power_def(M, plan["power"])
@@ -1111,22 +1330,28 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     return rounds_total / trials, a_wins / trials, capped / trials
 
 
-def _cast_at_crowd(hero, crowd, plan, M):
+def _cast_at_crowd(hero, crowd, plan, M, fields=None):
     """Resolve an area spell against a crowd: one casting roll, and
-    everything under the template takes it."""
-    sp = spell_def(M, plan["spell"])
+    everything under the template takes it -- damage now, a condition to
+    resist, and, if the spell persists, a field left on the ground."""
+    spell_id = plan["spell"]
+    sp = spell_def(M, spell_id)
     difficulty = plan["difficulty"]
+    extra = plan.get("duration_points", 0)
     minor = sp.get("tier") == "minor"
     minimum = int(sp.get("minimum_spirit", 0))
+    lasting = persists(M, spell_id)
+    ticks = field_ticks(spell_rounds(M, spell_id, extra)) if lasting else 1.0
+
     living0 = [x for x in crowd if x.chp > 0]
     if living0:
-        need = _hp_needed(living0[0], M, plan["spell"], difficulty)
+        need = _hp_needed(living0[0], M, spell_id, difficulty, ticks)
         damage, squares, _bodies = spell_best_for_crowd(
-            M, plan["spell"], difficulty, need, len(living0))
+            M, spell_id, difficulty, need, len(living0), extra)
         if squares == 0:
-            damage, squares = spell_shape(M, plan["spell"], difficulty)
+            damage, squares = spell_shape(M, spell_id, difficulty, extra)
     else:
-        damage, squares = spell_shape(M, plan["spell"], difficulty)
+        damage, squares = spell_shape(M, spell_id, difficulty, extra)
 
     roll, _crit = d20(M)
     roll += hero.casting_bonus(M)
@@ -1139,8 +1364,21 @@ def _cast_at_crowd(hero, crowd, plan, M):
     hero.spirit -= cost
 
     living = [x for x in crowd if x.chp > 0]
-    for target in living[:area_catch(squares, len(living))]:
-        apply_damage(target, reduce_by_armour(damage, target, M))
+    caught = living[:area_catch(squares, len(living))]
+    cond = spell_condition(M, spell_id)
+    for target in caught:
+        landed = reduce_by_armour(damage, target, M)
+        apply_damage(target, landed)
+        if cond is not None and target.chp > 0:
+            # The casting roll already made is the number to beat.
+            try_condition(target, cond, roll, M, damage=damage)
+
+    if lasting and fields is not None:
+        fields.append({"damage": damage,
+                       # The cast itself was the first tick, so what is
+                       # left on the ground is one round shorter.
+                       "rounds": spell_rounds(M, spell_id, extra) - 1,
+                       "caught": {id(t) for t in caught if t.chp > 0}})
 
 
 def _guard(defender, plan, M):
@@ -1292,14 +1530,72 @@ def expected_offence(char, foe, M, rounds_budget=4):
             + (1 - SNEAK_AVAILABILITY) * unconditional)
 
 
-def spell_options(M, spell_id, difficulty):
+def expected_control(char, foe, M, rounds_budget=4):
+    """Expected damage per round the foe never gets to deal, because a
+    condition took the round away from it.
+
+    Only casters produce any: no martial power in the list applies a
+    condition. It is quoted in damage so that it can be added to
+    offence, which is the only way a stun and a sword swing can be
+    compared at all."""
+    if not can_cast(char, M):
+        return 0.0
+    return best_spell(char, foe, M, char.spirit / float(rounds_budget))[4]
+
+
+def spell_condition(M, spell_id):
+    """The condition this spell tries to apply, or None."""
+    sp = spell_def(M, spell_id)
+    if not sp.get("applies_condition"):
+        return None
+    return str(sp["condition"])
+
+
+def spell_rounds(M, spell_id, duration_points=0):
+    """How many rounds a spell persists. Anything without a duration
+    goes off once and is gone -- spell-duration calls that
+    instantaneous, and one round is how the model counts it."""
+    sp = spell_def(M, spell_id)
+    if "duration_rounds" not in sp:
+        return 1
+    per = int(sp.get("rounds_per_difficulty", 0))
+    return int(sp["duration_rounds"]) + per * duration_points
+
+
+def persists(M, spell_id):
+    return "duration_rounds" in spell_def(M, spell_id)
+
+
+# The chance a creature caught in a field is still in it at the start of
+# its next turn. The model has no positions, so it cannot ask; half is
+# the midpoint between a crowd that must cross the field to reach the
+# caster and one that simply walks around it.
+FIELD_LINGER = 0.5
+
+
+def field_ticks(rounds):
+    """Expected number of times a field damages one creature it catches:
+    the first tick is certain, each later one only if the creature is
+    still standing in it."""
+    total = 0.0
+    live = 1.0
+    for _ in range(max(1, rounds)):
+        total += live
+        live *= FIELD_LINGER
+    return total
+
+
+def spell_options(M, spell_id, difficulty, duration_points=0):
     """Every (damage, squares) a spell can be shaped into at this
     difficulty. An area spell trades coverage against damage, and which
     trade is right depends entirely on what is being shot at -- so the
-    choice belongs to the caller, not to a heuristic buried here."""
+    choice belongs to the caller, not to a heuristic buried here.
+
+    `duration_points` is difficulty set aside for extra rounds before
+    any of it is spent on area or damage."""
     sp = spell_def(M, spell_id)
     base = int(sp["base_difficulty"])
-    spare = max(0, difficulty - base)
+    spare = max(0, difficulty - base - duration_points)
 
     if "area_archetype" not in sp:
         step = int(sp["difficulty_per_step"])
@@ -1317,17 +1613,21 @@ def spell_options(M, spell_id, difficulty):
     return out or [(0, 0)]
 
 
-def spell_shape(M, spell_id, difficulty):
+def spell_shape(M, spell_id, difficulty, duration_points=0):
     """The hardest-hitting shape, which is what a single target cares
     about."""
-    return max(spell_options(M, spell_id, difficulty), key=lambda o: o[0])
+    return max(spell_options(M, spell_id, difficulty, duration_points),
+               key=lambda o: o[0])
 
 
-def spell_best_for_crowd(M, spell_id, difficulty, target_hp, count):
+def spell_best_for_crowd(M, spell_id, difficulty, target_hp, count,
+                         duration_points=0):
     """The shape that drops the most bodies: wide enough to reach them,
-    still hard enough to kill them."""
+    still hard enough to kill them. `target_hp` is raw damage needed per
+    tick, so a field that gets several ticks is allowed to be weaker."""
     best = (0, 0, 0.0)
-    for damage, squares in spell_options(M, spell_id, difficulty):
+    for damage, squares in spell_options(M, spell_id, difficulty,
+                                         duration_points):
         if damage < target_hp:
             continue
         bodies = area_catch(squares, count)
@@ -1336,8 +1636,15 @@ def spell_best_for_crowd(M, spell_id, difficulty, target_hp, count):
     return best
 
 
-def cast_expectation(char, spell_id, difficulty, defender, M):
-    """Expected damage to ONE defender and expected spirit cost.
+def cast_expectation(char, spell_id, difficulty, defender, M,
+                     duration_points=0):
+    """Expected damage, spirit cost and control against ONE defender.
+
+    `damage` is everything the spell eventually deals to that creature:
+    the hit itself, the further ticks of a field it stands in, and the
+    burn a fire spell leaves on it. `control` is damage the defender
+    never gets to deal back, because a condition took its action away --
+    the only currency a stun and a sword swing can both be quoted in.
 
     A bolt needs a ranged attack roll on top of the casting check, which
     is the price of its efficiency; an area spell needs none, which is
@@ -1345,10 +1652,21 @@ def cast_expectation(char, spell_id, difficulty, defender, M):
     sp = spell_def(M, spell_id)
     minor = sp.get("tier") == "minor"
     minimum = int(sp.get("minimum_spirit", 0))
-    damage, _squares = spell_shape(M, spell_id, difficulty)
+    damage, _squares = spell_shape(M, spell_id, difficulty, duration_points)
     skill = char.casting_bonus(M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     crit_steps = critical_bonus_steps(M)
+
+    ticks = (field_ticks(spell_rounds(M, spell_id, duration_points))
+             if persists(M, spell_id) else 1.0)
+
+    cond = spell_condition(M, spell_id)
+    if cond is not None:
+        resist = defender.skill(resist_skill(M, cond), M)
+        loss = action_loss(M, cond)
+        repeats = bool(condition_def(M, cond).get("repeats_damage"))
+        # What the defender would have done with the rounds it loses.
+        foe_dpr, _ = attack_expectation(defender, char, M)
 
     # A spell that needs an attack roll is aimed with the casting roll
     # itself -- one roll, two jobs, as spell-properties now says.
@@ -1357,6 +1675,7 @@ def cast_expectation(char, spell_id, difficulty, defender, M):
 
     expected_damage = 0.0
     expected_cost = 0.0
+    expected_control = 0.0
     for face, weight, is_crit in d20_faces(M):
         roll = face + skill
         if roll >= difficulty:
@@ -1365,15 +1684,26 @@ def cast_expectation(char, spell_id, difficulty, defender, M):
             bonus = 0
             if is_crit:
                 more, _ = spell_shape(M, spell_id, difficulty + crit_steps *
-                                      _spell_step(M, spell_id))
+                                      _spell_step(M, spell_id),
+                                      duration_points)
                 bonus = max(0, more - damage)
             aimed = (not needs_aim) or ((roll >= td) if on_tie else (roll > td))
             if aimed:
-                expected_damage += weight * reduce_by_armour(
-                    damage + bonus, defender, M)
+                landed = reduce_by_armour(damage + bonus, defender, M)
+                expected_damage += weight * landed * ticks
+                if cond is not None:
+                    # The casting roll is the number the defender has to
+                    # beat -- conditions.md reuses it rather than asking
+                    # for a second roll.
+                    chance, rounds = condition_expectation(M, cond, roll,
+                                                           resist)
+                    if repeats:
+                        expected_damage += weight * chance * rounds * landed
+                    expected_control += (weight * chance * rounds
+                                         * loss * foe_dpr)
         else:
             expected_cost += weight * (0 if minor else minimum)
-    return expected_damage, expected_cost
+    return expected_damage, expected_cost, expected_control
 
 
 def _spell_step(M, spell_id):
@@ -1396,19 +1726,40 @@ def reduce_by_armour(raw, defender, M):
     return max(0, int(raw - min(reduction, cap)))
 
 
+_BEST_SPELL_CACHE = {}
+
+
 def best_spell(char, foe, M, spirit_budget):
-    """The spell and difficulty giving the most expected damage to one
-    target within a sustainable spirit spend."""
-    best = (None, -1.0, 0.0, 0)
+    """The spell, difficulty and duration giving the best turn against
+    one target within a sustainable spirit spend.
+
+    Ranked on damage PLUS control, because a caster who stuns for two
+    rounds has had a better turn than one who scratched for one more
+    point, and the metric that could not see that was the reason a
+    wizard read as a bad fighter.
+
+    Returns (spell, damage, cost, difficulty, control, duration_points)."""
+    key = (char.name, char.level, char.casting_bonus(M),
+           round(spirit_budget, 3),
+           foe.name, foe.total_hp, foe.armour.ap, foe.stance,
+           foe.skills.get("fortitude", 0), foe.skills.get("resolve", 0))
+    got = _BEST_SPELL_CACHE.get(key)
+    if got is not None:
+        return got
+    best = (None, -1.0, 0.0, 0, 0.0, 0)
     for spell_id in combat_spells(M):
         sp = spell_def(M, spell_id)
         base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 70):
-            damage, cost = cast_expectation(char, spell_id, difficulty, foe, M)
-            if cost > spirit_budget:
-                continue
-            if damage > best[1]:
-                best = (spell_id, damage, cost, difficulty)
+        durations = range(0, 5) if persists(M, spell_id) else (0,)
+        for extra in durations:
+            for difficulty in range(base, base + 70):
+                damage, cost, control = cast_expectation(
+                    char, spell_id, difficulty, foe, M, extra)
+                if cost > spirit_budget:
+                    continue
+                if damage + control > best[1] + best[4]:
+                    best = (spell_id, damage, cost, difficulty, control, extra)
+    _BEST_SPELL_CACHE[key] = best
     return best
 
 

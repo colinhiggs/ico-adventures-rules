@@ -295,9 +295,11 @@ def report_dpr(level, chars, M):
             continue
         plain, hitrate = m.attack_expectation(c, foe, M)
         best = m.expected_offence(c, foe, M)
+        control = m.expected_control(c, foe, M)
         out[name] = best
-        print("%-12s plain %5.2f   best power %5.2f   hit rate %.0f%%"
-              % (name, plain, best, hitrate * 100))
+        print("%-12s plain %5.2f   best power %5.2f   control %5.2f   "
+              "hit rate %.0f%%"
+              % (name, plain, best, control, hitrate * 100))
     return out
 
 
@@ -456,7 +458,15 @@ def contributions(chars, level, M):
         # its spells. An earlier version of this function carried its
         # own hardcoded list of martial powers, which measured a wizard
         # on the staff it was holding and scored it near zero.
-        out[name] = m.expected_offence(c, foe, M) * survival
+        #
+        # Control is added to offence rather than to survival: a round
+        # taken off the foe is a round of its damage that never happens,
+        # and quoting it as damage is the only way a stun and a sword
+        # swing can be compared at all. It is zero for every build that
+        # applies no conditions, which is every martial build.
+        offence = m.expected_offence(c, foe, M)
+        control = m.expected_control(c, foe, M)
+        out[name] = (offence + control) * survival
     return out
 
 

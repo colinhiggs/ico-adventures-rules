@@ -104,14 +104,19 @@ not damage alone: a defensive signature scores zero on a damage-only
 measure, which made the most over-powered build in an early run look
 like the weakest.
 
-**Contribution is a single-target, melee-range measure, and a caster
-fails it for reasons that are not faults.** It counts damage to one
-creature and how long the build survives being stood next to. It does
-not count clearing six goblins in a round, and it does not count doing
-so from thirty metres away without being hit at all. A caster scoring
-three or four times below a fighter on this gate is the metric's blind
-spot as much as the build's weakness -- read the rank-and-file table
-alongside it before concluding anything.
+Contribution is `(offence + control) x survival`. **Control** is damage
+the enemy never gets to deal because a condition took its round away:
+a stun that holds for two rounds is worth two rounds of that creature's
+output, and quoting it as damage is the only way a stun and a sword
+swing can be compared at all. It is zero for every build that applies
+no conditions, which today means every martial build.
+
+**Contribution is still a single-target, melee-range measure.** It
+counts damage to one creature and how long the build survives being
+stood next to. It does not count clearing six goblins in a round, and
+it does not count doing so from thirty metres away without being hit at
+all -- read the rank-and-file table alongside it before concluding
+anything.
 
 These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
@@ -140,6 +145,32 @@ Offence is looked up from a cache keyed on stamina rather than
 recomputed per trial; the difficulty search is far too slow to run
 inside the loop, and stamina is what actually varies.
 
+## Conditions and persistence
+
+Conditions are read out of `conditions.md` and resolved the way the book
+resolves them: the casting roll already made is the number to beat, the
+defender rolls Fortitude or Resolve against it, and the margin sets the
+duration. What each condition then *does* is read from its own mechanics
+entry rather than switched on its name, so a new condition needs no code
+here as long as it is described in the same vocabulary -- an entry with
+`loses_action` gates the action, one with `attack_penalty` comes off the
+roll and off the difficulty of hitting that creature, one with
+`movement_fraction` costs the action whenever movement was what the
+creature needed, and one with `repeats_damage` bites again each turn.
+
+Halved movement is the one that cannot be resolved literally, because
+the model has no positions. `MOVEMENT_GATES_ATTACK` is the share of a
+crowd member's rounds in which closing the distance, rather than the
+swing, is the binding constraint; slowing therefore costs a creature
+`MOVEMENT_GATES_ATTACK x (1 - movement_fraction)` of its actions.
+
+A field stays on the ground. `FIELD_LINGER` is the chance a creature it
+caught is still standing in it at the start of its next turn -- the
+midpoint between a crowd that must cross the field to reach the caster
+and one that simply walks around it. It is the number to argue with
+first if fields look wrong, and today it is what keeps them from ever
+being the best crowd spell.
+
 ## Known limits
 
 - **Damaging spells are modelled; nothing else about magic is.** A
@@ -148,6 +179,14 @@ inside the loop, and stamina is what actually varies.
   spirit. Healing and every spell cast for a narrative reason are out of
   scope, and always will be -- there is no way to score "talked the door
   open" against damage per round.
+- **Duels are melee-only, so no condition and no field ever appears in
+  one.** Conditions reach the analytic path (contribution, damage per
+  round, the crowd planner) and the skirmish loop, and nothing else.
+  `sweep.py` reports duel rounds, so it cannot see a condition either --
+  sweeping one of their rates moves nothing in its table.
+- A burn is counted for its full expected duration, as though the target
+  lives to take every tick. Nothing here models overkill, for spells or
+  for swings, so fire is flattered exactly as much as a great axe is.
 - Ranged weapons are still not modelled, only ranged *spells*.
 - Fresh-versus-empty is measured at the two extremes. A character plans
   for a sustainable spend across roughly four rounds, so the model never

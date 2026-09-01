@@ -16,9 +16,11 @@ mechanics:
     stunned:
       resisted_with: fortitude
       margin_per_extra_round: 15
+      loses_action: true
     burning:
       resisted_with: fortitude
       margin_per_extra_round: 4
+      repeats_damage: true
     slowed:
       resisted_with: fortitude
       movement_fraction: 0.5
