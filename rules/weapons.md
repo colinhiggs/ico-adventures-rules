@@ -14,12 +14,14 @@ mechanics:
     size: S
     block_ap: 2
     cost_gp: 2
+    quick: true
   short_sword:
     accuracy: 1
     damage: 6
     size: S
     block_ap: 6
     cost_gp: 10
+    quick: true
   hand_axe:
     accuracy: 0
     damage: 7
@@ -111,10 +113,25 @@ instead of strength for its attack skill.
 
 ## Two hands
 
-A weapon of size {{ mechanics.two_handed_size }} takes both hands, and
-cannot be carried with a shield from [[armour]]. That is the whole of
-what size does beyond finesse: the two ends of the scale each carry a
-rule, and the middle carries neither.
+A weapon of size {{ mechanics.two_handed_size }} takes both hands; every
+smaller weapon takes one. A two-handed weapon cannot be carried with a
+shield from [[armour]], and it leaves no hand free for anything that
+needs one — see [[free-hands]].
+
+## Reach
+
+A weapon of size {{ mechanics.two_handed_size }} extends its wielder's
+reach; smaller weapons do not. What that is worth in a fight is in
+[[reach]], and how reach is measured is in [[movement]].
+
+## Quick weapons
+
+Some small weapons are **quick**: light enough to be drawn, put away and
+brought back on the same breath, and short enough to be used at close
+quarters where a longer weapon has run out of room. The dagger and the
+short sword are quick; the hand axe is not, being a small weapon rather
+than a fast one. What quickness does is in [[reach]] and
+[[free-hands]].
 
 Ranged weapons are not yet statted.
 

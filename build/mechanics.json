@@ -481,6 +481,19 @@
         "master": "focused"
       }
     },
+    "free-hands": {
+      "hands_total": 2,
+      "stowing_costs_an_action": true,
+      "quick_stow_is_free": true,
+      "hands_needed": {
+        "spellcasting": 1,
+        "heal": 1,
+        "use_magic_device": 1,
+        "sleight_of_hand": 1,
+        "disable_device": 2,
+        "climb": 2
+      }
+    },
     "general-powers": {
       "fast_attack": {
         "source": "stamina",
@@ -565,6 +578,13 @@
       "gold_gained_per_point": 500,
       "gold_lost_per_point": 100,
       "power_source_bonus_per_point": 3
+    },
+    "reach": {
+      "outside_reach_cannot_strike": true,
+      "closing_costs_the_move": true,
+      "opening_attacks_per_square": 1,
+      "withdrawing_costs_the_move": true,
+      "quick_strikes_first_inside": true
     },
     "recovery": {
       "recovery_is_once_per_encounter": true,
@@ -876,14 +896,16 @@
         "damage": 4,
         "size": "S",
         "block_ap": 2,
-        "cost_gp": 2
+        "cost_gp": 2,
+        "quick": true
       },
       "short_sword": {
         "accuracy": 1,
         "damage": 6,
         "size": "S",
         "block_ap": 6,
-        "cost_gp": 10
+        "cost_gp": 10,
+        "quick": true
       },
       "hand_axe": {
         "accuracy": 0,

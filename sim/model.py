@@ -57,8 +57,11 @@ ASSUMPTIONS = [
     "rules give a starting sum and say nothing about what is earned "
     "afterwards, and gear cannot be chosen without a budget.",
     "A build buys the kit that maximises damage per round times rounds "
-    "survived against the standard foe of its level, and re-equips at "
-    "every level.",
+    "survived against a panel of two opponents, one sword-armed and one "
+    "carrying a two-handed sword, and re-equips at every level.",
+    "A reach advantage is worth the swings it gains while the other "
+    "side closes, and a quick weapon inside a longer one is worth about "
+    "one avoided swing over a fight.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -117,16 +120,19 @@ class Weapon:
     size: str
     block_ap: int
     cost_gp: int = 0
+    quick: bool = False
 
     @classmethod
     def load(cls, M, key):
+        entry = M.get("weapons", key)
         return cls(
             name=key,
-            accuracy=int(M.get("weapons", key, "accuracy")),
-            damage=int(M.get("weapons", key, "damage")),
-            size=str(M.get("weapons", key, "size")),
-            block_ap=int(M.get("weapons", key, "block_ap")),
-            cost_gp=int(M.get("weapons", key, "cost_gp")),
+            accuracy=int(entry["accuracy"]),
+            damage=int(entry["damage"]),
+            size=str(entry["size"]),
+            block_ap=int(entry["block_ap"]),
+            cost_gp=int(entry["cost_gp"]),
+            quick=bool(entry.get("quick", False)),
         )
 
 
@@ -390,6 +396,63 @@ def two_handed(weapon, M):
     return weapon.size == str(M.get("weapons", "two_handed_size"))
 
 
+def weapon_hands(weapon, M):
+    return 2 if two_handed(weapon, M) else 1
+
+
+def free_hands(char, M):
+    """Hands not holding something, per free-hands.md."""
+    used = weapon_hands(char.weapon, M) + (1 if char.shield else 0)
+    return max(0, int(M.get("free-hands", "hands_total")) - used)
+
+
+def hands_needed(M, skill_name):
+    table = M.get("free-hands", "hands_needed")
+    return int(table.get(skill_name, 0))
+
+
+def can_use_freely(char, M, skill_name):
+    """Whether this character can use the skill WITHOUT spending its
+    action putting something away first.
+
+    A quick weapon is stowed and drawn for nothing, so a character
+    holding only a quick weapon can always free the hands it needs. Any
+    other weapon has to be put down, and putting it down is the action."""
+    need = hands_needed(M, skill_name)
+    if need == 0 or free_hands(char, M) >= need:
+        return True
+    if not bool(M.get("free-hands", "quick_stow_is_free")):
+        return False
+    # Stow what can be stowed for free, and count again.
+    freed = weapon_hands(char.weapon, M) if char.weapon.quick else 0
+    return free_hands(char, M) + freed >= need
+
+
+def reach_of(char, M):
+    """Squares this character threatens, per movement.md."""
+    base = int(M.get("movement", "reach_by_size", "medium"))
+    if two_handed(char.weapon, M):
+        base += int(M.get("movement", "large_weapon_reach_bonus"))
+    return base
+
+
+def strikes_first_inside(char, other, M):
+    """A quick weapon beats a larger one to the punch once inside its
+    reach, whatever the initiative order was -- reach.md."""
+    if not bool(M.get("reach", "quick_strikes_first_inside")):
+        return False
+    return char.weapon.quick and reach_of(other, M) > reach_of(char, M)
+
+
+def opening_attacks(char, other, M):
+    """Unanswered blows `char` lands as `other` closes the gap. Paid
+    once, as the fight is joined: closing and withdrawing cancel."""
+    gap = reach_of(char, M) - reach_of(other, M)
+    if gap <= 0:
+        return 0
+    return gap * int(M.get("reach", "opening_attacks_per_square"))
+
+
 def gear_options(M, budget):
     """Every affordable (weapon, armour, shield) a character could carry.
     A two-handed weapon leaves no hand for a shield."""
@@ -409,8 +472,15 @@ def gear_options(M, budget):
     return out
 
 
-def choose_gear(char, foe, M, budget):
+def choose_gear(char, foes, M, budget):
     """Equip the character with the best kit its purse can reach.
+
+    `foes` is a PANEL, not one opponent, and it has to be. Quickness is
+    worth nothing except against a weapon longer than your own, so a
+    character shopping against a single sword-armed yardstick correctly
+    concludes that quickness is worthless -- and a character shopping
+    only against a spear would over-buy it. A build equips for the
+    fights it expects, and it expects both.
 
     Gear does not affect how a character spends its advancement points,
     so it can be chosen against a finished sheet -- which is the whole
@@ -433,7 +503,10 @@ def choose_gear(char, foe, M, budget):
     with casting is armour that changes what a caster deals, and the
     shortcut has to know it, or the interference is silently priced at
     nothing."""
+    if not isinstance(foes, (list, tuple)):
+        foes = [foes]
     guard = sustained_dodge_bonus(char, M)
+    rounds = float(TYPICAL_FIGHT_ROUNDS)
     armour_matters = (can_cast(char, M)
                       and "hampers_casting" in M.keys("armour")
                       and bool(M.get("armour", "hampers_casting")))
@@ -441,11 +514,29 @@ def choose_gear(char, foe, M, budget):
     best = (None, -1.0)
     for weapon, armour, shield in gear_options(M, budget):
         char.weapon, char.armour, char.shield = weapon, armour, shield
-        key = (weapon.name, armour.name if armour_matters else None)
-        if key not in offence:
-            offence[key] = expected_offence(char, foe, M)
-        taken, _ = attack_expectation(foe, char, M, dodge_bonus=guard)
-        score = offence[key] * (char.total_hp / max(0.1, taken))
+        total = 0.0
+        for foe in foes:
+            key = (foe.name, weapon.name,
+                   armour.name if armour_matters else None)
+            if key not in offence:
+                offence[key] = expected_offence(char, foe, M)
+            taken, _ = attack_expectation(foe, char, M, dodge_bonus=guard)
+
+            # Reach and quickness are counted as attacks gained and
+            # attacks avoided over a fight of typical length. A reach
+            # advantage is extra swings for me while the foe closes; a
+            # reach disadvantage is extra swings for them; and a quick
+            # weapon inside a longer one saves me the last blow of the
+            # fight, because a corpse does not answer. First order, but
+            # the alternative is a positionless model pricing two
+            # positional rules at nothing at all.
+            mine = opening_attacks(char, foe, M)
+            theirs = opening_attacks(foe, char, M)
+            saved = 1.0 if strikes_first_inside(char, foe, M) else 0.0
+            gained = offence[key] * (rounds + mine) / rounds
+            suffered = taken * max(0.0, rounds + theirs - saved) / rounds
+            total += gained * (char.total_hp / max(0.1, suffered))
+        score = total / len(foes)
         if score > best[1]:
             best = ((weapon, armour, shield), score)
     char.weapon, char.armour, char.shield = best[0]
@@ -951,7 +1042,14 @@ def combat_spells(M):
 
 
 def can_cast(char, M):
-    return char.has("magical", "initiate") or char.has("spiritual", "initiate")
+    """Knowing how, and having a hand to do it with. free-hands.md makes
+    the second half a real condition: a caster holding a two-handed
+    weapon must spend its action putting the thing down, which is the
+    action it wanted to cast with."""
+    if not (char.has("magical", "initiate")
+            or char.has("spiritual", "initiate")):
+        return False
+    return can_use_freely(char, M, "spellcasting")
 
 
 def area_rates(M, archetype, spell=None):
@@ -1540,6 +1638,24 @@ def apply_damage(target, amount):
     target.chp -= amount - from_mhp
 
 
+def initiative_order(a, b, M):
+    """Who acts first, settled once and held for the fight, per
+    turn-order.md -- unless one of them is inside a longer weapon's
+    reach with a quick one, which overrides it every round."""
+    quick_a = strikes_first_inside(a, b, M)
+    quick_b = strikes_first_inside(b, a, M)
+    if quick_a != quick_b:
+        return (a, b) if quick_a else (b, a)
+    skill = str(M.get("turn-order", "initiative_skill"))
+    ra = d20(M)[0] + a.skill(skill, M)
+    rb = d20(M)[0] + b.skill(skill, M)
+    if ra != rb:
+        return (a, b) if ra > rb else (b, a)
+    tie = str(M.get("turn-order", "ties_broken_by"))
+    return ((a, b) if a.attr_bonus(tie, M) >= b.attr_bonus(tie, M)
+            else (b, a))
+
+
 def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     """Monte Carlo. Returns (mean rounds, a's win rate, mean rounds
     where a was the one who fell)."""
@@ -1552,16 +1668,36 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     guard_a = redouble_plan(spec_a, M)
     guard_b = redouble_plan(spec_b, M)
 
+    plans = {id(spec_a): (plan_a, guard_a), id(spec_b): (plan_b, guard_b)}
+    open_a = opening_attacks(spec_a, spec_b, M)
+    open_b = opening_attacks(spec_b, spec_a, M)
+
     for _ in range(trials):
         a = _fresh(spec_a)
         b = _fresh(spec_b)
         rounds = 0
+
+        # Reach is paid once, as the fight is joined: whoever reaches
+        # further strikes while the other closes, and after that closing
+        # and withdrawing cancel.
+        for _ in range(open_a):
+            _act(a, b, _pick(plan_a), M, dodge_bonus=_guard(b, guard_b, M))
+        for _ in range(open_b):
+            if a.chp > 0:
+                _act(b, a, _pick(plan_b), M, dodge_bonus=_guard(a, guard_a, M))
+
+        first, second = initiative_order(a, b, M)
+        f_plan, f_guard = plans[id(spec_a) if first is a else id(spec_b)]
+        s_plan, s_guard = plans[id(spec_a) if second is a else id(spec_b)]
+
         while a.chp > 0 and b.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _act(a, b, _pick(plan_a), M, dodge_bonus=_guard(b, guard_b, M))
-            if b.chp <= 0:
+            _act(first, second, _pick(f_plan), M,
+                 dodge_bonus=_guard(second, s_guard, M))
+            if second.chp <= 0:
                 break
-            _act(b, a, _pick(plan_b), M, dodge_bonus=_guard(a, guard_a, M))
+            _act(second, first, _pick(s_plan), M,
+                 dodge_bonus=_guard(first, f_guard, M))
         rounds_total += rounds
         if rounds >= max_rounds:
             capped += 1

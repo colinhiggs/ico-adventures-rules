@@ -127,9 +127,16 @@ because the design intent moved, never to make the report quiet.
 
 Builds are not handed their gear; they buy it. An archetype names
 disciplines, attributes and a stance -- what the character *is* -- and
-the kit is chosen afterwards, against the standard foe of its level, on
-the objective the contribution gate uses: damage per round times rounds
-survived. Equipping for offence alone puts everybody in no armour, and
+the kit is chosen afterwards, on the objective the contribution gate
+uses: damage per round times rounds survived.
+
+It shops against a **panel**, not one opponent, and it has to.
+Quickness is worth nothing except against a weapon longer than your own
+and reach is worth nothing except against a shorter one, so no single
+yardstick can price either: one sword-armed opponent makes quickness
+look worthless, and one spear-armed opponent makes it look compulsory.
+The panel is the standard foe and the same foe carrying a two-handed
+sword. Equipping for offence alone puts everybody in no armour, and
 equipping for defence alone puts everybody in plate.
 
 This matters beyond tidiness. **Fixed gear quietly flatters any rule
@@ -188,6 +195,33 @@ deals. The cache key now widens to include the armour whenever the
 interference is switched on and the character can cast. Any further
 interference that touches offence has to widen it again, or it will be
 priced at zero and look harmless.
+
+## Reach, quickness and free hands
+
+Three rules that exist to give weapon size a second axis, since damage
+and accuracy trade along one line and a line has a best point on it.
+
+**Reach** is paid once. Whoever reaches further strikes while the other
+closes -- one blow per square of difference -- and after that closing
+and withdrawing cancel, so it never pays again. In a duel those blows
+are resolved before the first round. **Quickness** is the answer: a
+quick weapon inside a longer one strikes first every round, whatever
+initiative said, which in practice is worth about one avoided blow over
+a fight, because a corpse does not answer. **Free hands** decides what a
+character can do while holding what it is holding: `can_cast` now asks
+whether the caster has a hand for it, and a quick weapon can be stowed
+and drawn for free, so it is the only weapon that never gets in the way.
+
+The chooser prices all three first-order: a reach advantage is extra
+swings gained over a fight of typical length, a reach disadvantage is
+extra swings suffered, and quickness is one swing avoided. The
+alternative was a positionless model pricing two positional rules at
+nothing.
+
+Duels resolve them properly, including initiative -- rolled on the
+initiative skill, fixed for the fight, and overridden by a quick weapon
+inside a longer one. Before this, `a` simply always struck first, which
+was a quiet thumb on the scale in every duel the report printed.
 
 ## The adventuring day
 
@@ -304,6 +338,9 @@ land the thing at least half the time before it counts.
   by survival, so a build that raises both at once is the worst case the
   metric can be shown. Read its numbers as a bound, not as a build
   anybody would play.
+- **Reach and quickness reach duels and the gear chooser, not the
+  skirmish loop.** A crowd closing on one character is exactly where
+  reach should matter most, and the crowd model has no positions at all.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.

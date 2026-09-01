@@ -141,8 +141,21 @@ STANDARD_FOE = {
 }
 
 
+# The panel a build shops against. Quickness is worth nothing except
+# against a weapon longer than your own and reach is worth nothing
+# except against a shorter one, so a single opponent cannot price
+# either: one sword-armed yardstick makes quickness look worthless, and
+# one spear-armed yardstick makes it look compulsory.
+REACH_FOE = dict(STANDARD_FOE, weapon="two_handed_sword")
+
+
 def standard_foe(level, M):
     return m.build_character("standard", STANDARD_FOE, level, M)
+
+
+def shopping_panel(level, M):
+    return [m.build_character("standard", STANDARD_FOE, level, M),
+            m.build_character("reachy", REACH_FOE, level, M)]
 
 
 def hr(title):
@@ -153,10 +166,10 @@ def hr(title):
 def build_all(level, M):
     """Build every archetype, each of them shopping for its own kit
     against the standard foe of its level."""
-    foe = standard_foe(level, M)
+    panel = shopping_panel(level, M)
     out = {}
     for name, spec in ARCHETYPES.items():
-        char = m.build_character(name, spec, level, M, shopping_foe=foe)
+        char = m.build_character(name, spec, level, M, shopping_foe=panel)
         if char is not None:
             out[name] = char
     return out
@@ -219,14 +232,14 @@ def report_stances(level, chars, M):
     hr("Stance check: is blocking ever the right choice? (level %d)" % level)
     attacker = chars["berserker"] if "berserker" in chars else list(chars.values())[0]
     print("%-12s %-14s %-14s %s" % ("defender", "dmg taken/dodge", "dmg taken/block", "better"))
-    foe = standard_foe(level, M)
+    panel = shopping_panel(level, M)
     for name, spec in ARCHETYPES.items():
         # Each stance shops for itself: a blocker who cannot buy a shield
         # is not a fair test of blocking.
         d_dodge = m.build_character(name, dict(spec, stance="dodge"), level,
-                                    M, shopping_foe=foe)
+                                    M, shopping_foe=panel)
         d_block = m.build_character(name, dict(spec, stance="block"), level,
-                                    M, shopping_foe=foe)
+                                    M, shopping_foe=panel)
         if d_dodge is None or d_block is None:
             continue
         dd, _ = m.attack_expectation(attacker, d_dodge, M)

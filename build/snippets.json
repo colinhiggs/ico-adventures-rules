@@ -217,6 +217,26 @@
     "includes": [],
     "book_anchor": "#rule-disciplines"
   },
+  "free-hands": {
+    "id": "free-hands",
+    "kind": "rule",
+    "title": "Free Hands",
+    "summary": "Some skills and powers need a hand free, or both. What you are holding decides whether you can use them, and a quick weapon can be put away and brought back without spending an action.",
+    "summary_html": "Some skills and powers need a hand free, or both. What you are holding decides whether you can use them, and a quick weapon can be put away and brought back without spending an action.",
+    "html": "<p>You have 2 hands, and what is in them decides what you can do with them.</p>\n<h4>What a hand is holding</h4>\n<p>A weapon takes the hands its size says it takes, and a shield takes one — see <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> and <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>. Whatever is left over is free.</p>\n<p>A skill or power that needs a free hand cannot be used without one:</p>\n<ul><li><strong>1 hand</strong> — spellcasting,</li></ul>\n<p>heal, use magic device, sleight of hand.</p>\n<ul><li><strong>2 hands</strong> — climb, disable device.</li></ul>\n<p>So a one-handed weapon and no shield leaves a hand for a spell; the same weapon with a shield does not; and a two-handed weapon leaves nothing for anything.</p>\n<h4>Putting it away</h4>\n<p>Stowing what you are holding, or drawing it again, costs your <strong>action</strong> for the round. A <strong>quick</strong> weapon is the exception: it may be put away and brought back freely, as often as you like, and costs nothing.</p>\n<p>That is what quickness is for beyond <a href=\"#rule-reach\" data-rule-id=\"reach\">Reach and Closing</a>. A character whose work needs a hand — a caster, a healer, anyone who opens a lock in the middle of a fight — can carry a quick weapon and still do that work on the same turn. Carrying anything else means choosing, every round, between the thing in your hand and the thing you cannot do while holding it.</p>\n<h4>Example</h4>\n<p>Sela is a caster, and spellcasting needs 1 free hand.</p>\n<p>With a dagger and no shield she has a free hand already, and casts without having to do anything about it. If she wants a shield as well, both hands are full — but the dagger is quick, so she puts it away for nothing, casts, and has it back in her hand before the round ends.</p>\n<p>Give her a two-handed sword instead and none of that works. Both hands are on the weapon, and putting it away costs the action she wanted to cast with. She may cast this round or hold the sword, and not both.</p>\n<p>Bram, who casts nothing and picks no locks, notices none of this.</p>",
+    "tags": [
+      "core",
+      "skills",
+      "powers"
+    ],
+    "related": [
+      "armour",
+      "reach",
+      "weapons"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-free-hands"
+  },
   "general-powers": {
     "id": "general-powers",
     "kind": "rule",
@@ -353,6 +373,26 @@
     ],
     "includes": [],
     "book_anchor": "#rule-priorities"
+  },
+  "reach": {
+    "id": "reach",
+    "kind": "rule",
+    "title": "Reach and Closing",
+    "summary": "A longer weapon strikes at a distance a shorter one cannot answer, and is paid for that once as the shorter weapon closes. Inside, a quick weapon strikes first.",
+    "summary_html": "A longer weapon strikes at a distance a shorter one cannot answer, and is paid for that once as the shorter weapon closes. Inside, a quick weapon strikes first.",
+    "html": "<p>A polearm keeps you at arm's length and a dagger does not, and the fight between the two is decided by whether the dagger ever gets close.</p>\n<h4>Inside and outside</h4>\n<p><a href=\"#rule-movement\" data-rule-id=\"movement\">Movement and Distance</a> gives every combatant a <strong>reach</strong> in squares. Against a particular opponent you are either:</p>\n<ul><li><strong>outside</strong> — further away than your own reach but within theirs, so</li></ul>\n<p>they may strike you and you may not strike them; or</p>\n<ul><li><strong>inside</strong> — within your own reach, where both of you may strike.</li></ul>\n<p>A fight between equal reaches has no outside. A fight where one reach is longer has one, and it belongs entirely to the longer weapon.</p>\n<h4>Closing</h4>\n<p>Moving from outside to inside costs your <strong>move</strong> for the round, and your action is still yours. You lose nothing but the chance to strike on the way in, and what that costs you is 1 unanswered blow for every square of reach you had to give away.</p>\n<p>Your opponent may back out again, which costs <em>them</em> their move and puts you outside once more. Closing and withdrawing cancel: each spends one move, and the two of you end where you began. So the longer weapon is paid for its reach <strong>once</strong>, as the fight is joined, and not again for as long as neither of you can spare a move for anything else.</p>\n<h4>Quick weapons inside</h4>\n<p>A <strong>quick</strong> weapon — see <a href=\"#rule-weapons\" data-rule-id=\"weapons\">Weapons</a> — is short enough to be used where a longer one is fouled. While you are inside the reach of a weapon larger than your own, your attacks come <strong>before</strong> your opponent's, whatever <a href=\"#rule-turn-order\" data-rule-id=\"turn-order\">Turn Order</a> settled at the start of the fight.</p>\n<p>That is the whole of the exchange. A long weapon takes the first blow of the fight for free; a quick weapon takes the first blow of every round after that. Which is worth more depends on how long the fight lasts, which is exactly the choice a player should be making when they pick a weapon.</p>\n<h4>Example</h4>\n<p>Bram carries a great axe, size L, so his reach is <code>2</code> squares. Sela carries a dagger: quick, and reach <code>1</code>.</p>\n<p>They join battle two squares apart. Sela is outside — Bram can reach her and she cannot reach him — so Bram strikes, unanswered, for the one square of reach she has to give away. Sela then spends her move to close, and is inside.</p>\n<p>From there Sela strikes first every round, dagger before axe, whatever the initiative order was. Bram can spend his move to back off and make her close again, but that costs him the move and buys him nothing: she spends hers to follow, and they are back where they were.</p>\n<p>Bram's axe bought him one free blow. Sela's dagger buys her the first blow of every round for the rest of the fight.</p>",
+    "tags": [
+      "core",
+      "combat",
+      "map"
+    ],
+    "related": [
+      "movement",
+      "turn-order",
+      "weapons"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-reach"
   },
   "recovery": {
     "id": "recovery",
@@ -562,7 +602,7 @@
     "title": "Weapons",
     "summary": "Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.",
     "summary_html": "Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.",
-    "html": "<p>Each weapon carries the statistics that feed <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>: an <strong>accuracy</strong> modifier to the attack roll, a <strong>damage</strong> rating, a <strong>size</strong>, and the <strong>block value</strong> in armour points it subtracts from a blow when you use it to block rather than dodge.</p>\n<h4>Simple melee weapons</h4>\n<ul><li><strong>Dagger</strong> — accuracy +2, damage</li></ul>\n<p>4, size S, block 2, 2gp.</p>\n<ul><li><strong>Short sword</strong> — accuracy +1,</li></ul>\n<p>damage 6, size S, block 6, 10gp.</p>\n<ul><li><strong>Hand axe</strong> — accuracy +0, damage</li></ul>\n<p>7, size S, block 3, 8gp.</p>\n<ul><li><strong>Staff</strong> — accuracy +0, damage</li></ul>\n<p>5, size M, block 7, 1gp.</p>\n<h4>Martial melee weapons</h4>\n<ul><li><strong>Sword</strong> — accuracy +1, damage</li></ul>\n<p>8, size M, block 5, 20gp.</p>\n<ul><li><strong>Battle axe</strong> — accuracy +0,</li></ul>\n<p>damage 9, size M, block 3, 20gp.</p>\n<ul><li><strong>Two-handed sword</strong> — accuracy</li></ul>\n<p>+0, damage 12, size L, block 4, 50gp.</p>\n<ul><li><strong>Great axe</strong> — accuracy +0, damage</li></ul>\n<p>12, size L, block 2, 45gp.</p>\n<h4>Finesse</h4>\n<p>A weapon of size S may use <strong>dexterity</strong> instead of strength for its attack skill.</p>\n<h4>Two hands</h4>\n<p>A weapon of size L takes both hands, and cannot be carried with a shield from <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>. That is the whole of what size does beyond finesse: the two ends of the scale each carry a rule, and the middle carries neither.</p>\n<p>Ranged weapons are not yet statted.</p>\n<h4>Example</h4>\n<p>Dune carries a short sword. It is size S, so it is a finesse weapon and he attacks with his dexterity bonus of <code>+4</code> rather than his strength bonus of <code>+1</code> — a swing of three points he would otherwise never see.</p>\n<p>Its accuracy of <code>+1</code> is added to his attack roll on top of that. Its damage rating is what a landed blow starts from before margin, skill and the target's armour are applied, as <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> describes. And if he chooses to block rather than dodge, its block value is subtracted from whatever gets through.</p>\n<p>Ashri's two-handed sword hits far harder, but it is size L: no finesse, and no free hand for a shield.</p>",
+    "html": "<p>Each weapon carries the statistics that feed <a href=\"#rule-hitting\" data-rule-id=\"hitting\">Landing a Blow</a> and <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a>: an <strong>accuracy</strong> modifier to the attack roll, a <strong>damage</strong> rating, a <strong>size</strong>, and the <strong>block value</strong> in armour points it subtracts from a blow when you use it to block rather than dodge.</p>\n<h4>Simple melee weapons</h4>\n<ul><li><strong>Dagger</strong> — accuracy +2, damage</li></ul>\n<p>4, size S, block 2, 2gp.</p>\n<ul><li><strong>Short sword</strong> — accuracy +1,</li></ul>\n<p>damage 6, size S, block 6, 10gp.</p>\n<ul><li><strong>Hand axe</strong> — accuracy +0, damage</li></ul>\n<p>7, size S, block 3, 8gp.</p>\n<ul><li><strong>Staff</strong> — accuracy +0, damage</li></ul>\n<p>5, size M, block 7, 1gp.</p>\n<h4>Martial melee weapons</h4>\n<ul><li><strong>Sword</strong> — accuracy +1, damage</li></ul>\n<p>8, size M, block 5, 20gp.</p>\n<ul><li><strong>Battle axe</strong> — accuracy +0,</li></ul>\n<p>damage 9, size M, block 3, 20gp.</p>\n<ul><li><strong>Two-handed sword</strong> — accuracy</li></ul>\n<p>+0, damage 12, size L, block 4, 50gp.</p>\n<ul><li><strong>Great axe</strong> — accuracy +0, damage</li></ul>\n<p>12, size L, block 2, 45gp.</p>\n<h4>Finesse</h4>\n<p>A weapon of size S may use <strong>dexterity</strong> instead of strength for its attack skill.</p>\n<h4>Two hands</h4>\n<p>A weapon of size L takes both hands; every smaller weapon takes one. A two-handed weapon cannot be carried with a shield from <a href=\"#rule-armour\" data-rule-id=\"armour\">Armour and Shields</a>, and it leaves no hand free for anything that needs one — see <a href=\"#rule-free-hands\" data-rule-id=\"free-hands\">Free Hands</a>.</p>\n<h4>Reach</h4>\n<p>A weapon of size L extends its wielder's reach; smaller weapons do not. What that is worth in a fight is in <a href=\"#rule-reach\" data-rule-id=\"reach\">Reach and Closing</a>, and how reach is measured is in <a href=\"#rule-movement\" data-rule-id=\"movement\">Movement and Distance</a>.</p>\n<h4>Quick weapons</h4>\n<p>Some small weapons are <strong>quick</strong>: light enough to be drawn, put away and brought back on the same breath, and short enough to be used at close quarters where a longer weapon has run out of room. The dagger and the short sword are quick; the hand axe is not, being a small weapon rather than a fast one. What quickness does is in <a href=\"#rule-reach\" data-rule-id=\"reach\">Reach and Closing</a> and <a href=\"#rule-free-hands\" data-rule-id=\"free-hands\">Free Hands</a>.</p>\n<p>Ranged weapons are not yet statted.</p>\n<h4>Example</h4>\n<p>Dune carries a short sword. It is size S, so it is a finesse weapon and he attacks with his dexterity bonus of <code>+4</code> rather than his strength bonus of <code>+1</code> — a swing of three points he would otherwise never see.</p>\n<p>Its accuracy of <code>+1</code> is added to his attack roll on top of that. Its damage rating is what a landed blow starts from before margin, skill and the target's armour are applied, as <a href=\"#rule-damage\" data-rule-id=\"damage\">Working Out Damage</a> describes. And if he chooses to block rather than dodge, its block value is subtracted from whatever gets through.</p>\n<p>Ashri's two-handed sword hits far harder, but it is size L: no finesse, and no free hand for a shield.</p>",
     "tags": [
       "equipment",
       "reference",
@@ -571,7 +611,10 @@
     "related": [
       "armour",
       "damage",
-      "hitting"
+      "free-hands",
+      "hitting",
+      "movement",
+      "reach"
     ],
     "includes": [],
     "book_anchor": "#rule-weapons"
@@ -622,6 +665,7 @@
     "includes": [
       "turn-order",
       "movement",
+      "reach",
       "hitting",
       "damage",
       "conditions",
@@ -704,7 +748,8 @@
     "related": [],
     "includes": [
       "skills",
-      "skill-list"
+      "skill-list",
+      "free-hands"
     ],
     "book_anchor": "#rule-ch-skills"
   },

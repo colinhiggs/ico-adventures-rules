@@ -12,3 +12,5 @@ from character creation and from advancement.
 {% include skills %}
 
 {% include skill-list %}
+
+{% include free-hands %}
