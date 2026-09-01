@@ -109,6 +109,20 @@ ARCHETYPES = {
         # only one that pays them back every round.
         "skill_priority": ["spellcasting", "attack_ranged", "dodge", "spot"],
     },
+    # The breadth stress test: the only pairing whose BOTH signatures
+    # this model implements, and the sharpest one in the game -- Killing
+    # Blow doubles what margin is worth, Untouchable cancels armour's
+    # dodge penalty. Contribution is offence times survival, so this
+    # build multiplies on both halves of the metric at once, and it
+    # wears the heaviest armour in the game while dodging in it.
+    # Attribute total is 80, as every archetype here has.
+    "paragon": {
+        "disciplines": [("martial", "master"), ("athletic", "master")],
+        "attributes": {"strength": 16, "dexterity": 16, "constitution": 12,
+                       "intelligence": 8, "willpower": 14, "charisma": 14},
+        "weapon": "two_handed_sword", "armour": "full_plate", "shield": None,
+        "stance": "dodge",
+    },
     "generalist": {
         "disciplines": [("martial", "initiate"), ("athletic", "initiate"),
                         ("awareness", "initiate"), ("spiritual", "initiate")],

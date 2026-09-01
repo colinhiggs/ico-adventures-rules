@@ -227,6 +227,17 @@ land the thing at least half the time before it counts.
   see a spellcaster spending spirit on every spell. The bolts are a
   caster's equivalent of the free minor attack powers, so the same
   mechanism probably protects them — but probably is the honest word.
+- **Only two of the six Master signatures are modelled**: Killing Blow,
+  which doubles what margin is worth, and Untouchable, which cancels
+  armour's dodge penalty. Read the Blow, Command the Room, School
+  Mastery and Granted Domain do nothing here, so any build resting on
+  one of those is measured without its capstone.
+- The `paragon` archetype exists to stress-test breadth rather than to
+  be a sensible character: it is the only pairing whose *both*
+  signatures the model implements, and contribution multiplies offence
+  by survival, so a build that raises both at once is the worst case the
+  metric can be shown. Read its numbers as a bound, not as a build
+  anybody would play.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.
