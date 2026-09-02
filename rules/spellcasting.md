@@ -23,12 +23,18 @@ same way.
 
 ## School and domain
 
-Every spell is tagged with both:
+Every spell is tagged with both, and a spell may carry more than one of
+either:
 
 - a **school of magic** — how the spell is constructed: life force,
-  energy, matter, rifts, influence and command, or illusion;
-- a **domain of influence** — what the spell is about. The domains, and
-  what they mean to a priest, are in [[domains]].
+  energy, matter, rifts, influence and command, or illusion. Nearly
+  every spell has exactly one, because a spell is usually built one way.
+- a **domain of influence** — what the spell is about. Several is
+  normal: a fog bank is a thing of the wild and a thing of the sea both,
+  and a priest of either god may call it. The domains, and what they
+  mean to a priest, are in [[domains]].
+
+Where a bonus or a restriction turns on a tag, **one match is enough**.
 
 A caster's access to spells, and any bonus when casting them, is
 described in terms of these schools and domains.

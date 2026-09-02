@@ -381,6 +381,8 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p><strong>Burning</strong> — the fire keeps eating at the start of each of your turns, but it is eating what is left of itself: each time it deals 0.5 of what it dealt the time before, rounding down, and when that reaches nothing the fire is out. You may instead spend your action to smother it, which ends it at once and needs no roll. Resisted with fortitude, and it spreads easily: 4 points of margin buys another round of it.</p>
 <p>Burning therefore adds up to about as much again as the blow that started it, however long it lasts — a fire spell is the one that deals the most damage, and the price of that is that it shapes the fight least. What it does offer is a choice: keep swinging and keep burning, or lose a turn putting yourself out.</p>
 <p><strong>Slowed</strong> — your movement is multiplied by 0.5 and you have no reaction. Resisted with fortitude.</p>
+<p><strong>Rooted</strong> — you cannot move at all. Your movement is 0, and you have no reaction. You may still act, and you may still defend yourself; you simply cannot go anywhere. Resisted with fortitude.</p>
+<p><strong>Silenced</strong> — you cannot make yourself heard, and magic will not answer you properly. You take <code>-5</code> on spellcasting, and anything else that depends on being heard simply fails. Resisted with resolve.</p>
 <p><strong>Dazed</strong> — you take <code>-2</code> on attack rolls, and your targeting difficulty drops by the same. Resisted with resolve.</p>
 <h4>Lasting conditions</h4>
 <p>A few conditions have no duration at all. They do not count down and waiting does not help; they last until something is done about them, which in practice means a spell — see <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a>.</p>
@@ -917,11 +919,12 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Spells as powers</h4>
 <p>Every spell is a <a href="#rule-using-powers" data-rule-id="using-powers">power</a>. There is one casting skill — <strong>spellcasting</strong> — and one power source for all magic: <strong>spirit</strong> (see <a href="#rule-power-sources" data-rule-id="power-sources">Stamina and Spirit</a>). A spell's difficulty is used exactly as any other power's difficulty, and a margin over it reduces the spirit cost the same way.</p>
 <h4>School and domain</h4>
-<p>Every spell is tagged with both:</p>
+<p>Every spell is tagged with both, and a spell may carry more than one of either:</p>
 <ul><li>a <strong>school of magic</strong> — how the spell is constructed: life force,</li></ul>
-<p>energy, matter, rifts, influence and command, or illusion;</p>
-<ul><li>a <strong>domain of influence</strong> — what the spell is about. The domains, and</li></ul>
-<p>what they mean to a priest, are in <a href="#rule-domains" data-rule-id="domains">Domains and the Gods</a>.</p>
+<p>energy, matter, rifts, influence and command, or illusion. Nearly every spell has exactly one, because a spell is usually built one way.</p>
+<ul><li>a <strong>domain of influence</strong> — what the spell is about. Several is</li></ul>
+<p>normal: a fog bank is a thing of the wild and a thing of the sea both, and a priest of either god may call it. The domains, and what they mean to a priest, are in <a href="#rule-domains" data-rule-id="domains">Domains and the Gods</a>.</p>
+<p>Where a bonus or a restriction turns on a tag, <strong>one match is enough</strong>.</p>
 <p>A caster's access to spells, and any bonus when casting them, is described in terms of these schools and domains.</p>
 <h4>Which spells you can cast today</h4>
 <p>The two disciplines answer that question differently, and it is the largest difference between them. A wizard learns spells into a book and carries a few of them in memory; a priest carries their god's domains and prepares nothing. See <a href="#rule-spell-preparation" data-rule-id="spell-preparation">Learning and Carrying Spells</a>.</p>
@@ -942,10 +945,11 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="tags">magic · character · reference</p>
 <p class="summary">Every spell belongs to a domain. A god grants a priest one major domain, cast with a bonus, and one or two minor ones cast without.</p>
 <p>A <strong>domain</strong> is what a spell is <em>about</em>, as opposed to the school, which is how it is built — see <a href="#rule-spellcasting" data-rule-id="spellcasting">How Spellcasting Works</a>. Fire and lightning belong to war; frost belongs to nature; mending a wound belongs to healing.</p>
+<p>A spell may belong to several. A fog bank is a thing of the wild and a thing of the sea, and a priest of either god may call one; a shroud of darkness answers to two quite different sorts of god for two quite different reasons. Where a domain decides access or a bonus, <strong>one match is enough</strong> — a spell that is partly your god's business is your god's business.</p>
 <h4>The domains</h4>
 <p>['healing', 'war', 'nature', 'magic', 'death', 'trickery', 'love', 'knowledge', 'light', 'darkness', 'storm', 'sea', 'forge', 'travel', 'luck', 'justice']</p>
 <p>The list is open. A Dungeon Master inventing a god is not restricted to these, and a new domain costs nothing but a word: what it means is settled by which spells get tagged with it.</p>
-<p>Most of them are settled by nothing yet. The <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a> is young, and only healing, war, nature and magic currently have spells in them — so a god granting three of the others is granting a priest who cannot presently cast anything. Until the list fills out, a Dungeon Master building a pantheon should give every god at least one domain that has spells in it.</p>
+<p>Some of them are settled by nothing yet. The <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a> is young, and death, love, forge, travel and luck have no spells in them at all — so a god granting three of those is granting a priest who cannot presently cast anything. Until the list fills out, a Dungeon Master building a pantheon should give every god at least one domain that has spells in it.</p>
 <h4>What a god grants</h4>
 <p>A character who takes the Spiritual discipline serves something, and that something decides what they can do. Every god grants:</p>
 <ul><li><strong>1 major domain.</strong> Its spells are</li></ul>
@@ -1098,7 +1102,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Difficulty, cost and boosting all work as <a href="#rule-spellcasting" data-rule-id="spellcasting">How Spellcasting Works</a> and <a href="#rule-spell-properties" data-rule-id="spell-properties">Standard Spell Properties</a> describe. A spell marked <strong>minor</strong> is a minor power, and the minimum cost does not apply to it — see <a href="#rule-using-powers" data-rule-id="using-powers">Using a Power</a>.</p>
 <h4>The bolts</h4>
 <p>The bolts are one spell written several times, differing only in the damage they deal. Every one of them shares a chassis:</p>
-<ul><li><strong>Tier:</strong> minor</li><li><strong>School:</strong> energy</li><li><strong>Range:</strong> 10, needing a ranged attack roll</li><li><strong>Base difficulty:</strong> 2</li><li><strong>Damage:</strong> 6</li><li><strong>Minimum spirit:</strong> 0</li></ul>
+<ul><li><strong>Tier:</strong> minor</li><li><strong>Schools:</strong> ['energy']</li><li><strong>Range:</strong> 10, needing a ranged attack roll</li><li><strong>Base difficulty:</strong> 2</li><li><strong>Damage:</strong> 6</li><li><strong>Minimum spirit:</strong> 0</li></ul>
 <p>and both standard boosts:</p>
 <ul><li><strong>More damage:</strong> 1 per further</li></ul>
 <p>3 points of difficulty.</p>
@@ -1106,29 +1110,29 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>8 points of difficulty.</p>
 <p>The variants are then only a damage type and a domain:</p>
 <ul><li><strong>Force Bolt</strong> — force damage, domain</li></ul>
-<p>of magic.</p>
+<p>of ['magic'].</p>
 <ul><li><strong>Flame Bolt</strong> — fire damage, domain</li></ul>
-<p>of war.</p>
+<p>of ['war'].</p>
 <ul><li><strong>Frost Bolt</strong> — cold damage, domain</li></ul>
-<p>of nature.</p>
+<p>of ['nature'].</p>
 <ul><li><strong>Shock Bolt</strong> — lightning damage, domain</li></ul>
-<p>of war.</p>
+<p>of ['war'].</p>
 <p>Because the domain differs, a caster's <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Granted Domain</a> makes one bolt markedly cheaper than the rest — a priest of war throws flame where a druid throws frost, without either of them needing a separate rule.</p>
 <h4>The lances</h4>
 <p>Where a bolt is what a caster throws when there is nothing left, a <strong>lance</strong> is what they open with. One spell again written four times, sharing a chassis:</p>
-<ul><li><strong>School:</strong> energy</li><li><strong>Range:</strong> 10, aimed with the casting roll</li><li><strong>Base difficulty:</strong> 8</li><li><strong>Damage:</strong> 10, plus</li></ul>
+<ul><li><strong>Schools:</strong> ['energy']</li><li><strong>Range:</strong> 10, aimed with the casting roll</li><li><strong>Base difficulty:</strong> 8</li><li><strong>Damage:</strong> 10, plus</li></ul>
 <p>1 for each further 2 points of difficulty</p>
 <ul><li><strong>Minimum spirit:</strong> 2</li></ul>
 <p>A lance that hits also applies a <strong>condition</strong>, which the target may resist — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>. That is what a lance buys over a bolt, and why it is worth the spirit a bolt does not cost.</p>
 <p>The variants differ in damage type, domain, and which condition they carry:</p>
 <ul><li><strong>Force Lance</strong> — force damage,</li></ul>
-<p>domain of magic, leaves the target <strong>stunned</strong>.</p>
+<p>domain of ['magic'], leaves the target <strong>stunned</strong>.</p>
 <ul><li><strong>Flame Lance</strong> — fire damage,</li></ul>
-<p>domain of war, leaves the target <strong>burning</strong>.</p>
+<p>domain of ['war'], leaves the target <strong>burning</strong>.</p>
 <ul><li><strong>Frost Lance</strong> — cold damage,</li></ul>
-<p>domain of nature, leaves the target <strong>slowed</strong>.</p>
+<p>domain of ['nature'], leaves the target <strong>slowed</strong>.</p>
 <ul><li><strong>Storm Lance</strong> — lightning damage,</li></ul>
-<p>domain of war, leaves the target <strong>dazed</strong>.</p>
+<p>domain of ['war'], leaves the target <strong>dazed</strong>.</p>
 <p>Which lance to carry is a question about the fight rather than about the numbers: they deal the same damage, and the condition is the whole difference.</p>
 <h4>The area spells</h4>
 <p>Three families, and each of the four damage types appears in all three. None of them needs an attack roll: everything under the template takes the damage, and having nothing to dodge is what an area spell buys with its difficulty.</p>
@@ -1156,25 +1160,54 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h5>Design note</h5>
 <p>Wide and weak was the original idea, and it does not work: a field that deals a scratch is a field the enemy walks straight across, which leaves the spell with no job at all. Area denial only denies if crossing costs something worth avoiding, so a damaging field buys its damage at the same rate a blast does and simply pays a great deal of difficulty for covering so much ground.</p>
 <p>That makes the damaging fields expensive, which is correct — most fields will not be damaging at all. Fog, tangling ground, silence and the rest deny ground by what they do rather than by what they deal, and those are the ones the archetype's cheap spread was written for.</p>
+<h4>The wards</h4>
+<p>A <strong>ward</strong> covers ground and does nothing to it. Everything standing inside has the ward's condition, for exactly as long as it stands there; step out and it stops. There is no attack roll, no damage, and — unlike every other condition in the game — <strong>no roll to resist</strong>. You are in the fog or you are not.</p>
+<p>That is what makes area denial a different thing from an area attack. A blast asks whether it beat you; a ward asks where you are standing. The counter to a ward is not a good Fortitude score, it is your feet.</p>
+<p>Wards spread at the diffuse rate, the widest in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a>, because covering ground is the whole of what they buy. Difficulty goes to area and to duration and to nothing else: a ward does the same thing however hard it was cast, over more or less of the map, for more or less of the fight.</p>
+<p>All six share a chassis:</p>
+<ul><li><strong>Base difficulty:</strong> 6</li><li><strong>Template:</strong> circle, priced as</li></ul>
+<p>diffuse — see <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></p>
+<ul><li><strong>Duration:</strong> 3 rounds, plus</li></ul>
+<p>1 for each further point of difficulty spent on it</p>
+<ul><li><strong>Minimum spirit:</strong> 2</li></ul>
+<h5>Fog Bank</h5>
+<p><em>['matter']; ['nature', 'sea'].</em> Cold grey fog, too thick to see an arm's length through. Anything inside is <strong>blinded</strong> — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a> — which makes a fog bank as bad for the caster's own side as for anyone else, and is the reason it is usually put somewhere nobody friendly intends to stand.</p>
+<h5>Shroud</h5>
+<p><em>['illusion']; ['darkness', 'trickery'].</em> Darkness that is not the absence of light but the presence of something else. Anything inside is <strong>blinded</strong>. It does the same work as a Fog Bank and belongs to a different pair of gods, which is the point of having both.</p>
+<h5>Briar Patch</h5>
+<p><em>['matter']; ['nature'].</em> Thorned growth erupts from the ground and takes hold of whatever is standing in it. Anything inside is <strong>rooted</strong>: it may fight, it may defend itself, it may not go anywhere. The most straightforwardly obstructive ward, and the one that most resembles a wall.</p>
+<h5>Sleet Storm</h5>
+<p><em>['energy']; ['storm', 'nature'].</em> Freezing rain and treacherous footing. Anything inside is <strong>slowed</strong>. It denies less than a Briar Patch and is far harder to simply avoid, since a creature can still cross it — slowly, and while being shot at.</p>
+<h5>Hallowed Ground</h5>
+<p><em>['influence_and_command']; ['light', 'justice'].</em> Ground given over to something larger, which does not want a fight happening on it. Anything inside is <strong>dazed</strong>. The only ward that leaves its occupants entirely mobile and merely worse at everything.</p>
+<h5>Ring of Silence</h5>
+<p><em>['matter']; ['knowledge', 'magic'].</em> Sound stops at the edge. Anything inside is <strong>silenced</strong>, which is aimed at one kind of enemy in particular and does very little to the rest.</p>
+<h5>Design note</h5>
+<p>The wards do not allow a resistance roll, and that is the most important thing about them.</p>
+<p>Every other condition in the game lands by beating somebody, which makes a condition a contest and its duration a matter of how badly they lost. That is right for something a caster does <em>to</em> a creature. It is wrong for something a caster does to a <em>place</em>. A fog bank is not trying to beat you; it is fog. Rolling against it would say that a strong-willed character can see through weather, which is a strange thing for a rule to claim and an annoying one to adjudicate.</p>
+<p>Making them terrain also gives them a counter that has nothing to do with character sheets. A ward is beaten by moving, by going round, by waiting it out, or by making the enemy come to you anyway — decisions rather than dice. That is a different kind of pressure from anything else in the spell list, which is the reason for having the category at all.</p>
+<p>The price is that difficulty buys only ground and time. A ward cast enormously hard is a bigger, longer-lasting fog and not a thicker one, which keeps the whole family out of the arms race the damaging spells are in.</p>
 <h4>The restorative spells</h4>
 <p>Harm is undone in the reverse of the order it was done. <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> sends damage through mastery first and into core only when mastery is gone; healing goes to <strong>core first</strong>, and reaches mastery only once the real wound has closed. A wound mends before the luck comes back.</p>
 <p>That is why there are two spells and not one. Mastery hit points return between fights on their own, and core hit points return at the rate <a href="#rule-recovery" data-rule-id="recovery">Recovery Between Fights</a> gives them, which is barely at all — so the shallow pool is worth a cheap spell cast often, and the deep pool is worth an expensive one cast rarely.</p>
 <h5>Mend (4)</h5>
-<ul><li><strong>Tier:</strong> minor</li><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 0</li></ul>
+<ul><li><strong>Tier:</strong> minor</li><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 0</li></ul>
 <p>Restores 4 mastery hit points, plus 1 for each further 3 points of difficulty. It cannot touch core hit points: it puts back the cushion, not the wound.</p>
 <p>Being a minor spell it has no minimum cost, so a caster who has run dry can still mend — which is the point of it. It is to healing what a bolt is to harm.</p>
 <h5>Cure Wounds (16)</h5>
-<ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing, or harm when reversed</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 3</li></ul>
+<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing'], or harm when</li></ul>
+<p>reversed</p>
+<ul><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 3</li></ul>
 <p>Restores 3 hit points, plus 1 for each further 4 points of difficulty, to core hit points first and to mastery once core is full.</p>
 <p>However well you roll, this spell costs at least 3 spirit for every hit point it puts back. A good roll makes an ordinary spell cheaper; it does not make this one cheaper, because what it is buying is not measured in difficulty.</p>
 <p>It restores far less per point than Mend and costs a great deal more. That is not a mistake. A point of core is a night's rest, and this is the only thing in the game that gives one back in the middle of an adventure.</p>
 <p>Cast as <em>Cause Wounds</em>, the same spell inflicts that much damage instead, applied the ordinary way round.</p>
 <h5>Cleanse (10)</h5>
-<ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 2</li></ul>
+<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 2</li></ul>
 <p>Ends one condition on the creature you touch, if the difficulty you declare meets or beats the difficulty that imposed it. It cannot touch a lasting condition — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
 <p>You are undoing somebody else's work, and the price is that you have to match it. A stun laid on at difficulty <code>30</code> needs a Cleanse at <code>30</code>, and the caster who laid it on paid for that difficulty too.</p>
 <h5>Restoration (14)</h5>
-<ul><li><strong>School:</strong> life_force</li><li><strong>Domain:</strong> healing</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 4</li></ul>
+<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 4</li></ul>
 <p>The same, for the conditions Cleanse cannot reach: blindness, disease, a curse. Ends one lasting condition on the creature you touch, again if your declared difficulty meets or beats the difficulty that imposed it.</p>
 <p>Nothing else in the rules ends a lasting condition. Waiting does not.</p>
 <h5>Design note</h5>

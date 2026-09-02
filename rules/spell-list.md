@@ -10,7 +10,7 @@ mechanics:
   bolt:
     tier: minor
     base_difficulty: 2
-    school: energy
+    schools: [energy]
     range: 10
     needs_attack_roll: true
     damage: 6
@@ -21,21 +21,21 @@ mechanics:
   force_bolt:
     family: bolt
     damage_type: force
-    domain: magic
+    domains: [magic]
   flame_bolt:
     family: bolt
     damage_type: fire
-    domain: war
+    domains: [war]
   frost_bolt:
     family: bolt
     damage_type: cold
-    domain: nature
+    domains: [nature]
   shock_bolt:
     family: bolt
     damage_type: lightning
-    domain: war
+    domains: [war]
   lance:
-    school: energy
+    schools: [energy]
     base_difficulty: 8
     damage: 10
     difficulty_per_step: 2
@@ -48,25 +48,25 @@ mechanics:
   force_lance:
     family: lance
     damage_type: force
-    domain: magic
+    domains: [magic]
     condition: stunned
   flame_lance:
     family: lance
     damage_type: fire
-    domain: war
+    domains: [war]
     condition: burning
   frost_lance:
     family: lance
     damage_type: cold
-    domain: nature
+    domains: [nature]
     condition: slowed
   storm_lance:
     family: lance
     damage_type: lightning
-    domain: war
+    domains: [war]
     condition: dazed
   burst:
-    school: energy
+    schools: [energy]
     base_difficulty: 6
     template: circle
     area_archetype: concentrated
@@ -74,14 +74,14 @@ mechanics:
     needs_attack_roll: false
     applies_condition: true
   blast:
-    school: energy
+    schools: [energy]
     base_difficulty: 6
     template: any
     area_archetype: balanced
     minimum_spirit: 2
     needs_attack_roll: false
   field:
-    school: energy
+    schools: [energy]
     base_difficulty: 8
     template: circle
     area_archetype: diffuse
@@ -93,61 +93,100 @@ mechanics:
   force_burst:
     family: burst
     damage_type: force
-    domain: magic
+    domains: [magic]
     condition: stunned
   flame_burst:
     family: burst
     damage_type: fire
-    domain: war
+    domains: [war]
     condition: burning
   frost_burst:
     family: burst
     damage_type: cold
-    domain: nature
+    domains: [nature]
     condition: slowed
   storm_burst:
     family: burst
     damage_type: lightning
-    domain: war
+    domains: [war]
     condition: dazed
   force_blast:
     family: blast
     damage_type: force
-    domain: magic
+    domains: [magic]
   flame_blast:
     family: blast
     damage_type: fire
-    domain: war
+    domains: [war]
   frost_blast:
     family: blast
     damage_type: cold
-    domain: nature
+    domains: [nature]
   storm_blast:
     family: blast
     damage_type: lightning
-    domain: war
+    domains: [war]
   force_field:
     family: field
     damage_type: force
-    domain: magic
+    domains: [magic]
   flame_field:
     family: field
     damage_type: fire
-    domain: war
+    domains: [war]
   frost_field:
     family: field
     damage_type: cold
-    domain: nature
+    domains: [nature]
   storm_field:
     family: field
     damage_type: lightning
-    domain: war
+    domains: [war]
+  ward:
+    base_difficulty: 6
+    template: circle
+    area_archetype: diffuse
+    minimum_spirit: 2
+    needs_attack_roll: false
+    no_damage: true
+    duration_rounds: 3
+    rounds_per_difficulty: 1
+  fog_bank:
+    family: ward
+    schools: [matter]
+    domains: [nature, sea]
+    condition_inside: blinded
+  shroud:
+    family: ward
+    schools: [illusion]
+    domains: [darkness, trickery]
+    condition_inside: blinded
+  briar_patch:
+    family: ward
+    schools: [matter]
+    domains: [nature]
+    condition_inside: rooted
+  sleet_storm:
+    family: ward
+    schools: [energy]
+    domains: [storm, nature]
+    condition_inside: slowed
+  hallowed_ground:
+    family: ward
+    schools: [influence_and_command]
+    domains: [light, justice]
+    condition_inside: dazed
+  ring_of_silence:
+    family: ward
+    schools: [matter]
+    domains: [knowledge, magic]
+    condition_inside: silenced
   heal_order: [core, mastery]
   mend:
     tier: minor
     base_difficulty: 4
-    school: life_force
-    domain: healing
+    schools: [life_force]
+    domains: [healing]
     range: touch
     restores: 4
     difficulty_per_step: 3
@@ -156,8 +195,8 @@ mechanics:
     minimum_spirit: 0
   cure_wounds:
     base_difficulty: 16
-    school: life_force
-    domain: healing
+    schools: [life_force]
+    domains: [healing]
     range: touch
     restores: 3
     difficulty_per_step: 4
@@ -167,16 +206,16 @@ mechanics:
     minimum_spirit_per_point: 3
   cleanse:
     base_difficulty: 10
-    school: life_force
-    domain: healing
+    schools: [life_force]
+    domains: [healing]
     range: touch
     ends_conditions: true
     ends_lasting: false
     minimum_spirit: 2
   restoration:
     base_difficulty: 14
-    school: life_force
-    domain: healing
+    schools: [life_force]
+    domains: [healing]
     range: touch
     ends_conditions: true
     ends_lasting: true
@@ -193,7 +232,7 @@ The bolts are one spell written several times, differing only in the
 damage they deal. Every one of them shares a chassis:
 
 - **Tier:** {{ mechanics.bolt.tier }}
-- **School:** {{ mechanics.bolt.school }}
+- **Schools:** {{ mechanics.bolt.schools }}
 - **Range:** {{ mechanics.bolt.range }}, needing a ranged attack roll
 - **Base difficulty:** {{ mechanics.bolt.base_difficulty }}
 - **Damage:** {{ mechanics.bolt.damage }}
@@ -209,13 +248,13 @@ and both standard boosts:
 The variants are then only a damage type and a domain:
 
 - **Force Bolt** — {{ mechanics.force_bolt.damage_type }} damage, domain
-  of {{ mechanics.force_bolt.domain }}.
+  of {{ mechanics.force_bolt.domains }}.
 - **Flame Bolt** — {{ mechanics.flame_bolt.damage_type }} damage, domain
-  of {{ mechanics.flame_bolt.domain }}.
+  of {{ mechanics.flame_bolt.domains }}.
 - **Frost Bolt** — {{ mechanics.frost_bolt.damage_type }} damage, domain
-  of {{ mechanics.frost_bolt.domain }}.
+  of {{ mechanics.frost_bolt.domains }}.
 - **Shock Bolt** — {{ mechanics.shock_bolt.damage_type }} damage, domain
-  of {{ mechanics.shock_bolt.domain }}.
+  of {{ mechanics.shock_bolt.domains }}.
 
 Because the domain differs, a caster's [[discipline-powers|Granted
 Domain]] makes one bolt markedly cheaper than the rest — a priest of war
@@ -228,7 +267,7 @@ Where a bolt is what a caster throws when there is nothing left, a
 **lance** is what they open with. One spell again written four times,
 sharing a chassis:
 
-- **School:** {{ mechanics.lance.school }}
+- **Schools:** {{ mechanics.lance.schools }}
 - **Range:** {{ mechanics.lance.range }}, aimed with the casting roll
 - **Base difficulty:** {{ mechanics.lance.base_difficulty }}
 - **Damage:** {{ mechanics.lance.damage }}, plus
@@ -244,16 +283,16 @@ The variants differ in damage type, domain, and which condition they
 carry:
 
 - **Force Lance** — {{ mechanics.force_lance.damage_type }} damage,
-  domain of {{ mechanics.force_lance.domain }}, leaves the target
+  domain of {{ mechanics.force_lance.domains }}, leaves the target
   **{{ mechanics.force_lance.condition }}**.
 - **Flame Lance** — {{ mechanics.flame_lance.damage_type }} damage,
-  domain of {{ mechanics.flame_lance.domain }}, leaves the target
+  domain of {{ mechanics.flame_lance.domains }}, leaves the target
   **{{ mechanics.flame_lance.condition }}**.
 - **Frost Lance** — {{ mechanics.frost_lance.damage_type }} damage,
-  domain of {{ mechanics.frost_lance.domain }}, leaves the target
+  domain of {{ mechanics.frost_lance.domains }}, leaves the target
   **{{ mechanics.frost_lance.condition }}**.
 - **Storm Lance** — {{ mechanics.storm_lance.damage_type }} damage,
-  domain of {{ mechanics.storm_lance.domain }}, leaves the target
+  domain of {{ mechanics.storm_lance.domains }}, leaves the target
   **{{ mechanics.storm_lance.condition }}**.
 
 Which lance to carry is a question about the fight rather than about the
@@ -339,6 +378,113 @@ deny ground by what they do rather than by what they deal, and those are
 the ones the archetype's cheap spread was written for.
 {% endbook-only %}
 
+## The wards
+
+A **ward** covers ground and does nothing to it. Everything standing
+inside has the ward's condition, for exactly as long as it stands
+there; step out and it stops. There is no attack roll, no damage, and —
+unlike every other condition in the game — **no roll to resist**. You
+are in the fog or you are not.
+
+That is what makes area denial a different thing from an area attack. A
+blast asks whether it beat you; a ward asks where you are standing. The
+counter to a ward is not a good Fortitude score, it is your feet.
+
+Wards spread at the {{ mechanics.ward.area_archetype }} rate, the widest
+in [[spell-area]], because covering ground is the whole of what they
+buy. Difficulty goes to area and to duration and to nothing else: a ward
+does the same thing however hard it was cast, over more or less of the
+map, for more or less of the fight.
+
+All six share a chassis:
+
+- **Base difficulty:** {{ mechanics.ward.base_difficulty }}
+- **Template:** {{ mechanics.ward.template }}, priced as
+  {{ mechanics.ward.area_archetype }} — see [[spell-area]]
+- **Duration:** {{ mechanics.ward.duration_rounds }} rounds, plus
+  {{ mechanics.ward.rounds_per_difficulty }} for each further point of
+  difficulty spent on it
+- **Minimum spirit:** {{ mechanics.ward.minimum_spirit }}
+
+### Fog Bank
+
+*{{ mechanics.fog_bank.schools }}; {{ mechanics.fog_bank.domains }}.*
+Cold grey fog, too thick to see an arm's length through. Anything
+inside is **{{ mechanics.fog_bank.condition_inside }}** — see
+[[conditions]] — which makes a fog bank as bad for the caster's own side
+as for anyone else, and is the reason it is usually put somewhere nobody
+friendly intends to stand.
+
+### Shroud
+
+*{{ mechanics.shroud.schools }}; {{ mechanics.shroud.domains }}.*
+Darkness that is not the absence of light but the presence of something
+else. Anything inside is
+**{{ mechanics.shroud.condition_inside }}**. It does the same work as a
+Fog Bank and belongs to a different pair of gods, which is the point of
+having both.
+
+### Briar Patch
+
+*{{ mechanics.briar_patch.schools }};
+{{ mechanics.briar_patch.domains }}.* Thorned growth erupts from the
+ground and takes hold of whatever is standing in it. Anything inside is
+**{{ mechanics.briar_patch.condition_inside }}**: it may fight, it may
+defend itself, it may not go anywhere. The most straightforwardly
+obstructive ward, and the one that most resembles a wall.
+
+### Sleet Storm
+
+*{{ mechanics.sleet_storm.schools }};
+{{ mechanics.sleet_storm.domains }}.* Freezing rain and treacherous
+footing. Anything inside is
+**{{ mechanics.sleet_storm.condition_inside }}**. It denies less than a
+Briar Patch and is far harder to simply avoid, since a creature can
+still cross it — slowly, and while being shot at.
+
+### Hallowed Ground
+
+*{{ mechanics.hallowed_ground.schools }};
+{{ mechanics.hallowed_ground.domains }}.* Ground given over to something
+larger, which does not want a fight happening on it. Anything inside is
+**{{ mechanics.hallowed_ground.condition_inside }}**. The only ward that
+leaves its occupants entirely mobile and merely worse at everything.
+
+### Ring of Silence
+
+*{{ mechanics.ring_of_silence.schools }};
+{{ mechanics.ring_of_silence.domains }}.* Sound stops at the edge.
+Anything inside is
+**{{ mechanics.ring_of_silence.condition_inside }}**, which is aimed at
+one kind of enemy in particular and does very little to the rest.
+
+{% book-only %}
+### Design note
+
+The wards do not allow a resistance roll, and that is the most important
+thing about them.
+
+Every other condition in the game lands by beating somebody, which makes
+a condition a contest and its duration a matter of how badly they lost.
+That is right for something a caster does *to* a creature. It is wrong
+for something a caster does to a *place*. A fog bank is not trying to
+beat you; it is fog. Rolling against it would say that a strong-willed
+character can see through weather, which is a strange thing for a rule
+to claim and an annoying one to adjudicate.
+
+Making them terrain also gives them a counter that has nothing to do
+with character sheets. A ward is beaten by moving, by going round, by
+waiting it out, or by making the enemy come to you anyway — decisions
+rather than dice. That is a different kind of pressure from anything
+else in the spell list, which is the reason for having the category at
+all.
+
+The price is that difficulty buys only ground and time. A ward cast
+enormously hard is a bigger, longer-lasting fog and not a thicker one,
+which keeps the whole family out of the arms race the damaging spells
+are in.
+{% endbook-only %}
+
 ## The restorative spells
 
 Harm is undone in the reverse of the order it was done. [[hit-points]]
@@ -355,8 +501,8 @@ one cast rarely.
 ### Mend ({{ mechanics.mend.base_difficulty }})
 
 - **Tier:** {{ mechanics.mend.tier }}
-- **School:** {{ mechanics.mend.school }}
-- **Domain:** {{ mechanics.mend.domain }}
+- **Schools:** {{ mechanics.mend.schools }}
+- **Domains:** {{ mechanics.mend.domains }}
 - **Range:** {{ mechanics.mend.range }}
 - **Minimum spirit:** {{ mechanics.mend.minimum_spirit }}
 
@@ -371,8 +517,9 @@ is to harm.
 
 ### Cure Wounds ({{ mechanics.cure_wounds.base_difficulty }})
 
-- **School:** {{ mechanics.cure_wounds.school }}
-- **Domain:** {{ mechanics.cure_wounds.domain }}, or harm when reversed
+- **Schools:** {{ mechanics.cure_wounds.schools }}
+- **Domains:** {{ mechanics.cure_wounds.domains }}, or harm when
+  reversed
 - **Range:** {{ mechanics.cure_wounds.range }}
 - **Minimum spirit:** {{ mechanics.cure_wounds.minimum_spirit }}
 
@@ -397,8 +544,8 @@ instead, applied the ordinary way round.
 
 ### Cleanse ({{ mechanics.cleanse.base_difficulty }})
 
-- **School:** {{ mechanics.cleanse.school }}
-- **Domain:** {{ mechanics.cleanse.domain }}
+- **Schools:** {{ mechanics.cleanse.schools }}
+- **Domains:** {{ mechanics.cleanse.domains }}
 - **Range:** {{ mechanics.cleanse.range }}
 - **Minimum spirit:** {{ mechanics.cleanse.minimum_spirit }}
 
@@ -412,8 +559,8 @@ the caster who laid it on paid for that difficulty too.
 
 ### Restoration ({{ mechanics.restoration.base_difficulty }})
 
-- **School:** {{ mechanics.restoration.school }}
-- **Domain:** {{ mechanics.restoration.domain }}
+- **Schools:** {{ mechanics.restoration.schools }}
+- **Domains:** {{ mechanics.restoration.domains }}
 - **Range:** {{ mechanics.restoration.range }}
 - **Minimum spirit:** {{ mechanics.restoration.minimum_spirit }}
 

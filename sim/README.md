@@ -377,6 +377,12 @@ land the thing at least half the time before it counts.
   pairings under it at once. When a change fails the round-length gate
   at level 1 and passes or improves it everywhere else, suspect the
   level rather than the change.
+- **Area denial is not modelled at all, and cannot be.** The wards deal
+  no damage and impose their condition on whatever is standing in them,
+  so their whole value is positional and this model has no positions.
+  They are excluded from the spell search rather than scored at zero,
+  which would have been a measurement rather than an omission and would
+  have read like one.
 - **A caster duels toe to toe, which is the last place it would
   choose.** Its spells reach ten squares and the model has no positions,
   so it cannot back away and make a melee build spend the fight

@@ -30,6 +30,12 @@ mechanics:
     dazed:
       resisted_with: resolve
       attack_penalty: 2
+    rooted:
+      resisted_with: fortitude
+      movement_fraction: 0
+    silenced:
+      resisted_with: resolve
+      casting_penalty: 5
     blinded:
       resisted_with: fortitude
       attack_penalty: 5
@@ -117,6 +123,18 @@ or lose a turn putting yourself out.
 {{ mechanics.conditions.slowed.movement_fraction }} and you have no
 reaction. Resisted with
 {{ mechanics.conditions.slowed.resisted_with }}.
+
+**Rooted** — you cannot move at all. Your movement is
+{{ mechanics.conditions.rooted.movement_fraction }}, and you have no
+reaction. You may still act, and you may still defend yourself; you
+simply cannot go anywhere. Resisted with
+{{ mechanics.conditions.rooted.resisted_with }}.
+
+**Silenced** — you cannot make yourself heard, and magic will not answer
+you properly. You take
+`-{{ mechanics.conditions.silenced.casting_penalty }}` on spellcasting,
+and anything else that depends on being heard simply fails. Resisted
+with {{ mechanics.conditions.silenced.resisted_with }}.
 
 **Dazed** — you take
 `-{{ mechanics.conditions.dazed.attack_penalty }}` on attack rolls, and

@@ -286,6 +286,8 @@ class Character:
                 bonus += self.armour.skill_penalty
         if self.weapon:
             bonus -= hand_penalty(self, M, "spellcasting")
+        bonus -= sum(int(condition_def(M, n).get("casting_penalty", 0))
+                     for n in self.conditions)
         return bonus
 
     def has(self, discipline, grade):
@@ -1052,6 +1054,12 @@ def combat_spells(M):
         if not isinstance(entry, dict) or spell_id in families:
             continue
         merged = spell_def(M, spell_id)
+        if merged.get("no_damage"):
+            # A ward covers ground and deals nothing. Scoring it needs
+            # positions, which this model does not have -- see the
+            # README. Leaving it in the damage search would only let it
+            # come last with a zero.
+            continue
         if "damage" in merged or "area_archetype" in merged:
             out.append(spell_id)
     return out
@@ -1142,6 +1150,16 @@ def granted_domains(char):
     return (char.major_domain,) + tuple(char.minor_domains)
 
 
+def spell_domains(M, spell_id):
+    """A spell belongs to one or more domains. Most have one; a fog bank
+    is equally a thing of the sea and a thing of the wild."""
+    return tuple(str(d) for d in spell_def(M, spell_id).get("domains", ()))
+
+
+def spell_schools(M, spell_id):
+    return tuple(str(x) for x in spell_def(M, spell_id).get("schools", ()))
+
+
 def castable(char, spell_id, M):
     """Whether this character may cast this spell at all.
 
@@ -1152,7 +1170,8 @@ def castable(char, spell_id, M):
     and is tracked."""
     if char.major_domain is None:
         return True
-    return str(spell_def(M, spell_id).get("domain")) in granted_domains(char)
+    granted = granted_domains(char)
+    return any(d in granted for d in spell_domains(M, spell_id))
 
 
 def spells_for(char, M):
@@ -1165,10 +1184,11 @@ def domain_bonus(char, spell_id, M):
     them."""
     if char.major_domain is None:
         return 0
-    domain = str(spell_def(M, spell_id).get("domain"))
     favoured = (granted_domains(char) if char.has("spiritual", "master")
                 else (char.major_domain,))
-    if domain not in favoured:
+    # One favoured domain is enough; a spell that is partly your god's
+    # business is your god's business.
+    if not any(d in favoured for d in spell_domains(M, spell_id)):
         return 0
     return int(M.get("domains", "major_domain_bonus"))
 

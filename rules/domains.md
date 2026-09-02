@@ -21,6 +21,13 @@ A **domain** is what a spell is *about*, as opposed to the school, which
 is how it is built — see [[spellcasting]]. Fire and lightning belong to
 war; frost belongs to nature; mending a wound belongs to healing.
 
+A spell may belong to several. A fog bank is a thing of the wild and a
+thing of the sea, and a priest of either god may call one; a shroud of
+darkness answers to two quite different sorts of god for two quite
+different reasons. Where a domain decides access or a bonus, **one match
+is enough** — a spell that is partly your god's business is your god's
+business.
+
 ## The domains
 
 {{ mechanics.domains }}
@@ -29,9 +36,9 @@ The list is open. A Dungeon Master inventing a god is not restricted to
 these, and a new domain costs nothing but a word: what it means is
 settled by which spells get tagged with it.
 
-Most of them are settled by nothing yet. The [[spell-list]] is young,
-and only healing, war, nature and magic currently have spells in them —
-so a god granting three of the others is granting a priest who cannot
+Some of them are settled by nothing yet. The [[spell-list]] is young,
+and death, love, forge, travel and luck have no spells in them at all —
+so a god granting three of those is granting a priest who cannot
 presently cast anything. Until the list fills out, a Dungeon Master
 building a pantheon should give every god at least one domain that has
 spells in it.

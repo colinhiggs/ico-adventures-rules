@@ -139,6 +139,14 @@
           "resisted_with": "resolve",
           "attack_penalty": 2
         },
+        "rooted": {
+          "resisted_with": "fortitude",
+          "movement_fraction": 0
+        },
+        "silenced": {
+          "resisted_with": "resolve",
+          "casting_penalty": 5
+        },
         "blinded": {
           "resisted_with": "fortitude",
           "attack_penalty": 5,
@@ -721,7 +729,9 @@
       "bolt": {
         "tier": "minor",
         "base_difficulty": 2,
-        "school": "energy",
+        "schools": [
+          "energy"
+        ],
         "range": 10,
         "needs_attack_roll": true,
         "damage": 6,
@@ -733,25 +743,35 @@
       "force_bolt": {
         "family": "bolt",
         "damage_type": "force",
-        "domain": "magic"
+        "domains": [
+          "magic"
+        ]
       },
       "flame_bolt": {
         "family": "bolt",
         "damage_type": "fire",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
       },
       "frost_bolt": {
         "family": "bolt",
         "damage_type": "cold",
-        "domain": "nature"
+        "domains": [
+          "nature"
+        ]
       },
       "shock_bolt": {
         "family": "bolt",
         "damage_type": "lightning",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
       },
       "lance": {
-        "school": "energy",
+        "schools": [
+          "energy"
+        ],
         "base_difficulty": 8,
         "damage": 10,
         "difficulty_per_step": 2,
@@ -765,29 +785,39 @@
       "force_lance": {
         "family": "lance",
         "damage_type": "force",
-        "domain": "magic",
+        "domains": [
+          "magic"
+        ],
         "condition": "stunned"
       },
       "flame_lance": {
         "family": "lance",
         "damage_type": "fire",
-        "domain": "war",
+        "domains": [
+          "war"
+        ],
         "condition": "burning"
       },
       "frost_lance": {
         "family": "lance",
         "damage_type": "cold",
-        "domain": "nature",
+        "domains": [
+          "nature"
+        ],
         "condition": "slowed"
       },
       "storm_lance": {
         "family": "lance",
         "damage_type": "lightning",
-        "domain": "war",
+        "domains": [
+          "war"
+        ],
         "condition": "dazed"
       },
       "burst": {
-        "school": "energy",
+        "schools": [
+          "energy"
+        ],
         "base_difficulty": 6,
         "template": "circle",
         "area_archetype": "concentrated",
@@ -796,7 +826,9 @@
         "applies_condition": true
       },
       "blast": {
-        "school": "energy",
+        "schools": [
+          "energy"
+        ],
         "base_difficulty": 6,
         "template": "any",
         "area_archetype": "balanced",
@@ -804,7 +836,9 @@
         "needs_attack_roll": false
       },
       "field": {
-        "school": "energy",
+        "schools": [
+          "energy"
+        ],
         "base_difficulty": 8,
         "template": "circle",
         "area_archetype": "diffuse",
@@ -817,66 +851,165 @@
       "force_burst": {
         "family": "burst",
         "damage_type": "force",
-        "domain": "magic",
+        "domains": [
+          "magic"
+        ],
         "condition": "stunned"
       },
       "flame_burst": {
         "family": "burst",
         "damage_type": "fire",
-        "domain": "war",
+        "domains": [
+          "war"
+        ],
         "condition": "burning"
       },
       "frost_burst": {
         "family": "burst",
         "damage_type": "cold",
-        "domain": "nature",
+        "domains": [
+          "nature"
+        ],
         "condition": "slowed"
       },
       "storm_burst": {
         "family": "burst",
         "damage_type": "lightning",
-        "domain": "war",
+        "domains": [
+          "war"
+        ],
         "condition": "dazed"
       },
       "force_blast": {
         "family": "blast",
         "damage_type": "force",
-        "domain": "magic"
+        "domains": [
+          "magic"
+        ]
       },
       "flame_blast": {
         "family": "blast",
         "damage_type": "fire",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
       },
       "frost_blast": {
         "family": "blast",
         "damage_type": "cold",
-        "domain": "nature"
+        "domains": [
+          "nature"
+        ]
       },
       "storm_blast": {
         "family": "blast",
         "damage_type": "lightning",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
       },
       "force_field": {
         "family": "field",
         "damage_type": "force",
-        "domain": "magic"
+        "domains": [
+          "magic"
+        ]
       },
       "flame_field": {
         "family": "field",
         "damage_type": "fire",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
       },
       "frost_field": {
         "family": "field",
         "damage_type": "cold",
-        "domain": "nature"
+        "domains": [
+          "nature"
+        ]
       },
       "storm_field": {
         "family": "field",
         "damage_type": "lightning",
-        "domain": "war"
+        "domains": [
+          "war"
+        ]
+      },
+      "ward": {
+        "base_difficulty": 6,
+        "template": "circle",
+        "area_archetype": "diffuse",
+        "minimum_spirit": 2,
+        "needs_attack_roll": false,
+        "no_damage": true,
+        "duration_rounds": 3,
+        "rounds_per_difficulty": 1
+      },
+      "fog_bank": {
+        "family": "ward",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "nature",
+          "sea"
+        ],
+        "condition_inside": "blinded"
+      },
+      "shroud": {
+        "family": "ward",
+        "schools": [
+          "illusion"
+        ],
+        "domains": [
+          "darkness",
+          "trickery"
+        ],
+        "condition_inside": "blinded"
+      },
+      "briar_patch": {
+        "family": "ward",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "nature"
+        ],
+        "condition_inside": "rooted"
+      },
+      "sleet_storm": {
+        "family": "ward",
+        "schools": [
+          "energy"
+        ],
+        "domains": [
+          "storm",
+          "nature"
+        ],
+        "condition_inside": "slowed"
+      },
+      "hallowed_ground": {
+        "family": "ward",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "light",
+          "justice"
+        ],
+        "condition_inside": "dazed"
+      },
+      "ring_of_silence": {
+        "family": "ward",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "knowledge",
+          "magic"
+        ],
+        "condition_inside": "silenced"
       },
       "heal_order": [
         "core",
@@ -885,8 +1018,12 @@
       "mend": {
         "tier": "minor",
         "base_difficulty": 4,
-        "school": "life_force",
-        "domain": "healing",
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "healing"
+        ],
         "range": "touch",
         "restores": 4,
         "difficulty_per_step": 3,
@@ -898,8 +1035,12 @@
       },
       "cure_wounds": {
         "base_difficulty": 16,
-        "school": "life_force",
-        "domain": "healing",
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "healing"
+        ],
         "range": "touch",
         "restores": 3,
         "difficulty_per_step": 4,
@@ -913,8 +1054,12 @@
       },
       "cleanse": {
         "base_difficulty": 10,
-        "school": "life_force",
-        "domain": "healing",
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "healing"
+        ],
         "range": "touch",
         "ends_conditions": true,
         "ends_lasting": false,
@@ -922,8 +1067,12 @@
       },
       "restoration": {
         "base_difficulty": 14,
-        "school": "life_force",
-        "domain": "healing",
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "healing"
+        ],
         "range": "touch",
         "ends_conditions": true,
         "ends_lasting": true,

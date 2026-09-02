@@ -9,11 +9,10 @@ they stop being rediscovered.
 The damaging spells are done: bolts, lances, and the three area families
 (bursts, blasts, fields), across four damage types. What is missing:
 
-- **Non-damaging crowd control and area denial.** The `field` chassis
-  was written expecting most fields to be these — fog, tangling ground,
-  silence, darkness — denying ground by what they do rather than by what
-  they deal. The diffuse spread rate exists for exactly this and is
-  currently used only by the damaging fields.
+- **Non-damaging crowd control and area denial.** *Done, as the wards:
+  fog, darkness, briars, sleet, hallowed ground, silence.* What is still
+  missing from the category is anything that blocks movement outright —
+  a wall — and anything that keeps a named kind of creature out.
 - **Curing and restorative.** *In progress.*
 - **Protection.** Wards, shields, resistance to a damage type, cover
   against a school.
@@ -50,11 +49,10 @@ The damaging spells are done: bolts, lances, and the three area families
   times less than a martial build on the contribution gate. Part of that
   is the metric, which counts neither crowds nor range; part of it is
   real. It has survived every change made so far.
-- **Twelve of the sixteen domains have no spells in them.** Only
-  healing, war, nature and magic are populated, so a god granting three
-  of the others grants a priest who can cast nothing. The domain list
-  was written ahead of the spells deliberately, but it is a real hole
-  until the categories above are filled.
+- **Five of the sixteen domains have no spells in them:** death, love,
+  forge, travel and luck. A god granting three of those grants a priest
+  who can cast nothing. Better than it was — the wards took it from
+  twelve to five — but still a hole.
 - **A caster's free floor catches up with its paid output.** Minor
   spells scale with casting skill and have no minimum cost, so at level
   15 the priest keeps 96% of its damage with an empty reservoir, and at
