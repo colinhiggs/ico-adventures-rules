@@ -498,10 +498,11 @@
     },
     "free-hands": {
       "hands_total": 2,
+      "penalty_per_missing_hand": 2,
       "stowing_costs_an_action": true,
       "quick_stow_is_free": true,
       "hands_needed": {
-        "spellcasting": 1,
+        "spellcasting": 2,
         "heal": 1,
         "use_magic_device": 1,
         "sleight_of_hand": 1,
@@ -979,6 +980,7 @@
         "damage": 5,
         "size": "M",
         "block_ap": 7,
+        "aids_spellcasting": true,
         "cost_gp": 1
       },
       "sword": {

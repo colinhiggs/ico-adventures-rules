@@ -38,11 +38,14 @@ The damaging spells are done: bolts, lances, and the three area families
   level 1 average barely above the three-round floor before any
   particular rule is blamed. A question about hit points and damage at
   the bottom of the curve.
-- **The hand axe and the staff are dead weapons.** Both are dominated by
-  arithmetic rather than by structure — the short sword beats the hand
-  axe on accuracy, block and quickness for one point of damage, and the
-  sword beats the staff on accuracy and damage for two points of block.
-  A repricing job on the weapon table.
+- **The hand axe and the staff are still dead weapons.** Both are
+  dominated by arithmetic rather than by structure: the short sword
+  beats the hand axe on accuracy, block and quickness for one point of
+  damage, and the dagger beats the staff for a caster because it is
+  quick and so equally free to cast around. The staff does now have its
+  narrative job back, and its one real edge — the best block value on
+  the table — pays only a caster who blocks. A repricing job on the
+  weapon table.
 - **The caster's single-target gap.** A caster contributes three to five
   times less than a martial build on the contribution gate. Part of that
   is the metric, which counts neither crowds nor range; part of it is

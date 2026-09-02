@@ -121,6 +121,7 @@ class Weapon:
     block_ap: int
     cost_gp: int = 0
     quick: bool = False
+    aids_spellcasting: bool = False
 
     @classmethod
     def load(cls, M, key):
@@ -133,6 +134,7 @@ class Weapon:
             block_ap=int(entry["block_ap"]),
             cost_gp=int(entry["cost_gp"]),
             quick=bool(entry.get("quick", False)),
+            aids_spellcasting=bool(entry.get("aids_spellcasting", False)),
         )
 
 
@@ -279,6 +281,8 @@ class Character:
         if self.armour and "hampers_casting" in M.keys("armour"):
             if bool(M.get("armour", "hampers_casting")):
                 bonus += self.armour.skill_penalty
+        if self.weapon:
+            bonus -= hand_penalty(self, M, "spellcasting")
         return bonus
 
     def has(self, discipline, grade):
@@ -411,21 +415,30 @@ def hands_needed(M, skill_name):
     return int(table.get(skill_name, 0))
 
 
-def can_use_freely(char, M, skill_name):
-    """Whether this character can use the skill WITHOUT spending its
-    action putting something away first.
+def hand_penalty(char, M, skill_name):
+    """What this character's full hands cost it on this skill.
 
-    A quick weapon is stowed and drawn for nothing, so a character
-    holding only a quick weapon can always free the hands it needs. Any
-    other weapon has to be put down, and putting it down is the action."""
+    Nothing is forbidden any more: you are short a hand or you are not,
+    and each hand you are short is a penalty on the roll. A quick weapon
+    is stowed and drawn for nothing, so a character holding only a quick
+    weapon is never short of anything; a staff is not stowed at all but
+    cancels the penalty outright, which is what casters keep one for."""
     need = hands_needed(M, skill_name)
-    if need == 0 or free_hands(char, M) >= need:
-        return True
-    if not bool(M.get("free-hands", "quick_stow_is_free")):
-        return False
-    # Stow what can be stowed for free, and count again.
-    freed = weapon_hands(char.weapon, M) if char.weapon.quick else 0
-    return free_hands(char, M) + freed >= need
+    if need == 0:
+        return 0
+    spare = free_hands(char, M)
+    if char.weapon is not None:
+        aids = (skill_name == "spellcasting"
+                and char.weapon.aids_spellcasting)
+        stows = (char.weapon.quick
+                 and bool(M.get("free-hands", "quick_stow_is_free")))
+        if aids or stows:
+            # A staff does not get in the way and a quick weapon is put
+            # down for nothing: either way that hand is not the problem.
+            # A shield in the other hand still is.
+            spare += weapon_hands(char.weapon, M)
+    short = max(0, need - spare)
+    return short * int(M.get("free-hands", "penalty_per_missing_hand"))
 
 
 def reach_of(char, M):
@@ -1119,14 +1132,11 @@ def best_heal(char, M, spirit_budget, free_only=False):
 
 
 def can_cast(char, M):
-    """Knowing how, and having a hand to do it with. free-hands.md makes
-    the second half a real condition: a caster holding a two-handed
-    weapon must spend its action putting the thing down, which is the
-    action it wanted to cast with."""
-    if not (char.has("magical", "initiate")
-            or char.has("spiritual", "initiate")):
-        return False
-    return can_use_freely(char, M, "spellcasting")
+    """Knowing how. What is in your hands no longer decides whether you
+    may cast, only how well -- see Character.casting_bonus and
+    free-hands.md."""
+    return (char.has("magical", "initiate")
+            or char.has("spiritual", "initiate"))
 
 
 def area_rates(M, archetype, spell=None):

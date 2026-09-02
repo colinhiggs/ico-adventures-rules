@@ -34,6 +34,7 @@ mechanics:
     damage: 5
     size: M
     block_ap: 7
+    aids_spellcasting: true
     cost_gp: 1
   sword:
     accuracy: 1
@@ -130,6 +131,23 @@ that size takes `{{ mechanics.large_weapon_skill_penalty }}` off your
 defence, whichever way you defend — the same kind of interference heavy
 [[armour]] causes, and for the same reason. You are carrying something
 that gets in your way.
+
+## Staffs
+
+A staff is the one weapon a caster may hold and cast with as though
+their hands were empty. It cancels the penalty [[free-hands]] would
+otherwise charge for holding something, entirely.
+
+This is not a magical property of the wood. Casters practise with a
+staff precisely because it does this: the shape of the thing suits the
+work, the movements a spell wants are movements a staff can be part of
+rather than get in the way of, and every apprentice learns to cast
+around one from the beginning. That it is also a serviceable club, a
+walking aid over rough country, and the object most likely to be
+enchanted by someone eventually, is the rest of the reason every caster
+in the world seems to have one.
+
+A staff carried by somebody who casts nothing is a stick.
 
 ## Quick weapons
 

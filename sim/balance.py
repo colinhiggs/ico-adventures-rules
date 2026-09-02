@@ -122,6 +122,17 @@ ARCHETYPES = {
                        "intelligence": 8, "willpower": 14, "charisma": 14},
         "stance": "dodge",
     },
+    # The build the free-hands penalty exists to permit: fights and
+    # casts, and is second-rate at both by choice. If it never picks a
+    # real weapon the penalty is too steep; if a pure caster starts
+    # picking one, it is too shallow.
+    "spellblade": {
+        "disciplines": [("martial", "adept"), ("magical", "adept")],
+        "attributes": {"strength": 14, "dexterity": 12, "constitution": 14,
+                       "intelligence": 14, "willpower": 12, "charisma": 14},
+        "stance": "dodge", "casts": True,
+        "skill_priority": ["attack_melee", "spellcasting", "dodge", "spot"],
+    },
     "generalist": {
         "disciplines": [("martial", "initiate"), ("athletic", "initiate"),
                         ("awareness", "initiate"), ("spiritual", "initiate")],

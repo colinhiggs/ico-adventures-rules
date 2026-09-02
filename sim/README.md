@@ -207,10 +207,24 @@ and withdrawing cancel, so it never pays again. In a duel those blows
 are resolved before the first round. **Quickness** is the answer: a
 quick weapon inside a longer one strikes first every round, whatever
 initiative said, which in practice is worth about one avoided blow over
-a fight, because a corpse does not answer. **Free hands** decides what a
-character can do while holding what it is holding: `can_cast` now asks
-whether the caster has a hand for it, and a quick weapon can be stowed
-and drawn for free, so it is the only weapon that never gets in the way.
+a fight, because a corpse does not answer. **Free hands** decides how
+well a character can do a thing while holding what it is holding:
+casting wants
+both hands, and each hand short of that is a penalty on the roll rather
+than a bar. A quick weapon is stowed and drawn for free and a staff does
+not get in the way at all, so neither costs a caster anything.
+
+**The size of that penalty cannot be settled here, and the report should
+not pretend otherwise.** Every decision it could influence is already
+decided by a much larger margin: against one target a martial build's
+swing beats its own best spell by about forty per cent, so a
+fighter-mage fights whatever the penalty; against a crowd an area spell
+beats swinging by so much that a `spellblade` still casts with a great
+axe in hand at a penalty of six; and a pure caster carries a dagger or a
+staff, which cost nothing either way. The value is a design choice made
+on the scale armour already uses, and what it *costs* is the part worth
+measuring -- a level 10 caster loses 12% of its best spell turn to a
+one-handed weapon and 21% to a two-handed one.
 
 The chooser prices all three first-order: a reach advantage is extra
 swings gained over a fight of typical length, a reach disadvantage is
@@ -341,6 +355,10 @@ land the thing at least half the time before it counts.
   armour's dodge penalty. Read the Blow, Command the Room, School
   Mastery and Granted Domain do nothing here, so any build resting on
   one of those is measured without its capstone.
+- The `spellblade` archetype exists to check that the free-hands penalty
+  leaves a fighter-mage possible. It does not choose to cast against a
+  single target at any penalty, including none, which is a statement
+  about the caster gap rather than about the penalty.
 - The `paragon` archetype exists to stress-test breadth rather than to
   be a sensible character: it is the only pairing whose *both*
   signatures the model implements, and contribution multiplies offence
