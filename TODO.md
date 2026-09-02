@@ -50,6 +50,16 @@ The damaging spells are done: bolts, lances, and the three area families
   times less than a martial build on the contribution gate. Part of that
   is the metric, which counts neither crowds nor range; part of it is
   real. It has survived every change made so far.
+- **Twelve of the sixteen domains have no spells in them.** Only
+  healing, war, nature and magic are populated, so a god granting three
+  of the others grants a priest who can cast nothing. The domain list
+  was written ahead of the spells deliberately, but it is a real hole
+  until the categories above are filled.
+- **A caster's free floor catches up with its paid output.** Minor
+  spells scale with casting skill and have no minimum cost, so at level
+  15 the priest keeps 96% of its damage with an empty reservoir, and at
+  level 1 only 30% -- outside the band at both ends and in opposite
+  directions. The reservoir matters too much early and not at all late.
 - **Ranged weapons are not statted at all.**
 
 ## Simulator gaps

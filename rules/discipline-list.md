@@ -34,7 +34,7 @@ mechanics:
   spiritual:
     skills: [resolve, heal, diplomacy, spellcasting, concentration]
     source: spirit
-    signature: granted_domain
+    signature: full_communion
 ---
 
 Each discipline names a group of skills from the [[skill-list]], draws
@@ -106,10 +106,9 @@ Source: spirit.*
 
 Granted magic, and the strength of will that carries it.
 
-**Signature — Granted Domain.** Choose one domain of influence. Spells
-of that domain are cast at heavily reduced difficulty — this is what a
-god being your power source is worth. The size of both reductions is
-given in [[discipline-powers]].
+**Signature — Full Communion.** Every priest is granted domains by their
+god, one of them favoured; see [[domains]]. At Master, the favour
+extends to all of them. The sizes are given in [[discipline-powers]].
 
 ## Example
 

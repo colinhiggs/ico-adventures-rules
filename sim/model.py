@@ -248,6 +248,9 @@ class Character:
     # {condition name: rounds left}, and the damage a burn repeats.
     conditions: dict = field(default_factory=dict)
     burning_damage: int = 0
+    # A priest's god grants these; a wizard has neither.
+    major_domain: str = None
+    minor_domains: tuple = ()
 
     def attr_bonus(self, attribute, M):
         step = int(M.get("attributes", "points_per_bonus_step"))
@@ -631,6 +634,8 @@ def build_character(name, spec, level, M, shopping_foe=None):
         char.spirit += source_points * source_per_point
     else:
         char.stamina += source_points * source_per_point
+    char.major_domain = spec.get("major_domain")
+    char.minor_domains = tuple(spec.get("minor_domains", ()))
     char.spent = {
         "disciplines": disc_spend,
         "mhp_points": mhp_points,
@@ -1131,6 +1136,43 @@ def best_heal(char, M, spirit_budget, free_only=False):
     return best
 
 
+def granted_domains(char):
+    if char.major_domain is None:
+        return ()
+    return (char.major_domain,) + tuple(char.minor_domains)
+
+
+def castable(char, spell_id, M):
+    """Whether this character may cast this spell at all.
+
+    A wizard may cast anything they have prepared, which the model does
+    not track -- preparation is a choice made before the fight and every
+    build here is assumed to have prepared for the fight it is in. A
+    priest may cast only what their god granted, which is a hard limit
+    and is tracked."""
+    if char.major_domain is None:
+        return True
+    return str(spell_def(M, spell_id).get("domain")) in granted_domains(char)
+
+
+def spells_for(char, M):
+    return [s for s in combat_spells(M) if castable(char, s, M)]
+
+
+def domain_bonus(char, spell_id, M):
+    """The favour a god lends to its own subjects. Full Communion, the
+    Spiritual signature, spreads it from the major domain to all of
+    them."""
+    if char.major_domain is None:
+        return 0
+    domain = str(spell_def(M, spell_id).get("domain"))
+    favoured = (granted_domains(char) if char.has("spiritual", "master")
+                else (char.major_domain,))
+    if domain not in favoured:
+        return 0
+    return int(M.get("domains", "major_domain_bonus"))
+
+
 def can_cast(char, M):
     """Knowing how. What is in your hands no longer decides whether you
     may cast, only how well -- see Character.casting_bonus and
@@ -1333,8 +1375,8 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
     if not can_cast(hero, M):
         return None
     best = (None, 0.0)
-    skill = hero.casting_bonus(M)
-    for spell_id in combat_spells(M):
+    for spell_id in spells_for(hero, M):
+        skill = hero.casting_bonus(M) + domain_bonus(hero, spell_id, M)
         sp = spell_def(M, spell_id)
         if "area_archetype" not in sp:
             continue
@@ -1849,7 +1891,7 @@ def _cast_at_crowd(hero, crowd, plan, M, fields=None):
         damage, squares = spell_shape(M, spell_id, difficulty, extra)
 
     roll, _crit = d20(M)
-    roll += hero.casting_bonus(M)
+    roll += hero.casting_bonus(M) + domain_bonus(hero, spell_id, M)
     if roll < difficulty:
         hero.spirit = max(0, hero.spirit - (0 if minor else minimum))
         return                                  # the spell fails outright
@@ -2148,7 +2190,7 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
     minor = sp.get("tier") == "minor"
     minimum = int(sp.get("minimum_spirit", 0))
     damage, _squares = spell_shape(M, spell_id, difficulty, duration_points)
-    skill = char.casting_bonus(M)
+    skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     crit_steps = critical_bonus_steps(M)
 
@@ -2244,7 +2286,7 @@ def best_spell(char, foe, M, spirit_budget):
     if got is not None:
         return got
     best = (None, -1.0, 0.0, 0, 0.0, 0)
-    for spell_id in combat_spells(M):
+    for spell_id in spells_for(char, M):
         sp = spell_def(M, spell_id)
         base = int(sp["base_difficulty"])
         durations = range(0, 5) if persists(M, spell_id) else (0,)
@@ -2268,7 +2310,7 @@ def best_spell_free(char, spell_id, foe, M):
     needs_aim = bool(sp.get("needs_attack_roll"))
     td = targeting_difficulty(foe, M) if needs_aim else 0
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
-    skill = char.casting_bonus(M)
+    skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
     best = 0.0
     for difficulty in range(base, base + 60):
         damage, _sq = spell_shape(M, spell_id, difficulty)
@@ -2304,7 +2346,7 @@ def floor_offence(char, foe, M):
     # they are exactly what is left when the reservoir is empty -- the
     # same role Quick Attack plays for a fighter.
     if can_cast(char, M):
-        for spell_id in combat_spells(M):
+        for spell_id in spells_for(char, M):
             if spell_def(M, spell_id).get("tier") != "minor":
                 continue
             free = best_spell_free(char, spell_id, foe, M)
@@ -2389,7 +2431,7 @@ def _cast_at(actor, target, plan, M, fields=None):
 
     damage, _squares = spell_shape(M, spell_id, difficulty, extra)
     face, was_crit = d20(M)
-    roll = face + actor.casting_bonus(M)
+    roll = face + actor.casting_bonus(M) + domain_bonus(actor, spell_id, M)
 
     if roll < difficulty:
         actor.spirit = max(0, actor.spirit - (0 if minor else minimum))

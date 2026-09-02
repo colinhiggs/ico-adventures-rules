@@ -11,6 +11,10 @@ its own effect on top.
 
 {% include spellcasting %}
 
+{% include domains %}
+
+{% include spell-preparation %}
+
 {% include spell-properties %}
 
 {% include spell-duration %}

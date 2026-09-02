@@ -122,6 +122,17 @@ ARCHETYPES = {
                        "intelligence": 8, "willpower": 14, "charisma": 14},
         "stance": "dodge",
     },
+    # A priest: spells come from a god rather than a book, so the build
+    # casts only what it was granted and casts its major domain with the
+    # god's favour. War is the domain with combat spells in it today.
+    "priest": {
+        "disciplines": [("spiritual", "master"), ("martial", "initiate")],
+        "attributes": {"strength": 12, "dexterity": 12, "constitution": 14,
+                       "intelligence": 10, "willpower": 18, "charisma": 14},
+        "stance": "dodge", "casts": True,
+        "major_domain": "war", "minor_domains": ("healing", "nature"),
+        "skill_priority": ["spellcasting", "dodge", "attack_melee", "spot"],
+    },
     # The build the free-hands penalty exists to permit: fights and
     # casts, and is second-rate at both by choice. If it never picks a
     # real weapon the penalty is too steep; if a pure caster starts

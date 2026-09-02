@@ -197,14 +197,19 @@ mechanics:
     discipline: social
     grade: master
     affects_everyone_who_can_see_and_hear: true
+  expanded_memory:
+    discipline: magical
+    grade: initiate
+    extra_memory_slots: 2
+    may_be_taken_again: true
   school_mastery:
     discipline: magical
     grade: master
     difficulty_reduction: 5
-  granted_domain:
+  full_communion:
     discipline: spiritual
     grade: master
-    difficulty_reduction: 10
+    major_bonus_applies_to_all_domains: true
 ---
 
 These powers are opened by holding the matching discipline at the
@@ -394,6 +399,12 @@ explains. What their grades buy is reach: an Initiate may hold and cast
 spells at all, and an Adept's focused spellcasting skill lets them
 carry a much higher difficulty.
 
+**Expanded Memory** *(Magical, Initiate)* — you carry more spells in
+your head. {{ mechanics.expanded_memory.extra_memory_slots }} more
+memory slots, per [[spell-preparation]]. This is the one power on any of
+these lists that is not used during a fight and has no difficulty at
+all; it may be taken again at a later level, and stacks.
+
 **Turn Undead** *(Spiritual, Adept; spirit, willpower, base difficulty
 {{ mechanics.turn_undead.base_difficulty }})* — you hold up what you
 believe in and the dead give ground. {{ mechanics.turn_undead.base_undead }}
@@ -407,9 +418,10 @@ Master decides which those are.
 magic. Spells of that school are cast at
 {{ mechanics.school_mastery.difficulty_reduction }} less difficulty.
 
-**Granted Domain** *(Spiritual, Master signature)* — choose one domain
-of influence. Spells of that domain are cast at
-{{ mechanics.granted_domain.difficulty_reduction }} less difficulty.
+**Full Communion** *(Spiritual, Master signature)* — the favour your god
+shows you in your major domain extends to every domain you were granted.
+The `+{{ domains:mechanics.major_domain_bonus }}` that applied to one
+now applies to all of them. See [[domains]].
 
 ## Example
 
@@ -492,8 +504,15 @@ Whirl scales in reach rather than in force. Pushing the difficulty finds
 one more body, not a heavier cut — which is what makes it a crowd
 answer rather than a better way to fight one opponent.
 
-Granted Domain cuts more difficulty than School Mastery because it is
-narrower: a domain is a subject, a school is a technique. It is also the
-mechanical weight of having a god as your power source, which should
-feel like more than a discount.
+School Mastery and Full Communion are worth roughly the same and reach
+it from opposite directions. A school is a technique and a broad one, so
+mastering it is worth a large bonus on one thing. A domain is a subject
+and a narrow one, so the priest's signature is a small bonus spread
+across everything they can cast at all. The wizard gets deeper in one
+place; the priest gets their whole god at once.
+
+Neither of them is where a priest's domain bonus comes from. Every
+priest has that from the first level, because having a god is not an
+achievement — it is the arrangement. What the signature buys is the god
+paying full attention to all of it rather than to one part.
 {% endbook-only %}

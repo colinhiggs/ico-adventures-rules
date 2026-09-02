@@ -355,6 +355,12 @@ land the thing at least half the time before it counts.
   armour's dodge penalty. Read the Blow, Command the Room, School
   Mastery and Granted Domain do nothing here, so any build resting on
   one of those is measured without its capstone.
+- The `priest` archetype casts from a god rather than a book: it can
+  cast only its granted domains, and casts them with the major domain
+  bonus, which Full Communion extends to all three. Preparation is NOT
+  modelled for wizards -- every build is assumed to have memorised what
+  the fight in front of it wants, which is the most generous reading and
+  the only one a single-fight model can take.
 - The `spellblade` archetype exists to check that the free-hands penalty
   leaves a fighter-mage possible. It does not choose to cast against a
   single target at any penalty, including none, which is a statement

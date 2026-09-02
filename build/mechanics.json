@@ -248,7 +248,7 @@
           "concentration"
         ],
         "source": "spirit",
-        "signature": "granted_domain"
+        "signature": "full_communion"
       }
     },
     "discipline-powers": {
@@ -466,15 +466,21 @@
         "grade": "master",
         "affects_everyone_who_can_see_and_hear": true
       },
+      "expanded_memory": {
+        "discipline": "magical",
+        "grade": "initiate",
+        "extra_memory_slots": 2,
+        "may_be_taken_again": true
+      },
       "school_mastery": {
         "discipline": "magical",
         "grade": "master",
         "difficulty_reduction": 5
       },
-      "granted_domain": {
+      "full_communion": {
         "discipline": "spiritual",
         "grade": "master",
-        "difficulty_reduction": 10
+        "major_bonus_applies_to_all_domains": true
       }
     },
     "disciplines": {
@@ -495,6 +501,32 @@
         "adept": "focused",
         "master": "focused"
       }
+    },
+    "domains": {
+      "domains": [
+        "healing",
+        "war",
+        "nature",
+        "magic",
+        "death",
+        "trickery",
+        "love",
+        "knowledge",
+        "light",
+        "darkness",
+        "storm",
+        "sea",
+        "forge",
+        "travel",
+        "luck",
+        "justice"
+      ],
+      "list_is_open": true,
+      "major_domains_granted": 1,
+      "minor_domains_granted_least": 1,
+      "minor_domains_granted_most": 2,
+      "major_domain_bonus": 3,
+      "spiritual_casts_only_granted_domains": true
     },
     "free-hands": {
       "hands_total": 2,
@@ -898,6 +930,16 @@
         "minimum_spirit": 4
       }
     },
+    "spell-preparation": {
+      "magical_casters_memorise": true,
+      "spiritual_casters_memorise": false,
+      "base_memory_slots": 3,
+      "slots_per_expanded_memory": 2,
+      "standard_spells_per_slot": 1,
+      "minor_spells_per_slot": 2,
+      "memorised_spells_swap_after_sleep": true,
+      "spell_book_capacity_is_unlimited": true
+    },
     "spell-properties": {
       "long_range_multiplier": 2,
       "range_extend_squares_per_difficulty": 1,
@@ -915,15 +957,6 @@
         "rifts",
         "influence_and_command",
         "illusion"
-      ],
-      "domains": [
-        "healing",
-        "war",
-        "trickery",
-        "love",
-        "death",
-        "nature",
-        "magic"
       ]
     },
     "turn-order": {
