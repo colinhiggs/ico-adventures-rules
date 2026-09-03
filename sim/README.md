@@ -377,6 +377,11 @@ land the thing at least half the time before it counts.
   pairings under it at once. When a change fails the round-length gate
   at level 1 and passes or improves it everywhere else, suspect the
   level rather than the change.
+- **Protection is scored only where the model can see it.** A pool of
+  temporary hit points and a change in damage reduction are both
+  measurable, and `report_guards` measures them. Resistance to a damage
+  type or to a school is not: nothing here tracks which type or school a
+  blow came from, so those two guards are written and unmeasured.
 - **Party buffs are not modelled at all, and cannot be: there is no
   party.** Rally, Hold the Line and Call the Shot buff allies, and the
   `commander` archetype exists to hold them, so it appears in the report

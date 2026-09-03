@@ -958,6 +958,81 @@
           "war"
         ]
       },
+      "guard": {
+        "base_difficulty": 8,
+        "range": "touch",
+        "minimum_spirit": 2,
+        "needs_attack_roll": false,
+        "no_damage": true,
+        "duration_rounds": 3,
+        "rounds_per_difficulty": 1,
+        "protection": 1,
+        "difficulty_per_step": 5,
+        "protection_per_step": 1
+      },
+      "bulwark": {
+        "family": "guard",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "forge",
+          "light"
+        ],
+        "protects": "mastery_hit_points",
+        "protection": 4,
+        "difficulty_per_step": 4,
+        "protection_per_step": 2
+      },
+      "stoneskin": {
+        "family": "guard",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "nature",
+          "forge"
+        ],
+        "protects": "damage_reduction"
+      },
+      "elemental_guard": {
+        "family": "guard",
+        "schools": [
+          "energy"
+        ],
+        "domains": [
+          "nature",
+          "storm"
+        ],
+        "protects": "damage_reduction_of_one_type",
+        "protection": 2,
+        "difficulty_per_step": 3
+      },
+      "mantle_of_warding": {
+        "family": "guard",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "magic",
+          "knowledge"
+        ],
+        "protects": "resistance_to_one_school",
+        "difficulty_per_step": 4
+      },
+      "deathward": {
+        "family": "guard",
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "death",
+          "light"
+        ],
+        "protects": "resistance_to_the_death_domain",
+        "protection": 2,
+        "difficulty_per_step": 4
+      },
       "blessing": {
         "base_difficulty": 8,
         "range": "touch",

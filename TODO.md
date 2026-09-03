@@ -14,8 +14,10 @@ The damaging spells are done: bolts, lances, and the three area families
   missing from the category is anything that blocks movement outright —
   a wall — and anything that keeps a named kind of creature out.
 - **Curing and restorative.** *In progress.*
-- **Protection.** Wards, shields, resistance to a damage type, cover
-  against a school.
+- **Protection.** *Done, as the guards: Bulwark, Stoneskin, Elemental
+  Guard, Mantle of Warding, Deathward.* Still missing: anything that
+  protects a place rather than a person, and anything that turns an
+  effect back on its caster.
 - **Support and buff.** *Done, as the blessings, plus Rally and Hold the
   Line for the commander.* Still missing: anything that buffs a whole
   party by magic rather than by shouting, which was left out on purpose
@@ -51,9 +53,10 @@ The damaging spells are done: bolts, lances, and the three area families
   times less than a martial build on the contribution gate. Part of that
   is the metric, which counts neither crowds nor range; part of it is
   real. It has survived every change made so far.
-- **One of the sixteen domains has no spells in it:** death. The wards
-  took it from twelve to five and the blessings from five to one, so
-  this is nearly closed.
+- **Every domain now has at least one spell**, but they are very
+  unevenly served: war and healing are deep, forge and luck have a single spell
+  each. A god granting three thin domains grants a thin priest, which is
+  a content problem rather than a rules one.
 - **A caster's free floor catches up with its paid output.** Minor
   spells scale with casting skill and have no minimum cost, so at level
   15 the priest keeps 96% of its damage with an empty reservoir, and at

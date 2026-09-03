@@ -36,11 +36,11 @@ The list is open. A Dungeon Master inventing a god is not restricted to
 these, and a new domain costs nothing but a word: what it means is
 settled by which spells get tagged with it.
 
-One is settled by nothing yet: the [[spell-list]] has nothing in the
-death domain at all, so a god of the dead is currently a god whose
-priest cannot cast. Until that is filled, a Dungeon Master building a
-pantheon should check that every god they invent grants at least one
-domain with spells in it.
+Every domain on the list now has at least one spell in it, so any god a
+Dungeon Master invents from these has a priest who can do something.
+Some are much better served than others — war and healing have a great
+deal, forge and luck have very little — and a god granting three thin
+domains grants a thin priest.
 
 ## What a god grants
 

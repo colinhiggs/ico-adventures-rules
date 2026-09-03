@@ -142,6 +142,50 @@ mechanics:
     family: field
     damage_type: lightning
     domains: [war]
+  guard:
+    base_difficulty: 8
+    range: touch
+    minimum_spirit: 2
+    needs_attack_roll: false
+    no_damage: true
+    duration_rounds: 3
+    rounds_per_difficulty: 1
+    protection: 1
+    difficulty_per_step: 5
+    protection_per_step: 1
+  bulwark:
+    family: guard
+    schools: [matter]
+    domains: [forge, light]
+    protects: mastery_hit_points
+    protection: 4
+    difficulty_per_step: 4
+    protection_per_step: 2
+  stoneskin:
+    family: guard
+    schools: [matter]
+    domains: [nature, forge]
+    protects: damage_reduction
+  elemental_guard:
+    family: guard
+    schools: [energy]
+    domains: [nature, storm]
+    protects: damage_reduction_of_one_type
+    protection: 2
+    difficulty_per_step: 3
+  mantle_of_warding:
+    family: guard
+    schools: [influence_and_command]
+    domains: [magic, knowledge]
+    protects: resistance_to_one_school
+    difficulty_per_step: 4
+  deathward:
+    family: guard
+    schools: [life_force]
+    domains: [death, light]
+    protects: resistance_to_the_death_domain
+    protection: 2
+    difficulty_per_step: 4
   blessing:
     base_difficulty: 8
     range: touch
@@ -423,6 +467,95 @@ That makes the damaging fields expensive, which is correct — most fields
 will not be damaging at all. Fog, tangling ground, silence and the rest
 deny ground by what they do rather than by what they deal, and those are
 the ones the archetype's cheap spread was written for.
+{% endbook-only %}
+
+## The guards
+
+A **guard** is laid on one creature you touch and makes harm land more
+lightly on it. Where a blessing makes somebody better at what they do, a
+guard makes them harder to stop doing it.
+
+All of them share a chassis:
+
+- **Base difficulty:** {{ mechanics.guard.base_difficulty }}
+- **Range:** {{ mechanics.guard.range }}
+- **Duration:** {{ mechanics.guard.duration_rounds }} rounds, plus
+  {{ mechanics.guard.rounds_per_difficulty }} for each further point of
+  difficulty spent on it
+- **Strength:** {{ mechanics.guard.protection }}, plus
+  {{ mechanics.guard.protection_per_step }} for each further
+  {{ mechanics.guard.difficulty_per_step }} points of difficulty, unless
+  the spell says otherwise
+- **Minimum spirit:** {{ mechanics.guard.minimum_spirit }}
+
+### Bulwark
+
+*{{ mechanics.bulwark.schools }}; {{ mechanics.bulwark.domains }}.*
+The target gains {{ mechanics.bulwark.protection }} temporary
+**mastery** hit points, plus {{ mechanics.bulwark.protection_per_step }} for each
+further {{ mechanics.bulwark.difficulty_per_step }} points of
+difficulty. They behave exactly as mastery hit points do — see
+[[hit-points]] — and any that are left vanish when the spell ends.
+
+It cannot grant core hit points. Nothing grants core hit points except
+Cure Wounds, which is the point of Cure Wounds.
+
+### Stoneskin
+
+*{{ mechanics.stoneskin.schools }}; {{ mechanics.stoneskin.domains }}.*
+The target's damage reduction rises by the guard's strength, exactly as
+though their armour were better. It is still bound by the cap in
+[[damage]]: however much reduction you pile up, half of every blow gets
+through.
+
+### Elemental Guard
+
+*{{ mechanics.elemental_guard.schools }};
+{{ mechanics.elemental_guard.domains }}.* Name a damage type as you
+cast. Damage of that type is reduced by the guard's strength, which
+starts at {{ mechanics.elemental_guard.protection }} and buys its steps
+every {{ mechanics.elemental_guard.difficulty_per_step }} points —
+cheaper than Stoneskin because it only ever answers one thing.
+
+### Mantle of Warding
+
+*{{ mechanics.mantle_of_warding.schools }};
+{{ mechanics.mantle_of_warding.domains }}.* Name a school of magic as
+you cast. The target adds the guard's strength to every roll to resist
+an effect of that school, per [[conditions]].
+
+### Deathward
+
+*{{ mechanics.deathward.schools }}; {{ mechanics.deathward.domains }}.*
+The target adds the guard's strength to resist anything of the death
+domain, and reduces damage from it by the same. The one guard that
+answers a *subject* rather than a technique or an element, and the
+reason a priest of a kindly god is worth having in a tomb.
+
+{% book-only %}
+### Design note
+
+The guards are four different answers to the question "protected from
+what", and the price falls as the question narrows. Stoneskin answers
+everything and is dearest per point; Elemental Guard answers one damage
+type and is cheapest; the Mantle and Deathward sit between, each
+answering a category. That gradient is the whole family: a caster who
+knows what is coming buys the narrow spell and a caster who does not
+pays for the wide one.
+
+Bulwark is the odd one and the only one that adds rather than subtracts.
+Reduction is capped by [[damage]] at half a blow and therefore has a
+ceiling no amount of spirit can lift; temporary hit points have no
+ceiling at all, which is why they are mastery hit points and vanish with
+the spell. A pool that persisted would be a slow way of buying
+permanent hit points, and hit points are bought with advancement points
+in this game or not at all.
+
+That both of them exist is deliberate. Reduction is worth most against
+many small blows and nothing against one enormous one; a pool of hit
+points is the reverse. A guard chosen well is worth about twice a guard
+chosen badly, and the caster does not know which they are choosing until
+the enemy commits.
 {% endbook-only %}
 
 ## The blessings

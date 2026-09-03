@@ -1065,6 +1065,74 @@ def combat_spells(M):
     return out
 
 
+def guard_spells(M):
+    """Spells that make harm land more lightly."""
+    families = spell_families(M)
+    return [k for k, v in sorted(M.rules["spell-list"].items())
+            if isinstance(v, dict) and k not in families
+            and "protects" in spell_def(M, k)]
+
+
+def guard_strength(M, spell_id, difficulty):
+    sp = spell_def(M, spell_id)
+    spare = max(0, difficulty - int(sp["base_difficulty"]))
+    steps = spare // int(sp["difficulty_per_step"])
+    return int(sp["protection"]) + steps * int(sp["protection_per_step"])
+
+
+def self_guard_value(char, spell_id, difficulty, foe, M, horizon=None):
+    """Damage prevented by casting this guard on oneself, against the
+    damage that could have been dealt in the rounds it takes.
+
+    Prevention and dealing are quoted in the same currency for the same
+    reason control is: a point the enemy never takes off you is worth a
+    point you never had to put back. Only the two guards this model can
+    read are scored -- a pool of hit points and a change in reduction.
+    Resistance to a damage type or a school cannot be, because nothing
+    here tracks which type or school a blow came from."""
+    import copy
+    protects = str(spell_def(M, spell_id).get("protects"))
+    if protects not in ("mastery_hit_points", "damage_reduction"):
+        return None
+    rounds = float(horizon or TYPICAL_FIGHT_ROUNDS)
+    strength = guard_strength(M, spell_id, difficulty)
+    duration = min(rounds - 1, spell_rounds(M, spell_id, 0))
+
+    taken, _ = attack_expectation(foe, char, M)
+    if protects == "mastery_hit_points":
+        # A pool is worth what actually gets thrown at it.
+        prevented = min(float(strength), taken * duration)
+    else:
+        guarded = copy.copy(char)
+        guarded.armour = copy.copy(char.armour)
+        guarded.armour.ap = char.armour.ap + strength
+        after, _ = attack_expectation(foe, guarded, M)
+        prevented = max(0.0, taken - after) * duration
+
+    skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
+    chance = sum(w for face, w, _c in d20_faces(M)
+                 if face + skill >= difficulty)
+    return chance * prevented
+
+
+def best_self_guard(char, foe, M):
+    """(spell, difficulty, damage prevented) for the guard that pays
+    best when cast on oneself."""
+    best = (None, 0, 0.0)
+    for spell_id in guard_spells(M):
+        if not castable(char, spell_id, M):
+            continue
+        sp = spell_def(M, spell_id)
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 60):
+            got = self_guard_value(char, spell_id, difficulty, foe, M)
+            if got is None:
+                break
+            if got > best[2]:
+                best = (spell_id, difficulty, got)
+    return best
+
+
 def blessing_spells(M):
     """Spells that improve somebody rather than hurt them."""
     families = spell_families(M)

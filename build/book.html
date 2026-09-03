@@ -956,7 +956,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>The domains</h4>
 <p>['healing', 'war', 'nature', 'magic', 'death', 'trickery', 'love', 'knowledge', 'light', 'darkness', 'storm', 'sea', 'forge', 'travel', 'luck', 'justice']</p>
 <p>The list is open. A Dungeon Master inventing a god is not restricted to these, and a new domain costs nothing but a word: what it means is settled by which spells get tagged with it.</p>
-<p>One is settled by nothing yet: the <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a> has nothing in the death domain at all, so a god of the dead is currently a god whose priest cannot cast. Until that is filled, a Dungeon Master building a pantheon should check that every god they invent grants at least one domain with spells in it.</p>
+<p>Every domain on the list now has at least one spell in it, so any god a Dungeon Master invents from these has a priest who can do something. Some are much better served than others — war and healing have a great deal, forge and luck have very little — and a god granting three thin domains grants a thin priest.</p>
 <h4>What a god grants</h4>
 <p>A character who takes the Spiritual discipline serves something, and that something decides what they can do. Every god grants:</p>
 <ul><li><strong>1 major domain.</strong> Its spells are</li></ul>
@@ -977,7 +977,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>That asymmetry is what makes the two kinds of caster feel different without needing two sets of rules. A wizard's limit is preparation — they can learn anything and can only hold so much at once. A priest's limit is identity — they hold everything they were given, all the time, and cannot reach past it however clever they are. One is a problem of capacity and the other is a problem of scope, and a player picks which problem they would rather have.</p>
 <p>The major domain bonus is deliberately modest. It is not a signature and it is not earned; it is the baseline of having a god, held by every priest from the first level. Something large enough to reshape the character would leave nothing for the Spiritual signature to be, and a priest of a war god should be a priest who is <em>good at</em> war spells, not a priest who casts them for free.</p>
 <p>Capping the grant at three domains, one of them favoured, is what stops a priest simply being a wizard who never has to prepare. Three domains is a narrower list than a wizard's spell book and a far narrower one than the spell list; the compensation is that all of it is available all of the time.</p>
-<p class="related">See also: <a href="#rule-spell-list">The Spell List</a>, <a href="#rule-spell-preparation">Learning and Carrying Spells</a>, <a href="#rule-spellcasting">How Spellcasting Works</a></p>
+<p class="related">See also: <a href="#rule-spell-preparation">Learning and Carrying Spells</a>, <a href="#rule-spellcasting">How Spellcasting Works</a></p>
 </section>
 <section class="doc" id="rule-spell-preparation">
 <h3>Learning and Carrying Spells</h3>
@@ -1167,6 +1167,29 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h5>Design note</h5>
 <p>Wide and weak was the original idea, and it does not work: a field that deals a scratch is a field the enemy walks straight across, which leaves the spell with no job at all. Area denial only denies if crossing costs something worth avoiding, so a damaging field buys its damage at the same rate a blast does and simply pays a great deal of difficulty for covering so much ground.</p>
 <p>That makes the damaging fields expensive, which is correct — most fields will not be damaging at all. Fog, tangling ground, silence and the rest deny ground by what they do rather than by what they deal, and those are the ones the archetype's cheap spread was written for.</p>
+<h4>The guards</h4>
+<p>A <strong>guard</strong> is laid on one creature you touch and makes harm land more lightly on it. Where a blessing makes somebody better at what they do, a guard makes them harder to stop doing it.</p>
+<p>All of them share a chassis:</p>
+<ul><li><strong>Base difficulty:</strong> 8</li><li><strong>Range:</strong> touch</li><li><strong>Duration:</strong> 3 rounds, plus</li></ul>
+<p>1 for each further point of difficulty spent on it</p>
+<ul><li><strong>Strength:</strong> 1, plus</li></ul>
+<p>1 for each further 5 points of difficulty, unless the spell says otherwise</p>
+<ul><li><strong>Minimum spirit:</strong> 2</li></ul>
+<h5>Bulwark</h5>
+<p><em>['matter']; ['forge', 'light'].</em> The target gains 4 temporary <strong>mastery</strong> hit points, plus 2 for each further 4 points of difficulty. They behave exactly as mastery hit points do — see <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> — and any that are left vanish when the spell ends.</p>
+<p>It cannot grant core hit points. Nothing grants core hit points except Cure Wounds, which is the point of Cure Wounds.</p>
+<h5>Stoneskin</h5>
+<p><em>['matter']; ['nature', 'forge'].</em> The target's damage reduction rises by the guard's strength, exactly as though their armour were better. It is still bound by the cap in <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>: however much reduction you pile up, half of every blow gets through.</p>
+<h5>Elemental Guard</h5>
+<p><em>['energy']; ['nature', 'storm'].</em> Name a damage type as you cast. Damage of that type is reduced by the guard's strength, which starts at 2 and buys its steps every 3 points — cheaper than Stoneskin because it only ever answers one thing.</p>
+<h5>Mantle of Warding</h5>
+<p><em>['influence_and_command']; ['magic', 'knowledge'].</em> Name a school of magic as you cast. The target adds the guard's strength to every roll to resist an effect of that school, per <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
+<h5>Deathward</h5>
+<p><em>['life_force']; ['death', 'light'].</em> The target adds the guard's strength to resist anything of the death domain, and reduces damage from it by the same. The one guard that answers a <em>subject</em> rather than a technique or an element, and the reason a priest of a kindly god is worth having in a tomb.</p>
+<h5>Design note</h5>
+<p>The guards are four different answers to the question "protected from what", and the price falls as the question narrows. Stoneskin answers everything and is dearest per point; Elemental Guard answers one damage type and is cheapest; the Mantle and Deathward sit between, each answering a category. That gradient is the whole family: a caster who knows what is coming buys the narrow spell and a caster who does not pays for the wide one.</p>
+<p>Bulwark is the odd one and the only one that adds rather than subtracts. Reduction is capped by <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a> at half a blow and therefore has a ceiling no amount of spirit can lift; temporary hit points have no ceiling at all, which is why they are mastery hit points and vanish with the spell. A pool that persisted would be a slow way of buying permanent hit points, and hit points are bought with advancement points in this game or not at all.</p>
+<p>That both of them exist is deliberate. Reduction is worth most against many small blows and nothing against one enormous one; a pool of hit points is the reverse. A guard chosen well is worth about twice a guard chosen badly, and the caster does not know which they are choosing until the enemy commits.</p>
 <h4>The blessings</h4>
 <p>A <strong>blessing</strong> is laid on one creature you touch and improves one thing about it for a while. They cost no attack roll, allow no resistance — nobody resists being helped — and they are the only spells in the list whose target is usually on your own side.</p>
 <p>All of them share a chassis:</p>
@@ -1257,7 +1280,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Their boost rate is deliberately poor while their base damage is not. That combination is what makes a bolt a floor rather than a ceiling: it opens respectably and then barely improves however hard it is pushed, so it is worth having with an empty reservoir and never worth preferring to a lance when there is spirit to spend.</p>
 <p>The base was raised once the lances existed. Measured against a caster's new best turn, the old bolt left an empty caster on under a quarter of their output -- past diminished and into sidelined, which is exactly what the minor tier exists to prevent. The rate was left alone, because the rate is what keeps minor and standard apart.</p>
 <p>Cure Wounds stays standard rather than minor for the same reason from the other direction. Healing available on demand for nothing would empty every fight of consequence, since any damage that did not drop a character outright could simply be undone afterwards at no cost.</p>
-<p class="related">See also: <a href="#rule-conditions">Conditions and Resisting Them</a>, <a href="#rule-core-resolution">The Core Roll</a>, <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-recovery">Recovery Between Fights</a>, <a href="#rule-spell-area">Spell Areas</a>, <a href="#rule-spell-properties">Standard Spell Properties</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-using-powers">Using a Power</a></p>
+<p class="related">See also: <a href="#rule-conditions">Conditions and Resisting Them</a>, <a href="#rule-core-resolution">The Core Roll</a>, <a href="#rule-damage">Working Out Damage</a>, <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-recovery">Recovery Between Fights</a>, <a href="#rule-spell-area">Spell Areas</a>, <a href="#rule-spell-properties">Standard Spell Properties</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>
 </section>
 <footer>Compiled from 41 source documents, ordered by the include tree

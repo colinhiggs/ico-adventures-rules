@@ -65,6 +65,10 @@ MAX_HEAL_FRACTION_OF_ATTACK = 0.5
 # character's own best round spent on itself, the spell has become a
 # compulsory opener and the choice has gone out of the game.
 MAX_SELF_BLESSING_RATIO = 1.0
+# The same question for the guards. Damage prevented and damage dealt
+# are quoted in one currency for the same reason control is: a point the
+# enemy never takes off you is worth a point you never had to put back.
+MAX_SELF_GUARD_RATIO = 1.0
 
 # Every minor power is a weaker twin of a standard one. If a minor twin
 # ever matches its counterpart at the same difficulty, the standard
@@ -498,6 +502,42 @@ def report_blessings(level, chars, M):
     print("is the one blessing question a single character can answer.")
 
 
+def self_guard_picture(level, chars, M):
+    foe = standard_foe(level, M)
+    rounds = float(m.TYPICAL_FIGHT_ROUNDS)
+    out = {}
+    for name, c in sorted(chars.items()):
+        if not m.can_cast(c, M):
+            continue
+        spell, difficulty, prevented = m.best_self_guard(c, foe, M)
+        if spell is None:
+            continue
+        offence = m.expected_offence(c, foe, M)
+        with_guard = prevented + offence * (rounds - 1)
+        out[name] = (spell, difficulty, prevented, offence * rounds,
+                     with_guard / max(0.01, offence * rounds))
+    return out
+
+
+def report_guards(level, chars, M):
+    hr("Self-guarding at level %d -- is opening with a guard the right "
+       "play?" % level)
+    picture = self_guard_picture(level, chars, M)
+    if not picture:
+        print("no caster can reach a guard at this level")
+        return
+    print("%-12s %-24s %10s %10s %s"
+          % ("build", "best self-guard", "prevented", "just act", "ratio"))
+    for name, (spell, difficulty, prevented, best, ratio) in picture.items():
+        print("%-12s %-24s %10.1f %10.1f %.2f"
+              % (name, "%s @%d" % (spell, difficulty), prevented, best,
+                 ratio))
+    print()
+    print("Only a pool of hit points and a change in reduction are scored.")
+    print("Resistance to a damage type or a school cannot be: nothing here")
+    print("tracks which type or school a blow came from.")
+
+
 def report_attrition(level, chars, M):
     """Fresh versus empty. This is the minor-power tier's whole reason
     for existing: a long adventure should wear a character down, not
@@ -633,6 +673,15 @@ def run_gates(levels, M, trials):
                     "L%d %s opens best with %s on itself (%.2fx its own "
                     "best round, target <= %.2fx)"
                     % (level, name, spell, ratio, MAX_SELF_BLESSING_RATIO))
+
+        # Nor should a self-cast guard.
+        guards = self_guard_picture(level, chars, M)
+        for name, (spell, _d, _p, _b, ratio) in guards.items():
+            if ratio > MAX_SELF_GUARD_RATIO:
+                failures.append(
+                    "L%d %s opens best with %s on itself (%.2fx its own "
+                    "best round, target <= %.2fx)"
+                    % (level, name, spell, ratio, MAX_SELF_GUARD_RATIO))
 
         # Healing must not outrun harm, or a fight with a healer in it
         # simply does not end.
@@ -835,6 +884,7 @@ def main():
         report_fields(level, chars, M)
         report_healing(level, chars, M)
         report_blessings(level, chars, M)
+        report_guards(level, chars, M)
         free_bands(level, chars, M)
         report_attrition(level, chars, M)
         report_powers(level, chars, M)
