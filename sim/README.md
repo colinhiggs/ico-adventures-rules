@@ -377,6 +377,13 @@ land the thing at least half the time before it counts.
   pairings under it at once. When a change fails the round-length gate
   at level 1 and passes or improves it everywhere else, suspect the
   level rather than the change.
+- **Party buffs are not modelled at all, and cannot be: there is no
+  party.** Rally, Hold the Line and Call the Shot buff allies, and the
+  `commander` archetype exists to hold them, so it appears in the report
+  as a duellist that spent five points on nothing. The one blessing
+  question a single character CAN answer is whether buffing itself beats
+  getting on with the fight, which `report_blessings` asks and
+  `MAX_SELF_BLESSING_RATIO` gates.
 - **Area denial is not modelled at all, and cannot be.** The wards deal
   no damage and impose their condition on whatever is standing in them,
   so their whole value is positional and this model has no positions.

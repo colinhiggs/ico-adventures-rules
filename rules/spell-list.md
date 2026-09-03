@@ -142,6 +142,53 @@ mechanics:
     family: field
     damage_type: lightning
     domains: [war]
+  blessing:
+    base_difficulty: 8
+    range: touch
+    minimum_spirit: 2
+    needs_attack_roll: false
+    no_damage: true
+    duration_rounds: 3
+    rounds_per_difficulty: 1
+    bonus: 1
+    difficulty_per_step: 6
+    bonus_per_step: 1
+  blessing_of_the_blade:
+    family: blessing
+    schools: [influence_and_command]
+    domains: [war, light]
+    boosts: attack_rolls
+  warding_blessing:
+    family: blessing
+    schools: [influence_and_command]
+    domains: [light, healing]
+    boosts: targeting_difficulty
+  heart_of_the_lion:
+    family: blessing
+    schools: [influence_and_command]
+    domains: [love, war]
+    boosts: resolve
+  keen_edge:
+    family: blessing
+    schools: [matter]
+    domains: [forge, war]
+    boosts: weapon_damage
+    difficulty_per_step: 4
+  fleetness:
+    family: blessing
+    schools: [energy]
+    domains: [travel, storm]
+    boosts: movement_squares
+    bonus: 2
+    difficulty_per_step: 5
+    bonus_per_step: 1
+  fortunes_favour:
+    family: blessing
+    schools: [influence_and_command]
+    domains: [luck, trickery]
+    boosts: critical_range
+    bonus: 1
+    bonus_per_step: 0
   ward:
     base_difficulty: 6
     template: circle
@@ -376,6 +423,101 @@ That makes the damaging fields expensive, which is correct — most fields
 will not be damaging at all. Fog, tangling ground, silence and the rest
 deny ground by what they do rather than by what they deal, and those are
 the ones the archetype's cheap spread was written for.
+{% endbook-only %}
+
+## The blessings
+
+A **blessing** is laid on one creature you touch and improves one thing
+about it for a while. They cost no attack roll, allow no resistance —
+nobody resists being helped — and they are the only spells in the list
+whose target is usually on your own side.
+
+All of them share a chassis:
+
+- **Base difficulty:** {{ mechanics.blessing.base_difficulty }}
+- **Range:** {{ mechanics.blessing.range }}
+- **Duration:** {{ mechanics.blessing.duration_rounds }} rounds, plus
+  {{ mechanics.blessing.rounds_per_difficulty }} for each further point
+  of difficulty spent on it
+- **Strength:** `+{{ mechanics.blessing.bonus }}`, plus
+  {{ mechanics.blessing.bonus_per_step }} for each further
+  {{ mechanics.blessing.difficulty_per_step }} points of difficulty
+- **Minimum spirit:** {{ mechanics.blessing.minimum_spirit }}
+
+You may bless yourself. Most casters do not, because a round spent
+making somebody else better at fighting is a round not spent fighting,
+and the arithmetic only works when the somebody else is better at it
+than you are. That is the whole shape of a support caster: they are
+worth having in a party and poor on their own.
+
+### Blessing of the Blade
+
+*{{ mechanics.blessing_of_the_blade.schools }};
+{{ mechanics.blessing_of_the_blade.domains }}.* The target's attack
+rolls gain the blessing's strength.
+
+### Warding Blessing
+
+*{{ mechanics.warding_blessing.schools }};
+{{ mechanics.warding_blessing.domains }}.* The target's targeting
+difficulty rises by the blessing's strength — harder to hit, however
+they are defending.
+
+### Heart of the Lion
+
+*{{ mechanics.heart_of_the_lion.schools }};
+{{ mechanics.heart_of_the_lion.domains }}.* The target's Resolve rises
+by the blessing's strength, which is to say they shrug off the things
+[[conditions]] makes Resolve the answer to.
+
+### Keen Edge
+
+*{{ mechanics.keen_edge.schools }}; {{ mechanics.keen_edge.domains }}.*
+The target's weapon damage rises by the blessing's strength. It buys its
+steps every {{ mechanics.keen_edge.difficulty_per_step }} points rather
+than the usual rate, because damage is worth less per point than
+accuracy and should cost less.
+
+### Fleetness
+
+*{{ mechanics.fleetness.schools }}; {{ mechanics.fleetness.domains }}.*
+The target's movement rises by {{ mechanics.fleetness.bonus }} squares,
+plus {{ mechanics.fleetness.bonus_per_step }} for each further
+{{ mechanics.fleetness.difficulty_per_step }} points. It grants no extra
+action of any kind — see the design note.
+
+### Fortune's Favour
+
+*{{ mechanics.fortunes_favour.schools }};
+{{ mechanics.fortunes_favour.domains }}.* The target's critical range
+widens by {{ mechanics.fortunes_favour.bonus }}: they roll a critical on
+the top two faces rather than the top one, with everything
+[[core-resolution]] says about criticals following from there. This is
+the one blessing that does not grow with difficulty. Luck either favours
+you or it does not.
+
+{% book-only %}
+### Design note
+
+None of these grants an action, and that is the line the family will not
+cross. An extra action is worth more than any bonus the difficulty scale
+can price, because it multiplies everything a character does rather than
+adding to one part of it; a spell that hands one out is either the only
+buff anybody casts or it is priced so far out of reach that it is
+decoration. Fleetness moves you further and lets you do exactly as much
+when you get there.
+
+Blessings allow no resistance for the same reason the wards allow none,
+arrived at from the opposite side. A ward is terrain and does not care
+who you are; a blessing is a gift and the recipient is not arguing. The
+resistance rules exist for the case in between, where somebody is doing
+something to somebody who would rather they did not.
+
+Making them touch range and single target is what keeps the support
+caster a party member rather than a force multiplier who never leaves
+the back rank. Group buffs exist, but they belong to somebody standing
+in the middle of the group shouting — see the Social and Awareness
+powers in [[discipline-powers]], which do that job without magic at all.
 {% endbook-only %}
 
 ## The wards

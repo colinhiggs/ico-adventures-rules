@@ -183,6 +183,26 @@ mechanics:
     base_difficulty: 4
     difficulty_per_step: 3
     penalty_per_step: 1
+  rally:
+    discipline: social
+    grade: initiate
+    source: spirit
+    skill: diplomacy
+    base_difficulty: 6
+    base_allies: 2
+    difficulty_per_step: 4
+    extra_allies_per_step: 1
+    ally_bonus: 1
+  hold_the_line:
+    discipline: social
+    grade: adept
+    source: spirit
+    skill: diplomacy
+    base_difficulty: 10
+    base_allies: 2
+    difficulty_per_step: 4
+    extra_allies_per_step: 1
+    ally_td_bonus: 1
   command:
     discipline: social
     grade: adept
@@ -378,6 +398,24 @@ further {{ mechanics.rattle.difficulty_per_step }} points of difficulty.
 This is Social's contribution to a fight, and it works on anything with
 a mind to unsettle.
 
+**Rally** *(Initiate; spirit, diplomacy, base difficulty
+{{ mechanics.rally.base_difficulty }})* — a word at the right moment.
+{{ mechanics.rally.base_allies }} allies who can hear you gain
+`+{{ mechanics.rally.ally_bonus }}` on their next attack roll, and
+{{ mechanics.rally.extra_allies_per_step }} more ally for each further
+{{ mechanics.rally.difficulty_per_step }} points of difficulty.
+Difficulty buys *how many*, never how much: a commander reaches further
+across the field, they do not shout louder.
+
+**Hold the Line** *(Adept; spirit, diplomacy, base difficulty
+{{ mechanics.hold_the_line.base_difficulty }})* — you tell them where to
+stand and they stand there. {{ mechanics.hold_the_line.base_allies }}
+allies who can hear you gain
+`+{{ mechanics.hold_the_line.ally_td_bonus }}` to their targeting
+difficulty until your next turn, and
+{{ mechanics.hold_the_line.extra_allies_per_step }} more ally for each
+further {{ mechanics.hold_the_line.difficulty_per_step }} points.
+
 **Command** *(Adept; spirit, diplomacy, base difficulty
 {{ mechanics.command.base_difficulty }})* — one word, obeyed before the
 creature has decided whether to. Name a single simple instruction —
@@ -515,4 +553,31 @@ Neither of them is where a priest's domain bonus comes from. Every
 priest has that from the first level, because having a god is not an
 achievement — it is the arrangement. What the signature buys is the god
 paying full attention to all of it rather than to one part.
+
+## Design note: buffs, and who delivers them
+
+Making somebody else better at their job is a thing both magic and
+leadership can do, and the two are deliberately split so that neither
+makes the other pointless.
+
+The [[spell-list|blessings]] are **deep and narrow**: one creature you
+can touch, a large bonus, several rounds. Rally and Hold the Line are
+**broad and shallow**: everyone who can hear you, a fixed small bonus,
+this round only. Difficulty buys strength for the caster and reach for
+the commander, and that is the whole distinction. A wizard makes one
+ally formidable; a captain makes six allies slightly better, which
+against six enemies is the larger number and against one is not.
+
+The commander is the build this is for — Martial with a little Social or
+Awareness, spending its actions on other people's rolls. It is worth
+saying plainly that such a character will look weak on any measure that
+counts what one character does to one enemy, and is not weak. That is a
+limitation of the measure. The same is true of Call the Shot, which has
+been sitting in the Awareness list doing this job on its own.
+
+Note what none of them do: none grants an action. A bonus can be priced
+against difficulty. An extra action cannot, because it multiplies
+everything a character does rather than adding to one part of it, and a
+power that hands one out is either compulsory or decorative with very
+little ground in between.
 {% endbook-only %}

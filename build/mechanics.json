@@ -458,6 +458,28 @@
         "difficulty_per_step": 3,
         "penalty_per_step": 1
       },
+      "rally": {
+        "discipline": "social",
+        "grade": "initiate",
+        "source": "spirit",
+        "skill": "diplomacy",
+        "base_difficulty": 6,
+        "base_allies": 2,
+        "difficulty_per_step": 4,
+        "extra_allies_per_step": 1,
+        "ally_bonus": 1
+      },
+      "hold_the_line": {
+        "discipline": "social",
+        "grade": "adept",
+        "source": "spirit",
+        "skill": "diplomacy",
+        "base_difficulty": 10,
+        "base_allies": 2,
+        "difficulty_per_step": 4,
+        "extra_allies_per_step": 1,
+        "ally_td_bonus": 1
+      },
       "command": {
         "discipline": "social",
         "grade": "adept",
@@ -935,6 +957,90 @@
         "domains": [
           "war"
         ]
+      },
+      "blessing": {
+        "base_difficulty": 8,
+        "range": "touch",
+        "minimum_spirit": 2,
+        "needs_attack_roll": false,
+        "no_damage": true,
+        "duration_rounds": 3,
+        "rounds_per_difficulty": 1,
+        "bonus": 1,
+        "difficulty_per_step": 6,
+        "bonus_per_step": 1
+      },
+      "blessing_of_the_blade": {
+        "family": "blessing",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "war",
+          "light"
+        ],
+        "boosts": "attack_rolls"
+      },
+      "warding_blessing": {
+        "family": "blessing",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "light",
+          "healing"
+        ],
+        "boosts": "targeting_difficulty"
+      },
+      "heart_of_the_lion": {
+        "family": "blessing",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "love",
+          "war"
+        ],
+        "boosts": "resolve"
+      },
+      "keen_edge": {
+        "family": "blessing",
+        "schools": [
+          "matter"
+        ],
+        "domains": [
+          "forge",
+          "war"
+        ],
+        "boosts": "weapon_damage",
+        "difficulty_per_step": 4
+      },
+      "fleetness": {
+        "family": "blessing",
+        "schools": [
+          "energy"
+        ],
+        "domains": [
+          "travel",
+          "storm"
+        ],
+        "boosts": "movement_squares",
+        "bonus": 2,
+        "difficulty_per_step": 5,
+        "bonus_per_step": 1
+      },
+      "fortunes_favour": {
+        "family": "blessing",
+        "schools": [
+          "influence_and_command"
+        ],
+        "domains": [
+          "luck",
+          "trickery"
+        ],
+        "boosts": "critical_range",
+        "bonus": 1,
+        "bonus_per_step": 0
       },
       "ward": {
         "base_difficulty": 6,

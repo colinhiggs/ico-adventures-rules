@@ -36,12 +36,11 @@ The list is open. A Dungeon Master inventing a god is not restricted to
 these, and a new domain costs nothing but a word: what it means is
 settled by which spells get tagged with it.
 
-Some of them are settled by nothing yet. The [[spell-list]] is young,
-and death, love, forge, travel and luck have no spells in them at all —
-so a god granting three of those is granting a priest who cannot
-presently cast anything. Until the list fills out, a Dungeon Master
-building a pantheon should give every god at least one domain that has
-spells in it.
+One is settled by nothing yet: the [[spell-list]] has nothing in the
+death domain at all, so a god of the dead is currently a god whose
+priest cannot cast. Until that is filled, a Dungeon Master building a
+pantheon should check that every god they invent grants at least one
+domain with spells in it.
 
 ## What a god grants
 

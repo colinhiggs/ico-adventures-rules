@@ -16,8 +16,10 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Curing and restorative.** *In progress.*
 - **Protection.** Wards, shields, resistance to a damage type, cover
   against a school.
-- **Support and buff.** Raising an ally's skills, damage, movement or
-  defence for a duration.
+- **Support and buff.** *Done, as the blessings, plus Rally and Hold the
+  Line for the commander.* Still missing: anything that buffs a whole
+  party by magic rather than by shouting, which was left out on purpose
+  until there is a reason to want both.
 - **Domain spells for spiritual casters.** The domains exist
   (`war`, `nature`, `healing`, `magic`) and only shape which spell a
   Granted Domain makes cheap. A druid needs nature spells that are not
@@ -49,15 +51,17 @@ The damaging spells are done: bolts, lances, and the three area families
   times less than a martial build on the contribution gate. Part of that
   is the metric, which counts neither crowds nor range; part of it is
   real. It has survived every change made so far.
-- **Five of the sixteen domains have no spells in them:** death, love,
-  forge, travel and luck. A god granting three of those grants a priest
-  who can cast nothing. Better than it was — the wards took it from
-  twelve to five — but still a hole.
+- **One of the sixteen domains has no spells in it:** death. The wards
+  took it from twelve to five and the blessings from five to one, so
+  this is nearly closed.
 - **A caster's free floor catches up with its paid output.** Minor
   spells scale with casting skill and have no minimum cost, so at level
   15 the priest keeps 96% of its damage with an empty reservoir, and at
   level 1 only 30% -- outside the band at both ends and in opposite
   directions. The reservoir matters too much early and not at all late.
+- **Nothing grants an extra action, deliberately**, and at some point
+  somebody will want a Haste. The reasoning against is written up in the
+  blessings design note; it is a decision, not an oversight.
 - **Ranged weapons are not statted at all.**
 
 ## Simulator gaps

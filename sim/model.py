@@ -1065,6 +1065,77 @@ def combat_spells(M):
     return out
 
 
+def blessing_spells(M):
+    """Spells that improve somebody rather than hurt them."""
+    families = spell_families(M)
+    return [k for k, v in sorted(M.rules["spell-list"].items())
+            if isinstance(v, dict) and k not in families
+            and "boosts" in spell_def(M, k)]
+
+
+def blessing_strength(M, spell_id, difficulty):
+    sp = spell_def(M, spell_id)
+    spare = max(0, difficulty - int(sp["base_difficulty"]))
+    steps = spare // int(sp["difficulty_per_step"])
+    return int(sp["bonus"]) + steps * int(sp["bonus_per_step"])
+
+
+def self_blessing_value(char, spell_id, difficulty, foe, M, horizon=None):
+    """Total damage over a fight if this character spends its first round
+    blessing ITSELF, against spending every round attacking.
+
+    Only the blessings the model can read are scored: a bonus to attack
+    rolls and a bonus to weapon damage. A party buff cannot be measured
+    here at all -- there is no party -- so this asks the one question a
+    single-character model can answer honestly, which is whether buffing
+    yourself beats simply getting on with it."""
+    boosts = str(spell_def(M, spell_id).get("boosts"))
+    if boosts not in ("attack_rolls", "weapon_damage"):
+        return None
+    rounds = float(horizon or TYPICAL_FIGHT_ROUNDS)
+    strength = blessing_strength(M, spell_id, difficulty)
+    duration = min(rounds - 1, spell_rounds(M, spell_id, 0))
+
+    plain, _ = attack_expectation(char, foe, M)
+    import copy
+    boosted = copy.copy(char)
+    if boosts == "attack_rolls":
+        boosted.skills = dict(char.skills)
+        base = char.skills.get("attack_melee", 0)
+        boosted.skills["attack_melee"] = base + strength
+    else:
+        boosted.weapon = copy.copy(char.weapon)
+        boosted.weapon.damage = char.weapon.damage + strength
+    buffed, _ = attack_expectation(boosted, foe, M)
+
+    # Round one goes on the spell, and only lands if the spell goes off.
+    skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
+    chance = sum(w for face, w, _c in d20_faces(M)
+                 if face + skill >= difficulty)
+    with_spell = chance * (buffed * duration + plain * (rounds - 1 - duration))
+    with_spell += (1 - chance) * plain * (rounds - 1)
+    return with_spell, plain * rounds
+
+
+def best_self_blessing(char, foe, M):
+    """(spell, difficulty, buffed total, plain total) for the blessing
+    that pays best when cast on oneself."""
+    best = (None, 0, 0.0, 0.0)
+    for spell_id in blessing_spells(M):
+        if not castable(char, spell_id, M):
+            continue
+        sp = spell_def(M, spell_id)
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 60):
+            got = self_blessing_value(char, spell_id, difficulty, foe, M)
+            if got is None:
+                break
+            with_spell, without = got
+            if with_spell > best[2]:
+                best = (spell_id, difficulty, with_spell, without)
+    return best
+
+
 def healing_spells(M):
     """Spells that put hit points back. Read by what they carry, like
     everything else here."""
