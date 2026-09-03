@@ -32,9 +32,10 @@ The damaging spells are done: bolts, lances, and the three area families
 
 ## Rules gaps found while doing the above
 
-- **Dying, unconsciousness and death.** Nothing in the rules says what
-  happens at zero core hit points. Anything reviving, stabilising or
-  raising the dead needs this first.
+- **Reviving and raising the dead.** Dying is settled now — see
+  `dying.md` — so a spell that pulls somebody back from death's door
+  faster, or back from death itself, finally has rules to sit on. The
+  death domain has one spell and this is the obvious second.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** Measured, not suspected: duels at
@@ -54,9 +55,9 @@ The damaging spells are done: bolts, lances, and the three area families
   is the metric, which counts neither crowds nor range; part of it is
   real. It has survived every change made so far.
 - **Every domain now has at least one spell**, but they are very
-  unevenly served: war and healing are deep, forge and luck have a single spell
-  each. A god granting three thin domains grants a thin priest, which is
-  a content problem rather than a rules one.
+  unevenly served: war and healing are deep, forge and luck have a
+  single spell each. A god granting three thin domains grants a thin
+  priest, which is a content problem rather than a rules one.
 - **A caster's free floor catches up with its paid output.** Minor
   spells scale with casting skill and have no minimum cost, so at level
   15 the priest keeps 96% of its damage with an empty reservoir, and at

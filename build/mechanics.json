@@ -139,6 +139,11 @@
           "resisted_with": "resolve",
           "attack_penalty": 2
         },
+        "wounded": {
+          "roll_penalty": 2,
+          "lasting": true,
+          "no_resist": true
+        },
         "rooted": {
           "resisted_with": "fortitude",
           "movement_fraction": 0
@@ -557,6 +562,20 @@
       "minor_domains_granted_most": 2,
       "major_domain_bonus": 3,
       "spiritual_casts_only_granted_domains": true
+    },
+    "dying": {
+      "wounded_at_or_below_fraction": 0.5,
+      "scar_from_single_blow_fraction": 0.5,
+      "scars_only_from_natural_healing": true,
+      "deaths_door_at_core": 0,
+      "unconscious_at_deaths_door": true,
+      "rounds_before_dying": 3,
+      "self_stabilise_skill": "fortitude",
+      "stabilise_base_difficulty": 10,
+      "stabilise_difficulty_per_point_below_zero": 1,
+      "aid_skill": "heal",
+      "dead_at_negative_core_of": "constitution",
+      "hours_before_waking": 4
     },
     "free-hands": {
       "hands_total": 2,

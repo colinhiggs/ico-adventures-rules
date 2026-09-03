@@ -30,6 +30,10 @@ mechanics:
     dazed:
       resisted_with: resolve
       attack_penalty: 2
+    wounded:
+      roll_penalty: 2
+      lasting: true
+      no_resist: true
     rooted:
       resisted_with: fortitude
       movement_fraction: 0
@@ -140,6 +144,19 @@ with {{ mechanics.conditions.silenced.resisted_with }}.
 `-{{ mechanics.conditions.dazed.attack_penalty }}` on attack rolls, and
 your targeting difficulty drops by the same. Resisted with
 {{ mechanics.conditions.dazed.resisted_with }}.
+
+## Wounded
+
+**Wounded** is the one condition nobody rolls for and nobody inflicts.
+It arrives on its own when a character's core hit points fall to half
+their maximum or below, and it leaves on its own when they rise above
+half again — see [[dying]].
+
+While wounded you take
+`-{{ mechanics.conditions.wounded.roll_penalty }}` on every skill and
+power roll you make. Your targeting difficulty drops by the same, since
+that is set by a skill and you are worse at it: being hurt makes you
+slower to get out of the way as well as clumsier with the sword.
 
 ## Lasting conditions
 

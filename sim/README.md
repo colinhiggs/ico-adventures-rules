@@ -260,10 +260,16 @@ m.adventuring_day(hero, M, schedule=hard, tier="breather")
 ```
 
 It returns, per encounter, the share of the character's fresh offence
-they bring to it, the share of their hit points left, and the share of
-days they are still standing for it. `tier` is `"breather"`, `"rest"` or
-`None`, and reads its fractions from the recovery rule like everything
-else.
+they bring to it, the share of their hit points left, the share of days
+they are still standing for it, and the share of days they are
+**wounded** going into it. `tier` is `"breather"`, `"rest"` or `None`,
+and reads its fractions from the recovery rule like everything else.
+
+The offence cache is keyed on stamina *and* on whether the character is
+wounded, because this is the only measurement in the report where wounds
+can matter. Core hit points do not come back between fights, so a
+character hurt in the morning is worse at everything until somebody
+heals them.
 
 Offence is looked up from a cache keyed on stamina rather than
 recomputed per trial; the difficulty search is far too slow to run
@@ -377,6 +383,15 @@ land the thing at least half the time before it counts.
   pairings under it at once. When a change fails the round-length gate
   at level 1 and passes or improves it everywhere else, suspect the
   level rather than the change.
+- **Wounded is modelled and barely shows, which is a fact about the
+  model rather than about the rule.** Damage runs through the mastery
+  pool first, and a mastery pool is several times the size of a core
+  pool, so core damage only begins in the last round or two of a fight
+  a character is losing. Sweeping the penalty from 0 to 3 moves mean
+  duel length not at all: 3.41-3.52 rounds at level 1, 4.02-4.04 at
+  level 8, 4.81 at level 15, with the same pairs under the floor either
+  way. The day model is where it has room to bite, and even there a
+  character is usually dead before they have been wounded for long.
 - **Protection is scored only where the model can see it.** A pool of
   temporary hit points and a change in damage reduction are both
   measurable, and `report_guards` measures them. Resistance to a damage

@@ -251,6 +251,7 @@ class Character:
     # A priest's god grants these; a wizard has neither.
     major_domain: str = None
     minor_domains: tuple = ()
+    max_chp: int = 0
 
     def attr_bonus(self, attribute, M):
         step = int(M.get("attributes", "points_per_bonus_step"))
@@ -288,6 +289,7 @@ class Character:
             bonus -= hand_penalty(self, M, "spellcasting")
         bonus -= sum(int(condition_def(M, n).get("casting_penalty", 0))
                      for n in self.conditions)
+        bonus -= roll_penalty(self, M)
         return bonus
 
     def has(self, discipline, grade):
@@ -630,6 +632,7 @@ def build_character(name, spec, level, M, shopping_foe=None):
 
     char.mhp = free_mhp + bought_mhp
     char.chp = char.attributes["constitution"]
+    char.max_chp = char.chp
     char.stamina = char.attributes["constitution"]
     char.spirit = char.attributes["willpower"]
     if uses_spirit:
@@ -831,13 +834,36 @@ def smother(char, M):
     char.burning_damage = 0
 
 
+def is_wounded(char, M):
+    """Half your core hit points gone -- dying.md. Derived rather than
+    stored, because the rule says it arrives on its own when the pool
+    drops and leaves on its own when it rises. Nothing applies it and
+    nothing has to remember to take it off."""
+    if char.max_chp <= 0:
+        return False
+    frac = float(M.get("dying", "wounded_at_or_below_fraction"))
+    return char.chp <= char.max_chp * frac
+
+
+def roll_penalty(char, M):
+    """What every condition on this creature -- and being half dead --
+    takes off its skill and power rolls."""
+    total = sum(int(condition_def(M, n).get("roll_penalty", 0))
+                for n in char.conditions)
+    if is_wounded(char, M):
+        total += int(M.get("conditions", "conditions", "wounded",
+                           "roll_penalty"))
+    return total
+
+
 def condition_attack_penalty(char, M):
     """What every condition on this creature takes off its attack rolls
     -- and, by the same rule, off the difficulty of hitting it."""
-    if not char.conditions:
-        return 0
-    return sum(int(condition_def(M, n).get("attack_penalty", 0))
-               for n in char.conditions)
+    total = roll_penalty(char, M)
+    if char.conditions:
+        total += sum(int(condition_def(M, n).get("attack_penalty", 0))
+                     for n in char.conditions)
+    return total
 
 
 # How often reaching the target is what limits a crowd member's swing.
@@ -892,6 +918,8 @@ def tick_conditions(char, M):
         if loss >= 1.0 or random.random() < loss:
             acts = False
     for name in list(char.conditions):
+        if condition_def(M, name).get("lasting"):
+            continue        # waiting does not help -- conditions.md
         char.conditions[name] -= 1
         if char.conditions[name] <= 0:
             del char.conditions[name]
@@ -1462,6 +1490,7 @@ def make_mook(name, M, attack, dodge, hp, weapon, armour, resist=0):
     c.armour = Armour.load(M, armour)
     c.shield = None
     c.chp = hp
+    c.max_chp = hp
     c.mhp = 0
     c.stamina = 0
     return c
@@ -1793,26 +1822,34 @@ def adventuring_day(hero_spec, M, schedule=None, tier="breather", trials=300):
     offence they bring to it, the mean share of their hit points left,
     and the share of days they are still standing for it.
 
-    Offence is looked up from a small cache keyed on stamina rather than
-    recomputed per trial -- the difficulty search is far too expensive to
-    run inside the loop, and stamina is what actually varies."""
+    Offence is looked up from a small cache keyed on stamina AND on
+    whether the character is wounded -- the difficulty search is far too
+    expensive to run inside the loop, and those two are what actually
+    vary. Wounds belong in that key because this is the only measurement
+    in the report where they matter: core hit points do not come back
+    between fights, so a character hurt in the morning is worse at
+    everything for the rest of the day."""
     import copy
     schedule = schedule or DEFAULT_DAY
     foe = standard_foe_for(hero_spec, M)
     cache = {}
 
-    def offence_at(stamina):
-        key = int(stamina)
+    def offence_at(stamina, hurt):
+        key = (int(stamina), bool(hurt))
         if key not in cache:
             probe = copy.deepcopy(hero_spec)
-            probe.stamina = key
+            probe.stamina = key[0]
+            if hurt:
+                frac = float(M.get("dying", "wounded_at_or_below_fraction"))
+                probe.chp = max(1, int(probe.max_chp * frac))
             cache[key] = expected_offence(probe, foe, M)
         return cache[key]
 
-    fresh = offence_at(hero_spec.stamina)
+    fresh = offence_at(hero_spec.stamina, False)
     n = len(schedule)
     stam = [0.0] * n
     hp = [0.0] * n
+    hurt = [0] * n
     alive = [0] * n
 
     for _ in range(trials):
@@ -1825,15 +1862,22 @@ def adventuring_day(hero_spec, M, schedule=None, tier="breather", trials=300):
             alive[i] += 1
             stam[i] += hero.stamina
             hp[i] += (hero.mhp + hero.chp) / max(1, full_hp)
+            if is_wounded(hero, M):
+                hurt[i] += 1
             run_encounter(hero, kind, count, M)
             recover(hero, caps, M, tier)
 
     out = []
     for i in range(n):
         a = max(1, alive[i])
-        out.append((offence_at(stam[i] / a) / max(0.01, fresh),
+        share_hurt = hurt[i] / a
+        whole = offence_at(stam[i] / a, False)
+        wounded_off = offence_at(stam[i] / a, True)
+        blended = whole * (1 - share_hurt) + wounded_off * share_hurt
+        out.append((blended / max(0.01, fresh),
                     hp[i] / a,
-                    alive[i] / trials))
+                    alive[i] / trials,
+                    share_hurt))
     return out
 
 
