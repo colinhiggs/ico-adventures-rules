@@ -57,10 +57,20 @@ The damaging spells are done: bolts, lances, and the three area families
   narrative job back, and its one real edge — the best block value on
   the table — pays only a caster who blocks. A repricing job on the
   weapon table.
-- **The caster's single-target gap.** A caster contributes three to five
-  times less than a martial build on the contribution gate. Part of that
-  is the metric, which counts neither crowds nor range; part of it is
-  real. It has survived every change made so far.
+- **The caster's single-target gap.** *Closed by giving spells a damage
+  rate from casting skill.* Against the best conventional martial build
+  a caster now contributes 1.5x to 1.8x less across levels 5 to 15,
+  where it was three to five times; the priest sits mid-table at every
+  level and casters still clear a crowd in about half the rounds a
+  fighter needs. Contribution spread with the paragon set aside is 2.2x,
+  2.5x and 2.4x at levels 5, 10 and 15 -- at or inside the gate.
+- **The paragon is now what fails the contribution spread**, not the
+  caster. It scores 954 at level 15 against the next build's 617, a lead
+  of 1.5x over conventional martial builds, and taking it out of the
+  comparison puts every level inside the target. Its advantage was
+  measured earlier as the Untouchable-plus-heavy-armour interaction
+  rather than double Master, and the levers for that are already in the
+  model.
 - **Every domain now has at least one spell**, but they are very
   unevenly served: war and healing are deep, forge and luck have a
   single spell each. A god granting three thin domains grants a thin
