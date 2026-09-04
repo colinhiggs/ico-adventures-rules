@@ -1814,6 +1814,25 @@ def maxima(char):
     return {"stamina": char.stamina, "mhp": char.mhp, "chp": char.chp}
 
 
+def core_hit_points_per_night(char, M):
+    """How fast a real wound mends, and therefore how long a character
+    stays wounded -- see dying.md."""
+    return (int(M.get("recovery", "core_hit_points_per_night"))
+            + int(M.get("recovery",
+                        "core_hit_points_per_night_per_constitution"))
+            * char.attr_bonus("constitution", M))
+
+
+def nights_to_stop_being_wounded(char, M):
+    """Nights from death's door back above half core hit points."""
+    if char.max_chp <= 0:
+        return 0
+    frac = float(M.get("dying", "wounded_at_or_below_fraction"))
+    need = int(char.max_chp * frac) + 1 - char.chp
+    per = max(1, core_hit_points_per_night(char, M))
+    return max(0, -(-need // per))
+
+
 def prevents_recovery(char, M):
     return any(condition_def(M, n).get("prevents_recovery")
                for n in char.conditions)

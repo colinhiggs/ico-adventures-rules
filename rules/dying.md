@@ -32,8 +32,12 @@ you are **wounded** — see [[conditions]]. Nobody rolls for it and nobody
 can resist it. It is simply what being half dead does to a person.
 
 It lasts until your core hit points are above half again, which
-[[recovery]] makes clear is not a thing that happens quickly. A wounded
-character who cannot find a healer is wounded for days.
+[[recovery]] makes clear is not a thing that happens quickly — though
+how quickly depends on you. Core hit points mend overnight at a rate
+that rises with your constitution bonus, so a tough character shakes a
+bad wound off in a couple of nights and a frail one carries it for a
+week. A wounded character who cannot find a healer is wounded until
+their own body catches up.
 
 ## Scars
 

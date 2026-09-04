@@ -7,7 +7,7 @@ summary: >
   creation — discipline grades, skill ranks, or mastery hit points.
 mechanics:
   points_per_level: 15
-  free_mastery_hp_per_level: 3
+  free_mastery_hp_per_level: 1
   free_mastery_hp_per_constitution: 1
   mastery_hp_per_point: 2
   max_mastery_hp_bought_per_level: 1
@@ -26,11 +26,12 @@ skill ceilings, and it is spent in exactly the same shop as
 ## What a level gives
 
 - {{ mechanics.points_per_level }} points to spend, as below.
-- {{ mechanics.free_mastery_hp_per_level }} mastery hit points, free
-  and automatic, plus
+- {{ mechanics.free_mastery_hp_per_level }} mastery hit point free and
+  automatic, plus
   {{ mechanics.free_mastery_hp_per_constitution }} more for each point
-  of your **constitution** bonus. A hardy character accumulates the
-  cushion faster, every level, without paying for it.
+  of your **constitution** bonus. Almost all of the free cushion comes
+  from constitution, so a hardy character accumulates it several times
+  faster than a frail one, every level, without paying for it.
 - {{ mechanics.powers_per_level }} power, chosen from a pool you have
   opened — see [[disciplines]] and [[discipline-powers]].
 - Every {{ mechanics.attribute_point_every_n_levels }} levels, one
@@ -97,9 +98,24 @@ character already has far more stamina or spirit than a fight can spend,
 so converting spare points into more of it converts them into nothing.
 
 A grant costs a character nothing and therefore cannot be paid for out
-of the wrong pocket, which is the trap the other two fell into. It takes
-constitution to about nine tenths of the value of the best attribute at
-every level: worth buying, and still not the obvious answer.
+of the wrong pocket, which is the trap the other two fell into.
+
+The flat part of the grant then had to come down, and this is the part
+worth understanding. Adding constitution's hit points on top of the flat
+three made fights drift badly: mean duel length went from five rounds at
+first level to nearly seven at fifteenth, a drift of `1.31` where the
+game had been running at `1.08`. Damage does not keep pace with that,
+and the obvious lever does not help — one further point of damage per
+seven ranks of attack skill instead of eight moved the drift from `1.31`
+to `1.29`, because a couple of points of damage cannot answer a quarter
+more hit points.
+
+Taking the flat rate down to one and letting constitution supply the
+rest fixes it completely. Fights run five rounds at first level and five
+at fifteenth, a drift of `1.04` — flatter than before any of this — and
+constitution is worth between four fifths and nearly all of the best
+attribute in the game. The same hit points are being handed out; they
+are simply handed to the characters who bought the attribute for them.
 ## Design note
 
 The per-level mastery grant is deliberately small next to the opening

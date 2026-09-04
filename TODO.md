@@ -113,6 +113,14 @@ The damaging spells are done: bolts, lances, and the three area families
   standing, and the only repairs for it are moving block off strength
   or giving dexterity a second job of its own.
 
+- **Constitution now also speeds recovery and shortens a wound**, on
+  top of the free mastery hit points. Untested by the simulator in both
+  cases: the breather and rest percentages move by only a few points and
+  the day model cannot see the difference, and how long a character
+  stays wounded is a between-session question the fight model has no
+  view of at all. The arithmetic is what it is — a wound that keeps a
+  constitution 10 character down for six nights keeps a constitution 18
+  character down for two.
 - **High level builds cannot spend their points.** At level 15 every
   archetype has 8 to 38 points it is unable to place, because the
   mastery hit point ceiling and the power source ceiling both bind. The

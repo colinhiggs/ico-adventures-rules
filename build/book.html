@@ -375,7 +375,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Losing mastery hit points costs you nothing but your luck. Losing core hit points is the part that matters, and there are two thresholds in it.</p>
 <h4>Wounded</h4>
 <p>When your core hit points fall to 0.5 of their maximum or below, you are <strong>wounded</strong> — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>. Nobody rolls for it and nobody can resist it. It is simply what being half dead does to a person.</p>
-<p>It lasts until your core hit points are above half again, which <a href="#rule-recovery" data-rule-id="recovery">Recovery Between Fights</a> makes clear is not a thing that happens quickly. A wounded character who cannot find a healer is wounded for days.</p>
+<p>It lasts until your core hit points are above half again, which <a href="#rule-recovery" data-rule-id="recovery">Recovery Between Fights</a> makes clear is not a thing that happens quickly — though how quickly depends on you. Core hit points mend overnight at a rate that rises with your constitution bonus, so a tough character shakes a bad wound off in a couple of nights and a frail one carries it for a week. A wounded character who cannot find a healer is wounded until their own body catches up.</p>
 <h4>Scars</h4>
 <p>If a single blow takes 0.5 or more of your maximum core hit points, the wound is bad enough to leave a mark — but only if it is allowed to close on its own. Healed by magic it leaves nothing. Healed by time and bandages, it leaves a <strong>scar</strong>.</p>
 <p>A scar has no game effect whatsoever. It is a note on the character sheet saying where they have been, and the only reason it is in the rules at all is that a character who has been carried out of three dungeons should look like it.</p>
@@ -469,13 +469,15 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Each character recovers a share of their <strong>maximum</strong> stamina, spirit and mastery hit points — not a share of what is left, which would give nothing at all to the character who most needs it.</p>
 <p>The Dungeon Master says which of two intervals has passed:</p>
 <ul><li>A <strong>breather</strong> returns 25% of each</li></ul>
-<p>maximum. Long enough to stop shaking and re-strap a shield, and no longer.</p>
-<ul><li>A <strong>rest</strong> returns 50% of each maximum. An</li></ul>
-<p>hour or more, somewhere the party is not expecting to be found.</p>
+<p>maximum, plus 1 for each point of your constitution bonus. Long enough to stop shaking and re-strap a shield, and no longer.</p>
+<ul><li>A <strong>rest</strong> returns 50% of each maximum, plus</li></ul>
+<p>2 for each point of your constitution bonus. An hour or more, somewhere the party is not expecting to be found.</p>
+<p>A hardy character gets more out of the same doorway and the same hour, which is most of what being hardy is.</p>
 <p>Recovery happens <strong>once</strong> between one fight and the next. Sitting around a second time does not pay again; sitting around longer is what turns a breather into a rest.</p>
 <p>A <strong>night's sleep</strong>, somewhere safe, restores stamina, spirit and mastery hit points completely.</p>
 <h4>What does not</h4>
-<p>Core hit points are not recovered this way at all. They are real wounds — see <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> — and a night's sleep mends 1 of them. An adventuring party that is losing core hit points faster than that needs a healer, and Cure Wounds in <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a> is the reason one travels with them.</p>
+<p>Core hit points are not recovered this way at all. They are real wounds — see <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> — and a night's sleep mends 1 of them, plus 1 for each point of your constitution bonus.</p>
+<p>That is also how long a character stays <strong>wounded</strong>, since being wounded lasts until core hit points climb back above half — see <a href="#rule-dying" data-rule-id="dying">Wounds, Death's Door and Dying</a>. A tough character shrugs a bad wound off in a couple of nights where a frail one carries it for a week. An adventuring party losing core hit points faster than they mend needs a healer either way, and Cure Wounds in <a href="#rule-spell-list" data-rule-id="spell-list">The Spell List</a> is the reason one travels with them.</p>
 <h4>Guidance for the Dungeon Master</h4>
 <p>Ask what the party actually did, not how many minutes passed:</p>
 <ul><li><strong>Breather</strong> — they pressed on. They are still in hostile ground,</li></ul>
@@ -498,7 +500,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Simulating a hard day changed what this rule is for. The expectation was that characters would run dry and later fights would go flat. What actually happens is that a drained character still fights at four fifths of their best, because the minor powers cost nothing and are always there — so the interest does not drain out of the day at all.</p>
 <p>What drains is mastery hit points, and what happens at the fourth fight is not that the character becomes boring but that they die. Recovery is therefore a survivability rule first and a power-source rule second, and including mastery hit points in it is the part doing nearly all of the work. The fractions bear that out: across a punishing day at low level, a breather leaves about a fifth of characters standing at the last fight and a proper rest about half.</p>
 <p>Core hit points staying out of it is what keeps the two pools meaning different things. Mastery is luck, skill and the willingness to keep going, all of which come back with a sit-down. A wound does not, and a party accumulating real damage should feel the day getting more dangerous rather than resetting after each fight.</p>
-<p class="related">See also: <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-spell-list">The Spell List</a></p>
+<p class="related">See also: <a href="#rule-dying">Wounds, Death's Door and Dying</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-spell-list">The Spell List</a></p>
 </section>
 </section>
 <section class="doc" id="rule-ch-skills">
@@ -852,8 +854,8 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="summary">A level is a budget of points, spent in the same shop as character creation — discipline grades, skill ranks, or mastery hit points.</p>
 <p>A <strong>level</strong> in Ico is not a template. It is a budget of 15 points and a clock that raises your skill ceilings, and it is spent in exactly the same shop as <a href="#rule-character-creation" data-rule-id="character-creation">Creating a Character</a>.</p>
 <h4>What a level gives</h4>
-<ul><li>15 points to spend, as below.</li><li>3 mastery hit points, free</li></ul>
-<p>and automatic, plus 1 more for each point of your <strong>constitution</strong> bonus. A hardy character accumulates the cushion faster, every level, without paying for it.</p>
+<ul><li>15 points to spend, as below.</li><li>1 mastery hit point free and</li></ul>
+<p>automatic, plus 1 more for each point of your <strong>constitution</strong> bonus. Almost all of the free cushion comes from constitution, so a hardy character accumulates it several times faster than a frail one, every level, without paying for it.</p>
 <ul><li>1 power, chosen from a pool you have</li></ul>
 <p>opened — see <a href="#rule-disciplines" data-rule-id="disciplines">Disciplines</a> and <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Discipline Powers</a>.</p>
 <ul><li>Every 4 levels, one</li></ul>
@@ -877,7 +879,9 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Design note: what constitution is for</h4>
 <p>Constitution was the attribute nobody wanted. It bought core hit points and the base of a power source, and core hit points are a small slice of a pool that mastery hit points dominate, so four points spent on it were worth about three quarters of what the same four were worth in strength or dexterity. An attribute that is never the right answer is a tax on the players who did not notice.</p>
 <p>Tying free mastery hit points to it fixes that, and the reason it is a <strong>grant</strong> rather than a <strong>cap</strong> is worth keeping. Two other repairs were measured and both failed for the same reason. Letting constitution raise the ceiling on mastery hit points a character may <em>buy</em> helps late, where builds have points spare, and actively hurts in the middle levels, where they do not and the extra hit points come out of skills: constitution went from about three quarters of the best attribute to three fifths of it. Letting constitution and willpower raise the ceiling on the power source did nothing whatever, at any level — a senior character already has far more stamina or spirit than a fight can spend, so converting spare points into more of it converts them into nothing.</p>
-<p>A grant costs a character nothing and therefore cannot be paid for out of the wrong pocket, which is the trap the other two fell into. It takes constitution to about nine tenths of the value of the best attribute at every level: worth buying, and still not the obvious answer.</p>
+<p>A grant costs a character nothing and therefore cannot be paid for out of the wrong pocket, which is the trap the other two fell into.</p>
+<p>The flat part of the grant then had to come down, and this is the part worth understanding. Adding constitution's hit points on top of the flat three made fights drift badly: mean duel length went from five rounds at first level to nearly seven at fifteenth, a drift of <code>1.31</code> where the game had been running at <code>1.08</code>. Damage does not keep pace with that, and the obvious lever does not help — one further point of damage per seven ranks of attack skill instead of eight moved the drift from <code>1.31</code> to <code>1.29</code>, because a couple of points of damage cannot answer a quarter more hit points.</p>
+<p>Taking the flat rate down to one and letting constitution supply the rest fixes it completely. Fights run five rounds at first level and five at fifteenth, a drift of <code>1.04</code> — flatter than before any of this — and constitution is worth between four fifths and nearly all of the best attribute in the game. The same hit points are being handed out; they are simply handed to the characters who bought the attribute for them.</p>
 <h4>Design note</h4>
 <p>The per-level mastery grant is deliberately small next to the opening reserve in <a href="#rule-character-creation" data-rule-id="character-creation">Creating a Character</a>. Hit points that climb steeply every level while damage stays flat do not make a character heroic; they make every fight longer than the last. The curve here is meant to be nearly flat, with the growth in what a character can <em>do</em> rather than in how long they take to kill.</p>
 <p>The two purchase ceilings exist for the same reason. Without them a character with nothing else worth buying converts an entire level into one runaway statistic, and the balance between damage and durability that the rest of the system rests on quietly stops holding.</p>

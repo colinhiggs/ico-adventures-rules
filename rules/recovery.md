@@ -10,9 +10,12 @@ mechanics:
   recovery_is_once_per_encounter: true
   fraction_of_maximum: true
   breather_percent: 25
+  breather_percent_per_constitution: 1
   rest_percent: 50
+  rest_percent_per_constitution: 2
   night_restores_all_of: [stamina, spirit, mastery_hit_points]
   core_hit_points_per_night: 1
+  core_hit_points_per_night_per_constitution: 1
   core_hit_points_recover_between_fights: false
 ---
 
@@ -27,10 +30,17 @@ nothing at all to the character who most needs it.
 The Dungeon Master says which of two intervals has passed:
 
 - A **breather** returns {{ mechanics.breather_percent }}% of each
-  maximum. Long enough to stop shaking and re-strap a shield, and no
-  longer.
-- A **rest** returns {{ mechanics.rest_percent }}% of each maximum. An
-  hour or more, somewhere the party is not expecting to be found.
+  maximum, plus
+  {{ mechanics.breather_percent_per_constitution }} for each point of
+  your constitution bonus. Long enough to stop shaking and re-strap a
+  shield, and no longer.
+- A **rest** returns {{ mechanics.rest_percent }}% of each maximum, plus
+  {{ mechanics.rest_percent_per_constitution }} for each point of your
+  constitution bonus. An hour or more, somewhere the party is not
+  expecting to be found.
+
+A hardy character gets more out of the same doorway and the same hour,
+which is most of what being hardy is.
 
 Recovery happens **once** between one fight and the next. Sitting
 around a second time does not pay again; sitting around longer is what
@@ -43,9 +53,16 @@ mastery hit points completely.
 
 Core hit points are not recovered this way at all. They are real
 wounds — see [[hit-points]] — and a night's sleep mends
-{{ mechanics.core_hit_points_per_night }} of them. An adventuring party
-that is losing core hit points faster than that needs a healer, and
-Cure Wounds in [[spell-list]] is the reason one travels with them.
+{{ mechanics.core_hit_points_per_night }} of them, plus
+{{ mechanics.core_hit_points_per_night_per_constitution }} for each
+point of your constitution bonus.
+
+That is also how long a character stays **wounded**, since being wounded
+lasts until core hit points climb back above half — see [[dying]]. A
+tough character shrugs a bad wound off in a couple of nights where a
+frail one carries it for a week. An adventuring party losing core hit
+points faster than they mend needs a healer either way, and Cure Wounds
+in [[spell-list]] is the reason one travels with them.
 
 ## Guidance for the Dungeon Master
 
