@@ -11,7 +11,7 @@ mechanics:
   large_weapon_skill_penalty: -2
   dagger:
     accuracy: 2
-    damage: 4
+    damage: 5
     size: S
     block_ap: 2
     cost_gp: 2
@@ -34,6 +34,7 @@ mechanics:
     damage: 5
     size: M
     block_ap: 7
+    reach_bonus: 1
     aids_spellcasting: true
     cost_gp: 1
   sword:
@@ -51,12 +52,14 @@ mechanics:
   two_handed_sword:
     accuracy: 0
     damage: 12
+    unwieldy: true
     size: L
     block_ap: 4
     cost_gp: 50
   great_axe:
     accuracy: 0
     damage: 12
+    unwieldy: true
     size: L
     block_ap: 2
     cost_gp: 45
@@ -123,8 +126,10 @@ needs one — see [[free-hands]].
 ## Reach, and what it costs
 
 A weapon of size {{ mechanics.two_handed_size }} extends its wielder's
-reach; smaller weapons do not. What that is worth in a fight is in
-[[reach]], and how reach is measured is in [[movement]].
+reach, and so does any weapon whose entry gives it a reach bonus of its
+own — the staff is long without being large. Other weapons do not.
+What that is worth in a fight is in [[reach]], and how reach is
+measured is in [[movement]].
 
 It is long because it is big, and being big is not free. A weapon of
 that size takes `{{ mechanics.large_weapon_skill_penalty }}` off your
@@ -148,6 +153,19 @@ enchanted by someone eventually, is the rest of the reason every caster
 in the world seems to have one.
 
 A staff carried by somebody who casts nothing is a stick.
+
+## Unwieldy weapons
+
+A weapon may be **unwieldy**: big enough that bringing it back after a
+swing takes time. While you carry one your attacks come **after** any
+opponent whose weapon is not unwieldy, whatever [[turn-order]] settled
+at the start of the fight — the exact opposite of what a quick weapon
+does, and resolved the same way.
+
+Both of the size {{ mechanics.two_handed_size }} weapons are unwieldy.
+That is what their damage and their reach are bought with, alongside the
+penalty to your defence: you hit hardest, you reach furthest, and
+everybody else swings before you do.
 
 ## Quick weapons
 

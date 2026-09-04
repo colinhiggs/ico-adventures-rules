@@ -49,14 +49,13 @@ The damaging spells are done: bolts, lances, and the three area families
   with an empty reservoir is so small that more hit points simply
   lengthen the stalemate. That is the free-floor entry below rather
   than a hit point problem.
-- **The hand axe and the staff are still dead weapons.** Both are
-  dominated by arithmetic rather than by structure: the short sword
-  beats the hand axe on accuracy, block and quickness for one point of
-  damage, and the dagger beats the staff for a caster because it is
-  quick and so equally free to cast around. The staff does now have its
-  narrative job back, and its one real edge — the best block value on
-  the table — pays only a caster who blocks. A repricing job on the
-  weapon table.
+- **The dagger and the hand axe are dead weapons.** The staff is alive
+  now that it has reach, and it took the dagger's job: same damage,
+  better block, longer reach, and equally free to cast around, so a
+  caster has no reason to carry a knife instead. The hand axe wants to
+  be throwable, which needs ranged weapons to exist first — it is
+  otherwise a short sword with worse accuracy, worse block and no
+  quickness.
 - **The caster's single-target gap.** *Closed by giving spells a damage
   rate from casting skill.* Against the best conventional martial build
   a caster now contributes 1.5x to 1.8x less across levels 5 to 15,

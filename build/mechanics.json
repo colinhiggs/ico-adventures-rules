@@ -1376,7 +1376,7 @@
       "large_weapon_skill_penalty": -2,
       "dagger": {
         "accuracy": 2,
-        "damage": 4,
+        "damage": 5,
         "size": "S",
         "block_ap": 2,
         "cost_gp": 2,
@@ -1402,6 +1402,7 @@
         "damage": 5,
         "size": "M",
         "block_ap": 7,
+        "reach_bonus": 1,
         "aids_spellcasting": true,
         "cost_gp": 1
       },
@@ -1422,6 +1423,7 @@
       "two_handed_sword": {
         "accuracy": 0,
         "damage": 12,
+        "unwieldy": true,
         "size": "L",
         "block_ap": 4,
         "cost_gp": 50
@@ -1429,6 +1431,7 @@
       "great_axe": {
         "accuracy": 0,
         "damage": 12,
+        "unwieldy": true,
         "size": "L",
         "block_ap": 2,
         "cost_gp": 45

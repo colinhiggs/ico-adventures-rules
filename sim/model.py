@@ -122,6 +122,9 @@ class Weapon:
     cost_gp: int = 0
     quick: bool = False
     aids_spellcasting: bool = False
+    unwieldy: bool = False
+    reach_bonus: int = 0
+    reduction_ignored: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -135,6 +138,9 @@ class Weapon:
             cost_gp=int(entry["cost_gp"]),
             quick=bool(entry.get("quick", False)),
             aids_spellcasting=bool(entry.get("aids_spellcasting", False)),
+            unwieldy=bool(entry.get("unwieldy", False)),
+            reach_bonus=int(entry.get("reach_bonus", 0)),
+            reduction_ignored=int(entry.get("reduction_ignored", 0)),
         )
 
 
@@ -394,13 +400,16 @@ def buy_disciplines(priorities, budget, M, level=1):
 
 
 # A character starts with one purse and the rules say nothing about what
-# they earn after that. The model assumes one more starting purse per
-# level, which invents no number the rules do not already give: a level 1
-# character can afford a sword, a chain shirt and a shield; full plate
-# arrives at level 11. It is the assumption to argue with first if gear
-# choices look wrong at a level.
+# they earn after that. Treasure compounds -- a party that has cleared
+# five dungeons is not five times as rich as one that cleared one -- so
+# the model gives a starting purse for the first level, two for the
+# second and so on, which is the triangular number of them. A level 1
+# character can afford a sword, a chain shirt and a shield; by level 5
+# money has stopped deciding anything non-magical, which is where a
+# mid-level party actually is.
 def gear_budget(level, M):
-    return int(M.get("character-creation", "starting_gold")) * level
+    purse = int(M.get("character-creation", "starting_gold"))
+    return purse * level * (level + 1) // 2
 
 
 def two_handed(weapon, M):
@@ -453,7 +462,16 @@ def reach_of(char, M):
     base = int(M.get("movement", "reach_by_size", "medium"))
     if two_handed(char.weapon, M):
         base += int(M.get("movement", "large_weapon_reach_bonus"))
+    # A staff is long without being large.
+    base += char.weapon.reach_bonus
     return base
+
+
+def strikes_last(char, other, M):
+    """An unwieldy weapon comes back to guard slowly, so its wielder
+    strikes after anybody whose weapon is not unwieldy -- the exact
+    opposite of quickness, resolved the same way."""
+    return char.weapon.unwieldy and not other.weapon.unwieldy
 
 
 def strikes_first_inside(char, other, M):
@@ -553,6 +571,9 @@ def choose_gear(char, foes, M, budget):
             mine = opening_attacks(char, foe, M)
             theirs = opening_attacks(foe, char, M)
             saved = 1.0 if strikes_first_inside(char, foe, M) else 0.0
+            if strikes_last(char, foe, M):
+                # Striking last costs the blow that quickness saves.
+                saved -= 1.0
             gained = offence[key] * (rounds + mine) / rounds
             suffered = taken * max(0.0, rounds + theirs - saved) / rounds
             total += gained * (char.total_hp / max(0.1, suffered))
@@ -1016,8 +1037,9 @@ def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
     if defender.stance == "block":
         reduction += (defender.shield.block_ap if defender.shield
                       else defender.weapon.block_ap)
-    # Find the Gap ignores total reduction, shield included.
-    reduction = max(0, reduction - pierce)
+    # Find the Gap ignores total reduction, shield included, and an axe
+    # ignores some of it by being an axe.
+    reduction = max(0, reduction - pierce - attacker.weapon.reduction_ignored)
     # Reduction can never take more than its share of the raw blow.
     cap = raw * float(M.get("damage", "max_reduction_fraction"))
     return max(0, int(raw - min(reduction, cap)))
@@ -1987,6 +2009,10 @@ def initiative_order(a, b, M):
     quick_b = strikes_first_inside(b, a, M)
     if quick_a != quick_b:
         return (a, b) if quick_a else (b, a)
+    slow_a = strikes_last(a, b, M)
+    slow_b = strikes_last(b, a, M)
+    if slow_a != slow_b:
+        return (b, a) if slow_a else (a, b)
     skill = str(M.get("turn-order", "initiative_skill"))
     ra = d20(M)[0] + a.skill(skill, M)
     rb = d20(M)[0] + b.skill(skill, M)
