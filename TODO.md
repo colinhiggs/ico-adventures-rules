@@ -64,13 +64,27 @@ The damaging spells are done: bolts, lances, and the three area families
   level and casters still clear a crowd in about half the rounds a
   fighter needs. Contribution spread with the paragon set aside is 2.2x,
   2.5x and 2.4x at levels 5, 10 and 15 -- at or inside the gate.
-- **The paragon is now what fails the contribution spread**, not the
-  caster. It scores 954 at level 15 against the next build's 617, a lead
-  of 1.5x over conventional martial builds, and taking it out of the
-  comparison puts every level inside the target. Its advantage was
-  measured earlier as the Untouchable-plus-heavy-armour interaction
-  rather than double Master, and the levers for that are already in the
-  model.
+- **The paragon still leads the contribution spread**, though less.
+  Restricting Untouchable to light armour took it from 954 to 840 at
+  level 15 and from 689 to 603 at level 10, and its lead over the
+  duellist from 1.55x to 1.36x. Spread is 3.2x and 3.3x against a 2.5x
+  target. What is left is not one exploit but arithmetic: Killing Blow
+  raises offence, Untouchable raises survival, and contribution
+  multiplies the two, so a character holding both signatures is worth
+  more than the sum. Each alone scores about 626 at level 15; together
+  they score 840. Closing the rest means one of three things, none of
+  them obviously right:
+  - **A tighter survival clamp.** Fights last four to six rounds and the
+    clamp sits at 25, so the metric pays for survival far past the point
+    it can matter. At 16 the spread is 2.9x and 2.4x — but four builds
+    of ten then sit at the ceiling, and the metric starts drifting back
+    towards offence-only, which is what the clamp was added to prevent.
+  - **A rule about holding two signatures.** Either an escalating price
+    for a second Master or a level gate on it. Pricing was already
+    measured once and found to delay depth rather than prevent it.
+  - **Raising hybrids.** The bottom of the spread is the spellblade, a
+    genuine jack of two trades whose crowd magic the metric cannot see.
+    Its stance and gear were checked and are already its best.
 - **Every domain now has at least one spell**, but they are very
   unevenly served: war and healing are deep, forge and luck have a
   single spell each. A god granting three thin domains grants a thin

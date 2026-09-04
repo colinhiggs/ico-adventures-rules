@@ -439,7 +439,8 @@
       "untouchable": {
         "discipline": "athletic",
         "grade": "master",
-        "ignores_armour_skill_penalty_when_dodging": true
+        "ignores_armour_skill_penalty_when_dodging": true,
+        "untouchable_max_move_penalty": 0
       },
       "read_the_blow": {
         "discipline": "awareness",

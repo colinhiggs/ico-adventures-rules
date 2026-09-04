@@ -162,6 +162,7 @@ mechanics:
     discipline: athletic
     grade: master
     ignores_armour_skill_penalty_when_dodging: true
+    untouchable_max_move_penalty: 0
   read_the_blow:
     discipline: awareness
     grade: master
@@ -334,7 +335,10 @@ further {{ mechanics.sneak_attack.difficulty_per_step }} points of
 difficulty adds {{ mechanics.sneak_attack.damage_per_step }} damage.
 
 **Untouchable** *(Master signature)* — armour's skill penalty does not
-worsen your targeting difficulty while dodging. See [[armour]].
+worsen your targeting difficulty while dodging, provided the armour is
+light enough to carry no movement penalty at all. See [[armour]]. In
+anything heavier it does nothing: this is a signature about moving, and
+you cannot move like that in plate.
 
 ## Awareness
 
@@ -553,6 +557,22 @@ Neither of them is where a priest's domain bonus comes from. Every
 priest has that from the first level, because having a god is not an
 achievement — it is the arrangement. What the signature buys is the god
 paying full attention to all of it rather than to one part.
+
+## Design note: why Untouchable stops at light armour
+
+Left unqualified, Untouchable said that the best thing to dodge in was
+the heaviest armour in the game — you kept every point of its
+reduction and paid none of its penalty. That is the opposite of what the ability
+is about, and it had a measurable consequence: an Athletic Master in
+full plate took about a third less damage than the same character in a
+chain shirt, so every Athletic Master wore plate and the choice
+disappeared.
+
+Tying it to armour with no movement penalty puts the signature back
+where its name is. An Athletic Master now wears a chain shirt, takes
+about a third more damage than they did, and is still the hardest build
+in the game to hit — because they are quick, which is the thing they
+mastered.
 
 ## Design note: buffs, and who delivers them
 
