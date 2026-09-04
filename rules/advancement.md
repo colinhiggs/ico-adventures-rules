@@ -8,6 +8,7 @@ summary: >
 mechanics:
   points_per_level: 15
   free_mastery_hp_per_level: 3
+  free_mastery_hp_per_constitution: 1
   mastery_hp_per_point: 2
   max_mastery_hp_bought_per_level: 1
   power_source_per_point: 3
@@ -26,7 +27,10 @@ skill ceilings, and it is spent in exactly the same shop as
 
 - {{ mechanics.points_per_level }} points to spend, as below.
 - {{ mechanics.free_mastery_hp_per_level }} mastery hit points, free
-  and automatic.
+  and automatic, plus
+  {{ mechanics.free_mastery_hp_per_constitution }} more for each point
+  of your **constitution** bonus. A hardy character accumulates the
+  cushion faster, every level, without paying for it.
 - {{ mechanics.powers_per_level }} power, chosen from a pool you have
   opened — see [[disciplines]] and [[discipline-powers]].
 - Every {{ mechanics.attribute_point_every_n_levels }} levels, one
@@ -71,6 +75,31 @@ This level happens to be divisible by four, so she also takes an
 attribute point and puts it into strength.
 
 {% book-only %}
+## Design note: what constitution is for
+
+Constitution was the attribute nobody wanted. It bought core hit points
+and the base of a power source, and core hit points are a small slice of
+a pool that mastery hit points dominate, so four points spent on it were
+worth about three quarters of what the same four were worth in strength
+or dexterity. An attribute that is never the right answer is a tax on
+the players who did not notice.
+
+Tying free mastery hit points to it fixes that, and the reason it is a
+**grant** rather than a **cap** is worth keeping. Two other repairs were
+measured and both failed for the same reason. Letting constitution raise
+the ceiling on mastery hit points a character may *buy* helps late,
+where builds have points spare, and actively hurts in the middle levels,
+where they do not and the extra hit points come out of skills:
+constitution went from about three quarters of the best attribute to
+three fifths of it. Letting constitution and willpower raise the ceiling
+on the power source did nothing whatever, at any level — a senior
+character already has far more stamina or spirit than a fight can spend,
+so converting spare points into more of it converts them into nothing.
+
+A grant costs a character nothing and therefore cannot be paid for out
+of the wrong pocket, which is the trap the other two fell into. It takes
+constitution to about nine tenths of the value of the best attribute at
+every level: worth buying, and still not the obvious answer.
 ## Design note
 
 The per-level mastery grant is deliberately small next to the opening

@@ -4,6 +4,7 @@
     "advancement": {
       "points_per_level": 15,
       "free_mastery_hp_per_level": 3,
+      "free_mastery_hp_per_constitution": 1,
       "mastery_hp_per_point": 2,
       "max_mastery_hp_bought_per_level": 1,
       "power_source_per_point": 3,

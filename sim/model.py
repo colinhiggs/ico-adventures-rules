@@ -623,9 +623,20 @@ def build_character(name, spec, level, M, shopping_foe=None):
     # points they are allowed before pushing the last ranks of a skill,
     # so reserve that budget before spending on skills.
     per_point = int(M.get("advancement", "mastery_hp_per_point"))
+    # Optional levers, all absent by default, for asking what else
+    # constitution could be worth. Each reads a per-bonus rate and adds
+    # it to the rate already there.
+    def per_bonus(key, attribute):
+        if key not in M.keys("advancement"):
+            return 0
+        return int(M.get("advancement", key)) * char.attr_bonus(attribute, M)
+
+    mhp_per_level = (
+        int(M.get("advancement", "max_mastery_hp_bought_per_level"))
+        + per_bonus("mastery_hp_cap_per_constitution", "constitution"))
     mhp_ceiling = (
         int(M.get("character-creation", "max_starting_mastery_hp"))
-        + int(M.get("advancement", "max_mastery_hp_bought_per_level")) * (level - 1)
+        + mhp_per_level * (level - 1)
     )
     mhp_points = min(points, -(-mhp_ceiling // per_point))
     points -= mhp_points
@@ -645,14 +656,19 @@ def build_character(name, spec, level, M, shopping_foe=None):
 
     # Leftover points: mastery hit points up to the per-level ceiling,
     # then everything else widens the power source.
-    free_mhp = (int(M.get("advancement", "free_mastery_hp_per_level")) * level
+    free_mhp = ((int(M.get("advancement", "free_mastery_hp_per_level"))
+                 + per_bonus("free_mastery_hp_per_constitution",
+                             "constitution")) * level
                 + int(M.get("character-creation", "free_starting_mastery_hp")))
     bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
     source_per_point = int(M.get("advancement", "power_source_per_point"))
     uses_spirit = bool(spec.get("casts"))
-    source_ceiling = int(
-        M.get("advancement", "max_power_source_bought_per_level")) * level
+    source_attr = "willpower" if uses_spirit else "constitution"
+    source_ceiling = (int(M.get("advancement",
+                                "max_power_source_bought_per_level"))
+                      + per_bonus("power_source_cap_per_attribute",
+                                  source_attr)) * level
     source_points = min(points, source_ceiling)
     points -= source_points
 

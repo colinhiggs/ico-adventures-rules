@@ -101,10 +101,25 @@ The damaging spells are done: bolts, lances, and the three area families
 
   Moving block to constitution was measured and does fix the
   double-dip — the spread of the five options narrows from 1.39x to
-  1.24x at level 15 and constitution becomes worth having — but it makes
-  blocking worse than dodging across the board, which risks the stance
-  the game currently has in healthy balance. It is a real design choice
-  and is not taken here.
+  1.24x at level 15 — but it makes blocking worse than dodging across
+  the board, which risks a stance choice currently in good health. It
+  is a real design decision and is not taken.
+
+  Constitution has since been given free mastery hit points per level
+  instead, which takes it from three quarters of the best attribute to
+  about nine tenths without touching the stances. **Strength blocking
+  is still the best four points in the game**, because block skill and
+  melee attack share an attribute. That double-dip is the last thing
+  standing, and the only repairs for it are moving block off strength
+  or giving dexterity a second job of its own.
+
+- **High level builds cannot spend their points.** At level 15 every
+  archetype has 8 to 38 points it is unable to place, because the
+  mastery hit point ceiling and the power source ceiling both bind. The
+  power source ceiling is the strange one: raising it converts those
+  points into stamina or spirit and the extra buys nothing whatever,
+  because a senior character already has more reservoir than a fight
+  can spend. The advancement menu needs another sink, not a bigger one.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons
