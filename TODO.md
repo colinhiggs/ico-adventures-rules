@@ -63,25 +63,26 @@ The damaging spells are done: bolts, lances, and the three area families
   level and casters still clear a crowd in about half the rounds a
   fighter needs. Contribution spread with the paragon set aside is 2.2x,
   2.5x and 2.4x at levels 5, 10 and 15 -- at or inside the gate.
-- **The paragon's lead is mostly closed at high level, not at level 8.**
-  One Master per eight levels took it from 840 to 687 at level 15 and
-  its lead over the duellist from 1.36x to 1.11x; spread there is 2.7x
-  against a 2.5x target. At level 10 it went 603 to 556.
+- **The paragon's lead is much reduced and not gone.** Measured with
+  the Master limit and the weapon changes together, its contribution
+  spread runs 1.7x, 2.3x, 3.1x, 2.9x and 2.8x at levels 1, 5, 8, 10 and
+  15 against a 2.5x target. The trajectory of the whole effort, at
+  level 15: 5.5x before any of it, 3.7x after spells took damage from
+  casting skill, 3.3x after Untouchable was kept out of plate, 2.8x
+  with the Master limit and the weapon table on top.
 
-  At level 8 the rule made the build STRONGER, from 362 to 478, and the
-  reason is worth keeping. The second Master costs twenty points, and at
-  level 8 those come almost entirely out of the power source: stamina
-  fell from 45 to 12, which left the character unable to afford the
-  martial powers its offence depends on, so offence dropped from 31.8 to
-  22.2 for a defensive gain of less than half a point of damage taken.
-  A level 8 character should not buy a second Master, and the rule now
-  stops them making that mistake. What leads the level 8 spread is
-  therefore not signature stacking but an ordinary single-Master build
-  with good attributes and a great axe, which beats the duellist.
+  The two changes pull in opposite directions at level 8 and the same
+  direction above it. The Master limit takes level 15 down (827 to 732)
+  and pushes level 8 up (from 2.6x to 3.1x), because at level 8 the
+  second Master was a purchase the build should never have made -- it
+  cost 33 stamina and 9 points of offence for half a point of damage
+  taken, and forbidding it makes the character better. Above level 8
+  the compounding it prevents is real.
 
-  This is the same lesson the mastery hit point work turned up: a cost
-  looks like it comes out of everything and actually comes out of the
-  power source, which is what a build can least spare.
+  What is left at level 8 is not signature stacking. It is an ordinary
+  single-Master build with good attributes out-contributing the
+  duellist, which is a question about attribute spreads and stances
+  rather than about disciplines or weapons.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons
