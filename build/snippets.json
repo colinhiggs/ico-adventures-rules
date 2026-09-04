@@ -62,6 +62,25 @@
     "includes": [],
     "book_anchor": "#rule-attributes"
   },
+  "goblin": {
+    "id": "goblin",
+    "kind": "creature",
+    "title": "Goblin",
+    "summary": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
+    "summary_html": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
+    "html": "<p>A goblin stands about waist high to a human, and knows it. It carries a blade too big for it, wears whatever leather it has taken off something else, and would very much rather be behind you than in front of you.</p>\n<p>Alone a goblin is barely a fight. The reason it is the first thing in this book is that it is never alone: a raiding band is 6 of them, and 6 attacks a round against one target is a different proposition from one attack six times.</p>\n<h4>How it fights</h4>\n<p>It opens from hiding — Stealth 4 is the best thing about it — and it dodges rather than blocks, because at strength 8 it has nothing to block with. Against a dodging goblin an attacker is looking at a target set by dexterity 14 and Dodge 3, which is more than a first-level party expects from something this small.</p>\n<p>It is fragile in exactly the way that suggests. With 4 mastery hit points and 8 core, a solid hit from a <a href=\"#rule-weapons\" data-rule-id=\"weapons\">two-handed weapon</a> ends it outright, and any hit at all is likely to leave it <a href=\"#rule-dying\" data-rule-id=\"dying\">wounded</a>.</p>\n<p>Goblins break. When a band has lost 0.5 of its number the rest run, and a group that runs on the third round is the difference between a goblin ambush and a goblin massacre. This is a judgement for whoever is running the fight, not a roll.</p>\n<h4>Variants</h4>\n<ul><li><strong>Goblin archer.</strong> Swap the short sword for a bow and put the points in Attack Ranged instead of Attack Melee. It stays behind the others and is the reason the others are there.</li><li><strong>Goblin boss.</strong> One grade of the Martial discipline, a shield, and enough stamina to spend on a power. Worth roughly two ordinary goblins and worth killing first, since the band's morale is really its morale.</li></ul>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "humanoid"
+    ],
+    "related": [
+      "dying",
+      "weapons"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-goblin"
+  },
   "character-creation": {
     "id": "character-creation",
     "kind": "rule",
@@ -712,6 +731,20 @@
     ],
     "book_anchor": "#rule-ch-advancement"
   },
+  "ch-bestiary": {
+    "id": "ch-bestiary",
+    "kind": "section",
+    "title": "Bestiary",
+    "summary": "Creatures, statted the same way characters are, with what they want and how they fight.",
+    "summary_html": "Creatures, statted the same way characters are, with what they want and how they fight.",
+    "html": "<p>Everything in this chapter is built out of the same parts a character is built from: six attributes, ranked skills, weapons and armour off the equipment tables, and hit points in the same two pools. There is no separate system for the other side of the table.</p>\n<p>Each entry says what the creature is, how it fights, and what it wants — which is usually the part that decides how the encounter goes.</p>",
+    "tags": [],
+    "related": [],
+    "includes": [
+      "goblin"
+    ],
+    "book_anchor": "#rule-ch-bestiary"
+  },
   "ch-characters": {
     "id": "ch-characters",
     "kind": "section",
@@ -850,7 +883,8 @@
       "ch-powers",
       "ch-advancement",
       "ch-equipment",
-      "ch-magic"
+      "ch-magic",
+      "ch-bestiary"
     ],
     "book_anchor": "#rule-rulebook"
   }

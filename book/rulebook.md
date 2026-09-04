@@ -32,3 +32,5 @@ budget that buys them.
 {% include ch-equipment %}
 
 {% include ch-magic %}
+
+{% include ch-bestiary %}

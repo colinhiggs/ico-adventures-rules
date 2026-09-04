@@ -620,6 +620,36 @@
         "mastery_hp_per_step": 2
       }
     },
+    "goblin": {
+      "challenge_level": 1,
+      "typical_number": 6,
+      "attributes": {
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 8,
+        "intelligence": 8,
+        "willpower": 8,
+        "charisma": 6
+      },
+      "skills": {
+        "attack_melee": 2,
+        "dodge": 3,
+        "stealth": 4,
+        "spot": 2,
+        "fortitude": 1
+      },
+      "disciplines": {},
+      "powers": [],
+      "mastery_hit_points": 4,
+      "core_hit_points": 8,
+      "stamina": 5,
+      "spirit": 0,
+      "stance": "dodge",
+      "weapon": "short_sword",
+      "armour": "partial_leather",
+      "shield": "none",
+      "morale_breaks_at_core_fraction": 0.5
+    },
     "hit-points": {
       "core_hp_equals": "constitution",
       "core_hp_is_real_injury": true,
