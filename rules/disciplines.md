@@ -10,7 +10,7 @@ mechanics:
   initiate_cost: 5
   adept_cost: 15
   master_cost: 20
-  master_minimum_level: 8
+  levels_per_master: 8
   grades: [initiate, adept, master]
   grades_bought_in_order: true
   disciplines_held_is_unlimited: true
@@ -33,11 +33,13 @@ then **Master** — in that order, paid for with advancement points (see
 
 - **Initiate** costs {{ mechanics.initiate_cost }} points.
 - **Adept** costs a further {{ mechanics.adept_cost }} points.
-- **Master** costs a further {{ mechanics.master_cost }} points, and
-  cannot be taken before **level
-  {{ mechanics.master_minimum_level }}**.
+- **Master** costs a further {{ mechanics.master_cost }} points, and you
+  may hold **one Master for every
+  {{ mechanics.levels_per_master }} levels** you have.
 
-Master is the only grade with a level requirement. Holding Adept is
+Master is the only grade with a level requirement, and it is a count
+rather than a threshold: at level {{ mechanics.levels_per_master }} you
+may hold one, and not a second until twice that. Holding Adept is
 already required, since grades are bought in order; the level is a
 second gate on top of it, and there is no way to buy past either.
 
@@ -74,8 +76,10 @@ cheaper to raise and with a higher ceiling, though still short of her
 Martial skills.
 
 She could not take Martial to Master before level
-{{ mechanics.master_minimum_level }} however she spent her points, so
-she reaches it there and gains Killing Blow. Her focus does not change —
+{{ mechanics.levels_per_master }} however she spent her points, so she
+reaches it there and gains Killing Blow. A second discipline at Master
+is not open to her until level twice that, whatever she can afford. Her
+focus does not change —
 Adept had already made the group focused — so what the final and most
 expensive grade buys her is the signature and the deepest tier of
 Martial powers, nothing more.
@@ -116,4 +120,15 @@ A level requirement holds depth back exactly, and holds nothing else
 back at all. With it doing that job, the price has only one left —
 keeping Master the largest single purchase in the game — and can be set
 where nobody has to gut a character to pay it.
+
+Counting Masters against levels rather than merely gating the first one
+is the same idea applied twice. Two signatures are not twice one
+signature: they tend to reinforce rather than merely add, because a
+character who is better at one half of a fight and harder to stop in the
+other half gets the product of the two rather than the sum. Measured,
+one signature was worth about a third more than the same build without
+it, and two were worth a third more again on top. Price will not hold
+that back — a character who wants both saves for both and has them a
+level or two later — so time does, and the second signature arrives a
+whole career after the first.
 {% endbook-only %}
