@@ -165,6 +165,24 @@ The damaging spells are done: bolts, lances, and the three area families
 
 ## Simulator gaps
 
+- **No creature loader.** A bestiary entry is deliberately shaped like
+  the simulator's `Character` -- six attributes, ranked skills,
+  disciplines, the two hit point pools, stamina and spirit, a stance,
+  and weapon and armour keyed into the equipment tables -- so that
+  asking whether a creature is a fair fight at a given level is a
+  measurement against the archetype panel rather than a guess. Nothing
+  yet reads one. The missing piece is a short function that builds a
+  `Character` from `mechanics.json`'s entry for a creature, plus a
+  balance report that pits the bestiary against the archetypes the way
+  the archetypes are currently pitted against each other. Until it
+  exists, `challenge_level` in a stat block is an author's estimate and
+  should be read as one.
+- **Natural weapons have nowhere to live.** The goblin carries a weapon
+  off the equipment table. A wolf's bite is not in `weapons.md` and
+  should not be, because that table is also the shop. Creatures
+  probably want an inline `weapon:` map using the same keys as a table
+  entry, which the loader above would have to accept alongside a bare
+  table key.
 - **No positions.** Reach and quickness are modelled first-order in
   duels and not at all in the crowd loop, and a caster duels toe to toe
   with spells that reach ten squares. This is the single largest source
