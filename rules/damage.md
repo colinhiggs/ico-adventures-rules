@@ -8,6 +8,7 @@ summary: >
 mechanics:
   margin_to_damage_fraction: 0.5
   damage_per_attack_skill_step: 8
+  damage_per_casting_skill_step: 3
   round: down
   armour_reduces_each_blow: true
   max_reduction_fraction: 0.5
@@ -29,6 +30,12 @@ rounding {{ mechanics.round }}.
 Add one further point of damage for every
 {{ mechanics.damage_per_attack_skill_step }} full ranks of the attack
 skill you used, counting the bonus from its governing attribute.
+
+A damaging **spell** does the same from spellcasting, at a steeper rate:
+one further point for every
+{{ mechanics.damage_per_casting_skill_step }} full ranks of the
+spellcasting skill used, counting the attribute bonus and any bonus from
+a granted domain — see [[spellcasting]].
 
 ## Reductions
 
@@ -72,6 +79,24 @@ have come to `13` — the entire blow. The cap stops that: reduction is
 held to half of `13`, so `6` gets through regardless.
 
 {% book-only %}
+## Design note: two rates for one idea
+
+A caster converts skill into damage more than twice as fast as a
+warrior does, and the reason is the line above it. A blow turns
+**margin** into damage; a spell never does, because a spell's size is
+fixed when its difficulty is declared and margin buys the caster a lower
+price instead. So a warrior has two ways for skill to reach the damage
+figure and a caster has one, and the one is steeper to make up for it.
+
+Without it a caster's small spells never grow at all. A bolt is `6`
+damage at first level and `6` damage at fifteenth unless difficulty is
+spent on it, which a caster with an empty reservoir cannot do — and
+since armour takes half of every blow, half of a small number is most of
+what there was. That is what left an out-of-spirit caster with almost
+nothing to do at low level, and it is fixed here rather than by making
+bolts bigger, because the problem was never the bolt. It was that
+nothing a caster learned ever reached its damage.
+
 ## Design note
 
 Two terms here exist to solve the same problem from opposite ends.

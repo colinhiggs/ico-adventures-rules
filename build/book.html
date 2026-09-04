@@ -342,6 +342,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Take the weapon's <strong>damage rating</strong> and add <code>0.5</code> times the <strong>margin</strong> — the amount by which the attack roll beat the targeting difficulty — rounding down.</p>
 <h4>Skill in the blow</h4>
 <p>Add one further point of damage for every 8 full ranks of the attack skill you used, counting the bonus from its governing attribute.</p>
+<p>A damaging <strong>spell</strong> does the same from spellcasting, at a steeper rate: one further point for every 3 full ranks of the spellcasting skill used, counting the attribute bonus and any bonus from a granted domain — see <a href="#rule-spellcasting" data-rule-id="spellcasting">How Spellcasting Works</a>.</p>
 <h4>Reductions</h4>
 <p>The raw figure is then reduced:</p>
 <ul><li>by the <strong>armour rating</strong> of whatever the target is wearing, applied to</li></ul>
@@ -358,11 +359,14 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <ul><li>Damage dealt: <code>8</code>.</li></ul>
 <p>Those <code>8</code> come off Bramm's mastery hit points first.</p>
 <p>Had Bramm been in full plate behind a great shield, his reduction would have come to <code>13</code> — the entire blow. The cap stops that: reduction is held to half of <code>13</code>, so <code>6</code> gets through regardless.</p>
+<h4>Design note: two rates for one idea</h4>
+<p>A caster converts skill into damage more than twice as fast as a warrior does, and the reason is the line above it. A blow turns <strong>margin</strong> into damage; a spell never does, because a spell's size is fixed when its difficulty is declared and margin buys the caster a lower price instead. So a warrior has two ways for skill to reach the damage figure and a caster has one, and the one is steeper to make up for it.</p>
+<p>Without it a caster's small spells never grow at all. A bolt is <code>6</code> damage at first level and <code>6</code> damage at fifteenth unless difficulty is spent on it, which a caster with an empty reservoir cannot do — and since armour takes half of every blow, half of a small number is most of what there was. That is what left an out-of-spirit caster with almost nothing to do at low level, and it is fixed here rather than by making bolts bigger, because the problem was never the bolt. It was that nothing a caster learned ever reached its damage.</p>
 <h4>Design note</h4>
 <p>Two terms here exist to solve the same problem from opposite ends.</p>
 <p>The skill term keeps the game moving as characters advance. Attack and defence rise together, so the margin on a typical hit does not grow; without a term tied directly to skill, a veteran's blows would land exactly as hard as a novice's while everyone's mastery hit points climbed every level, and every fight would take longer than the last.</p>
 <p>The reduction cap stops the arithmetic breaking at the top end. Plate and a great shield subtract more than a sword's entire damage rating, so without a cap the best-armoured character in the party stops being hard to kill and becomes impossible to kill, while every light weapon in <a href="#rule-weapons" data-rule-id="weapons">Weapons</a> turns into a prop.</p>
-<p class="related">See also: <a href="#rule-armour">Armour and Shields</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-hitting">Landing a Blow</a>, <a href="#rule-weapons">Weapons</a></p>
+<p class="related">See also: <a href="#rule-armour">Armour and Shields</a>, <a href="#rule-hit-points">Core and Mastery Hit Points</a>, <a href="#rule-hitting">Landing a Blow</a>, <a href="#rule-spellcasting">How Spellcasting Works</a>, <a href="#rule-weapons">Weapons</a></p>
 </section>
 <section class="doc" id="rule-dying">
 <h3>Wounds, Death's Door and Dying</h3>

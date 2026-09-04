@@ -2394,6 +2394,8 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
     minor = sp.get("tier") == "minor"
     minimum = int(sp.get("minimum_spirit", 0))
     damage, _squares = spell_shape(M, spell_id, difficulty, duration_points)
+    damage += spell_skill_damage(char, M, spell_id)
+    pierce = spell_pierce(M, spell_id)
     skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     crit_steps = critical_bonus_steps(M)
@@ -2414,7 +2416,7 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
             # it. Armour bites every tick, so the schedule is reduced
             # tick by tick rather than in one lump.
             burn_ticks = burn_schedule(M, cond, damage, int(round(held)))
-            burn = chance * sum(reduce_by_armour(t, defender, M)
+            burn = chance * sum(reduce_by_armour(t, defender, M, pierce)
                                 for t in burn_ticks)
         # What the defender would have done with the rounds it loses.
         foe_dpr, _ = attack_expectation(defender, char, M)
@@ -2441,7 +2443,8 @@ def cast_expectation(char, spell_id, difficulty, defender, M,
                 bonus = max(0, more - damage)
             aimed = (not needs_aim) or ((roll >= td) if on_tie else (roll > td))
             if aimed:
-                landed = reduce_by_armour(damage + bonus, defender, M)
+                landed = reduce_by_armour(damage + bonus, defender, M,
+                                          pierce)
                 expected_damage += weight * (landed * ticks + burn)
                 expected_control += weight * control_each
         else:
@@ -2456,12 +2459,28 @@ def _spell_step(M, spell_id):
     return int(sp["difficulty_per_step"])
 
 
-def reduce_by_armour(raw, defender, M):
+def spell_skill_damage(char, M, spell_id):
+    """Damage a caster's own skill adds to a spell, the counterpart of
+    the rule damage.md gives a weapon -- steeper, because a blow also
+    turns margin into damage and a spell never does."""
+    step = int(M.get("damage", "damage_per_casting_skill_step"))
+    if step <= 0:
+        return 0
+    return (char.casting_bonus(M) + domain_bonus(char, spell_id, M)) // step
+
+
+def spell_pierce(M, spell_id):
+    """Reduction a spell ignores. No spell does today; the hook is here
+    because reduce_by_armour takes the argument."""
+    return 0
+
+
+def reduce_by_armour(raw, defender, M, pierce=0):
     """Spell damage meets armour like anything else, capped the same
-    way. Nothing in the rules exempts it."""
+    way. Nothing in the rules exempts it unless the spell says so."""
     if raw <= 0:
         return 0
-    reduction = defender.armour.ap
+    reduction = max(0, defender.armour.ap - pierce)
     if defender.stance == "block":
         reduction += (defender.shield.block_ap if defender.shield
                       else defender.weapon.block_ap)
@@ -2518,6 +2537,7 @@ def best_spell_free(char, spell_id, foe, M):
     best = 0.0
     for difficulty in range(base, base + 60):
         damage, _sq = spell_shape(M, spell_id, difficulty)
+        damage += spell_skill_damage(char, M, spell_id)
         total = 0.0
         for face, weight, _crit in d20_faces(M):
             roll = face + skill
@@ -2527,7 +2547,8 @@ def best_spell_free(char, spell_id, foe, M):
                 continue
             if needs_aim and not ((roll >= td) if on_tie else (roll > td)):
                 continue
-            total += weight * reduce_by_armour(damage, foe, M)
+            total += weight * reduce_by_armour(damage, foe, M,
+                                               spell_pierce(M, spell_id))
         best = max(best, total)
     return best
 
@@ -2606,7 +2627,8 @@ def _plan(char, foe, M, rounds_budget):
         pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
         if pick[0] is not None and pick[1] + pick[4] > plain:
             spell = {"spell": pick[0], "difficulty": pick[3],
-                     "duration_points": pick[5], "value": pick[1] + pick[4]}
+                     "duration_points": pick[5], "value": pick[1] + pick[4],
+                     "fallback": cheapest_spell(char, foe, M)}
 
     plans = {}
     for label, conditional in (("open", False), ("flank", True)):
@@ -2619,6 +2641,34 @@ def _plan(char, foe, M, rounds_budget):
                 chosen = spell
         plans[label] = chosen
     return plans
+
+
+def cheapest_spell(char, foe, M):
+    """The best spell this caster can throw for NOTHING, as a
+    (spell, difficulty) pair, or None if there is no such thing.
+
+    A caster whose reservoir is empty does not stand still. It falls
+    back on the minor tier exactly as floor_offence assumes, and before
+    this existed a dry caster in a duel did nothing whatever for the
+    rest of the fight -- which turned two out-of-spirit casters into a
+    seventy-round staring contest."""
+    best = (None, 0, -1.0)
+    for spell_id in spells_for(char, M):
+        sp = spell_def(M, spell_id)
+        if sp.get("tier") != "minor":
+            continue
+        skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
+        base = int(sp["base_difficulty"])
+        for difficulty in range(base, base + 40):
+            damage, _sq = spell_shape(M, spell_id, difficulty)
+            damage += spell_skill_damage(char, M, spell_id)
+            got = sum(w for face, w, _c in d20_faces(M)
+                      if face + skill >= difficulty
+                      and power_cost(difficulty, face + skill, M, True) == 0)
+            value = got * reduce_by_armour(damage, foe, M)
+            if value > best[2]:
+                best = (spell_id, difficulty, value)
+    return None if best[0] is None else (best[0], best[1])
 
 
 def _cast_at(actor, target, plan, M, fields=None):
@@ -2642,7 +2692,16 @@ def _cast_at(actor, target, plan, M, fields=None):
         return
     cost = max(minimum, power_cost(difficulty, roll, M, minor))
     if cost > actor.spirit:
-        return                      # cannot spend what you do not have
+        # You cannot spend what you do not have. Fall back on the minor
+        # tier if there is one, and on the weapon if there is not --
+        # the same way a fighter who cannot pay still swings.
+        fallback = plan.get("fallback")
+        if fallback and fallback[0] != spell_id:
+            _cast_at(actor, target, {"spell": fallback[0],
+                                     "difficulty": fallback[1]}, M, fields)
+        else:
+            _act(actor, target, None, M)
+        return
     actor.spirit -= cost
 
     if bool(sp.get("needs_attack_roll")):

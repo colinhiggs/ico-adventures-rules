@@ -183,6 +183,7 @@
     "damage": {
       "margin_to_damage_fraction": 0.5,
       "damage_per_attack_skill_step": 8,
+      "damage_per_casting_skill_step": 3,
       "round": "down",
       "armour_reduces_each_blow": true,
       "max_reduction_fraction": 0.5,

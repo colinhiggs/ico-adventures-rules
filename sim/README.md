@@ -414,6 +414,12 @@ land the thing at least half the time before it counts.
   They are excluded from the spell search rather than scored at zero,
   which would have been a measurement rather than an omission and would
   have read like one.
+- A caster whose reservoir is empty **falls back on the minor tier, and
+  on its weapon if it has no minor spell**, the same way a fighter who
+  cannot pay for a power still swings. Before that fallback existed, a
+  dry caster in a duel did nothing whatever for the rest of the fight,
+  which turned two out-of-spirit level 1 casters into a seventy-round
+  staring contest and looked exactly like a rules problem.
 - **A caster duels toe to toe, which is the last place it would
   choose.** Its spells reach ten squares and the model has no positions,
   so it cannot back away and make a melee build spend the fight

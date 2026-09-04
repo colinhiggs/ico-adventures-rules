@@ -65,11 +65,15 @@ The damaging spells are done: bolts, lances, and the three area families
   unevenly served: war and healing are deep, forge and luck have a
   single spell each. A god granting three thin domains grants a thin
   priest, which is a content problem rather than a rules one.
-- **A caster's free floor catches up with its paid output.** Minor
-  spells scale with casting skill and have no minimum cost, so at level
-  15 the priest keeps 96% of its damage with an empty reservoir, and at
-  level 1 only 30% -- outside the band at both ends and in opposite
-  directions. The reservoir matters too much early and not at all late.
+- **A caster's free floor was out of band at both ends.** *Fixed, by
+  giving spells a damage rate from spellcasting skill the way weapons
+  have one from attack skill — see the design note in `damage.md`.*
+  Casters now keep 39% to 62% of their damage with an empty reservoir
+  across every level, inside the 35-85% band throughout. What is left is
+  the same complaint about two HYBRID builds: the paragon at level 8 and
+  the spellblade at level 15 keep 86% and 92%, because their floor is a
+  great axe rather than a spell. That is a statement about those builds,
+  not about the magic rules.
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.
