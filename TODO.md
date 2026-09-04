@@ -13,7 +13,8 @@ The damaging spells are done: bolts, lances, and the three area families
   fog, darkness, briars, sleet, hallowed ground, silence.* What is still
   missing from the category is anything that blocks movement outright —
   a wall — and anything that keeps a named kind of creature out.
-- **Curing and restorative.** *In progress.*
+- **Curing and restorative.** *Done: Mend, Cure Wounds, Cleanse,
+  Restoration, and now Staunch.*
 - **Protection.** *Done, as the guards: Bulwark, Stoneskin, Elemental
   Guard, Mantle of Warding, Deathward.* Still missing: anything that
   protects a place rather than a person, and anything that turns an
@@ -32,10 +33,12 @@ The damaging spells are done: bolts, lances, and the three area families
 
 ## Rules gaps found while doing the above
 
-- **Reviving and raising the dead.** Dying is settled now — see
-  `dying.md` — so a spell that pulls somebody back from death's door
-  faster, or back from death itself, finally has rules to sit on. The
-  death domain has one spell and this is the obvious second.
+- **Reviving and raising the dead.** *Done, as Staunch and Raise the
+  Dead.* Raise the Dead is the only spell in the game whose cost is not
+  refunded by a night's sleep, and the only one with an explicit
+  exemption from healing. If a second such spell is ever wanted, that
+  exemption needs to become a general rule rather than a note on one
+  entry.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** Measured, not suspected: duels at

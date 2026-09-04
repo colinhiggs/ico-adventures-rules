@@ -977,6 +977,43 @@
           "war"
         ]
       },
+      "staunch": {
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "healing",
+          "death"
+        ],
+        "base_difficulty": 6,
+        "range": 10,
+        "minimum_spirit": 2,
+        "needs_attack_roll": false,
+        "no_damage": true,
+        "stabilises": true
+      },
+      "raise_the_dead": {
+        "schools": [
+          "life_force"
+        ],
+        "domains": [
+          "death",
+          "healing",
+          "light"
+        ],
+        "base_difficulty": 30,
+        "range": "touch",
+        "minimum_spirit": 10,
+        "needs_attack_roll": false,
+        "no_damage": true,
+        "raises_the_dead": true,
+        "difficulty_per_hour_dead": 1,
+        "hours_before_beyond_reach": 24,
+        "core_hit_points_from_caster": 3,
+        "caster_pays_only_on_success": true,
+        "cost_cannot_be_healed_by_magic": true,
+        "returns_at_core": 1
+      },
       "guard": {
         "base_difficulty": 8,
         "range": "touch",

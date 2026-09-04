@@ -392,6 +392,10 @@ land the thing at least half the time before it counts.
   level 8, 4.81 at level 15, with the same pairs under the floor either
   way. The day model is where it has room to bite, and even there a
   character is usually dead before they have been wounded for long.
+- **Staunch and Raise the Dead are not scored.** Both act on a
+  character who is already down, and the model fights one character at a
+  time — there is nobody to save and nobody to be saved by. Their whole
+  value is to a party.
 - **Protection is scored only where the model can see it.** A pool of
   temporary hit points and a change in damage reduction are both
   measurable, and `report_guards` measures them. Resistance to a damage

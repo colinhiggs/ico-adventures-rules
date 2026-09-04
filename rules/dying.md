@@ -82,11 +82,18 @@ bad roll here cost so much.
 
 ### Magic saves you
 
+**Staunch** stops the count and does nothing else: you remain
+unconscious on whatever you were reduced to, and it can be cast from
+across the room. It is the cheap answer and usually the right one in the
+middle of a fight.
+
 Any spell that restores **core** hit points and takes you above
-{{ mechanics.deaths_door_at_core }} ends the whole business at once: you
-are stable and conscious, and standing up is a matter of your next move.
-Mend cannot do this. Cure Wounds can, and this is the second reason it
-is priced the way it is — see [[spell-list]].
+{{ mechanics.deaths_door_at_core }} does more: you are stable *and*
+conscious, and standing up is a matter of your next move. Mend cannot do
+this, because it only touches mastery hit points. Cure Wounds can, and
+this is the second reason it is priced the way it is.
+
+Both are in the [[spell-list]].
 
 ## Stable
 
@@ -94,6 +101,13 @@ A stable character is no longer dying and is still unconscious. They
 wake about {{ mechanics.hours_before_waking }} hours later, on
 {{ mechanics.deaths_door_at_core }} core hit points and thoroughly
 wounded, unless somebody heals them first.
+
+## After death
+
+Death is not always the end of it, but the spell that answers it is
+expensive, gets harder every hour, and stops working entirely after a
+day — see **Raise the Dead** in the [[spell-list]]. A party that wants
+somebody back should be in a hurry.
 
 ## Example
 
@@ -116,8 +130,13 @@ several days wounded and taking
 `-{{ conditions:mechanics.conditions.wounded.roll_penalty }}` on
 everything he does.
 
-Had Sela cast Cure Wounds on him instead, for enough to take him to `1`
-or better, he would have been conscious immediately — and unscarred.
+Had Sela cast Staunch on him on the first round, from where she was
+standing, the whole question would have been settled before her second
+turn — though he would still have been unconscious at `-6` until
+somebody healed him.
+
+Had she cast Cure Wounds instead, for enough to take him to `1` or
+better, he would have been conscious immediately — and unscarred.
 
 {% book-only %}
 ## Design note

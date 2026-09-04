@@ -142,6 +142,30 @@ mechanics:
     family: field
     damage_type: lightning
     domains: [war]
+  staunch:
+    schools: [life_force]
+    domains: [healing, death]
+    base_difficulty: 6
+    range: 10
+    minimum_spirit: 2
+    needs_attack_roll: false
+    no_damage: true
+    stabilises: true
+  raise_the_dead:
+    schools: [life_force]
+    domains: [death, healing, light]
+    base_difficulty: 30
+    range: touch
+    minimum_spirit: 10
+    needs_attack_roll: false
+    no_damage: true
+    raises_the_dead: true
+    difficulty_per_hour_dead: 1
+    hours_before_beyond_reach: 24
+    core_hit_points_from_caster: 3
+    caster_pays_only_on_success: true
+    cost_cannot_be_healed_by_magic: true
+    returns_at_core: 1
   guard:
     base_difficulty: 8
     range: touch
@@ -469,6 +493,109 @@ deny ground by what they do rather than by what they deal, and those are
 the ones the archetype's cheap spread was written for.
 {% endbook-only %}
 
+## Bringing them back
+
+Two spells for the worst moment, and they are not the same spell. One
+stops somebody dying. The other undoes it, and costs the caster
+something a night's sleep will not give back.
+
+### Staunch ({{ mechanics.staunch.base_difficulty }})
+
+- **Schools:** {{ mechanics.staunch.schools }}
+- **Domains:** {{ mechanics.staunch.domains }}
+- **Range:** {{ mechanics.staunch.range }}
+- **Minimum spirit:** {{ mechanics.staunch.minimum_spirit }}
+
+A creature at death's door is **stable** — see [[dying]]. The dying
+count stops. It restores no hit points at all: they are still
+unconscious, still on whatever they were reduced to, and still wounded
+when they wake.
+
+That is the whole of its value and it is considerable. Cure Wounds can
+do this too, by taking them back above nothing, but Cure Wounds charges
+by the hit point and hauling somebody up from six under is an enormous
+bill in the middle of a fight. Staunch charges once, at a difficulty
+anyone can reach, and does it from across the room rather than from
+arm's length — which is often the difference between saving them and
+walking into whatever put them there.
+
+### Raise the Dead ({{ mechanics.raise_the_dead.base_difficulty }})
+
+- **Schools:** {{ mechanics.raise_the_dead.schools }}
+- **Domains:** {{ mechanics.raise_the_dead.domains }}
+- **Range:** {{ mechanics.raise_the_dead.range }}
+- **Minimum spirit:** {{ mechanics.raise_the_dead.minimum_spirit }}
+
+The dead return, on
+{{ mechanics.raise_the_dead.returns_at_core }} core hit point:
+unconscious, wounded, and alive.
+
+Three things make it something other than an errand.
+
+**It gets harder every hour.** Add
+{{ mechanics.raise_the_dead.difficulty_per_hour_dead }} to the
+difficulty for each hour since death, on top of the base — and after
+{{ mechanics.raise_the_dead.hours_before_beyond_reach }} hours it cannot
+be done at all, at any difficulty, by anyone. Whatever the spell reaches
+for is no longer within reach.
+
+**It costs the caster core hit points.** A successful casting takes
+{{ mechanics.raise_the_dead.core_hit_points_from_caster }} core hit
+points from *you* — and **no magic will put those back**. They are not
+an injury. Nobody hurt you; you spent yourself, and healing mends wounds
+rather than refunding what was given away. They return only with rest,
+at the
+{{ recovery:mechanics.core_hit_points_per_night }} a night [[recovery]]
+allows. You are paying several days of being worse at everything, and if
+the gift takes you to half your core hit points or fewer you are
+[[dying|wounded]] for all of them.
+
+A failed casting costs you the spirit and nothing else. You may try
+again, and the clock will have moved on while you did.
+
+**It is difficulty {{ mechanics.raise_the_dead.base_difficulty }} before
+the clock is added**, which is beyond most casters and out of reach
+entirely for a junior one.
+
+{% book-only %}
+### Design note
+
+Every resource in this game recovers overnight except one. Spirit comes
+back in full, stamina comes back in full, mastery hit points come back
+in full, and core hit points come back at one a night. So a spell whose
+only cost is spirit is a spell you can cast every day for ever, and
+raising the dead is precisely the thing that must not be an errand.
+
+Charging the caster in core hit points is the only price in the system
+that a night does not refund — and it has to be exempt from healing, or
+it is not a price at all. A caster who could Cure Wounds the cost back
+would be paying nine spirit to raise the dead, which is an errand again
+by a longer route. The exemption is not a special case bolted on: what
+healing does is close wounds, and nothing wounded you. You gave it away.
+
+It is also the right price in the fiction — your own life for somebody
+else's — and it lands on the person making the decision rather than on
+the player whose character died, which matters. A rule that returns the
+dead diminished punishes the one person at the table who has already had
+the worst evening.
+
+The rising difficulty does the pacing. A party that fights its way back
+to a fallen friend within the hour has a hard spell to cast; a party
+that comes back the next day has an impossible one. That gradient is
+worth more than a flat cut-off because it makes *hurrying* the decision
+rather than merely *deciding*. The hard limit at
+{{ mechanics.raise_the_dead.hours_before_beyond_reach }} hours is there
+anyway, so that a Dungeon Master never has to adjudicate a caster
+rolling enormously well on a week-old corpse.
+
+Staunch exists because Cure Wounds was doing two jobs and doing the
+second one badly. Stopping a death and repairing a body are different
+problems, and the first is urgent, cheap and needed at range while the
+second is expensive and can wait until the fighting stops. Splitting
+them gives a junior caster something decisive to do in the worst round
+of a fight, which is exactly when a junior caster otherwise has nothing.
+{% endbook-only %}
+
 ## The guards
 
 A **guard** is laid on one creature you touch and makes harm land more
@@ -492,8 +619,9 @@ All of them share a chassis:
 
 *{{ mechanics.bulwark.schools }}; {{ mechanics.bulwark.domains }}.*
 The target gains {{ mechanics.bulwark.protection }} temporary
-**mastery** hit points, plus {{ mechanics.bulwark.protection_per_step }} for each
-further {{ mechanics.bulwark.difficulty_per_step }} points of
+**mastery** hit points, plus
+{{ mechanics.bulwark.protection_per_step }} for each further
+{{ mechanics.bulwark.difficulty_per_step }} points of
 difficulty. They behave exactly as mastery hit points do — see
 [[hit-points]] — and any that are left vanish when the spell ends.
 
