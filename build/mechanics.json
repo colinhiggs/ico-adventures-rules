@@ -107,6 +107,7 @@
       "attribute_max": 18,
       "starting_discipline_budget": 20,
       "max_starting_mastery_hp": 25,
+      "free_starting_mastery_hp": 10,
       "skill_point_pool": 30,
       "starting_powers": 1,
       "starting_gold": 150

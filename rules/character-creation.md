@@ -12,6 +12,7 @@ mechanics:
   attribute_max: 18
   starting_discipline_budget: 20
   max_starting_mastery_hp: 25
+  free_starting_mastery_hp: 10
   skill_point_pool: 30
   starting_powers: 1
   starting_gold: 150
@@ -36,11 +37,17 @@ unfocused and peripheral, per [[skills]].
 
 ## Skills and mastery hit points
 
-You have {{ mechanics.skill_point_pool }} points for skill ranks and
-mastery hit points together, spent at the same prices [[advancement]]
-uses at every later level — there is no special chargen exchange rate.
-You may start with at most {{ mechanics.max_starting_mastery_hp }}
-mastery hit points.
+Everybody begins with {{ mechanics.free_starting_mastery_hp }} mastery
+hit points, free and before anything is spent. Nobody chooses them and
+nobody pays for them: a character who has survived long enough to become
+an adventurer has learned something about not being hit.
+
+You then have {{ mechanics.skill_point_pool }} points for skill ranks
+and further mastery hit points together, spent at the same prices
+[[advancement]] uses at every later level — there is no special chargen
+exchange rate. You may **buy** at most
+{{ mechanics.max_starting_mastery_hp }} mastery hit points on top of the
+free ones.
 
 ## Languages
 
@@ -77,6 +84,32 @@ She takes Power Attack as her power, buys a sword, a shield and a chain
 shirt, and pockets the change.
 
 {% book-only %}
+## Design note: the free ten
+
+A first-level fight was measurably too short — duels averaged barely
+above the three-round floor and a third of the pairings fell under it,
+while the same builds at level 8 and 15 sat comfortably inside the
+band. First level had too few hit points, and nothing else about it was
+wrong.
+
+The obvious lever was the cap on what a starting character may buy, and
+it does work: raising it clears every short fight. It also quietly
+raises the *price* of surviving, and the bill lands on whoever has the
+least to spare. A caster raising its hit points that way pays in power
+source — a level one wizard went from twenty-five spirit to nineteen,
+which is two fewer spells in the only fight it will be in that day, and
+raising the cap further made the same character give up on casting
+altogether and buy an axe.
+
+Granting the hit points instead costs nobody anything. The character
+that results has the same hit points, the same skills and the same
+reservoir it always had, and the fights come out the right length: mean
+rounds of 5.65 at level 1 against 4.81 at level 8 and 5.77 at level 15,
+which is as flat as this game has ever measured.
+
+The general lesson is worth keeping. Raising a *cap* looks free and is
+not — it changes what a build can afford, and the builds it changes
+most are the ones already shortest of points.
 ## Design note
 
 The opening mastery ceiling is deliberately generous compared with what

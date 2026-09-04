@@ -41,10 +41,14 @@ The damaging spells are done: bolts, lances, and the three area families
   entry.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
-- **Level 1 fights are too short.** Measured, not suspected: duels at
-  level 1 average barely above the three-round floor before any
-  particular rule is blamed. A question about hit points and damage at
-  the bottom of the curve.
+- **Level 1 fights are too short.** *Fixed, by granting ten mastery hit
+  points free at character creation rather than by raising what a
+  character may buy — see the design note in `character-creation.md`.*
+  What is left of it is one pairing: two level 1 casters against each
+  other still run past the twelve-round ceiling, because their damage
+  with an empty reservoir is so small that more hit points simply
+  lengthen the stalemate. That is the free-floor entry below rather
+  than a hit point problem.
 - **The hand axe and the staff are still dead weapons.** Both are
   dominated by arithmetic rather than by structure: the short sword
   beats the hand axe on accuracy, block and quickness for one point of

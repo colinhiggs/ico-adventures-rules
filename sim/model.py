@@ -620,7 +620,8 @@ def build_character(name, spec, level, M, shopping_foe=None):
 
     # Leftover points: mastery hit points up to the per-level ceiling,
     # then everything else widens the power source.
-    free_mhp = int(M.get("advancement", "free_mastery_hp_per_level")) * level
+    free_mhp = (int(M.get("advancement", "free_mastery_hp_per_level")) * level
+                + int(M.get("character-creation", "free_starting_mastery_hp")))
     bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
     source_per_point = int(M.get("advancement", "power_source_per_point"))
