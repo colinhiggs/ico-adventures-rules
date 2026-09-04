@@ -367,14 +367,14 @@ def discipline_cost(grade, M):
     return total
 
 
-def grade_minimum_level(M, grade):
-    """The level a grade cannot be taken below. Only Master has one:
-    depth is held back by time rather than by price, so that paying for
-    it does not eat the skill ranks its powers need to be used."""
-    key = "%s_minimum_level" % grade
-    if key not in M.keys("disciplines"):
-        return 1
-    return int(M.get("disciplines", key))
+def masters_allowed(M, level):
+    """How many disciplines this character may hold at Master: one for
+    every `levels_per_master` levels, per disciplines.md. Depth is held
+    back by time rather than by price, because price was measured to
+    delay it rather than prevent it -- and two signatures reinforce each
+    other rather than merely adding."""
+    per = int(M.get("disciplines", "levels_per_master"))
+    return level // per if per > 0 else 99
 
 
 def buy_disciplines(priorities, budget, M, level=1):
@@ -386,16 +386,20 @@ def buy_disciplines(priorities, budget, M, level=1):
     costs = grade_costs(M)
     held = {}
     spent = 0
+    masters = 0
+    allowed = masters_allowed(M, level)
     for discipline, target in priorities:
         for grade in GRADE_ORDER:
             if GRADE_ORDER.index(grade) > GRADE_ORDER.index(target):
                 break
-            if level < grade_minimum_level(M, grade):
+            if grade == "master" and masters >= allowed:
                 break
             if spent + costs[grade] > budget:
                 break
             spent += costs[grade]
             held[discipline] = grade
+            if grade == "master":
+                masters += 1
     return held, spent
 
 
