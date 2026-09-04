@@ -105,13 +105,33 @@ The damaging spells are done: bolts, lances, and the three area families
   the board, which risks a stance choice currently in good health. It
   is a real design decision and is not taken.
 
-  Constitution has since been given free mastery hit points per level
-  instead, which takes it from three quarters of the best attribute to
-  about nine tenths without touching the stances. **Strength blocking
-  is still the best four points in the game**, because block skill and
-  melee attack share an attribute. That double-dip is the last thing
-  standing, and the only repairs for it are moving block off strength
-  or giving dexterity a second job of its own.
+  Constitution has since been given free mastery hit points, faster
+  recovery and quicker healing, and that closed most of it.
+
+- **The strength double-dip is real, worth about ten per cent, and
+  should be left alone.** Block skill and melee attack do share an
+  attribute, so strength raises offence and defence together. Measured
+  across the pairings anybody would actually choose, though, the gap is
+  small — at level 15, strength-and-block 100%, constitution-and-dodge
+  97%, constitution-and-block 95%, dexterity-and-dodge 91%, a spread of
+  1.10x. At level 8 it is 1.11x.
+
+  Three repairs were measured and every one is worse:
+
+  - **Block governed by constitution** widens the spread to 1.56x and
+    1.59x. It does not remove the double-dip, it moves it onto the
+    attribute that now also grants hit points, recovery and healing.
+  - **Block governed by dexterity** gives the tightest spread of raw
+    pairings but drops the count of builds that prefer to block from
+    four in ten to two: every defensive option would run on one
+    attribute, and blocking stops being a real choice.
+  - **Finesse extended to medium weapons** keeps all four blockers and
+    reads 1.06x at level 15, but 1.20x at level 8 — better at one end
+    and worse at the other.
+
+  A ten per cent premium for a coherent build is not a defect. The gate
+  that is actually failing fails on the paragon against the spellblade,
+  which is a different quarrel entirely.
 
 - **Constitution now also speeds recovery and shortens a wound**, on
   top of the free mastery hit points. Untested by the simulator in both
