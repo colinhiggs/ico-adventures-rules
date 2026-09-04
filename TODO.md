@@ -63,26 +63,48 @@ The damaging spells are done: bolts, lances, and the three area families
   level and casters still clear a crowd in about half the rounds a
   fighter needs. Contribution spread with the paragon set aside is 2.2x,
   2.5x and 2.4x at levels 5, 10 and 15 -- at or inside the gate.
-- **The paragon's lead is much reduced and not gone.** Measured with
-  the Master limit and the weapon changes together, its contribution
-  spread runs 1.7x, 2.3x, 3.1x, 2.9x and 2.8x at levels 1, 5, 8, 10 and
-  15 against a 2.5x target. The trajectory of the whole effort, at
-  level 15: 5.5x before any of it, 3.7x after spells took damage from
-  casting skill, 3.3x after Untouchable was kept out of plate, 2.8x
-  with the Master limit and the weapon table on top.
+- **The paragon's lead is not the paragon.** Investigated properly and
+  it is neither its disciplines nor its weapon: a duellist given the
+  paragon's attributes and told to dodge scores exactly what the paragon
+  scores, 478 at level 8 and 732 at level 15, to the point. Athletic
+  Adept is worth literally nothing to a blocker — 404 before and 404
+  after — because Redouble needs the dodge stance and a blocker's
+  targeting difficulty comes from a skill Athletic does not touch.
 
-  The two changes pull in opposite directions at level 8 and the same
-  direction above it. The Master limit takes level 15 down (827 to 732)
-  and pushes level 8 up (from 2.6x to 3.1x), because at level 8 the
-  second Master was a purchase the build should never have made -- it
-  cost 33 stamina and 9 points of offence for half a point of damage
-  taken, and forbidding it makes the character better. Above level 8
-  the compounding it prevents is real.
+  Both stances are healthy. Four builds of ten prefer to block, and the
+  duellist at dexterity 12 is better blocking (617) than dodging (536),
+  while the paragon at dexterity 16 is better dodging (732) than
+  blocking (606). Neither is right in general, which is what the design
+  note says it wants.
 
-  What is left at level 8 is not signature stacking. It is an ordinary
-  single-Master build with good attributes out-contributing the
-  duellist, which is a question about attribute spreads and stances
-  rather than about disciplines or weapons.
+  What the investigation actually turned up is about ATTRIBUTES, and it
+  is the more useful finding. Measured from a common 76-point base with
+  four points to place, at levels 8 and 15:
+
+      +4 strength, blocking     464   725
+      +4 dexterity, dodging     440   656
+      +4 strength, dodging      385   630
+      +4 constitution, blocking 353   520
+      +4 constitution, dodging  343   529
+
+  Two things fall out. **Strength is the best attribute a martial build
+  can buy**, because block skill is governed by strength and melee
+  attack is too, so one attribute raises offence and defence together
+  where dexterity raises only defence. And **constitution is the worst
+  by a distance**, because core hit points are a small slice of a total
+  pool that mastery hit points dominate, so the attribute that buys them
+  buys very little.
+
+  It also means the strongest build is not in the roster at all: a
+  strength-heavy blocker beats the paragon on a like-for-like base, so
+  the contribution spread is understated rather than overstated.
+
+  Moving block to constitution was measured and does fix the
+  double-dip — the spread of the five options narrows from 1.39x to
+  1.24x at level 15 and constitution becomes worth having — but it makes
+  blocking worse than dodging across the board, which risks the stance
+  the game currently has in healthy balance. It is a real design choice
+  and is not taken here.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons
