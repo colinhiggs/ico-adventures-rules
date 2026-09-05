@@ -1313,7 +1313,8 @@
           "life_force"
         ],
         "domains": [
-          "healing"
+          "healing",
+          "death"
         ],
         "range": "touch",
         "restores": 3,

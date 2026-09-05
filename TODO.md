@@ -28,6 +28,20 @@ The damaging spells are done: bolts, lances, and the three area families
   Granted Domain makes cheap. A druid needs nature spells that are not
   simply elemental damage with a leaf on them: weather, plants, animals,
   terrain.
+- **A `harm` domain, if enough spells ever want one.** Cause Wounds is
+  tagged healing and death, the way Staunch already is: domains are
+  tags rather than categories and one match is enough for access, so
+  the reversed spell needed no domain of its own. A harm domain is
+  still arguable, and the question is what it would mean. Read widely
+  it is most of the damaging spells, which makes it a second name for
+  war and worth nothing. Read narrowly it is direct injury to the life
+  force, or the intent to cause pain rather than merely damage, which
+  is a distinct thing worth having a god of -- and currently has one
+  spell in it. A neutral `life` domain covering both directions was
+  the other candidate and was dropped as too near a duplicate of
+  healing. The list is open, so none of this costs anything to leave
+  until there are spells enough to settle it.
+
 - **Divination, movement and utility.** Not urgent, and mostly outside
   what the simulator can say anything about.
 

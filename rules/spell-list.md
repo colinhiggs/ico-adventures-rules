@@ -311,7 +311,7 @@ mechanics:
   cure_wounds:
     base_difficulty: 16
     schools: [life_force]
-    domains: [healing]
+    domains: [healing, death]
     range: touch
     restores: 3
     difficulty_per_step: 4
@@ -924,8 +924,10 @@ the only thing in the game that gives one back in the middle of an
 adventure.
 
 Cast as *Cause Wounds*, the same spell inflicts that much damage
-instead, applied the ordinary way round, and answers to harm rather than
-to {{ mechanics.cure_wounds.domains }}.
+instead, applied the ordinary way round. It is one spell either way
+and carries one set of domains — {{ mechanics.cure_wounds.domains }}
+— because a god who governs the boundary between life and death
+may teach a priest to move a creature across it in either direction.
 
 ### Cleanse ({{ mechanics.cleanse.base_difficulty }})
 
