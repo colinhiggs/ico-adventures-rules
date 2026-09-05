@@ -80,33 +80,20 @@ hit when dodging — see [[hitting]]. The Untouchable signature in
 
 ## Light armour
 
-- **Partial leather** — AP {{ mechanics.partial_leather.ap }}, move {{ mechanics.partial_leather.move_penalty }}, skill
-  penalty {{ mechanics.partial_leather.skill_penalty }},
-  {{ mechanics.partial_leather.cost_gp }}gp.
-- **Leather** — AP {{ mechanics.leather.ap }}, move {{ mechanics.leather.move_penalty }}, skill penalty
-  {{ mechanics.leather.skill_penalty }},
-  {{ mechanics.leather.cost_gp }}gp.
-- **Studded leather** — AP {{ mechanics.studded_leather.ap }}, move {{ mechanics.studded_leather.move_penalty }}, skill
-  penalty {{ mechanics.studded_leather.skill_penalty }},
-  {{ mechanics.studded_leather.cost_gp }}gp.
-- **Chain shirt** — AP {{ mechanics.chain_shirt.ap }}, move {{ mechanics.chain_shirt.move_penalty }}, skill penalty
-  {{ mechanics.chain_shirt.skill_penalty }},
-  {{ mechanics.chain_shirt.cost_gp }}gp.
+{% table mechanics
+   rows=unarmoured,partial_leather,leather,studded_leather,
+        chain_shirt
+   columns=ap:AP,move_penalty:Move,skill_penalty:Skill,
+           cost_gp:"Cost (gp)"
+   header=Armour %}
 
 ## Medium and heavy armour
 
-- **Scale mail** — AP {{ mechanics.scale_mail.ap }}, move {{ mechanics.scale_mail.move_penalty }}, skill penalty
-  {{ mechanics.scale_mail.skill_penalty }},
-  {{ mechanics.scale_mail.cost_gp }}gp.
-- **Chain mail** — AP {{ mechanics.chain_mail.ap }}, move {{ mechanics.chain_mail.move_penalty }}, skill penalty
-  {{ mechanics.chain_mail.skill_penalty }},
-  {{ mechanics.chain_mail.cost_gp }}gp.
-- **Breastplate** — AP {{ mechanics.breastplate.ap }}, move {{ mechanics.breastplate.move_penalty }}, skill penalty
-  {{ mechanics.breastplate.skill_penalty }},
-  {{ mechanics.breastplate.cost_gp }}gp.
-- **Full plate** — AP {{ mechanics.full_plate.ap }}, move {{ mechanics.full_plate.move_penalty }}, skill penalty
-  {{ mechanics.full_plate.skill_penalty }},
-  {{ mechanics.full_plate.cost_gp }}gp.
+{% table mechanics
+   rows=scale_mail,chain_mail,breastplate,full_plate
+   columns=ap:AP,move_penalty:Move,skill_penalty:Skill,
+           cost_gp:"Cost (gp)"
+   header=Armour %}
 
 ## Shields
 
@@ -114,17 +101,11 @@ A shield does nothing while you dodge. While you block, it adds to your
 targeting difficulty and its armour points come off the blow on top of
 your worn armour.
 
-- **Buckler** — block bonus +{{ mechanics.buckler.block_td_bonus }},
-  block AP {{ mechanics.buckler.block_ap }},
-  {{ mechanics.buckler.cost_gp }}gp.
-- **Shield** — block bonus +{{ mechanics.shield.block_td_bonus }},
-  block AP {{ mechanics.shield.block_ap }},
-  {{ mechanics.shield.cost_gp }}gp.
-- **Great shield** — block bonus
-  +{{ mechanics.great_shield.block_td_bonus }}, block AP
-  {{ mechanics.great_shield.block_ap }}, skill penalty
-  {{ mechanics.great_shield.skill_penalty }},
-  {{ mechanics.great_shield.cost_gp }}gp.
+{% table mechanics
+   rows=buckler,shield,great_shield
+   columns=block_td_bonus:"Block bonus",block_ap:"Block AP",
+           skill_penalty:Skill,cost_gp:"Cost (gp)"
+   header=Shield %}
 
 ## Example
 

@@ -346,12 +346,10 @@ power, and the minimum cost does not apply to it — see [[using-powers]].
 The bolts are one spell written several times, differing only in the
 damage they deal. Every one of them shares a chassis:
 
-- **Tier:** {{ mechanics.bolt.tier }}
-- **Schools:** {{ mechanics.bolt.schools }}
-- **Range:** {{ mechanics.bolt.range }}, needing a ranged attack roll
-- **Base difficulty:** {{ mechanics.bolt.base_difficulty }}
-- **Damage:** {{ mechanics.bolt.damage }}
-- **Minimum spirit:** {{ mechanics.bolt.minimum_spirit }}
+{% table mechanics.bolt
+   rows=tier,schools,range,needs_attack_roll:"Needs an attack roll",
+        base_difficulty,damage,minimum_spirit
+   header=Property %}
 
 and both standard boosts:
 
@@ -362,14 +360,11 @@ and both standard boosts:
 
 The variants are then only a damage type and a domain:
 
-- **Force Bolt** — {{ mechanics.force_bolt.damage_type }} damage, domain
-  of {{ mechanics.force_bolt.domains }}.
-- **Flame Bolt** — {{ mechanics.flame_bolt.damage_type }} damage, domain
-  of {{ mechanics.flame_bolt.domains }}.
-- **Frost Bolt** — {{ mechanics.frost_bolt.damage_type }} damage, domain
-  of {{ mechanics.frost_bolt.domains }}.
-- **Shock Bolt** — {{ mechanics.shock_bolt.damage_type }} damage, domain
-  of {{ mechanics.shock_bolt.domains }}.
+{% table mechanics
+   rows=force_bolt:"Force Bolt",flame_bolt:"Flame Bolt",
+        frost_bolt:"Frost Bolt",shock_bolt:"Shock Bolt"
+   columns=damage_type:Damage,domains:Domains
+   header=Spell %}
 
 Because the domain differs, a caster's [[discipline-powers|Granted
 Domain]] makes one bolt markedly cheaper than the rest — a priest of war
@@ -382,13 +377,14 @@ Where a bolt is what a caster throws when there is nothing left, a
 **lance** is what they open with. One spell again written four times,
 sharing a chassis:
 
-- **Schools:** {{ mechanics.lance.schools }}
-- **Range:** {{ mechanics.lance.range }}, aimed with the casting roll
-- **Base difficulty:** {{ mechanics.lance.base_difficulty }}
-- **Damage:** {{ mechanics.lance.damage }}, plus
-  {{ mechanics.lance.damage_per_step }} for each further
-  {{ mechanics.lance.difficulty_per_step }} points of difficulty
-- **Minimum spirit:** {{ mechanics.lance.minimum_spirit }}
+{% table mechanics.lance
+   rows=schools,range,needs_attack_roll:"Needs an attack roll",
+        base_difficulty,damage,minimum_spirit
+   header=Property %}
+
+It is aimed with the casting roll rather than a ranged attack, and it
+deals {{ mechanics.lance.damage_per_step }} more damage for each further
+{{ mechanics.lance.difficulty_per_step }} points of difficulty.
 
 A lance that hits also applies a **condition**, which the target may
 resist — see [[conditions]]. That is what a lance buys over a bolt, and
@@ -397,18 +393,11 @@ why it is worth the spirit a bolt does not cost.
 The variants differ in damage type, domain, and which condition they
 carry:
 
-- **Force Lance** — {{ mechanics.force_lance.damage_type }} damage,
-  domain of {{ mechanics.force_lance.domains }}, leaves the target
-  **{{ mechanics.force_lance.condition }}**.
-- **Flame Lance** — {{ mechanics.flame_lance.damage_type }} damage,
-  domain of {{ mechanics.flame_lance.domains }}, leaves the target
-  **{{ mechanics.flame_lance.condition }}**.
-- **Frost Lance** — {{ mechanics.frost_lance.damage_type }} damage,
-  domain of {{ mechanics.frost_lance.domains }}, leaves the target
-  **{{ mechanics.frost_lance.condition }}**.
-- **Storm Lance** — {{ mechanics.storm_lance.damage_type }} damage,
-  domain of {{ mechanics.storm_lance.domains }}, leaves the target
-  **{{ mechanics.storm_lance.condition }}**.
+{% table mechanics
+   rows=force_lance:"Force Lance",flame_lance:"Flame Lance",
+        frost_lance:"Frost Lance",storm_lance:"Storm Lance"
+   columns=damage_type:Damage,domains:Domains,condition:Condition
+   header=Spell %}
 
 Which lance to carry is a question about the fight rather than about the
 numbers: they deal the same damage, and the condition is the whole
@@ -433,14 +422,11 @@ Small and fierce, and the only area family that applies a condition —
 the same conditions the lances carry, resisted the same way. See
 [[conditions]].
 
-- **Force Burst** — {{ mechanics.force_burst.damage_type }} damage,
-  leaves the target **{{ mechanics.force_burst.condition }}**.
-- **Flame Burst** — {{ mechanics.flame_burst.damage_type }} damage,
-  leaves the target **{{ mechanics.flame_burst.condition }}**.
-- **Frost Burst** — {{ mechanics.frost_burst.damage_type }} damage,
-  leaves the target **{{ mechanics.frost_burst.condition }}**.
-- **Storm Burst** — {{ mechanics.storm_burst.damage_type }} damage,
-  leaves the target **{{ mechanics.storm_burst.condition }}**.
+{% table mechanics
+   rows=force_burst:"Force Burst",flame_burst:"Flame Burst",
+        frost_burst:"Frost Burst",storm_burst:"Storm Burst"
+   columns=damage_type:Damage,domains:Domains,condition:Condition
+   header=Spell %}
 
 ### Blasts — {{ mechanics.blast.area_archetype }}
 
@@ -453,8 +439,11 @@ family's whole character: a blast carries no condition and lasts no
 time, but it is the only area spell that can be poured down a corridor
 or swept across a rank.
 
-Force, Flame, Frost and Storm Blast differ only in damage type and
-domain.
+{% table mechanics
+   rows=force_blast:"Force Blast",flame_blast:"Flame Blast",
+        frost_blast:"Frost Blast",storm_blast:"Storm Blast"
+   columns=damage_type:Damage,domains:Domains
+   header=Spell %}
 
 ### Fields — {{ mechanics.field.area_archetype }}
 
@@ -474,8 +463,11 @@ it pays for its damage at {{ mechanics.field.difficulty_per_damage }}
 points each, the same rate a blast pays, rather than the diffuse rate.
 A field that nobody minds walking through is not denying anything.
 
-Force, Flame, Frost and Storm Field differ only in damage type and
-domain.
+{% table mechanics
+   rows=force_field:"Force Field",flame_field:"Flame Field",
+        frost_field:"Frost Field",storm_field:"Storm Field"
+   columns=damage_type:Damage,domains:Domains
+   header=Spell %}
 
 {% book-only %}
 ### Design note
@@ -499,12 +491,14 @@ Two spells for the worst moment, and they are not the same spell. One
 stops somebody dying. The other undoes it, and costs the caster
 something a night's sleep will not give back.
 
-### Staunch ({{ mechanics.staunch.base_difficulty }})
+{% table mechanics
+   rows=staunch:Staunch,raise_the_dead:"Raise the Dead"
+   columns=base_difficulty:Difficulty,schools:Schools,
+           domains:Domains,range:Range,
+           minimum_spirit:"Min spirit"
+   header=Spell %}
 
-- **Schools:** {{ mechanics.staunch.schools }}
-- **Domains:** {{ mechanics.staunch.domains }}
-- **Range:** {{ mechanics.staunch.range }}
-- **Minimum spirit:** {{ mechanics.staunch.minimum_spirit }}
+### Staunch ({{ mechanics.staunch.base_difficulty }})
 
 A creature at death's door is **stable** — see [[dying]]. The dying
 count stops. It restores no hit points at all: they are still
@@ -520,11 +514,6 @@ arm's length — which is often the difference between saving them and
 walking into whatever put them there.
 
 ### Raise the Dead ({{ mechanics.raise_the_dead.base_difficulty }})
-
-- **Schools:** {{ mechanics.raise_the_dead.schools }}
-- **Domains:** {{ mechanics.raise_the_dead.domains }}
-- **Range:** {{ mechanics.raise_the_dead.range }}
-- **Minimum spirit:** {{ mechanics.raise_the_dead.minimum_spirit }}
 
 The dead return, on
 {{ mechanics.raise_the_dead.returns_at_core }} core hit point:
@@ -615,13 +604,18 @@ All of them share a chassis:
   the spell says otherwise
 - **Minimum spirit:** {{ mechanics.guard.minimum_spirit }}
 
+{% table mechanics
+   rows=bulwark:"Bulwark",stoneskin:"Stoneskin",
+        elemental_guard:"Elemental Guard",
+        mantle_of_warding:"Mantle of Warding",deathward:"Deathward"
+   columns=schools:Schools,domains:Domains,protects:Protects
+   header=Guard %}
+
 ### Bulwark
 
-*{{ mechanics.bulwark.schools }}; {{ mechanics.bulwark.domains }}.*
 The target gains {{ mechanics.bulwark.protection }} temporary
-**mastery** hit points, plus
-{{ mechanics.bulwark.protection_per_step }} for each further
-{{ mechanics.bulwark.difficulty_per_step }} points of
+**mastery** hit points, plus {{ mechanics.bulwark.protection_per_step }}
+for each further {{ mechanics.bulwark.difficulty_per_step }} points of
 difficulty. They behave exactly as mastery hit points do — see
 [[hit-points]] — and any that are left vanish when the spell ends.
 
@@ -630,7 +624,6 @@ Cure Wounds, which is the point of Cure Wounds.
 
 ### Stoneskin
 
-*{{ mechanics.stoneskin.schools }}; {{ mechanics.stoneskin.domains }}.*
 The target's damage reduction rises by the guard's strength, exactly as
 though their armour were better. It is still bound by the cap in
 [[damage]]: however much reduction you pile up, half of every blow gets
@@ -638,23 +631,19 @@ through.
 
 ### Elemental Guard
 
-*{{ mechanics.elemental_guard.schools }};
-{{ mechanics.elemental_guard.domains }}.* Name a damage type as you
-cast. Damage of that type is reduced by the guard's strength, which
-starts at {{ mechanics.elemental_guard.protection }} and buys its steps
-every {{ mechanics.elemental_guard.difficulty_per_step }} points —
-cheaper than Stoneskin because it only ever answers one thing.
+Name a damage type as you cast. Damage of that type is reduced by the
+guard's strength, which starts at {{
+mechanics.elemental_guard.protection }} and buys its steps every {{
+mechanics.elemental_guard.difficulty_per_step }} points — cheaper than
+Stoneskin because it only ever answers one thing.
 
 ### Mantle of Warding
 
-*{{ mechanics.mantle_of_warding.schools }};
-{{ mechanics.mantle_of_warding.domains }}.* Name a school of magic as
-you cast. The target adds the guard's strength to every roll to resist
-an effect of that school, per [[conditions]].
+Name a school of magic as you cast. The target adds the guard's strength
+to every roll to resist an effect of that school, per [[conditions]].
 
 ### Deathward
 
-*{{ mechanics.deathward.schools }}; {{ mechanics.deathward.domains }}.*
 The target adds the guard's strength to resist anything of the death
 domain, and reduces damage from it by the same. The one guard that
 answers a *subject* rather than a technique or an element, and the
@@ -711,29 +700,30 @@ and the arithmetic only works when the somebody else is better at it
 than you are. That is the whole shape of a support caster: they are
 worth having in a party and poor on their own.
 
+{% table mechanics
+   rows=blessing_of_the_blade:"Blessing of the Blade",
+        warding_blessing:"Warding Blessing",
+        heart_of_the_lion:"Heart of the Lion",keen_edge:"Keen Edge",
+        fleetness:"Fleetness",fortunes_favour:"Fortune's Favour"
+   columns=schools:Schools,domains:Domains,boosts:Boosts
+   header=Blessing %}
+
 ### Blessing of the Blade
 
-*{{ mechanics.blessing_of_the_blade.schools }};
-{{ mechanics.blessing_of_the_blade.domains }}.* The target's attack
-rolls gain the blessing's strength.
+The target's attack rolls gain the blessing's strength.
 
 ### Warding Blessing
 
-*{{ mechanics.warding_blessing.schools }};
-{{ mechanics.warding_blessing.domains }}.* The target's targeting
-difficulty rises by the blessing's strength — harder to hit, however
-they are defending.
+The target's targeting difficulty rises by the blessing's strength —
+harder to hit, however they are defending.
 
 ### Heart of the Lion
 
-*{{ mechanics.heart_of_the_lion.schools }};
-{{ mechanics.heart_of_the_lion.domains }}.* The target's Resolve rises
-by the blessing's strength, which is to say they shrug off the things
-[[conditions]] makes Resolve the answer to.
+The target's Resolve rises by the blessing's strength, which is to say
+they shrug off the things [[conditions]] makes Resolve the answer to.
 
 ### Keen Edge
 
-*{{ mechanics.keen_edge.schools }}; {{ mechanics.keen_edge.domains }}.*
 The target's weapon damage rises by the blessing's strength. It buys its
 steps every {{ mechanics.keen_edge.difficulty_per_step }} points rather
 than the usual rate, because damage is worth less per point than
@@ -741,21 +731,18 @@ accuracy and should cost less.
 
 ### Fleetness
 
-*{{ mechanics.fleetness.schools }}; {{ mechanics.fleetness.domains }}.*
 The target's movement rises by {{ mechanics.fleetness.bonus }} squares,
-plus {{ mechanics.fleetness.bonus_per_step }} for each further
-{{ mechanics.fleetness.difficulty_per_step }} points. It grants no extra
+plus {{ mechanics.fleetness.bonus_per_step }} for each further {{
+mechanics.fleetness.difficulty_per_step }} points. It grants no extra
 action of any kind — see the design note.
 
 ### Fortune's Favour
 
-*{{ mechanics.fortunes_favour.schools }};
-{{ mechanics.fortunes_favour.domains }}.* The target's critical range
-widens by {{ mechanics.fortunes_favour.bonus }}: they roll a critical on
-the top two faces rather than the top one, with everything
-[[core-resolution]] says about criticals following from there. This is
-the one blessing that does not grow with difficulty. Luck either favours
-you or it does not.
+The target's critical range widens by {{ mechanics.fortunes_favour.bonus
+}}: they roll a critical on the top two faces rather than the top one,
+with everything [[core-resolution]] says about criticals following from
+there. This is the one blessing that does not grow with difficulty. Luck
+either favours you or it does not.
 
 {% book-only %}
 ### Design note
@@ -809,57 +796,55 @@ All six share a chassis:
   difficulty spent on it
 - **Minimum spirit:** {{ mechanics.ward.minimum_spirit }}
 
+{% table mechanics
+   rows=fog_bank:"Fog Bank",shroud:"Shroud",briar_patch:"Briar Patch",
+        sleet_storm:"Sleet Storm",hallowed_ground:"Hallowed Ground",
+        ring_of_silence:"Ring of Silence"
+   columns=schools:Schools,domains:Domains,condition_inside:Inside
+   header=Ward %}
+
 ### Fog Bank
 
-*{{ mechanics.fog_bank.schools }}; {{ mechanics.fog_bank.domains }}.*
-Cold grey fog, too thick to see an arm's length through. Anything
-inside is **{{ mechanics.fog_bank.condition_inside }}** — see
-[[conditions]] — which makes a fog bank as bad for the caster's own side
-as for anyone else, and is the reason it is usually put somewhere nobody
-friendly intends to stand.
+Cold grey fog, too thick to see an arm's length through. Anything inside
+is **{{ mechanics.fog_bank.condition_inside }}** — see [[conditions]] —
+which makes a fog bank as bad for the caster's own side as for anyone
+else, and is the reason it is usually put somewhere nobody friendly
+intends to stand.
 
 ### Shroud
 
-*{{ mechanics.shroud.schools }}; {{ mechanics.shroud.domains }}.*
 Darkness that is not the absence of light but the presence of something
-else. Anything inside is
-**{{ mechanics.shroud.condition_inside }}**. It does the same work as a
-Fog Bank and belongs to a different pair of gods, which is the point of
-having both.
+else. Anything inside is **{{ mechanics.shroud.condition_inside }}**. It
+does the same work as a Fog Bank and belongs to a different pair of
+gods, which is the point of having both.
 
 ### Briar Patch
 
-*{{ mechanics.briar_patch.schools }};
-{{ mechanics.briar_patch.domains }}.* Thorned growth erupts from the
-ground and takes hold of whatever is standing in it. Anything inside is
-**{{ mechanics.briar_patch.condition_inside }}**: it may fight, it may
-defend itself, it may not go anywhere. The most straightforwardly
-obstructive ward, and the one that most resembles a wall.
+Thorned growth erupts from the ground and takes hold of whatever is
+standing in it. Anything inside is **{{
+mechanics.briar_patch.condition_inside }}**: it may fight, it may defend
+itself, it may not go anywhere. The most straightforwardly obstructive
+ward, and the one that most resembles a wall.
 
 ### Sleet Storm
 
-*{{ mechanics.sleet_storm.schools }};
-{{ mechanics.sleet_storm.domains }}.* Freezing rain and treacherous
-footing. Anything inside is
-**{{ mechanics.sleet_storm.condition_inside }}**. It denies less than a
-Briar Patch and is far harder to simply avoid, since a creature can
-still cross it — slowly, and while being shot at.
+Freezing rain and treacherous footing. Anything inside is **{{
+mechanics.sleet_storm.condition_inside }}**. It denies less than a Briar
+Patch and is far harder to simply avoid, since a creature can still
+cross it — slowly, and while being shot at.
 
 ### Hallowed Ground
 
-*{{ mechanics.hallowed_ground.schools }};
-{{ mechanics.hallowed_ground.domains }}.* Ground given over to something
-larger, which does not want a fight happening on it. Anything inside is
-**{{ mechanics.hallowed_ground.condition_inside }}**. The only ward that
+Ground given over to something larger, which does not want a fight
+happening on it. Anything inside is **{{
+mechanics.hallowed_ground.condition_inside }}**. The only ward that
 leaves its occupants entirely mobile and merely worse at everything.
 
 ### Ring of Silence
 
-*{{ mechanics.ring_of_silence.schools }};
-{{ mechanics.ring_of_silence.domains }}.* Sound stops at the edge.
-Anything inside is
-**{{ mechanics.ring_of_silence.condition_inside }}**, which is aimed at
-one kind of enemy in particular and does very little to the rest.
+Sound stops at the edge. Anything inside is **{{
+mechanics.ring_of_silence.condition_inside }}**, which is aimed at one
+kind of enemy in particular and does very little to the rest.
 
 {% book-only %}
 ### Design note
@@ -901,13 +886,15 @@ between fights on their own, and core hit points return at the rate
 worth a cheap spell cast often, and the deep pool is worth an expensive
 one cast rarely.
 
-### Mend ({{ mechanics.mend.base_difficulty }})
+{% table mechanics
+   rows=mend:Mend,cure_wounds:"Cure Wounds",
+        cleanse:Cleanse,restoration:Restoration
+   columns=base_difficulty:Difficulty,schools:Schools,
+           domains:Domains,range:Range,
+           minimum_spirit:"Min spirit"
+   header=Spell %}
 
-- **Tier:** {{ mechanics.mend.tier }}
-- **Schools:** {{ mechanics.mend.schools }}
-- **Domains:** {{ mechanics.mend.domains }}
-- **Range:** {{ mechanics.mend.range }}
-- **Minimum spirit:** {{ mechanics.mend.minimum_spirit }}
+### Mend ({{ mechanics.mend.base_difficulty }})
 
 Restores {{ mechanics.mend.restores }} mastery hit points, plus
 {{ mechanics.mend.restored_per_step }} for each further
@@ -919,12 +906,6 @@ can still mend — which is the point of it. It is to healing what a bolt
 is to harm.
 
 ### Cure Wounds ({{ mechanics.cure_wounds.base_difficulty }})
-
-- **Schools:** {{ mechanics.cure_wounds.schools }}
-- **Domains:** {{ mechanics.cure_wounds.domains }}, or harm when
-  reversed
-- **Range:** {{ mechanics.cure_wounds.range }}
-- **Minimum spirit:** {{ mechanics.cure_wounds.minimum_spirit }}
 
 Restores {{ mechanics.cure_wounds.restores }} hit points, plus
 {{ mechanics.cure_wounds.restored_per_step }} for each further
@@ -943,14 +924,10 @@ the only thing in the game that gives one back in the middle of an
 adventure.
 
 Cast as *Cause Wounds*, the same spell inflicts that much damage
-instead, applied the ordinary way round.
+instead, applied the ordinary way round, and answers to harm rather than
+to {{ mechanics.cure_wounds.domains }}.
 
 ### Cleanse ({{ mechanics.cleanse.base_difficulty }})
-
-- **Schools:** {{ mechanics.cleanse.schools }}
-- **Domains:** {{ mechanics.cleanse.domains }}
-- **Range:** {{ mechanics.cleanse.range }}
-- **Minimum spirit:** {{ mechanics.cleanse.minimum_spirit }}
 
 Ends one condition on the creature you touch, if the difficulty you
 declare meets or beats the difficulty that imposed it. It cannot touch a
@@ -961,11 +938,6 @@ match it. A stun laid on at difficulty `30` needs a Cleanse at `30`, and
 the caster who laid it on paid for that difficulty too.
 
 ### Restoration ({{ mechanics.restoration.base_difficulty }})
-
-- **Schools:** {{ mechanics.restoration.schools }}
-- **Domains:** {{ mechanics.restoration.domains }}
-- **Range:** {{ mechanics.restoration.range }}
-- **Minimum spirit:** {{ mechanics.restoration.minimum_spirit }}
 
 The same, for the conditions Cleanse cannot reach: blindness, disease, a
 curse. Ends one lasting condition on the creature you touch, again if
