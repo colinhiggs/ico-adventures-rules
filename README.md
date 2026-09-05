@@ -10,6 +10,7 @@ rules/ico/
   book/      rulebook.md (the root) plus ch-*.md chapters that include the rules
   sim/       the balance simulator — see sim/README.md
   build/     generated; never edit
+  VERSION    the released version — see VERSIONING.md and CHANGELOG.md
 ```
 
 This directory is its own git repository and is developed independently
@@ -44,12 +45,30 @@ pools, character creation and priorities, combat, skills and focus,
 disciplines and advancement, powers, equipment, and spellcasting.
 
 Deliberately partial: the skill list has around thirty skills with no
-governing attribute assigned yet; ranged weapons are unstatted; the
-spell list has two spells; and the Magical and Spiritual disciplines
-lean on spells that mostly do not exist yet.
+governing attribute assigned yet; ranged weapons are unstatted; and the
+bestiary has one creature in it, which is enough to fix the stat block
+format and no more.
 
 Not here: the class and levelling system from the original draft. It was
 mid-revamp and internally inconsistent, and disciplines replace it.
+
+## Versioning
+
+The rules are versioned so that anything built on them — an adventure
+above all — can record which version it was checked against, and find
+out later whether that still holds. `VERSION` holds the number, an
+annotated git tag mirrors it, and the build stamps it into all three
+outputs.
+
+The three tiers mean what an adventure author has to *do* about a
+change rather than how large it was, which is the whole of the
+convention worth remembering:
+
+- **MAJOR** — a name went away; an adventure must be revisited.
+- **MINOR** — a name was added or a value moved; nothing breaks.
+- **PATCH** — no mechanic value changed at all.
+
+`VERSIONING.md` has the full convention and how to cut a release.
 
 ## House style for a rule document
 
