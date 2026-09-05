@@ -21,6 +21,13 @@ a:hover { border-bottom-color: #7aa7f0; }
 code { background: #1e2029; padding: 1px 5px; border-radius: 4px; font-size: 14px;
        font-family: ui-monospace, Menlo, monospace; color: #e6c07b; }
 .broken-link { color: #f77; text-decoration: underline wavy; }
+table { border-collapse: collapse; margin: 18px 0; font-family: system-ui, sans-serif;
+        font-size: 14px; width: 100%; display: block; overflow-x: auto; }
+th, td { padding: 6px 12px 6px 0; border-bottom: 1px solid #2a2c36; text-align: left;
+         vertical-align: top; white-space: nowrap; }
+thead th { color: #fff; font-size: 11px; text-transform: uppercase;
+           letter-spacing: .06em; border-bottom-color: #3a3d4a; }
+tbody tr:last-child td { border-bottom: none; }
 .doc { scroll-margin-top: 20px; }
 .tags { font-family: system-ui, sans-serif; font-size: 11px; color: #6e7280;
         text-transform: uppercase; letter-spacing: .06em; margin: 6px 0 0; }
@@ -797,9 +804,9 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="summary">Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.</p>
 <p>Each weapon carries the statistics that feed <a href="#rule-hitting" data-rule-id="hitting">Landing a Blow</a> and <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>: an <strong>accuracy</strong> modifier to the attack roll, a <strong>damage</strong> rating, a <strong>size</strong>, and the <strong>block value</strong> in armour points it subtracts from a blow when you use it to block rather than dodge.</p>
 <h4>Simple melee weapons</h4>
-<ul><li><strong>Dagger</strong> — accuracy +2, damage 5, size S, block 2, 2gp.</li><li><strong>Short sword</strong> — accuracy +1, damage 6, size S, block 6, 10gp.</li><li><strong>Hand axe</strong> — accuracy +0, damage 7, size S, block 3, 8gp.</li><li><strong>Staff</strong> — accuracy +0, damage 5, size M, block 7, 1gp.</li></ul>
+<table><thead><tr><th>Weapon</th><th>Accuracy</th><th>Damage</th><th>Size</th><th>Block</th><th>Reach</th><th>Cost (gp)</th><th>Properties</th></tr></thead><tbody><tr><td>Dagger</td><td>2</td><td>5</td><td>S</td><td>2</td><td>—</td><td>2</td><td>quick</td></tr><tr><td>Short sword</td><td>1</td><td>6</td><td>S</td><td>6</td><td>—</td><td>10</td><td>quick</td></tr><tr><td>Hand axe</td><td>0</td><td>7</td><td>S</td><td>3</td><td>—</td><td>8</td><td>—</td></tr><tr><td>Staff</td><td>0</td><td>5</td><td>M</td><td>7</td><td>1</td><td>1</td><td>aids casting</td></tr></tbody></table>
 <h4>Martial melee weapons</h4>
-<ul><li><strong>Sword</strong> — accuracy +1, damage 8, size M, block 5, 20gp.</li><li><strong>Battle axe</strong> — accuracy +0, damage 9, size M, block 3, 20gp.</li><li><strong>Two-handed sword</strong> — accuracy +0, damage 12, size L, block 4, 50gp.</li><li><strong>Great axe</strong> — accuracy +0, damage 12, size L, block 2, 45gp.</li></ul>
+<table><thead><tr><th>Weapon</th><th>Accuracy</th><th>Damage</th><th>Size</th><th>Block</th><th>Reach</th><th>Cost (gp)</th><th>Properties</th></tr></thead><tbody><tr><td>Sword</td><td>1</td><td>8</td><td>M</td><td>5</td><td>—</td><td>20</td><td>—</td></tr><tr><td>Battle axe</td><td>0</td><td>9</td><td>M</td><td>3</td><td>—</td><td>20</td><td>—</td></tr><tr><td>Two-handed sword</td><td>0</td><td>12</td><td>L</td><td>4</td><td>—</td><td>50</td><td>unwieldy</td></tr><tr><td>Great axe</td><td>0</td><td>12</td><td>L</td><td>2</td><td>—</td><td>45</td><td>unwieldy</td></tr></tbody></table>
 <h4>Finesse</h4>
 <p>A weapon of size S may use <strong>dexterity</strong> instead of strength for its attack skill.</p>
 <h4>Two hands</h4>
@@ -1193,6 +1200,8 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="tags">bestiary · creature · humanoid</p>
 <p class="summary">A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.</p>
 <p>A goblin stands about waist high to a human, and knows it. It carries a blade too big for it, wears whatever leather it has taken off something else, and would very much rather be behind you than in front of you.</p>
+<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>8</td></tr><tr><td>Dexterity</td><td>14</td></tr><tr><td>Constitution</td><td>8</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>8</td></tr><tr><td>Charisma</td><td>6</td></tr></tbody></table>
+<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>2</td></tr><tr><td>Dodge</td><td>3</td></tr><tr><td>Stealth</td><td>4</td></tr><tr><td>Spot</td><td>2</td></tr><tr><td>Fortitude</td><td>1</td></tr></tbody></table>
 <p>Alone a goblin is barely a fight. The reason it is the first thing in this book is that it is never alone: a raiding band is 6 of them, and 6 attacks a round against one target is a different proposition from one attack six times.</p>
 <h4>How it fights</h4>
 <p>It opens from hiding — Stealth 4 is the best thing about it — and it dodges rather than blocks, because at strength 8 it has nothing to block with. Against a dodging goblin an attacker is looking at a target set by dexterity 14 and Dodge 3, which is more than a first-level party expects from something this small.</p>

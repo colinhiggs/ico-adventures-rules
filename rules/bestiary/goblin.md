@@ -39,6 +39,10 @@ A goblin stands about waist high to a human, and knows it. It carries a
 blade too big for it, wears whatever leather it has taken off something
 else, and would very much rather be behind you than in front of you.
 
+{% table mechanics.attributes header=Attribute value_header=Score %}
+
+{% table mechanics.skills header=Skill value_header=Rank %}
+
 Alone a goblin is barely a fight. The reason it is the first thing in
 this book is that it is never alone: a raiding band is
 {{ mechanics.typical_number }} of them, and

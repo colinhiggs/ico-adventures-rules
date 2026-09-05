@@ -72,44 +72,21 @@ subtracts from a blow when you use it to block rather than dodge.
 
 ## Simple melee weapons
 
-- **Dagger** — accuracy +{{ mechanics.dagger.accuracy }}, damage
-  {{ mechanics.dagger.damage }}, size {{ mechanics.dagger.size }},
-  block {{ mechanics.dagger.block_ap }},
-  {{ mechanics.dagger.cost_gp }}gp.
-- **Short sword** — accuracy +{{ mechanics.short_sword.accuracy }},
-  damage {{ mechanics.short_sword.damage }}, size
-  {{ mechanics.short_sword.size }}, block
-  {{ mechanics.short_sword.block_ap }},
-  {{ mechanics.short_sword.cost_gp }}gp.
-- **Hand axe** — accuracy +{{ mechanics.hand_axe.accuracy }}, damage
-  {{ mechanics.hand_axe.damage }}, size {{ mechanics.hand_axe.size }},
-  block {{ mechanics.hand_axe.block_ap }},
-  {{ mechanics.hand_axe.cost_gp }}gp.
-- **Staff** — accuracy +{{ mechanics.staff.accuracy }}, damage
-  {{ mechanics.staff.damage }}, size {{ mechanics.staff.size }}, block
-  {{ mechanics.staff.block_ap }}, {{ mechanics.staff.cost_gp }}gp.
+{% table mechanics
+   rows=dagger,short_sword,hand_axe,staff
+   columns=accuracy:Accuracy,damage:Damage,size:Size,block_ap:Block,
+           reach_bonus:Reach,cost_gp:"Cost (gp)"
+   flags=quick:quick,unwieldy:unwieldy,aids_spellcasting:"aids casting"
+   header=Weapon %}
 
 ## Martial melee weapons
 
-- **Sword** — accuracy +{{ mechanics.sword.accuracy }}, damage
-  {{ mechanics.sword.damage }}, size {{ mechanics.sword.size }}, block
-  {{ mechanics.sword.block_ap }}, {{ mechanics.sword.cost_gp }}gp.
-- **Battle axe** — accuracy +{{ mechanics.battle_axe.accuracy }},
-  damage {{ mechanics.battle_axe.damage }}, size
-  {{ mechanics.battle_axe.size }}, block
-  {{ mechanics.battle_axe.block_ap }},
-  {{ mechanics.battle_axe.cost_gp }}gp.
-- **Two-handed sword** — accuracy
-  +{{ mechanics.two_handed_sword.accuracy }}, damage
-  {{ mechanics.two_handed_sword.damage }}, size
-  {{ mechanics.two_handed_sword.size }}, block
-  {{ mechanics.two_handed_sword.block_ap }},
-  {{ mechanics.two_handed_sword.cost_gp }}gp.
-- **Great axe** — accuracy +{{ mechanics.great_axe.accuracy }}, damage
-  {{ mechanics.great_axe.damage }}, size
-  {{ mechanics.great_axe.size }}, block
-  {{ mechanics.great_axe.block_ap }},
-  {{ mechanics.great_axe.cost_gp }}gp.
+{% table mechanics
+   rows=sword,battle_axe,two_handed_sword:"Two-handed sword",great_axe
+   columns=accuracy:Accuracy,damage:Damage,size:Size,block_ap:Block,
+           reach_bonus:Reach,cost_gp:"Cost (gp)"
+   flags=quick:quick,unwieldy:unwieldy,aids_spellcasting:"aids casting"
+   header=Weapon %}
 
 ## Finesse
 
