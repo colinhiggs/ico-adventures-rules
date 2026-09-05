@@ -21,6 +21,13 @@ a:hover { border-bottom-color: #7aa7f0; }
 code { background: #1e2029; padding: 1px 5px; border-radius: 4px; font-size: 14px;
        font-family: ui-monospace, Menlo, monospace; color: #e6c07b; }
 .broken-link { color: #f77; text-decoration: underline wavy; }
+table { border-collapse: collapse; margin: 18px 0; font-family: system-ui, sans-serif;
+        font-size: 14px; width: 100%; display: block; overflow-x: auto; }
+th, td { padding: 6px 12px 6px 0; border-bottom: 1px solid #2a2c36; text-align: left;
+         vertical-align: top; white-space: nowrap; }
+thead th { color: #fff; font-size: 11px; text-transform: uppercase;
+           letter-spacing: .06em; border-bottom-color: #3a3d4a; }
+tbody tr:last-child td { border-bottom: none; }
 .doc { scroll-margin-top: 20px; }
 .tags { font-family: system-ui, sans-serif; font-size: 11px; color: #6e7280;
         text-transform: uppercase; letter-spacing: .06em; margin: 6px 0 0; }
@@ -797,9 +804,9 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="summary">Weapon statistics: accuracy modifier, damage rating, size, and the armour points it contributes when used to block.</p>
 <p>Each weapon carries the statistics that feed <a href="#rule-hitting" data-rule-id="hitting">Landing a Blow</a> and <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>: an <strong>accuracy</strong> modifier to the attack roll, a <strong>damage</strong> rating, a <strong>size</strong>, and the <strong>block value</strong> in armour points it subtracts from a blow when you use it to block rather than dodge.</p>
 <h4>Simple melee weapons</h4>
-<ul><li><strong>Dagger</strong> — accuracy +2, damage 5, size S, block 2, 2gp.</li><li><strong>Short sword</strong> — accuracy +1, damage 6, size S, block 6, 10gp.</li><li><strong>Hand axe</strong> — accuracy +0, damage 7, size S, block 3, 8gp.</li><li><strong>Staff</strong> — accuracy +0, damage 5, size M, block 7, 1gp.</li></ul>
+<table><thead><tr><th>Weapon</th><th>Accuracy</th><th>Damage</th><th>Size</th><th>Block</th><th>Reach</th><th>Cost (gp)</th><th>Properties</th></tr></thead><tbody><tr><td>Dagger</td><td>2</td><td>5</td><td>S</td><td>2</td><td>—</td><td>2</td><td>quick</td></tr><tr><td>Short sword</td><td>1</td><td>6</td><td>S</td><td>6</td><td>—</td><td>10</td><td>quick</td></tr><tr><td>Hand axe</td><td>0</td><td>7</td><td>S</td><td>3</td><td>—</td><td>8</td><td>—</td></tr><tr><td>Staff</td><td>0</td><td>5</td><td>M</td><td>7</td><td>1</td><td>1</td><td>aids casting</td></tr></tbody></table>
 <h4>Martial melee weapons</h4>
-<ul><li><strong>Sword</strong> — accuracy +1, damage 8, size M, block 5, 20gp.</li><li><strong>Battle axe</strong> — accuracy +0, damage 9, size M, block 3, 20gp.</li><li><strong>Two-handed sword</strong> — accuracy +0, damage 12, size L, block 4, 50gp.</li><li><strong>Great axe</strong> — accuracy +0, damage 12, size L, block 2, 45gp.</li></ul>
+<table><thead><tr><th>Weapon</th><th>Accuracy</th><th>Damage</th><th>Size</th><th>Block</th><th>Reach</th><th>Cost (gp)</th><th>Properties</th></tr></thead><tbody><tr><td>Sword</td><td>1</td><td>8</td><td>M</td><td>5</td><td>—</td><td>20</td><td>—</td></tr><tr><td>Battle axe</td><td>0</td><td>9</td><td>M</td><td>3</td><td>—</td><td>20</td><td>—</td></tr><tr><td>Two-handed sword</td><td>0</td><td>12</td><td>L</td><td>4</td><td>—</td><td>50</td><td>unwieldy</td></tr><tr><td>Great axe</td><td>0</td><td>12</td><td>L</td><td>2</td><td>—</td><td>45</td><td>unwieldy</td></tr></tbody></table>
 <h4>Finesse</h4>
 <p>A weapon of size S may use <strong>dexterity</strong> instead of strength for its attack skill.</p>
 <h4>Two hands</h4>
@@ -834,12 +841,12 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="summary">Armour points reduce every blow that lands, at the price of a skill penalty that also makes a dodging wearer easier to hit. Shields add to a block instead.</p>
 <p>Armour is worn for its <strong>armour points</strong> (AP), subtracted from every blow that lands — see <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>. It also carries a <strong>movement penalty</strong>, in squares, taken off every move — see <a href="#rule-movement" data-rule-id="movement">Movement and Distance</a>. The further price is a <strong>skill penalty</strong> that applies while it is worn and, because a dodging defender's targeting difficulty is built from their dodge skill, makes the wearer easier to hit when dodging — see <a href="#rule-hitting" data-rule-id="hitting">Landing a Blow</a>. The Untouchable signature in <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Discipline Powers</a> removes exactly that penalty.</p>
 <h4>Light armour</h4>
-<ul><li><strong>Partial leather</strong> — AP 1, move 0, skill penalty 0, 5gp.</li><li><strong>Leather</strong> — AP 2, move 0, skill penalty -1, 10gp.</li><li><strong>Studded leather</strong> — AP 3, move 0, skill penalty -2, 25gp.</li><li><strong>Chain shirt</strong> — AP 4, move 0, skill penalty -3, 100gp.</li></ul>
+<table><thead><tr><th>Armour</th><th>AP</th><th>Move</th><th>Skill</th><th>Cost (gp)</th></tr></thead><tbody><tr><td>Unarmoured</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>Partial leather</td><td>1</td><td>0</td><td>0</td><td>5</td></tr><tr><td>Leather</td><td>2</td><td>0</td><td>-1</td><td>10</td></tr><tr><td>Studded leather</td><td>3</td><td>0</td><td>-2</td><td>25</td></tr><tr><td>Chain shirt</td><td>4</td><td>0</td><td>-3</td><td>100</td></tr></tbody></table>
 <h4>Medium and heavy armour</h4>
-<ul><li><strong>Scale mail</strong> — AP 4, move 1, skill penalty -4, 50gp.</li><li><strong>Chain mail</strong> — AP 5, move 1, skill penalty -4, 150gp.</li><li><strong>Breastplate</strong> — AP 5, move 1, skill penalty -3, 200gp.</li><li><strong>Full plate</strong> — AP 8, move 2, skill penalty -6, 1500gp.</li></ul>
+<table><thead><tr><th>Armour</th><th>AP</th><th>Move</th><th>Skill</th><th>Cost (gp)</th></tr></thead><tbody><tr><td>Scale mail</td><td>4</td><td>1</td><td>-4</td><td>50</td></tr><tr><td>Chain mail</td><td>5</td><td>1</td><td>-4</td><td>150</td></tr><tr><td>Breastplate</td><td>5</td><td>1</td><td>-3</td><td>200</td></tr><tr><td>Full plate</td><td>8</td><td>2</td><td>-6</td><td>1500</td></tr></tbody></table>
 <h4>Shields</h4>
 <p>A shield does nothing while you dodge. While you block, it adds to your targeting difficulty and its armour points come off the blow on top of your worn armour.</p>
-<ul><li><strong>Buckler</strong> — block bonus +1, block AP 2, 5gp.</li><li><strong>Shield</strong> — block bonus +2, block AP 3, 15gp.</li><li><strong>Great shield</strong> — block bonus +3, block AP 5, skill penalty -1, 40gp.</li></ul>
+<table><thead><tr><th>Shield</th><th>Block bonus</th><th>Block AP</th><th>Skill</th><th>Cost (gp)</th></tr></thead><tbody><tr><td>Buckler</td><td>1</td><td>2</td><td>0</td><td>5</td></tr><tr><td>Shield</td><td>2</td><td>3</td><td>0</td><td>15</td></tr><tr><td>Great shield</td><td>3</td><td>5</td><td>-1</td><td>40</td></tr></tbody></table>
 <h4>Example</h4>
 <p>Bramm wears chain mail and carries a shield.</p>
 <p>While he dodges, only the chain mail matters: its armour points come off every blow that lands, and its skill penalty comes off his targeting difficulty, making him easier to hit than he would be unarmoured. The shield does nothing at all.</p>
@@ -1029,18 +1036,19 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Difficulty, cost and boosting all work as <a href="#rule-spellcasting" data-rule-id="spellcasting">How Spellcasting Works</a> and <a href="#rule-spell-properties" data-rule-id="spell-properties">Standard Spell Properties</a> describe. A spell marked <strong>minor</strong> is a minor power, and the minimum cost does not apply to it — see <a href="#rule-using-powers" data-rule-id="using-powers">Using a Power</a>.</p>
 <h4>The bolts</h4>
 <p>The bolts are one spell written several times, differing only in the damage they deal. Every one of them shares a chassis:</p>
-<ul><li><strong>Tier:</strong> minor</li><li><strong>Schools:</strong> ['energy']</li><li><strong>Range:</strong> 10, needing a ranged attack roll</li><li><strong>Base difficulty:</strong> 2</li><li><strong>Damage:</strong> 6</li><li><strong>Minimum spirit:</strong> 0</li></ul>
+<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Tier</td><td>minor</td></tr><tr><td>Schools</td><td>energy</td></tr><tr><td>Range</td><td>10</td></tr><tr><td>Needs an attack roll</td><td>yes</td></tr><tr><td>Base difficulty</td><td>2</td></tr><tr><td>Damage</td><td>6</td></tr><tr><td>Minimum spirit</td><td>0</td></tr></tbody></table>
 <p>and both standard boosts:</p>
 <ul><li><strong>More damage:</strong> 1 per further 3 points of difficulty.</li><li><strong>More bolts:</strong> one extra bolt per further 8 points of difficulty.</li></ul>
 <p>The variants are then only a damage type and a domain:</p>
-<ul><li><strong>Force Bolt</strong> — force damage, domain of ['magic'].</li><li><strong>Flame Bolt</strong> — fire damage, domain of ['war'].</li><li><strong>Frost Bolt</strong> — cold damage, domain of ['nature'].</li><li><strong>Shock Bolt</strong> — lightning damage, domain of ['war'].</li></ul>
+<table><thead><tr><th>Spell</th><th>Damage</th><th>Domains</th></tr></thead><tbody><tr><td>Force Bolt</td><td>force</td><td>magic</td></tr><tr><td>Flame Bolt</td><td>fire</td><td>war</td></tr><tr><td>Frost Bolt</td><td>cold</td><td>nature</td></tr><tr><td>Shock Bolt</td><td>lightning</td><td>war</td></tr></tbody></table>
 <p>Because the domain differs, a caster's <a href="#rule-discipline-powers" data-rule-id="discipline-powers">Granted Domain</a> makes one bolt markedly cheaper than the rest — a priest of war throws flame where a druid throws frost, without either of them needing a separate rule.</p>
 <h4>The lances</h4>
 <p>Where a bolt is what a caster throws when there is nothing left, a <strong>lance</strong> is what they open with. One spell again written four times, sharing a chassis:</p>
-<ul><li><strong>Schools:</strong> ['energy']</li><li><strong>Range:</strong> 10, aimed with the casting roll</li><li><strong>Base difficulty:</strong> 8</li><li><strong>Damage:</strong> 10, plus 1 for each further 2 points of difficulty</li><li><strong>Minimum spirit:</strong> 2</li></ul>
+<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Schools</td><td>energy</td></tr><tr><td>Range</td><td>10</td></tr><tr><td>Needs an attack roll</td><td>yes</td></tr><tr><td>Base difficulty</td><td>8</td></tr><tr><td>Damage</td><td>10</td></tr><tr><td>Minimum spirit</td><td>2</td></tr></tbody></table>
+<p>It is aimed with the casting roll rather than a ranged attack, and it deals 1 more damage for each further 2 points of difficulty.</p>
 <p>A lance that hits also applies a <strong>condition</strong>, which the target may resist — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>. That is what a lance buys over a bolt, and why it is worth the spirit a bolt does not cost.</p>
 <p>The variants differ in damage type, domain, and which condition they carry:</p>
-<ul><li><strong>Force Lance</strong> — force damage, domain of ['magic'], leaves the target <strong>stunned</strong>.</li><li><strong>Flame Lance</strong> — fire damage, domain of ['war'], leaves the target <strong>burning</strong>.</li><li><strong>Frost Lance</strong> — cold damage, domain of ['nature'], leaves the target <strong>slowed</strong>.</li><li><strong>Storm Lance</strong> — lightning damage, domain of ['war'], leaves the target <strong>dazed</strong>.</li></ul>
+<table><thead><tr><th>Spell</th><th>Damage</th><th>Domains</th><th>Condition</th></tr></thead><tbody><tr><td>Force Lance</td><td>force</td><td>magic</td><td>stunned</td></tr><tr><td>Flame Lance</td><td>fire</td><td>war</td><td>burning</td></tr><tr><td>Frost Lance</td><td>cold</td><td>nature</td><td>slowed</td></tr><tr><td>Storm Lance</td><td>lightning</td><td>war</td><td>dazed</td></tr></tbody></table>
 <p>Which lance to carry is a question about the fight rather than about the numbers: they deal the same damage, and the condition is the whole difference.</p>
 <h4>The area spells</h4>
 <p>Three families, and each of the four damage types appears in all three. None of them needs an attack roll: everything under the template takes the damage, and having nothing to dodge is what an area spell buys with its difficulty.</p>
@@ -1048,27 +1056,26 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h5>Bursts — concentrated</h5>
 <p><em>Base difficulty 6, circle, minimum spirit 2.</em></p>
 <p>Small and fierce, and the only area family that applies a condition — the same conditions the lances carry, resisted the same way. See <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
-<ul><li><strong>Force Burst</strong> — force damage, leaves the target <strong>stunned</strong>.</li><li><strong>Flame Burst</strong> — fire damage, leaves the target <strong>burning</strong>.</li><li><strong>Frost Burst</strong> — cold damage, leaves the target <strong>slowed</strong>.</li><li><strong>Storm Burst</strong> — lightning damage, leaves the target <strong>dazed</strong>.</li></ul>
+<table><thead><tr><th>Spell</th><th>Damage</th><th>Domains</th><th>Condition</th></tr></thead><tbody><tr><td>Force Burst</td><td>force</td><td>magic</td><td>stunned</td></tr><tr><td>Flame Burst</td><td>fire</td><td>war</td><td>burning</td></tr><tr><td>Frost Burst</td><td>cold</td><td>nature</td><td>slowed</td></tr><tr><td>Storm Burst</td><td>lightning</td><td>war</td><td>dazed</td></tr></tbody></table>
 <h5>Blasts — balanced</h5>
 <p><em>Base difficulty 6, minimum spirit 2.</em></p>
 <p>A blast takes <strong>any template in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></strong> — circle, cone, line, square or rectangle — chosen as it is cast. That flexibility is the family's whole character: a blast carries no condition and lasts no time, but it is the only area spell that can be poured down a corridor or swept across a rank.</p>
-<p>Force, Flame, Frost and Storm Blast differ only in damage type and domain.</p>
+<table><thead><tr><th>Spell</th><th>Damage</th><th>Domains</th></tr></thead><tbody><tr><td>Force Blast</td><td>force</td><td>magic</td></tr><tr><td>Flame Blast</td><td>fire</td><td>war</td></tr><tr><td>Frost Blast</td><td>cold</td><td>nature</td></tr><tr><td>Storm Blast</td><td>lightning</td><td>war</td></tr></tbody></table>
 <h5>Fields — diffuse</h5>
 <p><em>Base difficulty 8, circle, minimum spirit 3.</em></p>
 <p>A field does not go off; it stays. It lasts 2 rounds, plus 1 for each further point of difficulty spent on duration, and anything inside it takes the damage at the start of its turn. It is the only way a caster denies ground rather than clearing it.</p>
 <p>A field spreads at the diffuse rate, so it covers more ground per point than anything else in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a> — but it pays for its damage at 2 points each, the same rate a blast pays, rather than the diffuse rate. A field that nobody minds walking through is not denying anything.</p>
-<p>Force, Flame, Frost and Storm Field differ only in damage type and domain.</p>
+<table><thead><tr><th>Spell</th><th>Damage</th><th>Domains</th></tr></thead><tbody><tr><td>Force Field</td><td>force</td><td>magic</td></tr><tr><td>Flame Field</td><td>fire</td><td>war</td></tr><tr><td>Frost Field</td><td>cold</td><td>nature</td></tr><tr><td>Storm Field</td><td>lightning</td><td>war</td></tr></tbody></table>
 <h5>Design note</h5>
 <p>Wide and weak was the original idea, and it does not work: a field that deals a scratch is a field the enemy walks straight across, which leaves the spell with no job at all. Area denial only denies if crossing costs something worth avoiding, so a damaging field buys its damage at the same rate a blast does and simply pays a great deal of difficulty for covering so much ground.</p>
 <p>That makes the damaging fields expensive, which is correct — most fields will not be damaging at all. Fog, tangling ground, silence and the rest deny ground by what they do rather than by what they deal, and those are the ones the archetype's cheap spread was written for.</p>
 <h4>Bringing them back</h4>
 <p>Two spells for the worst moment, and they are not the same spell. One stops somebody dying. The other undoes it, and costs the caster something a night's sleep will not give back.</p>
+<table><thead><tr><th>Spell</th><th>Difficulty</th><th>Schools</th><th>Domains</th><th>Range</th><th>Min spirit</th></tr></thead><tbody><tr><td>Staunch</td><td>6</td><td>life force</td><td>healing, death</td><td>10</td><td>2</td></tr><tr><td>Raise the Dead</td><td>30</td><td>life force</td><td>death, healing, light</td><td>touch</td><td>10</td></tr></tbody></table>
 <h5>Staunch (6)</h5>
-<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing', 'death']</li><li><strong>Range:</strong> 10</li><li><strong>Minimum spirit:</strong> 2</li></ul>
 <p>A creature at death's door is <strong>stable</strong> — see <a href="#rule-dying" data-rule-id="dying">Wounds, Death's Door and Dying</a>. The dying count stops. It restores no hit points at all: they are still unconscious, still on whatever they were reduced to, and still wounded when they wake.</p>
 <p>That is the whole of its value and it is considerable. Cure Wounds can do this too, by taking them back above nothing, but Cure Wounds charges by the hit point and hauling somebody up from six under is an enormous bill in the middle of a fight. Staunch charges once, at a difficulty anyone can reach, and does it from across the room rather than from arm's length — which is often the difference between saving them and walking into whatever put them there.</p>
 <h5>Raise the Dead (30)</h5>
-<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['death', 'healing', 'light']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 10</li></ul>
 <p>The dead return, on 1 core hit point: unconscious, wounded, and alive.</p>
 <p>Three things make it something other than an errand.</p>
 <p><strong>It gets harder every hour.</strong> Add 1 to the difficulty for each hour since death, on top of the base — and after 24 hours it cannot be done at all, at any difficulty, by anyone. Whatever the spell reaches for is no longer within reach.</p>
@@ -1085,17 +1092,18 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>A <strong>guard</strong> is laid on one creature you touch and makes harm land more lightly on it. Where a blessing makes somebody better at what they do, a guard makes them harder to stop doing it.</p>
 <p>All of them share a chassis:</p>
 <ul><li><strong>Base difficulty:</strong> 8</li><li><strong>Range:</strong> touch</li><li><strong>Duration:</strong> 3 rounds, plus 1 for each further point of difficulty spent on it</li><li><strong>Strength:</strong> 1, plus 1 for each further 5 points of difficulty, unless the spell says otherwise</li><li><strong>Minimum spirit:</strong> 2</li></ul>
+<table><thead><tr><th>Guard</th><th>Schools</th><th>Domains</th><th>Protects</th></tr></thead><tbody><tr><td>Bulwark</td><td>matter</td><td>forge, light</td><td>mastery hit points</td></tr><tr><td>Stoneskin</td><td>matter</td><td>nature, forge</td><td>damage reduction</td></tr><tr><td>Elemental Guard</td><td>energy</td><td>nature, storm</td><td>damage reduction of one type</td></tr><tr><td>Mantle of Warding</td><td>influence and command</td><td>magic, knowledge</td><td>resistance to one school</td></tr><tr><td>Deathward</td><td>life force</td><td>death, light</td><td>resistance to the death domain</td></tr></tbody></table>
 <h5>Bulwark</h5>
-<p><em>['matter']; ['forge', 'light'].</em> The target gains 4 temporary <strong>mastery</strong> hit points, plus 2 for each further 4 points of difficulty. They behave exactly as mastery hit points do — see <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> — and any that are left vanish when the spell ends.</p>
+<p>The target gains 4 temporary <strong>mastery</strong> hit points, plus 2 for each further 4 points of difficulty. They behave exactly as mastery hit points do — see <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> — and any that are left vanish when the spell ends.</p>
 <p>It cannot grant core hit points. Nothing grants core hit points except Cure Wounds, which is the point of Cure Wounds.</p>
 <h5>Stoneskin</h5>
-<p><em>['matter']; ['nature', 'forge'].</em> The target's damage reduction rises by the guard's strength, exactly as though their armour were better. It is still bound by the cap in <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>: however much reduction you pile up, half of every blow gets through.</p>
+<p>The target's damage reduction rises by the guard's strength, exactly as though their armour were better. It is still bound by the cap in <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a>: however much reduction you pile up, half of every blow gets through.</p>
 <h5>Elemental Guard</h5>
-<p><em>['energy']; ['nature', 'storm'].</em> Name a damage type as you cast. Damage of that type is reduced by the guard's strength, which starts at 2 and buys its steps every 3 points — cheaper than Stoneskin because it only ever answers one thing.</p>
+<p>Name a damage type as you cast. Damage of that type is reduced by the guard's strength, which starts at 2 and buys its steps every 3 points — cheaper than Stoneskin because it only ever answers one thing.</p>
 <h5>Mantle of Warding</h5>
-<p><em>['influence_and_command']; ['magic', 'knowledge'].</em> Name a school of magic as you cast. The target adds the guard's strength to every roll to resist an effect of that school, per <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
+<p>Name a school of magic as you cast. The target adds the guard's strength to every roll to resist an effect of that school, per <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
 <h5>Deathward</h5>
-<p><em>['life_force']; ['death', 'light'].</em> The target adds the guard's strength to resist anything of the death domain, and reduces damage from it by the same. The one guard that answers a <em>subject</em> rather than a technique or an element, and the reason a priest of a kindly god is worth having in a tomb.</p>
+<p>The target adds the guard's strength to resist anything of the death domain, and reduces damage from it by the same. The one guard that answers a <em>subject</em> rather than a technique or an element, and the reason a priest of a kindly god is worth having in a tomb.</p>
 <h5>Design note</h5>
 <p>The guards are four different answers to the question "protected from what", and the price falls as the question narrows. Stoneskin answers everything and is dearest per point; Elemental Guard answers one damage type and is cheapest; the Mantle and Deathward sit between, each answering a category. That gradient is the whole family: a caster who knows what is coming buys the narrow spell and a caster who does not pays for the wide one.</p>
 <p>Bulwark is the odd one and the only one that adds rather than subtracts. Reduction is capped by <a href="#rule-damage" data-rule-id="damage">Working Out Damage</a> at half a blow and therefore has a ceiling no amount of spirit can lift; temporary hit points have no ceiling at all, which is why they are mastery hit points and vanish with the spell. A pool that persisted would be a slow way of buying permanent hit points, and hit points are bought with advancement points in this game or not at all.</p>
@@ -1105,18 +1113,19 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>All of them share a chassis:</p>
 <ul><li><strong>Base difficulty:</strong> 8</li><li><strong>Range:</strong> touch</li><li><strong>Duration:</strong> 3 rounds, plus 1 for each further point of difficulty spent on it</li><li><strong>Strength:</strong> <code>+1</code>, plus 1 for each further 6 points of difficulty</li><li><strong>Minimum spirit:</strong> 2</li></ul>
 <p>You may bless yourself. Most casters do not, because a round spent making somebody else better at fighting is a round not spent fighting, and the arithmetic only works when the somebody else is better at it than you are. That is the whole shape of a support caster: they are worth having in a party and poor on their own.</p>
+<table><thead><tr><th>Blessing</th><th>Schools</th><th>Domains</th><th>Boosts</th></tr></thead><tbody><tr><td>Blessing of the Blade</td><td>influence and command</td><td>war, light</td><td>attack rolls</td></tr><tr><td>Warding Blessing</td><td>influence and command</td><td>light, healing</td><td>targeting difficulty</td></tr><tr><td>Heart of the Lion</td><td>influence and command</td><td>love, war</td><td>resolve</td></tr><tr><td>Keen Edge</td><td>matter</td><td>forge, war</td><td>weapon damage</td></tr><tr><td>Fleetness</td><td>energy</td><td>travel, storm</td><td>movement squares</td></tr><tr><td>Fortune's Favour</td><td>influence and command</td><td>luck, trickery</td><td>critical range</td></tr></tbody></table>
 <h5>Blessing of the Blade</h5>
-<p><em>['influence_and_command']; ['war', 'light'].</em> The target's attack rolls gain the blessing's strength.</p>
+<p>The target's attack rolls gain the blessing's strength.</p>
 <h5>Warding Blessing</h5>
-<p><em>['influence_and_command']; ['light', 'healing'].</em> The target's targeting difficulty rises by the blessing's strength — harder to hit, however they are defending.</p>
+<p>The target's targeting difficulty rises by the blessing's strength — harder to hit, however they are defending.</p>
 <h5>Heart of the Lion</h5>
-<p><em>['influence_and_command']; ['love', 'war'].</em> The target's Resolve rises by the blessing's strength, which is to say they shrug off the things <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a> makes Resolve the answer to.</p>
+<p>The target's Resolve rises by the blessing's strength, which is to say they shrug off the things <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a> makes Resolve the answer to.</p>
 <h5>Keen Edge</h5>
-<p><em>['matter']; ['forge', 'war'].</em> The target's weapon damage rises by the blessing's strength. It buys its steps every 4 points rather than the usual rate, because damage is worth less per point than accuracy and should cost less.</p>
+<p>The target's weapon damage rises by the blessing's strength. It buys its steps every 4 points rather than the usual rate, because damage is worth less per point than accuracy and should cost less.</p>
 <h5>Fleetness</h5>
-<p><em>['energy']; ['travel', 'storm'].</em> The target's movement rises by 2 squares, plus 1 for each further 5 points. It grants no extra action of any kind — see the design note.</p>
+<p>The target's movement rises by 2 squares, plus 1 for each further 5 points. It grants no extra action of any kind — see the design note.</p>
 <h5>Fortune's Favour</h5>
-<p><em>['influence_and_command']; ['luck', 'trickery'].</em> The target's critical range widens by 1: they roll a critical on the top two faces rather than the top one, with everything <a href="#rule-core-resolution" data-rule-id="core-resolution">The Core Roll</a> says about criticals following from there. This is the one blessing that does not grow with difficulty. Luck either favours you or it does not.</p>
+<p>The target's critical range widens by 1: they roll a critical on the top two faces rather than the top one, with everything <a href="#rule-core-resolution" data-rule-id="core-resolution">The Core Roll</a> says about criticals following from there. This is the one blessing that does not grow with difficulty. Luck either favours you or it does not.</p>
 <h5>Design note</h5>
 <p>None of these grants an action, and that is the line the family will not cross. An extra action is worth more than any bonus the difficulty scale can price, because it multiplies everything a character does rather than adding to one part of it; a spell that hands one out is either the only buff anybody casts or it is priced so far out of reach that it is decoration. Fleetness moves you further and lets you do exactly as much when you get there.</p>
 <p>Blessings allow no resistance for the same reason the wards allow none, arrived at from the opposite side. A ward is terrain and does not care who you are; a blessing is a gift and the recipient is not arguing. The resistance rules exist for the case in between, where somebody is doing something to somebody who would rather they did not.</p>
@@ -1127,18 +1136,19 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>Wards spread at the diffuse rate, the widest in <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a>, because covering ground is the whole of what they buy. Difficulty goes to area and to duration and to nothing else: a ward does the same thing however hard it was cast, over more or less of the map, for more or less of the fight.</p>
 <p>All six share a chassis:</p>
 <ul><li><strong>Base difficulty:</strong> 6</li><li><strong>Template:</strong> circle, priced as diffuse — see <a href="#rule-spell-area" data-rule-id="spell-area">Spell Areas</a></li><li><strong>Duration:</strong> 3 rounds, plus 1 for each further point of difficulty spent on it</li><li><strong>Minimum spirit:</strong> 2</li></ul>
+<table><thead><tr><th>Ward</th><th>Schools</th><th>Domains</th><th>Inside</th></tr></thead><tbody><tr><td>Fog Bank</td><td>matter</td><td>nature, sea</td><td>blinded</td></tr><tr><td>Shroud</td><td>illusion</td><td>darkness, trickery</td><td>blinded</td></tr><tr><td>Briar Patch</td><td>matter</td><td>nature</td><td>rooted</td></tr><tr><td>Sleet Storm</td><td>energy</td><td>storm, nature</td><td>slowed</td></tr><tr><td>Hallowed Ground</td><td>influence and command</td><td>light, justice</td><td>dazed</td></tr><tr><td>Ring of Silence</td><td>matter</td><td>knowledge, magic</td><td>silenced</td></tr></tbody></table>
 <h5>Fog Bank</h5>
-<p><em>['matter']; ['nature', 'sea'].</em> Cold grey fog, too thick to see an arm's length through. Anything inside is <strong>blinded</strong> — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a> — which makes a fog bank as bad for the caster's own side as for anyone else, and is the reason it is usually put somewhere nobody friendly intends to stand.</p>
+<p>Cold grey fog, too thick to see an arm's length through. Anything inside is <strong>blinded</strong> — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a> — which makes a fog bank as bad for the caster's own side as for anyone else, and is the reason it is usually put somewhere nobody friendly intends to stand.</p>
 <h5>Shroud</h5>
-<p><em>['illusion']; ['darkness', 'trickery'].</em> Darkness that is not the absence of light but the presence of something else. Anything inside is <strong>blinded</strong>. It does the same work as a Fog Bank and belongs to a different pair of gods, which is the point of having both.</p>
+<p>Darkness that is not the absence of light but the presence of something else. Anything inside is <strong>blinded</strong>. It does the same work as a Fog Bank and belongs to a different pair of gods, which is the point of having both.</p>
 <h5>Briar Patch</h5>
-<p><em>['matter']; ['nature'].</em> Thorned growth erupts from the ground and takes hold of whatever is standing in it. Anything inside is <strong>rooted</strong>: it may fight, it may defend itself, it may not go anywhere. The most straightforwardly obstructive ward, and the one that most resembles a wall.</p>
+<p>Thorned growth erupts from the ground and takes hold of whatever is standing in it. Anything inside is <strong>rooted</strong>: it may fight, it may defend itself, it may not go anywhere. The most straightforwardly obstructive ward, and the one that most resembles a wall.</p>
 <h5>Sleet Storm</h5>
-<p><em>['energy']; ['storm', 'nature'].</em> Freezing rain and treacherous footing. Anything inside is <strong>slowed</strong>. It denies less than a Briar Patch and is far harder to simply avoid, since a creature can still cross it — slowly, and while being shot at.</p>
+<p>Freezing rain and treacherous footing. Anything inside is <strong>slowed</strong>. It denies less than a Briar Patch and is far harder to simply avoid, since a creature can still cross it — slowly, and while being shot at.</p>
 <h5>Hallowed Ground</h5>
-<p><em>['influence_and_command']; ['light', 'justice'].</em> Ground given over to something larger, which does not want a fight happening on it. Anything inside is <strong>dazed</strong>. The only ward that leaves its occupants entirely mobile and merely worse at everything.</p>
+<p>Ground given over to something larger, which does not want a fight happening on it. Anything inside is <strong>dazed</strong>. The only ward that leaves its occupants entirely mobile and merely worse at everything.</p>
 <h5>Ring of Silence</h5>
-<p><em>['matter']; ['knowledge', 'magic'].</em> Sound stops at the edge. Anything inside is <strong>silenced</strong>, which is aimed at one kind of enemy in particular and does very little to the rest.</p>
+<p>Sound stops at the edge. Anything inside is <strong>silenced</strong>, which is aimed at one kind of enemy in particular and does very little to the rest.</p>
 <h5>Design note</h5>
 <p>The wards do not allow a resistance roll, and that is the most important thing about them.</p>
 <p>Every other condition in the game lands by beating somebody, which makes a condition a contest and its duration a matter of how badly they lost. That is right for something a caster does <em>to</em> a creature. It is wrong for something a caster does to a <em>place</em>. A fog bank is not trying to beat you; it is fog. Rolling against it would say that a strong-willed character can see through weather, which is a strange thing for a rule to claim and an annoying one to adjudicate.</p>
@@ -1147,22 +1157,19 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>The restorative spells</h4>
 <p>Harm is undone in the reverse of the order it was done. <a href="#rule-hit-points" data-rule-id="hit-points">Core and Mastery Hit Points</a> sends damage through mastery first and into core only when mastery is gone; healing goes to <strong>core first</strong>, and reaches mastery only once the real wound has closed. A wound mends before the luck comes back.</p>
 <p>That is why there are two spells and not one. Mastery hit points return between fights on their own, and core hit points return at the rate <a href="#rule-recovery" data-rule-id="recovery">Recovery Between Fights</a> gives them, which is barely at all — so the shallow pool is worth a cheap spell cast often, and the deep pool is worth an expensive one cast rarely.</p>
+<table><thead><tr><th>Spell</th><th>Difficulty</th><th>Schools</th><th>Domains</th><th>Range</th><th>Min spirit</th></tr></thead><tbody><tr><td>Mend</td><td>4</td><td>life force</td><td>healing</td><td>touch</td><td>0</td></tr><tr><td>Cure Wounds</td><td>16</td><td>life force</td><td>healing</td><td>touch</td><td>3</td></tr><tr><td>Cleanse</td><td>10</td><td>life force</td><td>healing</td><td>touch</td><td>2</td></tr><tr><td>Restoration</td><td>14</td><td>life force</td><td>healing</td><td>touch</td><td>4</td></tr></tbody></table>
 <h5>Mend (4)</h5>
-<ul><li><strong>Tier:</strong> minor</li><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 0</li></ul>
 <p>Restores 4 mastery hit points, plus 1 for each further 3 points of difficulty. It cannot touch core hit points: it puts back the cushion, not the wound.</p>
 <p>Being a minor spell it has no minimum cost, so a caster who has run dry can still mend — which is the point of it. It is to healing what a bolt is to harm.</p>
 <h5>Cure Wounds (16)</h5>
-<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing'], or harm when reversed</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 3</li></ul>
 <p>Restores 3 hit points, plus 1 for each further 4 points of difficulty, to core hit points first and to mastery once core is full.</p>
 <p>However well you roll, this spell costs at least 3 spirit for every hit point it puts back. A good roll makes an ordinary spell cheaper; it does not make this one cheaper, because what it is buying is not measured in difficulty.</p>
 <p>It restores far less per point than Mend and costs a great deal more. That is not a mistake. A point of core is a night's rest, and this is the only thing in the game that gives one back in the middle of an adventure.</p>
-<p>Cast as <em>Cause Wounds</em>, the same spell inflicts that much damage instead, applied the ordinary way round.</p>
+<p>Cast as <em>Cause Wounds</em>, the same spell inflicts that much damage instead, applied the ordinary way round, and answers to harm rather than to ['healing'].</p>
 <h5>Cleanse (10)</h5>
-<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 2</li></ul>
 <p>Ends one condition on the creature you touch, if the difficulty you declare meets or beats the difficulty that imposed it. It cannot touch a lasting condition — see <a href="#rule-conditions" data-rule-id="conditions">Conditions and Resisting Them</a>.</p>
 <p>You are undoing somebody else's work, and the price is that you have to match it. A stun laid on at difficulty <code>30</code> needs a Cleanse at <code>30</code>, and the caster who laid it on paid for that difficulty too.</p>
 <h5>Restoration (14)</h5>
-<ul><li><strong>Schools:</strong> ['life_force']</li><li><strong>Domains:</strong> ['healing']</li><li><strong>Range:</strong> touch</li><li><strong>Minimum spirit:</strong> 4</li></ul>
 <p>The same, for the conditions Cleanse cannot reach: blindness, disease, a curse. Ends one lasting condition on the creature you touch, again if your declared difficulty meets or beats the difficulty that imposed it.</p>
 <p>Nothing else in the rules ends a lasting condition. Waiting does not.</p>
 <h5>Design note</h5>
@@ -1193,6 +1200,8 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p class="tags">bestiary · creature · humanoid</p>
 <p class="summary">A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.</p>
 <p>A goblin stands about waist high to a human, and knows it. It carries a blade too big for it, wears whatever leather it has taken off something else, and would very much rather be behind you than in front of you.</p>
+<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>8</td></tr><tr><td>Dexterity</td><td>14</td></tr><tr><td>Constitution</td><td>8</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>8</td></tr><tr><td>Charisma</td><td>6</td></tr></tbody></table>
+<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>2</td></tr><tr><td>Dodge</td><td>3</td></tr><tr><td>Stealth</td><td>4</td></tr><tr><td>Spot</td><td>2</td></tr><tr><td>Fortitude</td><td>1</td></tr></tbody></table>
 <p>Alone a goblin is barely a fight. The reason it is the first thing in this book is that it is never alone: a raiding band is 6 of them, and 6 attacks a round against one target is a different proposition from one attack six times.</p>
 <h4>How it fights</h4>
 <p>It opens from hiding — Stealth 4 is the best thing about it — and it dodges rather than blocks, because at strength 8 it has nothing to block with. Against a dodging goblin an attacker is looking at a target set by dexterity 14 and Dodge 3, which is more than a first-level party expects from something this small.</p>
