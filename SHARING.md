@@ -62,7 +62,9 @@ The common case, and the one the shared area exists for.
    keys of `build/snippets.json`.
 4. Rebuild, so `build/` moves with the source in the same commit. See
    "Building from a consuming project" below for the command.
-5. `python3 tools/test_rules.py ico` must pass.
+5. `python3 tools/test_rules.py ico` must pass. From a consuming
+   project's layout it cannot be run at all yet — see below — so a
+   creature branch raised there is tested when it is reviewed here.
 
 A new creature is a MINOR change: it adds a name and takes nothing
 away. It does not need a release of its own — the rules project tags
@@ -147,7 +149,23 @@ python3 tools/build.py --path ../../rules-ico
 
 The build prints the directory's name back at you, so from that layout
 it says `Built 'rules-ico'` rather than `Built 'ico'`. Only the label
-differs; the outputs are identical either way.
+differs; the outputs are identical either way — the same sources build
+byte-for-byte identical files from either checkout, which is what makes
+the conflict recipe below work.
+
+`tools/test_rules.py` has no `--path`. It takes a ruleset *name* and
+looks it up in the same two directories, so from a submodule layout it
+can only run its own suite against `demo`:
+
+```bash
+python3 tools/test_rules.py          # the toolset's own suite; still worth running
+```
+
+That still proves the toolset, but not this ruleset. Until `--path` is
+added there (it is named as a wanted extension in the toolset's
+`SHARING.md`), the ruleset suite runs from the rules project's own
+working directory, which is one more reason a branch raised from a
+consumer is reviewed here before it merges.
 
 ## Conflicts in `build/`
 
