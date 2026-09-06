@@ -8,6 +8,27 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.0.1
+
+No mechanic value changed. An adventure written against 1.0.0 needs to
+do nothing.
+
+`SHARING.md` is new: who may write to which part of this repository,
+now that the projects built on these rules hold it as a git submodule
+and write to it. The short of it is that `rules/bestiary/` is open to
+anyone — writing an adventure creates monsters — and that a change
+moving a mechanic value comes from here, because the value is measured
+against the whole system rather than against the encounter that
+noticed it. It also covers where a new creature belongs, how to add
+one, and the submodule habits that keep two writers apart.
+
+`README.md` gained a pointer to it.
+
+Worth knowing on the toolset side, though it is not part of this
+version: `tools/test_rules.py` now takes `--path`, so a project holding
+the rules and the toolset as sibling submodules can run the ruleset's
+suite where it lies instead of only building it.
+
 ## 1.0.0
 
 The first tagged version. Nothing to compare it against — this entry
