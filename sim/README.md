@@ -12,6 +12,29 @@ python3 sim/balance.py --levels 1,5,10,15 --trials 5000
 
 Run it from `rules/ico/`, after `python3 tools/build.py ico`.
 
+## Measuring a ruleset that is not this one
+
+Both tools take `--path`, meaning the same thing it means to
+`tools/build.py`: the ruleset to work on.
+
+```bash
+python3 sim/balance.py --check --path ../../other/rules-ico
+python3 sim/sweep.py -m damage.damage_per_attack_skill_step=8,10 \
+                     --path ../../other/rules-ico
+```
+
+Without it, the simulator reads the `build/` beside itself, which is
+right almost always — it ships inside the ruleset it measures. With it,
+it can measure another checkout: a submodule pinned to an older
+version, a tag worked out into a temporary clone to find out when a
+gate started failing, or the copy installed into the game. A build
+directory or a `mechanics.json` is accepted as meant, too.
+
+Both print the file they read as `source:` before anything else, so a
+report can always be traced to the numbers behind it. Measuring the
+wrong ruleset and not noticing is the only real hazard here, and that
+line is the guard against it.
+
 ## Asking "what if this number were different?"
 
 `balance.py` says whether the current ruleset is balanced. `sweep.py`

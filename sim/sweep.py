@@ -113,6 +113,9 @@ def main():
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--verbose", action="store_true",
                     help="also print every level of every combination")
+    ap.add_argument("--path", default=None,
+                    help="Ruleset directory to sweep (or a mechanics.json), "
+                         "instead of this checkout's own build/.")
     args = ap.parse_args()
 
     if len(args.mechanic) > 2:
@@ -126,6 +129,7 @@ def main():
     print("Sweeping %s over levels %s (%d trials/duel)"
           % (" x ".join(".".join(p) for p, _ in specs),
              ",".join(str(x) for x in levels), args.trials))
+    print("source: %s" % m.resolve_mechanics_path(args.path))
     print("target: %.0f-%.0f rounds, spread <= %.1fx, drift near 1.0\n"
           % (b.TARGET_ROUNDS[0], b.TARGET_ROUNDS[1], b.MAX_CONTRIBUTION_SPREAD))
 
@@ -138,7 +142,7 @@ def main():
     best = None
     for combo in itertools.product(*[values for _, values in specs]):
         random.seed(args.seed)
-        M = m.Mechanics()
+        M = m.Mechanics(args.path)
         for (parts, _), value in zip(specs, combo):
             apply_override(M, parts, value)
         r = evaluate(M, levels, args.trials)

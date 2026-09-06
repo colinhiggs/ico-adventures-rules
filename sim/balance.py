@@ -857,6 +857,9 @@ def main():
     ap.add_argument("--check", action="store_true",
                     help="gates only; exit 1 on failure")
     ap.add_argument("--seed", type=int, default=12345)
+    ap.add_argument("--path", default=None,
+                    help="Ruleset directory to measure (or a mechanics.json), "
+                         "instead of this checkout's own build/.")
     args = ap.parse_args()
 
     import random
@@ -865,7 +868,7 @@ def main():
     levels = [int(x) for x in args.levels.split(",")]
     global TRIALS_SWARM
     TRIALS_SWARM = args.swarm_trials
-    M = m.Mechanics()
+    M = m.Mechanics(args.path)
 
     print("Ico balance report")
     print("source: %s" % M.path)

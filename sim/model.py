@@ -72,14 +72,47 @@ class RulesNotBuilt(Exception):
     pass
 
 
+def resolve_mechanics_path(path=None):
+    """Return the mechanics.json that a --path argument means.
+
+    Given nothing, this checkout's own build/, which is the answer
+    almost always: the simulator ships inside the ruleset it measures.
+
+    Given a ruleset directory, that ruleset's build output — the same
+    thing --path means to tools/build.py, so the two agree on what a
+    path to a ruleset is. That is what makes it possible to measure a
+    ruleset that is not this one: another checkout, an older tag worked
+    out in a temporary clone, or the copy installed into the game.
+
+    A build directory or the mechanics.json itself is taken as meant.
+    Nothing is ambiguous between the three and refusing would be
+    pedantry.
+    """
+    if path is None:
+        return MECHANICS_PATH
+    path = Path(path)
+    if path.is_dir():
+        for candidate in (path / "build" / "mechanics.json",
+                          path / "mechanics.json"):
+            if candidate.exists():
+                return candidate
+        # Neither exists; name the one a caller most likely meant, so
+        # the error below reads as "you have not built it" rather than
+        # "you have mistyped it".
+        return path / "build" / "mechanics.json"
+    return path
+
+
 class Mechanics:
     """Fail-fast reader over build/mechanics.json."""
 
     def __init__(self, path=None):
-        path = Path(path or MECHANICS_PATH)
+        path = resolve_mechanics_path(path)
         if not path.exists():
             raise RulesNotBuilt(
-                "%s not found. Run:  python3 tools/build.py ico\n"
+                "%s not found. Build the ruleset first:\n"
+                "  python3 tools/build.py ico          # this checkout\n"
+                "  python3 tools/build.py --path DIR   # a ruleset elsewhere\n"
                 "The simulator has no built-in game constants by design."
                 % path
             )

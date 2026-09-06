@@ -153,6 +153,18 @@ are identical either way — the same sources build byte-for-byte
 identical files from either checkout, which is what makes the conflict
 recipe below work.
 
+The simulator needs no such argument from a consumer, because it ships
+inside the ruleset it measures and reads the `build/` beside itself:
+
+```bash
+cd rules-ico && python3 sim/balance.py --check
+```
+
+It takes `--path` all the same, meaning the same thing, for the case
+that argument is actually for — measuring a ruleset that is not the one
+the simulator sits in, such as an older pinned version against the
+current one. See `sim/README.md`.
+
 ## Conflicts in `build/`
 
 `build/` is tracked on purpose — the server and the adventures read it
