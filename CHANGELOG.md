@@ -8,6 +8,35 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.0.5
+
+No mechanic value changed. An adventure written against any earlier
+1.0.x needs to do nothing.
+
+Four `related` lists in `snippets.json` lost one entry each: `damage`
+no longer lists `weapons`, `discipline-powers` no longer lists
+`spell-list`, `hitting` no longer lists `discipline-powers`, and
+`spell-preparation` no longer lists `disciplines`. Every one of those
+links appears only inside a `{% book-only %}` design note, which the
+snippet does not carry — so the snippet was offering an onward link to
+a document its own text never mentions.
+
+The toolset was building that list once per document, over the whole
+source, and then writing it into every output regardless of what each
+output actually contains. It now builds the list per output, from the
+links still standing after that output's audience rules have been
+applied, so an entry's `related` agrees with its `html`.
+
+Here that is a tidiness fix. It was found somewhere it is not: the
+adventures project uses the same mechanism with `{% gm-only %}`, where
+the equivalent list was handing a printed player handout the name of a
+document the handout exists to withhold, with a link to a page that was
+not in the file. The fix is in the toolset rather than in these rules,
+and this release is only the rebuild that carries it.
+
+`book.html` and `mechanics.json` are unchanged apart from the version
+stamp.
+
 ## 1.0.4
 
 No mechanic value changed. An adventure written against any earlier

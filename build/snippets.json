@@ -1,5 +1,5 @@
 {
-  "_version": "1.0.4",
+  "_version": "1.0.5",
   "advancement": {
     "id": "advancement",
     "kind": "rule",
@@ -163,8 +163,7 @@
       "armour",
       "hit-points",
       "hitting",
-      "spellcasting",
-      "weapons"
+      "spellcasting"
     ],
     "includes": [],
     "book_anchor": "#rule-damage"
@@ -215,7 +214,6 @@
       "general-powers",
       "hitting",
       "movement",
-      "spell-list",
       "spell-preparation",
       "spellcasting",
       "turn-order",
@@ -358,7 +356,6 @@
       "armour",
       "core-resolution",
       "damage",
-      "discipline-powers",
       "skills",
       "weapons"
     ],
@@ -599,7 +596,6 @@
     "related": [
       "advancement",
       "discipline-powers",
-      "disciplines",
       "domains",
       "power-sources",
       "recovery"
