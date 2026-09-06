@@ -8,6 +8,23 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.0.4
+
+No mechanic value changed. An adventure written against any earlier
+1.0.x needs to do nothing.
+
+`SHARING.md` points at `WORKING.md` in the `rpg-master` repository, the
+practical half of the pair: which working copy to open, why the rules
+and the adventures are separate Claude projects by default and when to
+deliberately combine them, and step-by-step procedures for the common
+jobs — adding a creature from the adventures side among them.
+
+The gate note in `README.md` and `sim/README.md` still says "as of
+1.0.3" and is meant to. That date is when the six failures were last
+measured, not the version the sentence ships in, and nothing since has
+touched a value the gates read. Re-dating it every release would turn a
+statement about evidence into a statement about the version number.
+
 ## 1.0.3
 
 No mechanic value changed. An adventure written against any earlier
