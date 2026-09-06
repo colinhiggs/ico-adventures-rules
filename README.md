@@ -41,7 +41,7 @@ The first two prove the book, the snippets and the server data agree.
 The third measures whether the resulting game is balanced. Both matter
 and they catch entirely different things.
 
-**The gates do not currently pass.** As of 1.0.2, `--check` reports six
+**The gates do not currently pass.** As of 1.0.3, `--check` reports six
 failures and exits 1: the paragon's lead over the other builds at level
 10, three pairings that end outside the three-to-twelve round band, the
 spellblade keeping too much of its damage with an empty reservoir, and

@@ -146,7 +146,7 @@ These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
 because the design intent moved, never to make the report quiet.
 
-Six of them fail as of 1.0.2, which is that principle being applied
+Six of them fail as of 1.0.3, which is that principle being applied
 rather than ignored: `TARGET_ROUNDS` on three pairings at level 10,
 `MAX_CONTRIBUTION_SPREAD` at level 10 (2.9x against a 2.5x target),
 `FLOOR_RATIO_BAND` for the spellblade, and the dagger and hand axe

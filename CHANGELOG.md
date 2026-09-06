@@ -8,6 +8,28 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.0.3
+
+No mechanic value changed. An adventure written against any earlier
+1.0.x needs to do nothing.
+
+The README now says that `sim/balance.py --check` does not pass. It
+reports six failures and exits 1, and it has done for some time: the
+paragon's lead at level 10, three pairings outside the round band, the
+spellblade's floor with an empty reservoir, and the dagger and hand axe
+that no build chooses. Every one is an open tuning question `TODO.md`
+already carries. The README had listed `--check` beside the build and
+the test suite as though it were a check that passes, which left
+somebody running it for the first time to wonder what they had broken.
+
+`sim/README.md` says the same in its own terms, and adds what a failing
+check is still good for: run it either side of a change to a rule
+value, and the same six failures with the same numbers means the change
+was neutral.
+
+Nothing about the gates themselves moved. A target is changed because
+the design intent moved, never to make the report quiet.
+
 ## 1.0.2
 
 No mechanic value changed. An adventure written against 1.0.0 or 1.0.1
