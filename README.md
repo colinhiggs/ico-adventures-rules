@@ -13,6 +13,9 @@ rules/ico/
   VERSION    the released version — see VERSIONING.md and CHANGELOG.md
 ```
 
+More than one project writes to this repository: see `SHARING.md` for
+who owns which parts of it.
+
 This directory is its own git repository and is developed independently
 of the game. It is a **plug-in**: to play it, the whole directory is
 dropped into the game's installed ruleset folder at
@@ -69,6 +72,19 @@ convention worth remembering:
 - **PATCH** — no mechanic value changed at all.
 
 `VERSIONING.md` has the full convention and how to cut a release.
+
+## Sharing
+
+The projects built on these rules hold this repository as a git
+submodule, and they write to it: an adventure that invents a monster
+adds it to `rules/bestiary/`, which is the shared area and is open by
+design. Everything that carries a mechanic value is not — those numbers
+are measured by `sim/` against the whole system, so they move from
+here.
+
+`SHARING.md` has the write surface in full, how to add a creature, what
+belongs in the bestiary rather than in the adventure that invented it,
+and the submodule habits that keep two writers out of each other's way.
 
 ## House style for a rule document
 
