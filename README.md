@@ -41,6 +41,21 @@ The first two prove the book, the snippets and the server data agree.
 The third measures whether the resulting game is balanced. Both matter
 and they catch entirely different things.
 
+**The gates do not currently pass.** As of 1.0.2, `--check` reports six
+failures and exits 1: the paragon's lead over the other builds at level
+10, three pairings that end outside the three-to-twelve round band, the
+spellblade keeping too much of its damage with an empty reservoir, and
+the dagger and hand axe that no build ever chooses. Each is an open
+question already written up in `TODO.md` with what has been ruled out
+so far, not a surprise and not a regression.
+
+So a failing `--check` is the expected result today. What it is still
+good for is *change*: run it before and after touching a rule value and
+compare, because a seventh failure or a number moving the wrong way is
+the thing worth knowing. The gates are targets rather than rules, and
+they have been left failing deliberately — silencing them by moving a
+target is only honest when the design intent moved, which it has not.
+
 ## What is and is not here
 
 Present: the core roll, characters and attributes, the two hit point
