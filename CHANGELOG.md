@@ -8,6 +8,20 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.0.2
+
+No mechanic value changed. An adventure written against 1.0.0 or 1.0.1
+needs to do nothing.
+
+`sim/balance.py` and `sim/sweep.py` take `--path`, naming the ruleset
+to measure the same way `tools/build.py` does. Without it they read the
+`build/` beside themselves, which is right almost always, since the
+simulator ships inside the ruleset it measures; with it they can
+measure a ruleset that is not this one — an older pinned version
+against the current one, or a tag worked out into a temporary clone to
+find when a gate started failing. `sweep.py` now prints the file it
+read, as `balance.py` already did.
+
 ## 1.0.1
 
 No mechanic value changed. An adventure written against 1.0.0 needs to
