@@ -21,6 +21,14 @@ says the same kind of thing about the toolset. `VERSIONING.md` says
 what the version numbers mean; this document says who is allowed to
 move them.
 
+`WORKING.md`, beside that other `SHARING.md`, is the practical half of
+all three: which working copy to open, why the rules and the adventures
+are separate Claude projects by default and when to deliberately
+combine them, and step-by-step procedures for the jobs that come up
+often — adding a creature from the adventures side among them. Read it
+before working in this repository from a checkout that is not the
+rules project's own.
+
 ## The write surface
 
 | Area | Who writes it | Why |
