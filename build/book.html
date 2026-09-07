@@ -213,6 +213,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Reactions</h4>
 <p>You also hold 1 <strong>reaction</strong>, spent on someone else's turn rather than your own. It refreshes at the start of each of your turns, so a reaction spent answering the first enemy to swing at you is gone when the second does.</p>
 <p>Powers say when they are reactions. Riposte answers an attack that missed you, Deflect blunts one that did not, and Anticipate spends the reaction to act out of turn entirely.</p>
+<p>Not every reaction is a power. Answering somebody who walks into the reach of a longer weapon costs the same one — see <a href="#rule-reach" data-rule-id="reach">Reach and Closing</a> — so a fighter holding a polearm is choosing between their reach and their Riposte every round of the fight.</p>
 <h4>Example</h4>
 <p>Ashri, Dune and two orcs come to blows. Ashri rolls <code>12</code> and adds her Spot of <code>4</code> for <code>16</code>; Dune rolls <code>9</code> and adds his Spot of <code>11</code> for <code>20</code>; the orcs roll <code>17</code> and <code>6</code>, adding <code>3</code> each, for <code>20</code> and <code>9</code>.</p>
 <p>Dune and the first orc have tied on <code>20</code>. Dune's dexterity is higher, so he goes first. The order for the whole fight is Dune, orc, Ashri, orc — and it does not change even when Dune drops the second orc.</p>
@@ -221,7 +222,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <p>One roll at the start, held for the whole fight, is the cheapest structure that still makes going first worth wanting. Re-rolling every round doubles the dice and buys only noise.</p>
 <p>Tying initiative to Spot rather than to dexterity gives the Awareness discipline a job in every fight, which it badly needed — it is the one discipline with no damage of its own, and "you all act in the order I tell you" is real authority at a table. It also makes Forewarned coherent: a Spot power that improves a Spot check.</p>
 <p>The single reaction is what makes Riposte, Deflect and Guard choices rather than free extras. Without a cap, a defensive character answers every attack in the round and the action economy quietly stops meaning anything.</p>
-<p class="related">See also: <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-movement">Movement and Distance</a>, <a href="#rule-skill-list">The Skill List</a>, <a href="#rule-using-powers">Using a Power</a></p>
+<p class="related">See also: <a href="#rule-discipline-powers">Discipline Powers</a>, <a href="#rule-movement">Movement and Distance</a>, <a href="#rule-reach">Reach and Closing</a>, <a href="#rule-skill-list">The Skill List</a>, <a href="#rule-using-powers">Using a Power</a></p>
 </section>
 <section class="doc" id="rule-movement">
 <h3>Movement and Distance</h3>
@@ -260,28 +261,50 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <section class="doc" id="rule-reach">
 <h3>Reach and Closing</h3>
 <p class="tags">core · combat · map</p>
-<p class="summary">A longer weapon strikes at a distance a shorter one cannot answer, and is paid for that once as the shorter weapon closes. Inside, a quick weapon strikes first.</p>
+<p class="summary">A longer weapon holds a band its opponent can be struck in and cannot strike from. Crossing it costs a free attack, or the reaching fighter gives ground to hold it — one or the other, once a round. In a tight space it is a liability.</p>
 <p>A polearm keeps you at arm's length and a dagger does not, and the fight between the two is decided by whether the dagger ever gets close.</p>
-<h4>Inside and outside</h4>
-<p><a href="#rule-movement" data-rule-id="movement">Movement and Distance</a> gives every combatant a <strong>reach</strong> in squares. Against a particular opponent you are either:</p>
-<ul><li><strong>outside</strong> — further away than your own reach but within theirs, so they may strike you and you may not strike them; or</li><li><strong>inside</strong> — within your own reach, where both of you may strike.</li></ul>
-<p>A fight between equal reaches has no outside. A fight where one reach is longer has one, and it belongs entirely to the longer weapon.</p>
-<h4>Closing</h4>
-<p>Moving from outside to inside costs your <strong>move</strong> for the round, and your action is still yours. You lose nothing but the chance to strike on the way in, and what that costs you is 1 unanswered blow for every square of reach you had to give away.</p>
-<p>Your opponent may back out again, which costs <em>them</em> their move and puts you outside once more. Closing and withdrawing cancel: each spends one move, and the two of you end where you began. So the longer weapon is paid for its reach <strong>once</strong>, as the fight is joined, and not again for as long as neither of you can spare a move for anything else.</p>
+<h4>The band</h4>
+<p><a href="#rule-movement" data-rule-id="movement">Movement and Distance</a> gives every combatant a <strong>reach</strong> in squares. Put two of them on the grid and there are three distances that matter:</p>
+<ul><li><strong>Apart</strong> — further away than either reach. Nobody strikes anybody.</li><li><strong>The band</strong> — inside the longer reach and outside the shorter. The longer weapon strikes; the shorter cannot answer.</li><li><strong>Close</strong> — inside both reaches. Both strike.</li></ul>
+<p>Two equal reaches have no band, and their fight has no rule in it beyond who moves first. A longer reach <em>imposes</em> a band, and everything below is about that strip of ground and who is standing in it.</p>
+<h4>Crossing it</h4>
+<p>The band is not a wall. Anyone may walk through it, and against a shorter weapon somebody has to.</p>
+<p>When an opponent standing in your band moves <strong>towards</strong> you, you may answer in one of two ways, and you must choose one:</p>
+<ul><li><strong>Strike them as they come.</strong> One free attack, resolved as <a href="#rule-hitting" data-rule-id="hitting">Landing a Blow</a> resolves any other.</li><li><strong>Give ground.</strong> Step back, so that the band opens in front of them again and they have crossed nothing.</li></ul>
+<p>You may do this 1 time in a round, and it costs your <strong>reaction</strong> — see <a href="#rule-turn-order" data-rule-id="turn-order">Turn Order</a>. So the fighter with the longer weapon spends on their reach the same reaction that would have paid for Riposte or Deflect, and cannot have both.</p>
+<p>Nothing here triggers on somebody who is merely standing in the band, or who is walking out of it, or who is already close. It is the approach that is answered.</p>
+<h4>Giving ground</h4>
+<p>Stepping back costs <code>2</code> squares of your <strong>move</strong> for every square you give up. You are walking backwards with your eyes on somebody who is trying to kill you, and that is half the speed of walking. Those squares come out of your own move, spent from whenever your next one falls.</p>
+<p>Two things can stop you. You may not step back through a wall, a table, or anything else solid — and unlike a fight in the open, a fight in a corridor often has one directly behind you. And you may not step back further than your move can pay for, which is where the movement penalty on heavy <a href="#rule-armour" data-rule-id="armour">Armour and Shields</a> is felt: a character in plate can give up perhaps one square and then has nothing left to move with on their own turn, while a lightly armoured one gives up the same square and barely notices.</p>
+<h4>Coming again</h4>
+<p>If your opponent cannot cross the whole band in the movement they have, they end their turn inside it, where you may strike them and they may not strike you. That is the whole of what a reach advantage buys and it is worth having.</p>
+<p>They will come again next round, and closing again is another approach, so you may answer it again — once, as before. A slow opponent crossing a wide band therefore pays for it every round until they arrive, and a fast one pays once and is inside.</p>
+<h4>What reach does not buy</h4>
+<p>Not one attack per square. However far you outreach somebody, the crossing is answered 1 time and no more, and if they have the movement to cross the band and keep coming, they arrive. You cannot hold somebody off with reach alone.</p>
+<p>What extra reach <em>does</em> buy is the band itself, and a band against the other long weapons: a size L weapon imposes one on every ordinary weapon in <a href="#rule-weapons" data-rule-id="weapons">Weapons</a>, and a longer one still would impose a band on that.</p>
+<h4>A long weapon in a tight space</h4>
+<p>A weapon that needs room is worth less where there is none. Take your reach, subtract 1, and count every square within that distance of you that is <strong>blocked</strong> — a wall, a pillar, a closed door, the low ceiling of a tunnel. Anything immobile and solid counts. Every blocked square is <code>-1</code> on your attack rolls, to a maximum of <code>-4</code>.</p>
+<p>Other creatures never count, however crowded it is. A press of bodies is something a spear is <em>for</em>; a doorway is not.</p>
+<p>A weapon with no reach beyond the ordinary subtracts 1 from a reach of the same size and so counts no squares at all. This rule reaches only the weapons that reach.</p>
+<p>The practical effect is that the corridor and the doorway are where a long weapon stops being the obvious choice, and both of those are where a dungeon spends most of its time.</p>
 <h4>Quick weapons inside</h4>
 <p>A <strong>quick</strong> weapon — see <a href="#rule-weapons" data-rule-id="weapons">Weapons</a> — is short enough to be used where a longer one is fouled. While you are inside the reach of a weapon larger than your own, your attacks come <strong>before</strong> your opponent's, whatever <a href="#rule-turn-order" data-rule-id="turn-order">Turn Order</a> settled at the start of the fight.</p>
-<p>That is the whole of the exchange. A long weapon takes the first blow of the fight for free; a quick weapon takes the first blow of every round after that. Which is worth more depends on how long the fight lasts, which is exactly the choice a player should be making when they pick a weapon.</p>
+<p>So the exchange has two halves. The long weapon owns the band, and the quick weapon owns what happens once the band has been crossed.</p>
 <h4>Example</h4>
-<p>Bram carries a great axe, size L, so his reach is <code>2</code> squares. Sela carries a dagger: quick, and reach <code>1</code>.</p>
-<p>They join battle two squares apart. Sela is outside — Bram can reach her and she cannot reach him — so Bram strikes, unanswered, for the one square of reach she has to give away. Sela then spends her move to close, and is inside.</p>
-<p>From there Sela strikes first every round, dagger before axe, whatever the initiative order was. Bram can spend his move to back off and make her close again, but that costs him the move and buys him nothing: she spends hers to follow, and they are back where they were.</p>
-<p>Bram's axe bought him one free blow. Sela's dagger buys her the first blow of every round for the rest of the fight.</p>
+<p>Bram carries a great axe: size L, reach <code>2</code>. Sela carries a dagger, reach <code>1</code>, and is wearing plate, which leaves her a move of <code>2</code>. Bram's band is the ring of squares exactly <code>2</code> away from him.</p>
+<p>She spends her turn crossing the open ground and ends <code>2</code> squares off, inside the band. She cannot strike from there.</p>
+<p>Next round she moves the last square. That is an approach inside his band, so Bram answers it: he takes the free attack, spending his reaction, and hits her as she comes. She arrives and strikes him with her own action.</p>
+<p>On his turn Bram steps back a square — his own move, on his own turn, at the ordinary price — and attacks her from <code>2</code> again. She is in the band once more.</p>
+<p>From here it repeats, and the shape of the fight is set. Every round Sela chooses between standing in the band doing nothing and walking into a free attack to get her one blow in. Every round Bram spends his move backing off and his reaction hitting her for it, which means he never Ripostes and never Deflects all fight.</p>
+<p>Had Sela come at him in a corridor instead, <code>6</code> of the <code>8</code> squares around Bram would be wall — everything but the length of the passage — which is well past the cap, so his axe swings at <code>-4</code> and his band is a strip of floor one square wide. At that point her dagger is the better weapon, which is exactly what it is in a corridor.</p>
 <h4>Design note</h4>
-<p>Reach sat on the movement table and did nothing. A number that is printed, measured and never consulted is worse than no number at all, because it implies a rule the reader then goes looking for.</p>
-<p>The rule it implies is this one, and it is deliberately paid <strong>once</strong>. A reach advantage granting a free attack every round would make the longest weapon the only weapon; the alternative — tracking who stepped where, round by round — is the kind of bookkeeping that stops a table counting squares at all. Letting closing and withdrawing cancel says the same thing in one sentence and needs no adjudication.</p>
-<p>Quickness is the answer to it, and the two together are what stop weapon size being a single scale with one right answer at the top. A long weapon wants a short fight and a quick weapon wants a long one. Neither dominates, and a player choosing between them is choosing between two bets rather than reading off which number is bigger.</p>
-<p class="related">See also: <a href="#rule-movement">Movement and Distance</a>, <a href="#rule-turn-order">Turn Order</a>, <a href="#rule-weapons">Weapons</a></p>
+<p>Reach is a band of ground rather than a bonus, because a bonus would be a number on a sheet and a band is a thing on the table that both players can see. The question a reach advantage asks — <em>are you willing to walk into that</em> — is a real one, asked once a round, and answered differently depending on how badly the shorter weapon needs to be in the fight.</p>
+<p>A fighter willing to spend everything on their reach can hold it every round: the move to back off, the reaction to strike whoever follows. That is meant to be available and it is meant to be expensive. It costs them their move for the whole fight, so they go nowhere and help nobody, and it costs them the reaction Riposte and Deflect are paid out of, so their defence is whatever armour and dodge can manage alone.</p>
+<p>Making striking and giving ground the <em>same</em> reaction is what stops the two being stacked inside one round. A long weapon can answer an approach or refuse it, and having to choose means the fighter crossing the band always learns something about what is waiting for them.</p>
+<p>Charging double for backwards movement is what keeps giving ground from being free, and it is the first place in the game where the movement penalty on armour changes what happens in a round rather than what happens between them. A heavily armoured fighter with a polearm holds a band for one step and then cannot hold it at all, which is the correct answer: the polearm wants a light fighter behind it.</p>
+<p>Capping the crossing at one answer a round, rather than one per square, is the difference between a weapon and a wall. A reach advantage should make an approach expensive; it should never make an approach impossible, because a rule that stops the other side arriving stops the fight.</p>
+<p>The tight-space penalty exists because everything above makes a long weapon strong, and a strong thing wants somewhere it is weak. Bodies deliberately do not block: a spear in a shield wall is the oldest good idea in warfare, and a rule that punished a polearm for standing next to its friends would be describing some other game. Walls block, and walls are what a dungeon is made of, so the weapon that owns the open field gives it back at the door.</p>
+<p class="related">See also: <a href="#rule-armour">Armour and Shields</a>, <a href="#rule-hitting">Landing a Blow</a>, <a href="#rule-movement">Movement and Distance</a>, <a href="#rule-turn-order">Turn Order</a>, <a href="#rule-weapons">Weapons</a></p>
 </section>
 <section class="doc" id="rule-hitting">
 <h3>Landing a Blow</h3>
@@ -814,6 +837,7 @@ footer { margin-top: 80px; padding-top: 20px; border-top: 1px solid #2a2c36;
 <h4>Reach, and what it costs</h4>
 <p>A weapon of size L extends its wielder's reach, and so does any weapon whose entry gives it a reach bonus of its own — the staff is long without being large. Other weapons do not. What that is worth in a fight is in <a href="#rule-reach" data-rule-id="reach">Reach and Closing</a>, and how reach is measured is in <a href="#rule-movement" data-rule-id="movement">Movement and Distance</a>.</p>
 <p>It is long because it is big, and being big is not free. A weapon of that size takes <code>-2</code> off your defence, whichever way you defend — the same kind of interference heavy <a href="#rule-armour" data-rule-id="armour">Armour and Shields</a> causes, and for the same reason. You are carrying something that gets in your way.</p>
+<p>It also wants room to be carried in. A weapon that reaches swings badly where there is nothing to swing in, and what a corridor or a doorway costs one is in <a href="#rule-reach" data-rule-id="reach">Reach and Closing</a> with the rest of the reach rules.</p>
 <h4>Staffs</h4>
 <p>A staff is the one weapon a caster may hold and cast with as though their hands were empty. It cancels the penalty <a href="#rule-free-hands" data-rule-id="free-hands">Free Hands</a> would otherwise charge for holding something, entirely.</p>
 <p>This is not a magical property of the wood. Casters practise with a staff precisely because it does this: the shape of the thing suits the work, the movements a spell wants are movements a staff can be part of rather than get in the way of, and every apprentice learns to cast around one from the beginning. That it is also a serviceable club, a walking aid over rough country, and the object most likely to be enchanted by someone eventually, is the rest of the reason every caster in the world seems to have one.</p>

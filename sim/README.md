@@ -237,10 +237,21 @@ priced at zero and look harmless.
 Three rules that exist to give weapon size a second axis, since damage
 and accuracy trade along one line and a line has a best point on it.
 
-**Reach** is paid once. Whoever reaches further strikes while the other
-closes -- one blow per square of difference -- and after that closing
-and withdrawing cancel, so it never pays again. In a duel those blows
-are resolved before the first round. **Quickness** is the answer: a
+**Reach** buys a **band**: the ground inside the longer reach and
+outside the shorter, where one of them can strike and the other cannot.
+An opponent who crosses it is answered once -- a free attack, or a step
+back to open it again -- and the choice costs the reaching fighter their
+reaction. It is charged once a *round*, not once per square, and a slow
+opponent crossing a wide band pays every round until they arrive.
+
+The model credits that as one free attack before the first round, which
+is what a positionless model can honestly say: the widest band any
+weapon here imposes is one square, so the difference between per-square
+and per-round does not arise, and whether the free attack is collected
+again is a question about where the two of them are standing. The
+step-back, the reaction it costs, and the tight-space penalty are not
+modelled at all -- the first two need positions and the third needs
+walls, and `ASSUMPTIONS` says every fight here is on open ground. **Quickness** is the answer: a
 quick weapon inside a longer one strikes first every round, whatever
 initiative said, which in practice is worth about one avoided blow over
 a fight, because a corpse does not answer. **Free hands** decides how

@@ -176,6 +176,23 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.
+- **The reach rules are unmeasured, and they are a buff.** Crossing a
+  band is answered once a round rather than once per fight, and a
+  fighter who spends their move backing off and their reaction striking
+  can collect that answer every round of a fight. Against a shorter
+  weapon that is close to an extra attack a round, paid for with the
+  move, the reaction that Riposte and Deflect come out of, and
+  `-4` in a corridor. Whether the price covers it is exactly the
+  question `sim/` should answer and cannot: the free attack needs
+  positions and the corridor needs walls. Until then the numbers in
+  `reach.md` are a design judgement, and the simulator still credits
+  reach with the single opening blow it always did.
+- **The tight-space penalty has no home in the simulator, by
+  construction.** Every fight the model runs is on open ground, which is
+  an `ASSUMPTIONS` entry rather than an oversight, so the counterweight
+  to the reach buff is the one part of it that cannot be checked. A
+  positional model would need walls before this means anything, and
+  walls are a much larger thing than distance.
 - **The long-range rule lives in two documents.** `spell-properties`
   owns `long_range_multiplier` and `ranged-weapons` owns
   `long_range_penalty`, and each interpolates the other's half. Nothing

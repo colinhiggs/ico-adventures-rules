@@ -791,8 +791,14 @@
     "reach": {
       "outside_reach_cannot_strike": true,
       "closing_costs_the_move": true,
-      "opening_attacks_per_square": 1,
       "withdrawing_costs_the_move": true,
+      "free_attack_on_closing": true,
+      "free_attacks_per_round": 1,
+      "reach_choice_costs_the_reaction": true,
+      "step_back_move_cost_multiplier": 2,
+      "tight_space_radius_offset": 1,
+      "tight_space_penalty_per_square": -1,
+      "tight_space_penalty_max": -4,
       "quick_strikes_first_inside": true
     },
     "recovery": {

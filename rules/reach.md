@@ -3,45 +3,126 @@ id: reach
 title: Reach and Closing
 tags: [core, combat, map]
 summary: >
-  A longer weapon strikes at a distance a shorter one cannot answer, and
-  is paid for that once as the shorter weapon closes. Inside, a quick
-  weapon strikes first.
+  A longer weapon holds a band its opponent can be struck in and cannot
+  strike from. Crossing it costs a free attack, or the reaching fighter
+  gives ground to hold it — one or the other, once a round. In a tight
+  space it is a liability.
 mechanics:
   outside_reach_cannot_strike: true
   closing_costs_the_move: true
-  opening_attacks_per_square: 1
   withdrawing_costs_the_move: true
+  free_attack_on_closing: true
+  free_attacks_per_round: 1
+  reach_choice_costs_the_reaction: true
+  step_back_move_cost_multiplier: 2
+  tight_space_radius_offset: 1
+  tight_space_penalty_per_square: -1
+  tight_space_penalty_max: -4
   quick_strikes_first_inside: true
 ---
 
 A polearm keeps you at arm's length and a dagger does not, and the fight
 between the two is decided by whether the dagger ever gets close.
 
-## Inside and outside
+## The band
 
-[[movement]] gives every combatant a **reach** in squares. Against a
-particular opponent you are either:
+[[movement]] gives every combatant a **reach** in squares. Put two of
+them on the grid and there are three distances that matter:
 
-- **outside** — further away than your own reach but within theirs, so
-  they may strike you and you may not strike them; or
-- **inside** — within your own reach, where both of you may strike.
+- **Apart** — further away than either reach. Nobody strikes anybody.
+- **The band** — inside the longer reach and outside the shorter. The
+  longer weapon strikes; the shorter cannot answer.
+- **Close** — inside both reaches. Both strike.
 
-A fight between equal reaches has no outside. A fight where one reach is
-longer has one, and it belongs entirely to the longer weapon.
+Two equal reaches have no band, and their fight has no rule in it
+beyond who moves first. A longer reach *imposes* a band, and everything
+below is about that strip of ground and who is standing in it.
 
-## Closing
+## Crossing it
 
-Moving from outside to inside costs your **move** for the round, and
-your action is still yours. You lose nothing but the chance to strike on
-the way in, and what that costs you is
-{{ mechanics.opening_attacks_per_square }} unanswered blow for every
-square of reach you had to give away.
+The band is not a wall. Anyone may walk through it, and against a
+shorter weapon somebody has to.
 
-Your opponent may back out again, which costs *them* their move and puts
-you outside once more. Closing and withdrawing cancel: each spends one
-move, and the two of you end where you began. So the longer weapon is
-paid for its reach **once**, as the fight is joined, and not again for
-as long as neither of you can spare a move for anything else.
+When an opponent standing in your band moves **towards** you, you may
+answer in one of two ways, and you must choose one:
+
+- **Strike them as they come.** One free attack, resolved as
+  [[hitting]] resolves any other.
+- **Give ground.** Step back, so that the band opens in front of them
+  again and they have crossed nothing.
+
+You may do this {{ mechanics.free_attacks_per_round }} time in a round,
+and it costs your **reaction** — see [[turn-order]]. So the fighter with
+the longer weapon spends on their reach the same reaction that would
+have paid for Riposte or Deflect, and cannot have both.
+
+Nothing here triggers on somebody who is merely standing in the band, or
+who is walking out of it, or who is already close. It is the approach
+that is answered.
+
+## Giving ground
+
+Stepping back costs `{{ mechanics.step_back_move_cost_multiplier }}`
+squares of your **move** for every square you give up. You are walking
+backwards with your eyes on somebody who is trying to kill you, and that
+is half the speed of walking. Those squares come out of your own move,
+spent from whenever your next one falls.
+
+Two things can stop you. You may not step back through a wall, a
+table, or anything else solid — and unlike a fight in the open, a fight
+in a corridor often has one directly behind you. And you may not step
+back further than your move can pay for, which is where the movement
+penalty on heavy [[armour]] is felt: a character in plate can give up
+perhaps one square and then has nothing left to move with on their own
+turn, while a lightly armoured one gives up the same square and barely
+notices.
+
+## Coming again
+
+If your opponent cannot cross the whole band in the movement they have,
+they end their turn inside it, where you may strike them and they may
+not strike you. That is the whole of what a reach advantage buys and it
+is worth having.
+
+They will come again next round, and closing again is another approach,
+so you may answer it again — once, as before. A slow opponent crossing a
+wide band therefore pays for it every round until they arrive, and a
+fast one pays once and is inside.
+
+## What reach does not buy
+
+Not one attack per square. However far you outreach somebody, the
+crossing is answered
+{{ mechanics.free_attacks_per_round }} time and no more, and if they
+have the movement to cross the band and keep coming, they arrive. You
+cannot hold somebody off with reach alone.
+
+What extra reach *does* buy is the band itself, and a band against the
+other long weapons: a size {{ weapons:mechanics.two_handed_size }} weapon
+imposes one on every ordinary weapon in [[weapons]], and a longer one
+still would impose a band on that.
+
+## A long weapon in a tight space
+
+A weapon that needs room is worth less where there is none. Take your
+reach, subtract {{ mechanics.tight_space_radius_offset }}, and count
+every square within that distance of you that is **blocked** — a wall, a
+pillar, a closed door, the low ceiling of a tunnel. Anything immobile
+and solid counts. Every blocked square is
+`{{ mechanics.tight_space_penalty_per_square }}` on your attack rolls,
+to a maximum of `{{ mechanics.tight_space_penalty_max }}`.
+
+Other creatures never count, however crowded it is. A press of bodies is
+something a spear is *for*; a doorway is not.
+
+A weapon with no reach beyond the ordinary subtracts
+{{ mechanics.tight_space_radius_offset }} from a reach of the same size
+and so counts no squares at all. This rule reaches only the weapons that
+reach.
+
+The practical effect is that the corridor and the doorway are where a
+long weapon stops being the obvious choice, and both of those are where
+a dungeon spends most of its time.
 
 ## Quick weapons inside
 
@@ -50,47 +131,78 @@ a longer one is fouled. While you are inside the reach of a weapon
 larger than your own, your attacks come **before** your opponent's,
 whatever [[turn-order]] settled at the start of the fight.
 
-That is the whole of the exchange. A long weapon takes the first blow of
-the fight for free; a quick weapon takes the first blow of every round
-after that. Which is worth more depends on how long the fight lasts,
-which is exactly the choice a player should be making when they pick a
-weapon.
+So the exchange has two halves. The long weapon owns the band, and the
+quick weapon owns what happens once the band has been crossed.
 
 ## Example
 
-Bram carries a great axe, size L, so his reach is `2` squares. Sela
-carries a dagger: quick, and reach `1`.
+Bram carries a great axe: size L, reach `2`. Sela carries a dagger,
+reach `1`, and is wearing plate, which leaves her a move of `2`.
+Bram's band is the ring of squares exactly `2` away from him.
 
-They join battle two squares apart. Sela is outside — Bram can reach her
-and she cannot reach him — so Bram strikes, unanswered, for the one
-square of reach she has to give away. Sela then spends her move to
-close, and is inside.
+She spends her turn crossing the open ground and ends `2` squares off,
+inside the band. She cannot strike from there.
 
-From there Sela strikes first every round, dagger before axe, whatever
-the initiative order was. Bram can spend his move to back off and make
-her close again, but that costs him the move and buys him nothing: she
-spends hers to follow, and they are back where they were.
+Next round she moves the last square. That is an approach inside his
+band, so Bram answers it: he takes the free attack, spending his
+reaction, and hits her as she comes. She arrives and strikes him with
+her own action.
 
-Bram's axe bought him one free blow. Sela's dagger buys her the first
-blow of every round for the rest of the fight.
+On his turn Bram steps back a square — his own move, on his own turn, at
+the ordinary price — and attacks her from `2` again. She is in the band
+once more.
+
+From here it repeats, and the shape of the fight is set. Every round
+Sela chooses between standing in the band doing nothing and walking into
+a free attack to get her one blow in. Every round Bram spends his move
+backing off and his reaction hitting her for it, which means he never
+Ripostes and never Deflects all fight.
+
+Had Sela come at him in a corridor instead, `6` of the `8` squares
+around Bram would be wall — everything but the length of the passage —
+which is well past the cap, so his axe swings at
+`{{ mechanics.tight_space_penalty_max }}` and his band is a strip of
+floor one square wide. At that point her dagger is the better weapon,
+which is exactly what it is in a corridor.
 
 {% book-only %}
 ## Design note
 
-Reach sat on the movement table and did nothing. A number that is
-printed, measured and never consulted is worse than no number at all,
-because it implies a rule the reader then goes looking for.
+Reach is a band of ground rather than a bonus, because a bonus would be
+a number on a sheet and a band is a thing on the table that both players
+can see. The question a reach advantage asks — *are you willing to walk
+into that* — is a real one, asked once a round, and answered differently
+depending on how badly the shorter weapon needs to be in the fight.
 
-The rule it implies is this one, and it is deliberately paid **once**. A
-reach advantage granting a free attack every round would make the
-longest weapon the only weapon; the alternative — tracking who stepped
-where, round by round — is the kind of bookkeeping that stops a table
-counting squares at all. Letting closing and withdrawing cancel says the
-same thing in one sentence and needs no adjudication.
+A fighter willing to spend everything on their reach can hold it every
+round: the move to back off, the reaction to strike whoever follows.
+That is meant to be available and it is meant to be expensive. It costs
+them their move for the whole fight, so they go nowhere and help nobody,
+and it costs them the reaction Riposte and Deflect are paid out of, so
+their defence is whatever armour and dodge can manage alone.
 
-Quickness is the answer to it, and the two together are what stop weapon
-size being a single scale with one right answer at the top. A long
-weapon wants a short fight and a quick weapon wants a long one. Neither
-dominates, and a player choosing between them is choosing between two
-bets rather than reading off which number is bigger.
+Making striking and giving ground the *same* reaction is what stops the
+two being stacked inside one round. A long weapon can answer an approach
+or refuse it, and having to choose means the fighter crossing the band
+always learns something about what is waiting for them.
+
+Charging double for backwards movement is what keeps giving ground from
+being free, and it is the first place in the game where the movement
+penalty on armour changes what happens in a round rather than what
+happens between them. A heavily armoured fighter with a polearm holds a
+band for one step and then cannot hold it at all, which is the correct
+answer: the polearm wants a light fighter behind it.
+
+Capping the crossing at one answer a round, rather than one per square,
+is the difference between a weapon and a wall. A reach advantage should
+make an approach expensive; it should never make an approach impossible,
+because a rule that stops the other side arriving stops the fight.
+
+The tight-space penalty exists because everything above makes a long
+weapon strong, and a strong thing wants somewhere it is weak. Bodies
+deliberately do not block: a spear in a shield wall is the oldest good
+idea in warfare, and a rule that punished a polearm for standing next to
+its friends would be describing some other game. Walls block, and walls
+are what a dungeon is made of, so the weapon that owns the open field
+gives it back at the door.
 {% endbook-only %}

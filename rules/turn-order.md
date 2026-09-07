@@ -56,6 +56,11 @@ Powers say when they are reactions. Riposte answers an attack that
 missed you, Deflect blunts one that did not, and Anticipate spends the
 reaction to act out of turn entirely.
 
+Not every reaction is a power. Answering somebody who walks into the
+reach of a longer weapon costs the same one — see [[reach]] — so a
+fighter holding a polearm is choosing between their reach and their
+Riposte every round of the fight.
+
 ## Example
 
 Ashri, Dune and two orcs come to blows. Ashri rolls `12` and adds her

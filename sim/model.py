@@ -59,9 +59,12 @@ ASSUMPTIONS = [
     "A build buys the kit that maximises damage per round times rounds "
     "survived against a panel of two opponents, one sword-armed and one "
     "carrying a two-handed sword, and re-equips at every level.",
-    "A reach advantage is worth the swings it gains while the other "
-    "side closes, and a quick weapon inside a longer one is worth about "
-    "one avoided swing over a fight.",
+    "A reach advantage is worth one free attack as the fight is "
+    "joined, and a quick weapon inside a longer one is worth about one "
+    "avoided swing over a fight. reach.md charges an approach once a "
+    "round rather than once per square, so whether the free attack is "
+    "collected again in later rounds depends on where the two of them "
+    "are standing, which this model cannot ask.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -520,12 +523,22 @@ def strikes_first_inside(char, other, M):
 
 
 def opening_attacks(char, other, M):
-    """Unanswered blows `char` lands as `other` closes the gap. Paid
-    once, as the fight is joined: closing and withdrawing cancel."""
-    gap = reach_of(char, M) - reach_of(other, M)
-    if gap <= 0:
+    """Unanswered blows `char` lands as `other` crosses the band.
+
+    reach.md charges an approach once per round however wide the band
+    is, rather than once per square, so what a reach advantage is worth
+    to a positionless model is one free attack as the fight is joined.
+    Whether it is collected again in later rounds is a question about
+    where the two of them are standing, and there is nowhere to stand
+    here; the duel loop is where that will be answered.
+
+    Nothing about today's numbers moves either way. The widest band any
+    weapon in the ruleset imposes is one square, so per-square and
+    per-round were the same figure for every pairing this can be asked
+    about."""
+    if reach_of(char, M) <= reach_of(other, M):
         return 0
-    return gap * int(M.get("reach", "opening_attacks_per_square"))
+    return int(M.get("reach", "free_attacks_per_round"))
 
 
 def gear_options(M, budget):

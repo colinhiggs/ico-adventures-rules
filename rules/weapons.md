@@ -116,6 +116,10 @@ defence, whichever way you defend — the same kind of interference heavy
 [[armour]] causes, and for the same reason. You are carrying something
 that gets in your way.
 
+It also wants room to be carried in. A weapon that reaches swings badly
+where there is nothing to swing in, and what a corridor or a doorway
+costs one is in [[reach]] with the rest of the reach rules.
+
 ## Staffs
 
 A staff is the one weapon a caster may hold and cast with as though
