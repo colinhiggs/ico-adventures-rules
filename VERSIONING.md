@@ -63,9 +63,9 @@ longer there.
 The definitions are phrased over names and values on purpose, so that
 they can be checked mechanically rather than argued about. Between two
 builds, the document ids are the keys of `snippets.json` and the
-mechanics keys and values are in `mechanics.json`, which is everything
-needed to work out which of the three a change was. See the note at the
-end.
+mechanics keys and values are in `mechanics.json`, and a diff of those
+two settles every change that moved one of them. What it cannot settle
+is a change that moved none. See the note at the end.
 
 ## Where the version appears
 
@@ -134,11 +134,39 @@ is updated whenever somebody re-checks the adventure. The version it was
 first written against is already in that adventure's own git history, so
 a second field would only duplicate what git knows.
 
+## What a diff can and cannot tell you
+
+A diff of two builds gives a **floor**, not an answer. A renamed or
+removed id or key proves the release is at least MAJOR. A new name or a
+moved value proves it is at least MINOR. Nothing having moved proves
+nothing at all.
+
+That is because a rule document is prose as well as data, and the prose
+is where a value's *meaning* lives. A change that alters what an
+existing number applies to, when it applies, or which roll it modifies
+moves the game without touching a single key — and if it interpolates a
+value already declared elsewhere, as the single-source rule pushes it
+to, it does not even add one.
+
+Release 1.2.0 is the worked example. Its `mechanics.json` is
+byte-identical to 1.1.0's, and it still lowered every caster's accuracy
+at long range, because the change was a sentence saying that a penalty
+which already existed now applied to spells as well as to arrows. Read
+as a diff it was a PATCH, and PATCH promises an adventure that nothing
+it was tuned against has changed. That promise would have been false.
+
+So the tier is settled by the question the tiers are defined by — what
+must an adventure author *do* about this? — and a diff is evidence
+towards the answer rather than the answer. Where the two disagree, the
+diff is the one that is wrong, because it has only ever seen half of
+what a release is.
+
 ## Not yet done
 
-Because the tiers are defined over names and values, the correct bump
-for any change is computable from the build outputs alone. A tool that
-diffed two of them could classify a change as MAJOR, MINOR or PATCH and
-refuse a release numbered lower than the diff warrants, which would turn
-this document from a discipline into a check. It is worth having and it
-is not written; the convention stands without it.
+A tool that diffed two builds could compute the floor above and refuse a
+release numbered lower than it. That would catch the failure that
+actually costs somebody an evening — a MAJOR shipped as a MINOR — and it
+would turn the mechanical half of this document from a discipline into a
+check. It could only decline to lower a number, never raise one, so it
+is a guard on the convention rather than a replacement for it. It is
+worth having and it is not written; the convention stands without it.
