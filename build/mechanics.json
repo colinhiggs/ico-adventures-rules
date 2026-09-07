@@ -1,6 +1,6 @@
 {
   "_generated": "Built from rules/*.md by tools/build.py - do not edit.",
-  "_version": "1.2.0",
+  "_version": "1.2.1",
   "rules": {
     "advancement": {
       "points_per_level": 15,

@@ -8,6 +8,24 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.2.1
+
+No mechanic value changed and no rule document was touched. An adventure
+needs to do nothing.
+
+`VERSIONING.md` no longer claims that the correct bump for a change is
+computable from the build outputs alone. A diff of two builds gives a
+floor and not an answer: it sees the data half of a rule document and
+not the prose half, which is where a value's meaning lives, and the
+single-source rule pushes a change towards reusing an existing key
+rather than declaring a new one -- so the better the prose behaves, the
+less a diff can see.
+
+The previous release is the worked example, and is named as one. The
+tool that section has always wanted is unaffected, with its job stated
+more precisely: it can refuse a release numbered below the floor, and it
+can never raise one.
+
 ## 1.2.0
 
 No name was added, renamed or removed, and `mechanics.json` is
