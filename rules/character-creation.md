@@ -58,7 +58,7 @@ are not skills and cost nothing at creation.
 
 Take {{ mechanics.starting_powers }} power (see [[using-powers]]) and
 {{ mechanics.starting_gold }} gold pieces to equip yourself from
-[[weapons]] and [[armour]].
+[[weapons]], [[ranged-weapons]] and [[armour]].
 
 ## Priorities
 

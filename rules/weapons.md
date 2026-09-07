@@ -14,6 +14,7 @@ mechanics:
     damage: 5
     size: S
     block_ap: 2
+    thrown_range: 4
     cost_gp: 2
     quick: true
   short_sword:
@@ -28,6 +29,7 @@ mechanics:
     damage: 7
     size: S
     block_ap: 3
+    thrown_range: 3
     cost_gp: 8
   staff:
     accuracy: 0
@@ -153,7 +155,12 @@ short sword are quick; the hand axe is not, being a small weapon rather
 than a fast one. What quickness does is in [[reach]] and
 [[free-hands]].
 
-Ranged weapons are not yet statted.
+## Throwing
+
+The dagger and the hand axe are balanced to be thrown as well as swung,
+and each carries the range it can be thrown to. What that costs, how it
+is aimed, and the bows, crossbows and sling that are built for nothing
+else are all in [[ranged-weapons]].
 
 ## Example
 

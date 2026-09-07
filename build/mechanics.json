@@ -711,6 +711,81 @@
       "gold_lost_per_point": 100,
       "power_source_bonus_per_point": 3
     },
+    "ranged-weapons": {
+      "long_range_penalty": -4,
+      "engaged_penalty": -4,
+      "into_melee_penalty": -2,
+      "draw_penalty_per_point": -2,
+      "weapon_block_applies_to_shots": false,
+      "shield_block_applies_to_shots": true,
+      "ammunition_recovered_fraction": 0.5,
+      "sling": {
+        "accuracy": 0,
+        "damage": 4,
+        "range": 6,
+        "hands": 1,
+        "ammunition": "stones",
+        "cost_gp": 1
+      },
+      "shortbow": {
+        "accuracy": 1,
+        "damage": 6,
+        "range": 10,
+        "hands": 2,
+        "ammunition": "arrows",
+        "cost_gp": 30
+      },
+      "longbow": {
+        "accuracy": 0,
+        "damage": 8,
+        "range": 18,
+        "hands": 2,
+        "ammunition": "arrows",
+        "draw_strength": 1,
+        "cost_gp": 75
+      },
+      "light_crossbow": {
+        "accuracy": 2,
+        "damage": 8,
+        "range": 12,
+        "hands": 2,
+        "ammunition": "bolts",
+        "reload": "move",
+        "cost_gp": 35
+      },
+      "heavy_crossbow": {
+        "accuracy": 1,
+        "damage": 11,
+        "range": 16,
+        "hands": 2,
+        "ammunition": "bolts",
+        "reload": "action",
+        "cost_gp": 50
+      },
+      "javelin": {
+        "accuracy": 0,
+        "damage": 6,
+        "range": 4,
+        "hands": 1,
+        "thrown": true,
+        "cost_gp": 1
+      },
+      "arrows": {
+        "used_by": "bows",
+        "quantity": 20,
+        "cost_gp": 1
+      },
+      "bolts": {
+        "used_by": "crossbows",
+        "quantity": 20,
+        "cost_gp": 2
+      },
+      "stones": {
+        "used_by": "slings",
+        "quantity": 20,
+        "cost_gp": 0
+      }
+    },
     "reach": {
       "outside_reach_cannot_strike": true,
       "closing_costs_the_move": true,
@@ -1415,6 +1490,7 @@
         "damage": 5,
         "size": "S",
         "block_ap": 2,
+        "thrown_range": 4,
         "cost_gp": 2,
         "quick": true
       },
@@ -1431,6 +1507,7 @@
         "damage": 7,
         "size": "S",
         "block_ap": 3,
+        "thrown_range": 3,
         "cost_gp": 8
       },
       "staff": {

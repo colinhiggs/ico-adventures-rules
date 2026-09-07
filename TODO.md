@@ -63,13 +63,14 @@ The damaging spells are done: bolts, lances, and the three area families
   with an empty reservoir is so small that more hit points simply
   lengthen the stalemate. That is the free-floor entry below rather
   than a hit point problem.
-- **The dagger and the hand axe are dead weapons.** The staff is alive
-  now that it has reach, and it took the dagger's job: same damage,
-  better block, longer reach, and equally free to cast around, so a
-  caster has no reason to carry a knife instead. The hand axe wants to
-  be throwable, which needs ranged weapons to exist first — it is
-  otherwise a short sword with worse accuracy, worse block and no
-  quickness.
+- **The dagger and the hand axe are dead weapons.** *Partly answered:
+  both are throwable now that `ranged-weapons.md` exists, so the hand
+  axe is no longer a short sword with worse everything.* The staff is
+  still alive and still holding the dagger's job — same damage, better
+  block, longer reach, equally free to cast around — so a caster who
+  never throws anything has no reason to carry a knife instead. Whether
+  a throw at the dagger's range is worth the hand is unmeasured, because
+  the simulator has no positions.
 - **The caster's single-target gap.** *Closed by giving spells a damage
   rate from casting skill.* Against the best conventional martial build
   a caster now contributes 1.5x to 1.8x less across levels 5 to 15,
@@ -175,7 +176,13 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.
-- **Ranged weapons are not statted at all.**
+- **Ranged weapons are unmeasured.** *Statted in
+  `ranged-weapons.md`: sling, shortbow, longbow, both crossbows, the
+  javelin, and throwing ranges on the dagger and hand axe.* Not one of
+  those numbers has been through `sim/`, because the simulator has no
+  positions and so has no way to represent the thing an archer is
+  buying. They are a first pass, priced by eye against the melee table.
+  The entry below on positions is now the blocker for this one.
 
 ## Simulator gaps
 

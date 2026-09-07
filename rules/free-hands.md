@@ -25,8 +25,9 @@ how well you can do the things that want them.
 
 ## What a hand is holding
 
-A weapon takes the hands its size says it takes, and a shield takes one
-— see [[weapons]] and [[armour]]. Whatever is left over is free.
+A melee weapon takes the hands its size says it takes, a ranged one
+takes the hands its entry states, and a shield takes one — see
+[[weapons]], [[ranged-weapons]] and [[armour]]. Whatever is left over is free.
 
 Each skill or power says how many hands it wants:
 
