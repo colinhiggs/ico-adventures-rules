@@ -8,6 +8,49 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.3.0
+
+Two names were added to one creature and nothing was renamed, removed or
+moved. An adventure using goblins keeps working and should re-read its
+goblin encounters, because the creature is more dangerous than it was.
+
+### The goblin carries a shortbow
+
+`goblin` gains `ranged_weapon: shortbow` beside its existing `weapon`,
+and `skills.attack_ranged`, set to the rank `attack_melee` already had.
+No existing value changed: `attack_melee`, the attributes, the hit point
+pools, the armour and `challenge_level` are all exactly what they were.
+
+A stat block now has two weapon keys rather than one. `weapon` still
+holds a melee weapon and is still a string, so anything reading
+`goblin.weapon` reads what it always read; `ranged_weapon` is a new
+optional key that a creature without one simply does not carry.
+
+### What it does to an encounter
+
+The goblin is much better with the bow than with the blade — an attack
+bonus of `+4` at range against `+1` in melee — but that gap is dexterity
+`14` against strength `8`, not a retune. Its damage is unchanged, since
+a shortbow and a short sword have the same damage rating.
+
+The practical difference is that a band can now hurt a party while the
+party crosses the ground to it, where before it could only hurt them
+after. Against that, the bow takes both hands: a goblin that is reached
+either spends its action drawing its blade or goes on shooting at the
+engaged penalty in `ranged-weapons`. Closing with goblins is now
+something a party does on purpose.
+
+`challenge_level` is unchanged at `1` and remains an author's estimate.
+It cannot be more than that until `sim/` can load a creature, which
+`TODO.md` still carries.
+
+### Removed from the prose, not from the data
+
+The **Goblin archer** variant is gone. It said to swap the short sword
+for a bow and move the skill points across, which no longer names a
+difference from the creature above it. No id or mechanics key went with
+it; the variants were always prose.
+
 ## 1.2.1
 
 No mechanic value changed and no rule document was touched. An adventure
