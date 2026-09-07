@@ -8,6 +8,61 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.1.0
+
+Names were added and nothing was renamed or removed. An adventure
+written against any 1.0.x still resolves every name it uses, and needs
+to do nothing unless it wants the new material.
+
+### Ranged weapons exist
+
+A new rule document, `ranged-weapons`, carrying the common set: sling,
+shortbow, longbow, light crossbow, heavy crossbow and javelin, with
+accuracy, damage, range in squares, hands, reload and cost. Arrows,
+bolts and sling stones are listed with a quantity and a price.
+
+It is a separate document from `weapons` rather than more rows in it. A
+ranged weapon has no size, and size on the melee table decides three
+different things — finesse, reach and block value — none of which
+describes a bow, so a ranged entry states the hands it takes outright.
+
+The rules that come with them reuse what the game already had rather
+than adding machinery:
+
+- **Range** is the listed number as short range, doubled for long range
+  by the same multiplier `spell-properties` already applies to a spell,
+  with a penalty to shoot into it and no shot at all beyond it.
+- **Reloading** is paid out of the turn `turn-order` gives you. A light
+  crossbow reloads with the move, so it shoots every round from a spot
+  it cannot leave; a heavy crossbow reloads with the action, so it
+  shoots every other round.
+- **A longbow names a draw strength**, and a character short of it
+  shoots at a penalty for each point they are short rather than being
+  forbidden the bow.
+- **An archer with an enemy inside their reach** shoots at a penalty,
+  and so does anyone shooting at a target inside an ally's reach.
+- **A shield's block value stops a shot; a weapon's does not.** This is
+  the only place a shot is resolved differently from a swing.
+
+### Throwing
+
+`weapons.dagger` and `weapons.hand_axe` each gain a `thrown_range`.
+Thrown, a weapon keeps its own accuracy and damage and is aimed with
+Attack (ranged) like anything else on the new page. No other value in
+`weapons` moved.
+
+### What this does not carry
+
+None of these numbers has been through `sim/`. The simulator has no
+positions, so it cannot represent the one thing an archer is buying, and
+it reads only `weapons` for the gear a character shops from — which is
+the second reason the bows live elsewhere. They are a first pass priced
+by eye against the melee table, and `TODO.md` records that. The balance
+gates are unchanged: the same six failures with the same numbers, either
+side of this release.
+
+No creature in the bestiary has been given a ranged weapon.
+
 ## 1.0.5
 
 No mechanic value changed. An adventure written against any earlier
