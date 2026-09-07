@@ -634,6 +634,7 @@
       },
       "skills": {
         "attack_melee": 2,
+        "attack_ranged": 2,
         "dodge": 3,
         "stealth": 4,
         "spot": 2,
@@ -647,6 +648,7 @@
       "spirit": 0,
       "stance": "dodge",
       "weapon": "short_sword",
+      "ranged_weapon": "shortbow",
       "armour": "partial_leather",
       "shield": "none",
       "morale_breaks_at_core_fraction": 0.5

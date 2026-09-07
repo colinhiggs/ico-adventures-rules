@@ -18,6 +18,7 @@ mechanics:
     charisma: 6
   skills:
     attack_melee: 2
+    attack_ranged: 2
     dodge: 3
     stealth: 4
     spot: 2
@@ -30,14 +31,16 @@ mechanics:
   spirit: 0
   stance: dodge
   weapon: short_sword
+  ranged_weapon: shortbow
   armour: partial_leather
   shield: none
   morale_breaks_at_core_fraction: 0.5
 ---
 
 A goblin stands about waist high to a human, and knows it. It carries a
-blade too big for it, wears whatever leather it has taken off something
-else, and would very much rather be behind you than in front of you.
+bow it is good with and a blade it is not, wears whatever leather it has
+taken off something else, and would very much rather be behind you than
+in front of you.
 
 {% table mechanics.attributes header=Attribute value_header=Score %}
 
@@ -52,9 +55,26 @@ different proposition from one attack six times.
 ## How it fights
 
 It opens from hiding — Stealth {{ mechanics.skills.stealth }} is the
-best thing about it — and it dodges rather than blocks, because at
-strength {{ mechanics.attributes.strength }} it has nothing to block
-with. Against a dodging goblin an attacker is looking at a target set by
+best thing about it — and it opens at range. Its
+[[ranged-weapons|shortbow]] and its [[weapons|short sword]] do the same
+damage, and it has the same rank in both, so everything that separates
+them is who is holding them: dexterity
+{{ mechanics.attributes.dexterity }} carries the shot and strength
+{{ mechanics.attributes.strength }} drags the swing down. A goblin made
+to fight at arm's length is a goblin fighting badly, and it knows that
+too.
+
+Being reached is therefore what a party is trying to do to it. The bow
+takes both hands, so a goblin caught in its hiding place either spends
+its action drawing the blade — see [[free-hands]] — or goes on shooting
+with somebody standing over it at the penalty [[ranged-weapons]] charges
+for that. Six goblins at
+{{ ranged-weapons:mechanics.shortbow.range }} squares and six goblins at
+arm's length are not the same encounter.
+
+It dodges rather than blocks, because at strength
+{{ mechanics.attributes.strength }} it has nothing to block with.
+Against a dodging goblin an attacker is looking at a target set by
 dexterity {{ mechanics.attributes.dexterity }} and Dodge
 {{ mechanics.skills.dodge }}, which is more than a first-level party
 expects from something this small.
@@ -73,9 +93,6 @@ is running the fight, not a roll.
 
 ## Variants
 
-- **Goblin archer.** Swap the short sword for a bow and put the points
-  in Attack Ranged instead of Attack Melee. It stays behind the others
-  and is the reason the others are there.
 - **Goblin boss.** One grade of the Martial discipline, a shield, and
   enough stamina to spend on a power. Worth roughly two ordinary
   goblins and worth killing first, since the band's morale is really
