@@ -8,6 +8,49 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 1.2.0
+
+No name was added, renamed or removed, and `mechanics.json` is
+byte-identical to 1.1.0. An adventure needs to do nothing to keep
+working, but an encounter that assumed a caster could bolt at any
+distance for free should be re-read.
+
+### Long range costs a caster what it costs an archer
+
+`spell-properties` has always given an attack-roll spell a short range
+and a long range, and has never said what being at the long one costs.
+It does now: a spell aimed past its short range takes the same penalty
+`ranged-weapons` charges anyone shooting at that distance.
+
+It is charged as **accuracy**, not as difficulty. `using-powers` has
+one casting roll answering two questions — the declared difficulty
+first, the target's targeting difficulty second — and an accuracy
+penalty applies only to the second. So a spell thrown a long way is
+harder to place and no harder to cast: a caster who misjudges the
+distance loses the bolt, not the spirit.
+
+The caster keeps the out they already had. Range extends by a square
+per point of added difficulty, so a caster may spend spirit to bring
+the target inside short range instead of spending accuracy. An archer
+at the same distance has only the second option.
+
+No new mechanics key was added for this. `spell-properties`
+interpolates `ranged-weapons.long_range_penalty` rather than declaring
+a second copy of it, which is why the data outputs did not move.
+
+### Why this is MINOR and not PATCH
+
+`VERSIONING.md` defines the tiers by what an adventure author has to
+do, and observes that the correct tier is therefore computable from the
+build outputs. This release is a counterexample worth recording: every
+name and every value is exactly what it was in 1.1.0, and the game
+still moved, because the change is entirely in the prose that tells you
+what an existing value applies to. A caster's effective accuracy at
+long range is lower than it was.
+
+PATCH promises an adventure that nothing it was tuned against has
+changed, and that promise would not have been true here.
+
 ## 1.1.0
 
 Names were added and nothing was renamed or removed. An adventure
