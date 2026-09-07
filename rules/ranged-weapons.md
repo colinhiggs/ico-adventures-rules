@@ -137,6 +137,10 @@ figure — the same doubling that carries a spell out to its own long
 range, see [[spell-properties]] — and shooting into it costs
 `{{ mechanics.long_range_penalty }}` on the attack roll.
 
+A spell aimed into its own long range pays the same, out of the same
+figure. Distance is not interested in what launched the thing, so
+[[spell-properties]] charges a bolt what this page charges an arrow.
+
 Beyond long range there is no shot. The arrow goes somewhere; it does
 not go where you were aiming, and the Dungeon Master is not obliged to
 say where it went.

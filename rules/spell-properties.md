@@ -28,9 +28,12 @@ A spell's range is **self**, **touch**, or a **number**.
   [[movement]] measures them. If the spell needs an
   attack roll to land, the listed number is short range and long range
   is {{ mechanics.long_range_multiplier }} times it, and the casting
-  roll is the attack roll — see below. Range can be extended by
+  roll is the attack roll — see below. Aiming into long range costs
+  accuracy, exactly as it costs an archer accuracy; that is under
+  **Accuracy** below. Range can be extended by
   {{ mechanics.range_extend_squares_per_difficulty }} square per point
-  of added difficulty.
+  of added difficulty, which is how a caster buys their way out of the
+  penalty rather than paying it.
 
 ## Duration and area
 
@@ -53,17 +56,37 @@ roll. Accuracy increases by
 `+{{ mechanics.accuracy_bonus_per_difficulty }}` for every point of
 added difficulty.
 
+A spell aimed past its short range loses accuracy instead of gaining
+it: `{{ ranged-weapons:mechanics.long_range_penalty }}` on the attack
+roll. That is the same figure [[ranged-weapons]] charges anybody shooting at that
+distance, and it is the same rule: how far away a thing is does not
+care what launched it.
+
+Being accuracy rather than difficulty settles which of the casting
+roll's two jobs it touches. [[using-powers]] has the roll answering the
+declared difficulty first and the target's targeting difficulty second;
+an accuracy penalty applies only to the second. Reaching a long way
+does not make a spell harder to *cast* — it makes it harder to
+**place**. A caster who misjudges the distance loses the bolt, not the
+spirit.
+
 ## Example
 
 Sela casts a bolt at a target `14` squares away. The spell's listed
 range is `10`, which is short range; long range is double that, so `14`
 is within reach but at long range.
 
-She would rather not rely on that, so she boosts the range instead:
-each point of added difficulty extends it by a square, so declaring `4`
-points above the base brings the target inside short range. Those `4`
-points are added to the difficulty she declares, and are paid for in
-spirit exactly as any other reach would be.
+Cast from there it would land at
+`{{ ranged-weapons:mechanics.long_range_penalty }}` accuracy, so she
+boosts the range instead: each point of added difficulty extends it by
+a square, so declaring `4` points above the base brings the target
+inside short range. Those `4` points are added to the difficulty she
+declares, and are paid for in spirit exactly as any other reach would
+be.
+
+That is the choice the penalty exists to offer. She can spend spirit to
+stand closer than she is, or spend accuracy and hope. An archer at the
+same distance has only the second of those.
 
 Because the bolt needs an attack roll, that same casting roll is what
 places it: one roll, compared first to the difficulty she declared and
@@ -89,4 +112,20 @@ own skill hits with that roll.
 Spell ranges count the same squares movement does, rather than carrying
 a measure of their own. A caster who knows how far they can walk knows
 how far they can reach, and nobody converts units mid-fight.
+
+Long range costs a caster exactly what it costs an archer, because the
+alternative is a game in which distance is a real problem for one half
+of the party and a printed number for the other. Two bands and one
+penalty is also the least a rule can be and still be a rule: there is
+nothing to look up, and the answer for a bolt is the answer for an
+arrow.
+
+Charging it as accuracy rather than as difficulty is what keeps the two
+fair to each other. Difficulty is the caster's price for the spell
+happening at all, and loading distance onto it would mean a spell
+thrown a long way could fail outright and still cost spirit — a
+punishment an archer never faces for the same misjudgement, in a
+subsystem that already has enough ways to go wrong. Accuracy touches
+only the aiming, which is the part distance actually has an opinion
+about.
 {% endbook-only %}

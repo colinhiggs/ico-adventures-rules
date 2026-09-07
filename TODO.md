@@ -176,6 +176,14 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.
+- **The long-range rule lives in two documents.** `spell-properties`
+  owns `long_range_multiplier` and `ranged-weapons` owns
+  `long_range_penalty`, and each interpolates the other's half. Nothing
+  can drift, because neither value is written twice, but the rule reads
+  as though it belongs to whichever page you happened to open. Both
+  constants want one home — `movement` already owns the squares they
+  are counted in. Moving either one removes a mechanics key, which is a
+  MAJOR bump, so it waits for the next one.
 - **Ranged weapons are unmeasured.** *Statted in
   `ranged-weapons.md`: sling, shortbow, longbow, both crossbows, the
   javelin, and throwing ranges on the dagger and hand axe.* Not one of
