@@ -8,6 +8,56 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.1.0
+
+**One mechanics key added, to four entries. Nothing was renamed,
+removed or re-valued**, so an adventure built against 2.0.0 needs no
+revisiting: every `[[link]]`, every `snippets.json` key and every
+number it already names still says what it said. Read on only if your
+adventure has an encounter that turns on where a caster is standing.
+
+### Area spells say how far away they can be put
+
+`spell-properties` has always been explicit that a range is **self**,
+**touch**, or **a number**, and the bolt and lance chassis duly said
+`10`. The four area families said nothing at all, so nothing in the
+book answered *how far off may I drop a fire field*. They now carry
+`range: 10` — `spell-list.blast.range`,
+`spell-list.burst.range`, `spell-list.field.range` and
+`spell-list.ward.range`, inherited by every variant of each.
+
+An area spell is **placed**, not centred on the caster, and the prose
+now says so where the three damaging families are introduced.
+Extending the range costs difficulty at the rate `spell-properties`
+already gave for a bolt.
+
+This fills a hole rather than making a decision: a caster who had been
+told at your table that a fire field goes anywhere within a bolt's
+range has been playing it correctly all along. A caster who had been
+told it lands at their feet has not, and that is the one reading this
+changes.
+
+### What it is worth, measured
+
+Not speed. A caster clearing six goblins already did it in one round to
+one and a half, and opening at ten squares rather than two does not
+shorten that — it makes it free. The evoker, the priest and the
+spellblade all finish untouched now, where the spellblade was paying
+`9%` of its hit points for the same crowd.
+
+The balance gates report the same ten failures with the same numbers,
+because none of them bound on a caster's crowd fight and the
+contribution spread is measured from duels, where nothing yet opens at
+range.
+
+### Also, and invisible from an adventure
+
+The simulator learned where people are standing, and got about five
+times faster while nothing it reported moved. Duels have had distance
+since 2.0.0; skirmishes have it now, which is what the area-spell range
+above was needed for. `sim/README.md` and `TODO.md` carry the detail.
+No rule changed for any of it.
+
 ## 2.0.0
 
 **Two mechanics keys went away.** Both are in the substitution table
