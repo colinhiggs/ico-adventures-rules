@@ -57,6 +57,7 @@ mechanics:
     unwieldy: true
     size: L
     block_ap: 4
+    reach_bonus: 1
     cost_gp: 50
   great_axe:
     accuracy: 0
@@ -64,6 +65,7 @@ mechanics:
     unwieldy: true
     size: L
     block_ap: 2
+    reach_bonus: 1
     cost_gp: 45
 ---
 
@@ -104,11 +106,12 @@ needs one — see [[free-hands]].
 
 ## Reach, and what it costs
 
-A weapon of size {{ mechanics.two_handed_size }} extends its wielder's
-reach, and so does any weapon whose entry gives it a reach bonus of its
-own — the staff is long without being large. Other weapons do not.
-What that is worth in a fight is in [[reach]], and how reach is
-measured is in [[movement]].
+A weapon that extends its wielder's reach says so in its own entry, and
+the amount is in the Reach column of the tables above. It is not a
+property of being large: the staff is long without being large, and a
+weapon that reaches is a weapon that reaches whoever is holding it and
+whatever else its entry says. What that is worth in a fight is in
+[[reach]], and how reach is measured is in [[movement]].
 
 It is long because it is big, and being big is not free. A weapon of
 that size takes `{{ mechanics.large_weapon_skill_penalty }}` off your

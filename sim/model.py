@@ -498,13 +498,15 @@ def hand_penalty(char, M, skill_name):
 
 
 def reach_of(char, M):
-    """Squares this character threatens, per movement.md."""
-    base = int(M.get("movement", "reach_by_size", "medium"))
-    if two_handed(char.weapon, M):
-        base += int(M.get("movement", "large_weapon_reach_bonus"))
-    # A staff is long without being large.
-    base += char.weapon.reach_bonus
-    return base
+    """Squares this character threatens: what its size reaches, plus
+    whatever its weapon's own entry adds.
+
+    Reach is a per-weapon figure and lives in the weapon, which is why
+    there is nothing here keyed on size. A staff is long without being
+    large and a great axe is long as well as large, and both say so the
+    same way."""
+    return (int(M.get("movement", "reach_by_size", "medium"))
+            + char.weapon.reach_bonus)
 
 
 def strikes_last(char, other, M):

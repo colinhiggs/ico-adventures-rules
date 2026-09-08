@@ -696,8 +696,7 @@
         "medium": 1,
         "large": 2,
         "huge": 3
-      },
-      "large_weapon_reach_bonus": 1
+      }
     },
     "power-sources": {
       "stamina_base": "constitution",
@@ -1547,6 +1546,7 @@
         "unwieldy": true,
         "size": "L",
         "block_ap": 4,
+        "reach_bonus": 1,
         "cost_gp": 50
       },
       "great_axe": {
@@ -1555,6 +1555,7 @@
         "unwieldy": true,
         "size": "L",
         "block_ap": 2,
+        "reach_bonus": 1,
         "cost_gp": 45
       }
     }

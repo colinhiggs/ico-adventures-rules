@@ -44,17 +44,19 @@ The band is not a wall. Anyone may walk through it, and against a
 shorter weapon somebody has to.
 
 When an opponent standing in your band moves **towards** you, you may
-answer in one of two ways, and you must choose one:
+spend your **reaction** to answer it. Both answers cost that same one
+reaction, so you take one or the other and never both:
 
 - **Strike them as they come.** One free attack, resolved as
   [[hitting]] resolves any other.
 - **Give ground.** Step back, so that the band opens in front of them
   again and they have crossed nothing.
 
-You may do this {{ mechanics.free_attacks_per_round }} time in a round,
-and it costs your **reaction** — see [[turn-order]]. So the fighter with
-the longer weapon spends on their reach the same reaction that would
-have paid for Riposte or Deflect, and cannot have both.
+One reaction is all anybody has in a round — see [[turn-order]] — so
+this is {{ mechanics.free_attacks_per_round }} answer per round, and it
+is the same reaction Riposte and Deflect are paid out of. A fighter
+holding a long weapon is choosing between their reach and their defence
+every round of the fight.
 
 Nothing here triggers on somebody who is merely standing in the band, or
 who is walking out of it, or who is already close. It is the approach
@@ -76,6 +78,25 @@ penalty on heavy [[armour]] is felt: a character in plate can give up
 perhaps one square and then has nothing left to move with on their own
 turn, while a lightly armoured one gives up the same square and barely
 notices.
+
+## When giving ground is the right answer
+
+Do the arithmetic before you reach for it. They come forward at the
+ordinary price and you go backwards at double, so holding somebody off
+by stepping back alone asks you to be **twice as quick as they are**.
+Against anyone with movement still in hand you will not manage it: they
+follow, you have spent your reaction and two squares' worth of move to
+go one, and you are exactly where you started with nothing to show.
+
+What makes it worth having is that an opponent who has just crossed your
+band has usually spent their move getting there. Give up one square and
+they need one more, out of whatever is left — and if that is nothing,
+they finish their turn standing in the band with no attack at all. They
+must cross again next round, and you may answer that too.
+
+So the free attack is the ordinary answer, and giving ground is the
+answer to somebody who has over-committed. Knowing which you are looking
+at is the skill the rule is asking for.
 
 ## Coming again
 
@@ -148,15 +169,23 @@ band, so Bram answers it: he takes the free attack, spending his
 reaction, and hits her as she comes. She arrives and strikes him with
 her own action.
 
-On his turn Bram steps back a square — his own move, on his own turn, at
-the ordinary price — and attacks her from `2` again. She is in the band
-once more.
+On his turn Bram steps back a square. This is not the reaction: it is
+ordinary movement on his own turn, going where he likes at the ordinary
+price. Then he attacks her from `2` again, and she is in the band once
+more.
 
 From here it repeats, and the shape of the fight is set. Every round
 Sela chooses between standing in the band doing nothing and walking into
 a free attack to get her one blow in. Every round Bram spends his move
 backing off and his reaction hitting her for it, which means he never
 Ripostes and never Deflects all fight.
+
+Note which of his two withdrawals was which. Backing off on his own turn
+is ordinary movement and costs him only his move. Backing off as a
+reaction would cost double and buy him nothing here, because Sela has a
+square of movement left every round and would simply follow. He is
+holding the band with his turn, not with his reaction, and spending the
+reaction on the free attack instead.
 
 Had Sela come at him in a corridor instead, `6` of the `8` squares
 around Bram would be wall — everything but the length of the passage —

@@ -27,7 +27,6 @@ mechanics:
     medium: 1
     large: 2
     huge: 3
-  large_weapon_reach_bonus: 1
 ---
 
 Distance is counted in **squares** on the battle grid.
@@ -88,8 +87,8 @@ A creature can make a melee attack against anything within its
 - Large — {{ mechanics.reach_by_size.large }} squares
 - Huge — {{ mechanics.reach_by_size.huge }} squares
 
-A weapon of size L adds {{ mechanics.large_weapon_reach_bonus }} to
-that — see [[weapons]].
+A weapon may add to that, and says by how much in its own entry — see
+the Reach column in [[weapons]].
 
 Reach is what powers mean by *within reach*: Whirl sweeps everything
 inside it, Guard covers an ally standing inside it, and the extra
@@ -112,7 +111,7 @@ gait bonus.
 An ogre is large and upright: base `5`, plus a dexterity bonus of `+1`,
 for `6` squares. It is slower over open ground than either of them — but
 its reach is `2` squares, so Dune cannot stop one square short of it and
-be safe, and with a size L club it threatens `3`.
+be safe, and with a club that reaches, it threatens `3`.
 
 {% book-only %}
 ## Design note
