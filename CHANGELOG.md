@@ -8,6 +8,68 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.2.0
+
+**One mechanics key added. Nothing renamed, removed or re-valued**, so
+an adventure built against 2.1.0 still resolves every `[[link]]`, every
+`snippets.json` key and every number it names. But this one **changes
+what a character carries**, so read it if any of your NPCs cast
+anything.
+
+### Armour costs a caster their spellcasting
+
+`armour.hampers_spellcasting` is `true`, and armour's skill penalty now
+comes off the casting roll as well as off the dodge. Every time,
+whatever the spell.
+
+The rule already said the penalty "applies while it is worn". It then
+named exactly one consequence — a dodging defender is easier to hit —
+and a rule that names one consequence is read as having only that one.
+Nothing anywhere else picked it up, so on the arithmetic every wizard
+in the game should have worn full plate: it cost two squares of
+movement and nothing else, and took eight points off every blow.
+
+### What it means for an NPC you have already written
+
+**A statted caster in armour got worse at casting and did not get
+worse at anything else.** If you built one in mail or plate, its spells
+are now harder by that armour's skill penalty — `-6` in full plate.
+Either re-equip it, which is what its own arithmetic now wants, or
+leave it and know that it is paying for the steel.
+
+**Nobody is forbidden anything.** Ico does not ban equipment by
+archetype and this does not start: a caster in plate is legal, playable
+and sometimes right — a bodyguard who casts once a day should wear the
+plate. The choice simply costs what it ought to.
+
+### Scope, and what was deliberately left out
+
+It is the **spellcasting skill**, not spirit generally. `source` is on
+every discipline and would have said "any power drawing on spirit" in a
+line, but every spirit-fuelled power that is not a spell is Social or
+Spiritual — Rally, Command, Hold the Line, Turn Undead — and an
+armoured commander shouting orders is the picture this rule protects,
+not one to penalise.
+
+Extending it to dexterity skills is right in principle and is not done:
+`skill-list` keeps governing attributes in prose rather than in
+frontmatter, so nothing can compute it, and the case it would bite is
+the armoured archer, which arrives with ranged weapons.
+
+### The price, which was accepted rather than missed
+
+Casters were already the least of the party by measurement, and taking
+their armour away without giving anything back makes that worse, not
+better: the level 10 contribution spread widens from `2.9x` to `3.4x`.
+The balance gates go from ten failures to eleven.
+
+That was decided knowingly. A caster wearing full plate at every level
+is a worse problem than a gate reading `3.4x`, and a robed caster's
+protection is supposed to come from the guards — Bulwark, Stoneskin,
+Mantle of Warding — rather than from a breastplate. If it turns out not
+to come from there hard enough, those are what wants fixing. `TODO.md`
+carries it.
+
 ## 2.1.0
 
 **One mechanics key added, to four entries. Nothing was renamed,
