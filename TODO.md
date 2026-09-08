@@ -134,12 +134,70 @@ The damaging spells are done: bolts, lances, and the three area families
   where there was none. The gate was already failing and this is the
   same failure louder, not a new kind of one.
 
-  Two things follow that are the actual open work. A caster's
-  protection is meant to come from the guards -- Bulwark, Stoneskin,
-  Mantle of Warding -- and `MAX_SELF_GUARD_RATIO` deliberately holds
-  them below the point where casting one beats getting on with the
-  fight. If a robed caster is now too fragile, that cap is the lever,
-  and raising it is a design decision nobody has taken. The **spellblade came out incoherent** and no
+  **The guards are not the answer, and this entry used to say they
+  were.** The reasoning was that a robed caster's protection ought to
+  come from Bulwark and Stoneskin rather than from a breastplate, and
+  that `MAX_SELF_GUARD_RATIO` was the cap holding them back. Measured,
+  none of that is a lever:
+
+  - `MAX_SELF_GUARD_RATIO` is a **gate threshold, not a knob**. It caps
+    how good a self-cast guard is allowed to be, and no build reaches
+    it -- the ratios sit at `0.84` to `0.94` against a cap of `1.00`.
+    Raising it permits something that is not happening.
+  - Making the guards themselves stronger barely helps. Sweeping
+    `protection_per_step` from `1` to `6` (and Bulwark's from `2` to
+    `12`) takes the evoker's self-cast ratio from `0.93` to `1.13` and
+    moves the contribution spread by **nothing at all**: `3.34x` at
+    every strength, the evoker pinned at `147`. Stoneskin flattens at
+    `0.93` however strong it gets, because extra armour runs into
+    `damage.max_reduction_fraction`.
+  - The reason it moves nothing is that **`contributions` never casts a
+    guard**. It is offence times `total_hp / taken`, and no guard is
+    applied anywhere in it. The metric that reports casters as weak
+    cannot see protection at all.
+  - Even crediting a self-cast guard at full value, which the metric
+    does not, the evoker goes `147` to `164` and needs `197` to pass
+    the `2.5x` gate. The whole guard family is worth about a third of
+    the gap.
+
+  **Probed on the damage side, and it is half offence and half
+  survival.** At level 10 the paragon is `1.99x` ahead on offence plus
+  control and `1.68x` ahead on survival, and `1.99 x 1.68` is the whole
+  of the `3.34x`. The survival half is the armour rule above doing
+  exactly what it was meant to do: the evoker takes `8.71` a round in
+  partial leather where the paragon takes `5.19` in a breastplate.
+
+  What the sweeps say, all measured at levels 1, 5, 10 and 15:
+
+  - **`damage.damage_per_casting_skill_step` `3` to `1` fixes it**, and
+    by a distance. Contribution spread `1.91x` to `2.25x` at every
+    level, caster free floors a healthy `54%` to `71%`, and
+    `--check` goes from **fourteen failures to six** -- the lowest this
+    ruleset has measured since duels had no positions. The six left are
+    the paragon being too strong and the dead weapons, both older than
+    this question.
+  - **But it overpays, and the reason is worth knowing.** At step `3`
+    a caster's skill is ALREADY at per-blow parity: casting skill `16`
+    gives `5` damage, and a duellist's attack skill `16` gives `2` from
+    skill plus about `4` from margin. Step `1` makes it `16`, about
+    `2.7x` what the fighter gets. It works because it pays for the
+    survival half of the gap out of the offence half, not because the
+    rate was wrong.
+  - `lance.damage_per_step` `1` to `2` fixes the spread on its own
+    (`2.49x` at level 10) and is far more targeted, but it lifts only
+    the paid spell and not the free one, so caster floors fall out of
+    the `35-85%` band at levels 1 and 5 (`33%`, `29%`). `--check`
+    stays at fourteen failures, just different ones.
+  - `casting 2` plus `lance 2` passes the spread everywhere and keeps
+    floors at `36-43%`, but that is two keys to buy what one nearly
+    does, and it sits against the floor bound.
+
+  So the decision is not "which number", it is whether a caster's
+  survival deficit should be repaid in damage. If it should, step `1`
+  is the change and the design note in `damage.md` needs to say why
+  the rate is steeper than parity. If it should not, the missing
+  piece is defensive and the guards cannot supply it -- see above --
+  so it would have to be something new. The **spellblade came out incoherent** and no
   longer does: the gear chooser used to keep it in full plate, because
   its melee dominates damage-times-survival, and it then could not land
   a field at level 5. A build with ranks in spellcasting now refuses
@@ -164,8 +222,9 @@ The damaging spells are done: bolts, lances, and the three area families
   `15.7` against a one-handed power at `12.1`, and the axe
   configuration wins on score even so. The constraint stops the build
   buying its way out of being a caster; it does not make casting worth
-  doing. That is the contribution spread again, and the guards are
-  still the lever.
+  doing. That is the contribution spread again, and per the
+  measurements above it is the spell's damage that wants looking at,
+  not its protection.
 
 - **The strength double-dip is real, worth about ten per cent, and
   should be left alone.** Block skill and melee attack do share an
