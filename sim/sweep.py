@@ -64,6 +64,10 @@ def apply_override(M, parts, value):
             "'%s' has no mechanic '%s' (have: %s)"
             % (".".join(parts[:-1]), keys[-1], ", ".join(sorted(cur))))
     cur[keys[-1]] = value
+    # model.py memoises both the values themselves and figures worked
+    # out from them, so a sweep that changed one silently without
+    # saying so would measure the value it had replaced.
+    M.invalidate()
 
 
 def measure_level(M, level, trials):

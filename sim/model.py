@@ -16,6 +16,7 @@
 # marked ASSUMPTION and collected by balance.py so they are reported
 # rather than hidden.
 
+import copy
 import json
 import random
 from dataclasses import dataclass, field
@@ -119,6 +120,11 @@ def resolve_mechanics_path(path=None):
     return path
 
 
+# A sentinel, because a cached mechanic value may legitimately be None,
+# False or 0 and `None` cannot mean "not cached" here.
+_MISSING = object()
+
+
 class Mechanics:
     """Fail-fast reader over build/mechanics.json."""
 
@@ -134,8 +140,28 @@ class Mechanics:
             )
         self.path = path
         self.rules = json.loads(path.read_text(encoding="utf-8"))["rules"]
+        # The file is read once and its values are read hundreds of
+        # thousands of times per duel, so the walk is memoised, and
+        # `derived` holds anything else worked out from those values.
+        # `generation` is what keeps that honest: sweep.py changes a
+        # value in memory, and everything cached from the old one has to
+        # go at that moment. Nothing outside `invalidate` may write to
+        # `rules`.
+        self._cache = {}
+        self.derived = {}
+        self.generation = 0
+
+    def invalidate(self):
+        """Forget everything cached from the values in `rules`. Call
+        this after changing one -- sweep.py is the only caller."""
+        self._cache.clear()
+        self.derived.clear()
+        self.generation += 1
 
     def get(self, rule_id, *keys):
+        cached = self._cache.get((rule_id, keys), _MISSING)
+        if cached is not _MISSING:
+            return cached
         if rule_id not in self.rules:
             raise KeyError(
                 "no rule '%s' in %s (have: %s)"
@@ -152,6 +178,7 @@ class Mechanics:
                 )
             cur = cur[k]
             walked.append(k)
+        self._cache[(rule_id, keys)] = cur
         return cur
 
     def keys(self, rule_id):
@@ -844,7 +871,7 @@ def d20_faces(M, depth=4):
     walk 1..20 any more, because the top face reopens the die. Depth 4
     leaves under one part in a hundred thousand unaccounted for, which is
     far below the noise in everything else here."""
-    cached = _FACES_CACHE.get(depth)
+    cached = M.derived.get(("faces", depth))
     if cached is not None:
         return cached
     crit_on = int(M.get("core-resolution", "critical_on"))
@@ -860,11 +887,8 @@ def d20_faces(M, depth=4):
                 out.append((total + face, w, is_crit or face == crit_on))
 
     walk(0, 1.0, 0, False)
-    _FACES_CACHE[depth] = out
+    M.derived[("faces", depth)] = out
     return out
-
-
-_FACES_CACHE = {}
 
 
 def critical_bonus_steps(M):
@@ -903,9 +927,6 @@ def condition_duration(M, name, margin):
             + margin // margin_per_round(M, name))
 
 
-_CONDITION_CACHE = {}
-
-
 def condition_expectation(M, name, difficulty, resist_bonus):
     """(chance it lands, mean rounds it then lasts).
 
@@ -914,8 +935,8 @@ def condition_expectation(M, name, difficulty, resist_bonus):
     off on the same lever as everything else a power's user pays for. A
     tie goes to the user, exactly as core-resolution gives ties to the
     actor."""
-    key = (name, difficulty, resist_bonus)
-    got = _CONDITION_CACHE.get(key)
+    key = ("condition", name, difficulty, resist_bonus)
+    got = M.derived.get(key)
     if got is not None:
         return got
     landed = 0.0
@@ -927,7 +948,7 @@ def condition_expectation(M, name, difficulty, resist_bonus):
         landed += weight
         rounds += weight * condition_duration(M, name, difficulty - total)
     got = (landed, rounds / landed if landed else 0.0)
-    _CONDITION_CACHE[key] = got
+    M.derived[key] = got
     return got
 
 
@@ -1155,20 +1176,30 @@ def margin_fraction(attacker, M):
     return float(M.get("damage", "margin_to_damage_fraction"))
 
 
-def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
-                weapon_only=False, use_margin=True):
-    """weapon_only strips the margin and skill terms, leaving the bare
+def damage_curve(attacker, defender, M, bonus=0, pierce=0,
+                 weapon_only=False, use_margin=True):
+    """Everything in a blow that the margin does not change, worked out
+    once, as a function of the margin.
+
+    The expectation functions enumerate ninety-six faces of the die and
+    want a damage figure for every one of them. Only the margin differs
+    between those ninety-six: the weapon, the arm behind it, and the
+    armour it lands on are the same blow each time. Splitting the two
+    apart is what stops the armour being looked up ninety-six times to
+    reach the same number.
+
+    weapon_only strips the margin and skill terms, leaving the bare
     weapon rating -- what Quick Attack's extra swings deal. use_margin
     drops only the margin, keeping the trained arm behind the blow --
     what a Whirl sweep deals."""
-    weapon_damage = attacker.weapon.damage
     if weapon_only:
-        raw = weapon_damage
+        base = attacker.weapon.damage
+        fraction = 0.0
     else:
-        from_margin = int(margin * margin_fraction(attacker, M)) if use_margin else 0
         step = int(M.get("damage", "damage_per_attack_skill_step"))
         from_skill = attacker.attack_bonus(M) // step if step else 0
-        raw = weapon_damage + from_margin + from_skill + bonus
+        base = attacker.weapon.damage + from_skill + bonus
+        fraction = margin_fraction(attacker, M) if use_margin else 0.0
     reduction = defender.armour.ap
     if defender.stance == "block":
         reduction += (defender.shield.block_ap if defender.shield
@@ -1177,24 +1208,37 @@ def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
     # ignores some of it by being an axe.
     reduction = max(0, reduction - pierce - attacker.weapon.reduction_ignored)
     # Reduction can never take more than its share of the raw blow.
-    cap = raw * float(M.get("damage", "max_reduction_fraction"))
-    return max(0, int(raw - min(reduction, cap)))
+    max_fraction = float(M.get("damage", "max_reduction_fraction"))
+
+    def at(margin):
+        raw = base + int(margin * fraction)
+        return max(0, int(raw - min(reduction, raw * max_fraction)))
+
+    return at
+
+
+def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
+                weapon_only=False, use_margin=True):
+    """One blow, for a caller that has only one margin to resolve."""
+    return damage_curve(attacker, defender, M, bonus=bonus, pierce=pierce,
+                        weapon_only=weapon_only,
+                        use_margin=use_margin)(margin)
 
 
 def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0):
     """Exact expected damage of one swing, enumerated over the d20."""
     td = targeting_difficulty(defender, M, dodge_bonus)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    at = damage_curve(attacker, defender, M, bonus=bonus, pierce=pierce)
+    skill = attacker.attack_bonus(M) + attacker.weapon.accuracy
     total_damage = 0.0
     hits = 0.0
     for face, weight, _crit in d20_faces(M):
-        total = face + attacker.attack_bonus(M) + attacker.weapon.accuracy
+        total = face + skill
         landed = total >= td if on_tie else total > td
         if landed:
             hits += weight
-            total_damage += weight * damage_from(
-                attacker, defender, total - td, M, bonus=bonus, pierce=pierce
-            )
+            total_damage += weight * at(total - td)
     return total_damage, hits
 
 
@@ -1577,7 +1621,8 @@ def power_expectation(char, power_id, difficulty, defender, M):
     extra_attacks = steps if "difficulty_per_extra_attack" in p else 0
     weak_extras = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
-    skill = char.attack_bonus(M) + char.weapon.accuracy
+    attack = char.attack_bonus(M)
+    skill = attack + char.weapon.accuracy
     td = targeting_difficulty(defender, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
@@ -1586,30 +1631,43 @@ def power_expectation(char, power_id, difficulty, defender, M):
     per_step_pierce = int(p.get("reduction_ignored_per_step", 0))
     crit_steps = critical_bonus_steps(M)
 
+    # A face is either a critical or it is not, and the only thing that
+    # follows from it is more steps of the power. So there are two blows
+    # to describe here, not ninety-six, and the extra swings are either
+    # the same blow again or the bare weapon.
+    curves = {}
+    for is_crit in (False, True):
+        extra = crit_steps if is_crit else 0
+        b = bonus + extra * per_step_damage
+        pc = pierce + extra * per_step_pierce
+        main = damage_curve(char, defender, M, bonus=b, pierce=pc)
+        following = (damage_curve(char, defender, M, weapon_only=True)
+                     if weak_extras else main)
+        curves[is_crit] = (main, following,
+                           extra_attacks + (extra if extra_attacks else 0))
+
+    # power_cost, unrolled: both of the numbers it reads are the same
+    # for all ninety-six faces, and only the roll changes.
+    base_cost = int(M.get("using-powers", "base_cost"))
+    floor_cost = 0 if minor else difficulty // divisor
+
     damage = 0.0
     cost = 0.0
     for face, weight, is_crit in d20_faces(M):
-        roll = face + char.attack_bonus(M)
+        roll = face + attack
         total = face + skill
         if roll >= difficulty:
-            cost += weight * power_cost(difficulty, roll, M, minor)
-            # A critical grants extra steps of the power's own effect,
-            # which is the only thing margin does not already reach.
-            extra = crit_steps if is_crit else 0
-            b = bonus + extra * per_step_damage
-            pc = pierce + extra * per_step_pierce
-            swings = extra_attacks + (extra if extra_attacks else 0)
+            cost += weight * max(floor_cost, base_cost + difficulty - roll)
+            main, following, swings = curves[is_crit]
             if (total >= td) if on_tie else (total > td):
-                damage += weight * damage_from(
-                    char, defender, total - td, M, bonus=b, pierce=pc)
+                margin = total - td
+                damage += weight * main(margin)
+                # Added one at a time, as the swings are, so that the
+                # sum is the same sum to the last bit.
                 for _ in range(swings):
-                    damage += weight * damage_from(
-                        char, defender, total - td, M,
-                        bonus=0 if weak_extras else b,
-                        pierce=0 if weak_extras else pc,
-                        weapon_only=weak_extras)
+                    damage += weight * following(margin)
         else:
-            cost += weight * (0 if minor else difficulty // divisor)
+            cost += weight * floor_cost
             # power failed; the action is spent, so no swing at all
     return damage, cost
 
@@ -2413,8 +2471,29 @@ def _pick(plans):
 
 
 def _fresh(char):
-    import copy
-    return copy.deepcopy(char)
+    """A combatant as they were before the fight started.
+
+    Two of these are made for every trial of every duel, which makes it
+    the most-run line in the model, and it used to be a `deepcopy` --
+    a general walk over an object graph that is not general at all.
+    Every field a Character holds is a scalar, a flat dict of scalars,
+    a tuple of strings, or one of the three gear records, which are
+    themselves flat. Copying those by hand is the same copy: nothing
+    below the first level is ever written to, and the gear records are
+    duplicated anyway so that anything that does write to one (a guard
+    spell raising armour, a blessing raising damage) still cannot reach
+    the table entry it was loaded from."""
+    c = copy.copy(char)
+    c.disciplines = dict(char.disciplines)
+    c.attributes = dict(char.attributes)
+    c.skills = dict(char.skills)
+    c.power_plan = dict(char.power_plan)
+    c.spent = dict(char.spent)
+    c.conditions = dict(char.conditions)
+    c.weapon = copy.copy(char.weapon)
+    c.armour = copy.copy(char.armour)
+    c.shield = copy.copy(char.shield)
+    return c
 
 
 # How often a fight offers the flank or the distracted target that

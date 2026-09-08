@@ -240,6 +240,21 @@ The damaging spells are done: bolts, lances, and the three area families
   duels and not at all in the crowd loop, and a caster duels toe to toe
   with spells that reach ten squares. This is the single largest source
   of doubt in every number the report prints.
+- **What is left of the speed problem is duplicated planning.** A full
+  `balance.py --check` went from thirteen minutes to four, and the
+  remaining time is concentrated in one place: choosing what a
+  combatant means to do. `duel` works that out twice for each side --
+  once in `_plan`, once again in `expected_offence` for what a round of
+  theirs is worth -- and both walk the same sixty candidate
+  difficulties through `power_expectation`. Merging them would take
+  roughly another third off, and the reason it has not been done is
+  that the two disagree slightly about what a spell is worth, so the
+  merge is a small design question rather than a refactor. Below that,
+  `best_difficulty` scans sixty difficulties and stops at none of them:
+  expected cost looks monotonic in difficulty, and if it is, the scan
+  can break rather than continue. That is an assumption about every
+  future power as well as the present ones, so it wants deciding rather
+  than assuming.
 - **Four of the six Master signatures do nothing** in the model: Read
   the Blow, Command the Room, School Mastery, Granted Domain.
 - **The Social discipline is unmeasured**, because nothing in the model

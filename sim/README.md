@@ -86,6 +86,24 @@ measuring the wrong game.
 That is also why the workflow is *edit a rule file, rebuild, re-run*.
 There is no second place to change a number.
 
+**The corollary is that those values are cached.** A duel reads some of
+them hundreds of thousands of times, so `Mechanics.get` memoises the
+walk, and `Mechanics.derived` holds the things worked out from those
+values that are expensive enough to be worth keeping -- the enumeration
+of the exploding d20, and each condition's expectation. Nothing may
+write into `Mechanics.rules` without calling `Mechanics.invalidate()`
+afterwards, which empties both caches. `sweep.py` is the only thing that
+writes there, and it does.
+
+That is not a style preference. Before the caches were tied together,
+the face enumeration was held in a module-level dict keyed on its own
+recursion depth, so a sweep of `core-resolution.critical_on` printed the
+same figure for every value it was given and read as a mechanic that
+changed nothing -- and the condition cache was stale against
+`conditions.base_rounds` in exactly the same way. A cache that outlives
+the number it was computed from does not make the model slower, it makes
+it wrong, and quietly.
+
 ## What it reports
 
 - **Character sheets** — what each build actually looks like at a level,
