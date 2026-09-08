@@ -528,14 +528,27 @@ land the thing at least half the time before it counts.
   which turned two out-of-spirit level 1 casters into a seventy-round
   staring contest and looked exactly like a rules problem.
 - **A caster duels toe to toe, which is the last place it would
-  choose.** Its spells reach ten squares and the model has no positions,
-  so it cannot back away and make a melee build spend the fight
-  closing. Every caster duel in the report is therefore the worst case
-  for the caster, and the win rates should be read as a floor rather
-  than an estimate.
-- **Reach and quickness reach duels and the gear chooser, not the
-  skirmish loop.** A crowd closing on one character is exactly where
-  reach should matter most, and the crowd model has no positions at all.
+  choose.** Duels have distance, but nothing in a duel picks up a bow
+  or opens at spell range, so a caster still cannot back away and make
+  a melee build spend the fight closing. Every caster duel in the
+  report is therefore the worst case for the caster, and the win rates
+  should be read as a floor rather than an estimate.
+- **The crowd loop has positions now, and they change nothing yet.**
+  A skirmish holds one distance per creature, starts where the hero
+  could first act, gives the hero ground to give up and the crowd
+  ground to cross, answers a crossing of the hero's band out of its
+  reaction, and stops more bodies reaching you than can stand next to
+  you. Every one of those is inert on the present ruleset, and the
+  reason is a hole in `spell-list` rather than anything here: the only
+  thing that would open a crowd fight at a distance is a hero with
+  range, and **the four area families -- blast, burst, field and ward
+  -- declare no range at all**, while the spells that do declare one
+  (bolt and lance, at ten squares) are single-target and never what a
+  caster picks against six goblins. So every build in the panel still
+  opens at its own reach of one or two squares, goblins move four, and
+  the crowd arrives and swings in the same round exactly as it did
+  before. Give those four families a range and the machinery starts
+  measuring; until then it is groundwork for ranged weapons.
 - Fights are one-on-one, to the death, on open ground. Party
   composition, terrain, morale and action economy across multiple
   opponents are exactly where the remaining balance risk lives.

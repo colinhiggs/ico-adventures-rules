@@ -82,6 +82,24 @@ ASSUMPTIONS = [
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
+    "A fight against a crowd starts where the hero can first act -- "
+    "at its own reach, or at the range of the spell it means to "
+    "throw -- because the hero is the one who picks the moment to "
+    "start it.",
+    "The ground a crowd fight happens on is as deep as that same "
+    "range, counted as how far the hero may give before its back is "
+    "to a wall. Capping the distance rather than the ground would not "
+    "bind: anyone who walks backwards as fast as the crowd walks "
+    "forwards would back away for ever.",
+    "A spell that declares no range reaches no further than the "
+    "caster's own arm. spell-properties says a range is self, touch "
+    "or a number; the four area families declare none of the three, "
+    "so this is a stand-in for a missing rule and it understates "
+    "every caster rather than flattering one.",
+    "Eight creatures per square of reach can stand where they can "
+    "strike you, that being the ring of squares around you when a "
+    "diagonal costs the same as a step. It binds at no crowd size "
+    "this report uses.",
 ]
 
 
@@ -1914,6 +1932,96 @@ def _expected_kills(hero, foe, M, power_id, difficulty, budget):
     return total_kills
 
 
+def crowd_geometry(hero, template, plan, M):
+    """Where a fight against a crowd starts, how big the ground is, and
+    what everybody can do with their feet.
+
+    Stage one started a duel at the moment the two of them were in each
+    other's way. A crowd is the same idea from the other end: the fight
+    starts when the HERO can first act, because the hero is the one who
+    picks the moment to start it. A swordsman opens in contact; a caster
+    holding a lance opens ten squares out and the crowd has to cross
+    them.
+
+    That same number is the arena. A fight on ground with no edge is
+    decided by the absence of walls -- the duel loop already says so --
+    and for a crowd the ground that matters is the ground the hero
+    chose to open at. Without the cap, a caster who can outrun nothing
+    still backs away across thirty-six squares and is never touched
+    once, which measures the emptiness of the field rather than the
+    rules."""
+    opening = max(1, acting_range(hero, plan, M))
+    return {
+        "range": opening,
+        "arena": opening,
+        "hero_move": move_of(hero, M),
+        "hero_reach": reach_of(hero, M),
+        "mook_move": move_of(template, M),
+        "mook_reach": reach_of(template, M),
+        "limit": engagement_limit(reach_of(template, M)),
+    }
+
+
+def _crowd_advance(hero, crowd, gaps, geo, M, on_tie, ground):
+    """The crowd's feet, and the hero's answer to them.
+
+    Everybody stands at their own reach when they can, which is the same
+    rule the duel loop moves on. For a mook that means closing until it
+    can swing; for the hero it means giving ground to keep the nearest
+    of them at the distance it would rather fight at -- and a hero whose
+    reach IS its range has nowhere to give, which is why a swordsman
+    fights where it stands.
+
+    A mook crossing the hero's band is answered out of the hero's
+    reaction, once a round, exactly as [[reach]] answers it in a duel.
+
+    `ground` is how many squares of retreat the hero has left, and it is
+    the whole of what the arena means. Capping the DISTANCE at the arena
+    would not bind at all: the hero only ever has to restore the gap it
+    started at, so anybody who can walk backwards as fast as the crowd
+    walks forwards backs away for ever. Capping the total ground given
+    up is what puts a wall behind them."""
+    living = [i for i, mk in enumerate(crowd) if mk.chp > 0]
+    if not living:
+        return
+
+    # The hero's own turn: ordinary movement at the ordinary price.
+    want = geo["range"]
+    nearest = min(gaps[i] for i in living)
+    if nearest < want and ground["left"] > 0:
+        step = min(geo["hero_move"], want - nearest, ground["left"])
+        ground["left"] -= step
+        for i in living:
+            gaps[i] = min(want, gaps[i] + step)
+
+    # Then the crowd's, one at a time. Whoever is already in a square
+    # they can hit from stays in it and leaves the square occupied.
+    reaction = True
+    engaged = sum(1 for i in living if gaps[i] <= geo["mook_reach"])
+    for i in living:
+        if gaps[i] <= geo["mook_reach"]:
+            continue
+        floor = (geo["mook_reach"] if engaged < geo["limit"]
+                 else geo["mook_reach"] + 1)
+        moved_to = max(floor, gaps[i] - geo["mook_move"])
+        if moved_to >= gaps[i]:
+            continue
+        crossed = gaps[i] > geo["hero_reach"] >= moved_to
+        gaps[i] = moved_to
+        if moved_to <= geo["mook_reach"]:
+            engaged += 1
+        # reach.md: an approach across the band is answered once a
+        # round, and only a longer weapon imposes a band at all.
+        if (crossed and reaction
+                and geo["hero_reach"] > geo["mook_reach"]):
+            reaction = False
+            mk = crowd[i]
+            td = targeting_difficulty(mk, M)
+            total = d20(M)[0] + hero.attack_bonus(M) + hero.weapon.accuracy
+            if (total >= td) if on_tie else (total > td):
+                apply_damage(mk, damage_from(hero, mk, total - td, M))
+
+
 def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     """One hero against a crowd. Returns (mean rounds to clear, win
     rate, mean share of the hero's hit points lost)."""
@@ -1925,6 +2033,7 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     action_value, _ = attack_expectation(template, hero_spec, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    geo = crowd_geometry(hero_spec, template, plan, M)
 
     rounds_total = 0
     wins = 0
@@ -1932,33 +2041,43 @@ def skirmish(hero_spec, kind, count, M, trials=2000, max_rounds=40):
     start_hp = hero_spec.total_hp
 
     for _ in range(trials):
-        hero = copy.deepcopy(hero_spec)
-        crowd = [copy.deepcopy(template) for _ in range(count)]
+        hero = _fresh(hero_spec)
+        crowd = [_fresh(template) for _ in range(count)]
+        # One distance each, from the hero. There is nothing else on the
+        # grid to hold: the model cannot say which side of the hero
+        # anybody is standing on, only how far off they are.
+        gaps = [geo["range"]] * count
+        ground = {"left": geo["arena"]}
         fields = []             # persisting spells still on the ground
         rounds = 0
-        while crowd and hero.chp > 0 and rounds < max_rounds:
+        while any(mk.chp > 0 for mk in crowd) and hero.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields)
-            crowd = [m for m in crowd if m.chp > 0]
-            for m in crowd:
-                if m.chp <= 0:
+            targets = [mk for mk, gap in zip(crowd, gaps)
+                       if mk.chp > 0 and gap <= geo["range"]]
+            if targets:
+                _swarm_act(hero, targets, plan, M, on_tie, divisor, fields)
+            _crowd_advance(hero, crowd, gaps, geo, M, on_tie, ground)
+            for mk, gap in zip(crowd, gaps):
+                if mk.chp <= 0:
                     continue
-                _stand_in_fields(m, fields, M)
-                if m.chp <= 0:
+                _stand_in_fields(mk, fields, M)
+                if mk.chp <= 0:
                     continue
                 # Burning bites and stun bites before the swing does.
-                if not tick_conditions(m, M):
+                if not tick_conditions(mk, M):
                     continue
-                if would_smother(m, M, action_value):
-                    smother(m, M)
+                if would_smother(mk, M, action_value):
+                    smother(mk, M)
                     continue        # the turn went on the flames
+                if gap > geo["mook_reach"]:
+                    continue        # still walking; nothing in reach
                 td = targeting_difficulty(hero, M)
-                total = (d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
-                         - condition_attack_penalty(m, M))
+                total = (d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
+                         - condition_attack_penalty(mk, M))
                 if (total >= td) if on_tie else (total > td):
-                    apply_damage(hero, damage_from(m, hero, total - td, M))
-            crowd = [m for m in crowd if m.chp > 0]
+                    apply_damage(hero, damage_from(mk, hero, total - td, M))
             _age_fields(fields)
+        crowd = [mk for mk in crowd if mk.chp > 0]
         rounds_total += rounds
         if not crowd and hero.chp > 0:
             wins += 1
@@ -2042,22 +2161,32 @@ def recover(char, caps, M, tier):
 def run_encounter(hero, kind, count, M, max_rounds=40):
     """One fight, fought by THIS hero, spending their actual resources.
     Mutates the hero and returns (rounds, survived)."""
-    import copy
     template = mook(kind, M)
     plan = _swarm_plan(hero, template, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    crowd = [copy.deepcopy(template) for _ in range(count)]
+    # The same ground the skirmish report fights on. A day made of
+    # fights the crowd report would not recognise measures a different
+    # game from the one being balanced.
+    geo = crowd_geometry(hero, template, plan, M)
+    crowd = [_fresh(template) for _ in range(count)]
+    gaps = [geo["range"]] * count
+    ground = {"left": geo["arena"]}
     rounds = 0
-    while crowd and hero.chp > 0 and rounds < max_rounds:
+    while any(mk.chp > 0 for mk in crowd) and hero.chp > 0 and rounds < max_rounds:
         rounds += 1
-        _swarm_act(hero, crowd, plan, M, on_tie, divisor)
-        crowd = [m for m in crowd if m.chp > 0]
-        for m in crowd:
+        targets = [mk for mk, gap in zip(crowd, gaps)
+                   if mk.chp > 0 and gap <= geo["range"]]
+        if targets:
+            _swarm_act(hero, targets, plan, M, on_tie, divisor)
+        _crowd_advance(hero, crowd, gaps, geo, M, on_tie, ground)
+        for mk, gap in zip(crowd, gaps):
+            if mk.chp <= 0 or gap > geo["mook_reach"]:
+                continue
             td = targeting_difficulty(hero, M)
-            total = d20(M)[0] + m.attack_bonus(M) + m.weapon.accuracy
+            total = d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
             if (total >= td) if on_tie else (total > td):
-                apply_damage(hero, damage_from(m, hero, total - td, M))
+                apply_damage(hero, damage_from(mk, hero, total - td, M))
     return rounds, hero.chp > 0
 
 
@@ -2136,7 +2265,14 @@ def standard_foe_for(hero, M):
     return mook("orc", M)
 
 
-def _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields=None):
+def _swarm_act(hero, targets, plan, M, on_tie, divisor, fields=None):
+    """The hero's action against the crowd.
+
+    `targets` is who the hero can actually act on this round --
+    alive, and near enough for the weapon or the spell it chose.
+    Everything below picks from that list and no wider one, so a
+    build cannot cleave through somebody who is still walking
+    towards it."""
     face, was_crit = d20(M)
     roll = face + hero.attack_bonus(M)
     total = roll + hero.weapon.accuracy
@@ -2148,7 +2284,7 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields=None):
                                              bonus=bonus, pierce=pierce,
                                              weapon_only=weapon_only))
 
-    living = [m for m in crowd if m.chp > 0]
+    living = [m for m in targets if m.chp > 0]
     if not living:
         return
     if plan is None:
@@ -2156,7 +2292,7 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields=None):
         return
 
     if "spell" in plan:
-        _cast_at_crowd(hero, crowd, plan, M, fields)
+        _cast_at_crowd(hero, targets, plan, M, fields)
         return
 
     p = power_def(M, plan["power"])
@@ -2211,7 +2347,7 @@ def _swarm_act(hero, crowd, plan, M, on_tie, divisor, fields=None):
     strike(living[0])
     idx = 1
     for _ in range(extras):
-        living = [m for m in crowd if m.chp > 0]
+        living = [m for m in targets if m.chp > 0]
         if idx >= len(living):
             idx = max(0, len(living) - 1)
         if not living:
@@ -2417,6 +2553,55 @@ def _move(actor, other, M, gap, geometry, budget, arena, actor_key,
     _deliver(other, actor, _pick(other_plan), M,
              _guard(actor, actor_guard, M), fields)
     return gap
+
+
+def spell_range(M, spell_id):
+    """How many squares away a spell can be aimed, or None when it
+    reaches no further than the caster's own arm.
+
+    [[spell-properties]] says a range is **self**, **touch**, or a
+    number, so `touch` and `self` come back as None and a number comes
+    back as itself.
+
+    A spell with no `range` at all also comes back as None, and that is
+    not a shorthand -- it is a hole in `spell-list`. The four area
+    families (blast, burst, field and ward) declare none of the three,
+    so nothing in the ruleset says how far away a caster may put a
+    field. Reading the silence as `touch` understates every caster in
+    the panel, which is the safe direction for a guess to be wrong in:
+    it can only make a caster look worse than the rules allow, never
+    better. TODO.md carries it as a rules gap to fill.
+    """
+    value = spell_def(M, spell_id).get("range")
+    if value is None or isinstance(value, str):
+        return None
+    return int(value)
+
+
+def acting_range(char, plan, M):
+    """How far from a crowd this character can still do its chosen
+    thing: the reach of the weapon in its hands, or the range of the
+    spell it means to cast, whichever is the further."""
+    reach = reach_of(char, M)
+    if plan and "spell" in plan:
+        ranged = spell_range(M, plan["spell"])
+        if ranged is not None:
+            return max(reach, ranged)
+    return reach
+
+
+# How many bodies can stand where they can hit you. Ico counts a
+# diagonal as one square, so the squares at reach `r` from a creature
+# are the ring of `8 * r` around it, and a creature standing in one of
+# them occupies it alone.
+#
+# This is a different question from `SQUARES_PER_BODY`, and the two
+# numbers disagree on purpose. That one asks how thinly a crowd is
+# spread over a wide area a spell template has to cover; this one asks
+# how many can physically be next to you. A body takes one square when
+# it is against you and rather more than one when it is milling about.
+def engagement_limit(reach):
+    return 8 * max(1, reach)
 
 
 def _cast_at_crowd(hero, crowd, plan, M, fields=None):

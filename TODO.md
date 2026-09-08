@@ -200,6 +200,21 @@ The damaging spells are done: bolts, lances, and the three area families
   reactions here. A
   positional model would need walls before this means anything, and
   walls are a much larger thing than distance.
+- **The area spells do not say how far away they can be put.**
+  `spell-properties` is explicit that a range is **self**, **touch** or
+  **a number**, and the bolt and lance chassis duly say `10`. The four
+  area families -- `blast`, `burst`, `field` and `ward` -- say nothing
+  at all, so nothing in the ruleset answers "how far off may I drop a
+  fire field". Every caster in the panel clears a crowd with
+  `flame_field`, which makes this the one missing number that decides
+  whether a caster gets to use its range against a crowd or has to
+  stand in the middle of one. The simulator reads the silence as
+  `touch`, which understates a caster rather than flattering it, and
+  says so in `ASSUMPTIONS`. Filling it adds a key to four entries, so
+  it is a MINOR bump; the obvious candidate is the `10` a bolt and a
+  lance already carry, but whether a wide template should be placeable
+  as far off as a single bolt is a design question and not an
+  oversight to be tidied.
 - **The long-range rule lives in two documents.** `spell-properties`
   owns `long_range_multiplier` and `ranged-weapons` owns
   `long_range_penalty`, and each interpolates the other's half. Nothing
@@ -236,10 +251,17 @@ The damaging spells are done: bolts, lances, and the three area families
   probably want an inline `weapon:` map using the same keys as a table
   entry, which the loader above would have to accept alongside a bare
   table key.
-- **No positions.** Reach and quickness are modelled first-order in
-  duels and not at all in the crowd loop, and a caster duels toe to toe
-  with spells that reach ten squares. This is the single largest source
-  of doubt in every number the report prints.
+- **Positions reach duels and the crowd loop; nothing yet picks up a
+  ranged weapon.** Duels have distance and so do skirmishes -- one
+  number per creature, an opening at the hero's own range, ground to
+  give and ground to cross, the band answered out of the reaction, and
+  a limit on how many bodies can stand where they can hit you. What is
+  missing is anything that would use it: no build shoots, throws, or
+  opens a fight at spell range, because the spells a caster actually
+  picks against a crowd declare no range (see the rules gap above).
+  Until that is filled and ranged weapons reach the combat loop, the
+  crowd numbers are the same numbers a positionless model produced,
+  and the machinery is groundwork rather than measurement.
 - **The simulator was thirteen minutes and is now under three.**
   *Done, and recorded here because the next person to profile it should
   know where the easy wins have already gone.* Values and the figures
