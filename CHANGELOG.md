@@ -8,6 +8,112 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.0.0
+
+**Two mechanics keys went away.** Both are in the substitution table
+below. No document id was renamed or removed, so every `[[link]]` and
+every `snippets.json` key an adventure holds still resolves; if your
+adventure names neither key, nothing here breaks it and you need only
+read the new reach rules to see whether an encounter you built around a
+polearm still plays the way you meant.
+
+### Renames and removals, old to new
+
+| Gone | Use instead |
+|---|---|
+| `reach.opening_attacks_per_square` | `reach.free_attacks_per_round` — but read the note below, because the meaning changed and not only the name |
+| `movement.large_weapon_reach_bonus` | the weapon's own `reach_bonus`, e.g. `weapons.great_axe.reach_bonus` |
+
+`opening_attacks_per_square` is not a rename. It said a reach advantage
+was worth one unanswered blow **per square** of advantage, collected
+once as the fight was joined. `free_attacks_per_round` says an approach
+across the band is answered once **per round**, however wide the band
+is. Both happen to be `1`, and for every weapon in this ruleset the two
+produced the same number, because no weapon imposes a band more than one
+square wide. A substitution is safe here. It would not have been if
+anything reached further.
+
+### Reach is a band of ground, and there is a choice in it
+
+The old rule resolved itself: the longer weapon landed a blow as the
+shorter one closed, and nobody decided anything. Reach is now the strip
+of ground inside the longer reach and outside the shorter — where one
+combatant can strike and the other cannot — and crossing it is
+**answered**.
+
+The fighter with the longer weapon spends their **reaction** on one of
+two answers, never both:
+
+- **strike** whoever is crossing, one free attack; or
+- **give ground**, opening the band in front of them again.
+
+Giving ground costs `step_back_move_cost_multiplier` squares of move for
+every square surrendered, because it is walking backwards, and it needs
+somewhere to walk to. That makes it the narrower option: you would have
+to be twice as quick as your opponent to hold them off with it against
+anyone who has movement in hand. What it is for is the opponent who has
+just spent their move crossing — one square is then enough to leave them
+in the band with no attack at all.
+
+An approach is answered `free_attacks_per_round` time however wide the
+band. A reach advantage makes an approach expensive; it can never make
+one impossible.
+
+### Long weapons are bad in tight spaces
+
+New, and the counterweight to the above. Take your reach, subtract
+`tight_space_radius_offset`, and count the blocked squares within that
+distance — walls, pillars, a closed door. Each is
+`tight_space_penalty_per_square` on your attack rolls, to a maximum of
+`tight_space_penalty_max`.
+
+Other creatures never block. A press of bodies is what a spear is for; a
+doorway is not. A weapon with no reach beyond the ordinary counts no
+squares and never suffers this.
+
+A one-square corridor blocks six of the eight squares around you, which
+is past the cap, so a polearm in a dungeon swings at
+`tight_space_penalty_max`. **This is the rule most likely to change an
+encounter you have already written**, and it changes it in the players'
+favour or against it depending on who is holding the long weapon.
+
+### Reach now lives in the weapon
+
+`movement.large_weapon_reach_bonus` gave every size L weapon an extra
+square from a rule in another document, while the staff declared its own
+`reach_bonus` in its table entry. The two-handed sword and the great axe
+now declare theirs the same way, and the size-keyed rule is gone.
+
+Nothing about any weapon's reach changed — the great axe reached `2`
+squares before and reaches `2` now. What changed is that the Reach
+column of the weapon tables used to print a dash for weapons that
+reach, and now prints the figure.
+
+`movement` keeps `reach_by_size`, which is the reach a **creature** has
+from being large, and really is a general rule.
+
+### Also
+
+`turn-order` gains a paragraph: reactions are not only ever powers, and
+this is the first rule outside a power to spend one. A fighter with a
+long weapon is choosing between their reach and their Riposte every
+round.
+
+### What is not measured
+
+None of this has been through `sim/`. The free attack needs positions
+and the tight-space penalty needs walls, and the balance model has
+neither — every fight it runs is one-on-one on open ground, which is a
+listed assumption rather than an oversight. `balance.py --check` reports
+the same six failures with the same numbers as 1.3.0, which is the model
+being unable to see the change rather than the change being small.
+
+Read the reach rules as a design judgement, and expect them to be a buff
+to long weapons: a fighter who spends their move backing off and their
+reaction striking collects a free attack most rounds. What that is
+bought with is the move, the reaction that Riposte and Deflect come out
+of, and `tight_space_penalty_max` indoors. `TODO.md` carries it.
+
 ## 1.3.0
 
 Two names were added to one creature and nothing was renamed, removed or
