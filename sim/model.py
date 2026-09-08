@@ -64,8 +64,10 @@ ASSUMPTIONS = [
     "A character's purse grows by one starting purse per level. The "
     "rules give a starting sum and say nothing about what is earned "
     "afterwards, and gear cannot be chosen without a budget.",
-    "A build buys the kit that maximises damage per round times rounds "
-    "survived against a panel of two opponents, one sword-armed and one "
+    "A build buys the kit that maximises the same figure the "
+    "contribution gate marks it on -- damage per round times rounds "
+    "survived, plus what it gets done before the fight is joined -- "
+    "against a panel of two opponents, one sword-armed and one "
     "carrying a two-handed sword, and re-equips at every level.",
     "A duel begins at the moment the two of them are in each other's "
     "way -- at the longer of the two reaches -- rather than across a "
@@ -739,10 +741,13 @@ def choose_gear(char, foes, M, budget):
     so it can be chosen against a finished sheet -- which is the whole
     reason this is affordable to do at all.
 
-    The objective is the one the contribution gate uses, damage per
-    round times rounds survived, because equipping for offence alone
-    puts everybody in no armour and equipping for defence alone puts
-    everybody in plate. Stance is NOT chosen here: which way a character
+    The objective is the one the contribution gate uses -- damage per
+    round times rounds survived, plus what the build gets done before
+    the fight is joined -- because equipping for offence alone puts
+    everybody in no armour and equipping for defence alone puts
+    everybody in plate. That it is the SAME objective matters more than
+    which one it is: a chooser marked on a measure it cannot see buys
+    kit that loses on the day. Stance is NOT chosen here: which way a character
     defends is part of what the build IS, and the stance report exists
     to ask whether that choice is a real one.
 
@@ -807,7 +812,23 @@ def choose_gear(char, foes, M, budget):
                 saved -= 1.0
             gained = offence[key] * (rounds + mine) / rounds
             suffered = taken * max(0.0, rounds + theirs - saved) / rounds
-            total += gained * (char.total_hp / max(0.1, suffered))
+            # The rounds before the fight is joined at all, which is a
+            # different phase from the reach band above: `mine` is free
+            # swings as a foe crosses the last square or two of a MELEE
+            # fight, this is the walk in before there is a melee. A
+            # build with no range scores nothing here.
+            #
+            # It has to be counted, or the chooser optimises a
+            # different objective from the gate that judges it -- which
+            # is what happened when `contributions` learned about range
+            # and this did not, and it put the spellblade in armour
+            # that scored worse by the measure it was being marked on.
+            # Armour is read twice over here on purpose: it costs
+            # casting, and its move penalty costs the stride that holds
+            # the range open.
+            approach = opening_value(char, foe, M) * opening_rounds(
+                char, foe, M)
+            total += approach + gained * (char.total_hp / max(0.1, suffered))
         score = total / len(foes)
         if score > best[1]:
             best = ((weapon, armour, shield), score)

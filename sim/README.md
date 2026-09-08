@@ -221,22 +221,25 @@ and it fights every duel on open ground, so the tight-space penalty
 never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same thirteen failures
-with the same numbers means the change was neutral, and a fourteenth
+either side of a change to a rule value: the same nine failures
+with the same numbers means the change was neutral, and a tenth
 means it was not.
 
 The count is a baseline and not a target, and it moves when the rules
 move. It was six until duels got positions, ten until armour started
 hampering spellcasting, eleven then, and fourteen once a caster stopped
 buying armour that switches its casting off. Each of those was taken
-knowing the count would go up. Thirteen is the first time it has come
+knowing the count would go up. Thirteen was the first time it came
 DOWN, and not because a rule moved: `contributions` began counting the
 rounds a caster acts before the foe arrives, and the level 5 spread
 had been failing for a blind spot in the measure rather than for
-anything in the book.
+anything in the book. Nine is the same story finished -- the gear
+chooser was still buying against the old objective, so builds were
+being marked on a measure they had not shopped for. The contribution
+spread now passes at every level, and no rule moved for any of it.
 
 **Read the round-length failures with the numbers in front of you.**
-Four of the thirteen sit between `2.96` and `3.00` rounds against a
+Five of the nine sit between `2.96` and `3.00` rounds against a
 floor of `3.00`, which is a hair rather than a verdict, and one of them
 is a pairing with no caster in it that moved only because `--check`
 seeds once and runs every duel off one stream -- change anything early
