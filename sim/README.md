@@ -90,10 +90,19 @@ There is no second place to change a number.
 them hundreds of thousands of times, so `Mechanics.get` memoises the
 walk, and `Mechanics.derived` holds the things worked out from those
 values that are expensive enough to be worth keeping -- the enumeration
-of the exploding d20, and each condition's expectation. Nothing may
-write into `Mechanics.rules` without calling `Mechanics.invalidate()`
-afterwards, which empties both caches. `sweep.py` is the only thing that
-writes there, and it does.
+of the exploding d20, each condition's expectation, each spell's merged
+definition, every shape a spell can be cast into, and the best spell a
+caster has against a given foe. Nothing may write into
+`Mechanics.rules` without calling `Mechanics.invalidate()` afterwards,
+which empties the lot. `sweep.py` is the only thing that writes there,
+and it does.
+
+Two of those are handed out rather than copied, because copying them is
+what cost the time in the first place: `spell_def` returns one shared
+dict per spell and `spell_options` returns a tuple. **Read them, never
+write to them.** The tuple says so in its type; the dict cannot, and
+relies on the same discipline `Mechanics.get` already needs, since that
+hands back live pieces of `M.rules` too.
 
 That is not a style preference. Before the caches were tied together,
 the face enumeration was held in a module-level dict keyed on its own

@@ -1257,7 +1257,19 @@ def spell_def(M, spell_id):
 
     The bolt variants carry only a damage type and a domain; everything
     else -- difficulty, damage, the scaling rates -- lives once on the
-    `bolt` entry, so a variant has to inherit it rather than repeat it."""
+    `bolt` entry, so a variant has to inherit it rather than repeat it.
+
+    The merged entry is built once per spell and then handed out, which
+    makes it **shared and read-only to every caller**. It was seven
+    million fresh dictionaries in a single level of the report
+    otherwise, all of them the same dictionary. Nothing here writes to
+    one -- every reader takes a value out with `sp["key"]` or
+    `sp.get` -- and nothing may start, which is the same rule
+    `Mechanics.get` already works under: it too hands back live pieces
+    of `M.rules` rather than copies."""
+    cached = M.derived.get(("spell_def", spell_id))
+    if cached is not None:
+        return cached
     spells = M.rules["spell-list"]
     if spell_id not in spells or not isinstance(spells[spell_id], dict):
         raise KeyError("no spell '%s' in spell-list" % spell_id)
@@ -1267,6 +1279,7 @@ def spell_def(M, spell_id):
         chassis = dict(spells[str(family)])
         chassis.update(entry)
         entry = chassis
+    M.derived[("spell_def", spell_id)] = entry
     return entry
 
 
@@ -2727,7 +2740,19 @@ def spell_options(M, spell_id, difficulty, duration_points=0):
     choice belongs to the caller, not to a heuristic buried here.
 
     `duration_points` is difficulty set aside for extra rounds before
-    any of it is spent on area or damage."""
+    any of it is spent on area or damage.
+
+    The answer depends on the spell and three integers and on nothing
+    else, and the spell searches ask for the same combination over and
+    over -- three and a half million calls in one level of the report,
+    across a few thousand distinct questions. So it is worked out once
+    and kept. A tuple comes back rather than a list because the result
+    is now shared between every caller that asks the same question, and
+    the type is what says so."""
+    key = ("spell_options", spell_id, difficulty, duration_points)
+    cached = M.derived.get(key)
+    if cached is not None:
+        return cached
     sp = spell_def(M, spell_id)
     base = int(sp["base_difficulty"])
     spare = max(0, difficulty - base - duration_points)
@@ -2735,17 +2760,21 @@ def spell_options(M, spell_id, difficulty, duration_points=0):
     if "area_archetype" not in sp:
         step = int(sp["difficulty_per_step"])
         damage = int(sp["damage"]) + (spare // step) * int(sp["damage_per_step"])
-        return [(damage, 0)]
+        out = ((damage, 0),)
+        M.derived[key] = out
+        return out
 
     per_point, per_damage = area_rates(M, str(sp["area_archetype"]), sp)
-    out = []
+    shapes = []
     for radius in range(1, 6):
         squares = circle_squares(M, radius)
         left = spare - area_cost(squares, per_point)
         if left < 0:
             break
-        out.append((left // per_damage, squares))
-    return out or [(0, 0)]
+        shapes.append((left // per_damage, squares))
+    out = tuple(shapes) or ((0, 0),)
+    M.derived[key] = out
+    return out
 
 
 def spell_shape(M, spell_id, difficulty, duration_points=0):

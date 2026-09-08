@@ -240,23 +240,23 @@ The damaging spells are done: bolts, lances, and the three area families
   duels and not at all in the crowd loop, and a caster duels toe to toe
   with spells that reach ten squares. This is the single largest source
   of doubt in every number the report prints.
-- **What is left of the speed problem is the SPELL search, not the
-  power search.** A full `balance.py --check` went from thirteen
-  minutes to three. The duplicated planning is now shared -- `duel`
-  used to ask what each combatant would do and what a round of theirs
-  was worth off two separate searches through every power at every
-  difficulty, and asks once -- but that turned out to be worth about
-  five per cent end to end rather than the third guessed here, because
-  planning happens once per duel and the trials happen three thousand
-  times. Profiling the rest of a level says where the time really goes:
-  `cast_expectation` walks `spell_options` three and a half million
-  times and `spell_def` seven million, and `spell_def` builds a fresh
-  dictionary on every one of those calls to merge a bolt variant onto
-  its chassis. Both are pure functions of the mechanics and their
-  arguments. Memoising the pair on `Mechanics.derived` was measured at
-  a further **2.7x**, with every duel, skirmish, contribution and
-  offence figure byte-identical -- it is not done only because it was
-  found while doing something else.
+- **The simulator was thirteen minutes and is now under three.**
+  *Done, and recorded here because the next person to profile it should
+  know where the easy wins have already gone.* Values and the figures
+  derived from them are cached on the `Mechanics` instance; a blow is
+  split into the part the margin changes and the part it does not; a
+  combatant is copied by hand rather than by `deepcopy`; `duel` asks
+  what each side will do and what a round of it is worth off one search
+  rather than two; and the spell search no longer rebuilds a spell's
+  definition seven million times a level. Every one of those was
+  checked by dumping duels, skirmishes, contributions and offence
+  figures on a fixed seed and diffing -- byte-identical, every time.
+  Two lessons worth keeping. Guesses about where the time goes were
+  wrong twice: sharing the duel planning was estimated at a third and
+  measured at five per cent, because planning happens once a duel and
+  the trials happen three thousand times. And this machine varies by
+  twenty-five per cent between batches, so a timing is only worth
+  quoting when the two versions were run back to back.
 - **`best_difficulty` scans sixty difficulties and stops at none of
   them.** Expected cost looks monotonic in difficulty, and if it is,
   the scan can break rather than continue. That is an assumption about
