@@ -196,17 +196,25 @@ and it fights every duel on open ground, so the tight-space penalty
 never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same eleven failures with
-the same numbers means the change was neutral, and a twelfth means it
-was not.
+either side of a change to a rule value: the same fourteen failures
+with the same numbers means the change was neutral, and a fifteenth
+means it was not.
 
 The count is a baseline and not a target, and it moves when the rules
 move. It was six until duels got positions, ten until armour started
-hampering spellcasting, and eleven now -- that last change was made
-knowing it would widen the contribution spread rather than narrow it,
-because a caster who wears full plate at every level is a worse problem
-than a gate reading `3.4x`. Whoever changes it next should say so here
-in the same way.
+hampering spellcasting, eleven then, and fourteen once a caster stopped
+buying armour that switches its casting off. Each of those was taken
+knowing the count would go up.
+
+**Read the round-length failures with the numbers in front of you.**
+Four of the fourteen sit between `2.96` and `3.00` rounds against a
+floor of `3.00`, which is a hair rather than a verdict, and one of them
+is a pairing with no caster in it that moved only because `--check`
+seeds once and runs every duel off one stream -- change anything early
+and every later pairing gets different dice. A hairline pairing
+crossing the floor is not evidence about the change that preceded it.
+Compare the *numbers*, not the count, whenever a failure appears or
+vanishes within a few hundredths of a bound.
 
 ## Shopping
 
@@ -275,6 +283,34 @@ decline it themselves.
   default, so the model behaves as the book reads until it is switched
   on. A map from weapon size to what carrying one costs the skills it
   gets in the way of; it comes off defending, whichever way you defend.
+
+### A build will not buy kit that switches off half of itself
+
+`choose_gear` maximises the best SINGLE action, and that turns out to
+be blind in one specific way. The spellblade's best action is its axe
+in every kit, so its offence read the same `17.09` in every suit of
+armour at every level while its best spell fell by more than half. It
+bought full plate and lost the ability to land a spell at all, and the
+score did not move by one point.
+
+Pricing the second capability would need a weight nobody can derive
+from the rules. So this is a **legality filter** instead, the same kind
+of thing as "no shield with a two-handed weapon": a build with ranks in
+spellcasting will not consider kit that stops it landing, at least half
+the time, the spell it would have cast unarmoured. Half is the line
+`MIN_FIELD_SUCCESS` already draws -- a spell you land less than half
+the time is not a capability you have.
+
+The weapon is held on both sides of that comparison deliberately. What
+a two-handed weapon costs a caster is the free-hands trade, which the
+spellblade exists to test and should stay free to make badly; what the
+armour costs it is what the score cannot see.
+
+If nothing in the shop passes, the filter is dropped rather than
+leaving the character naked. A build that cannot keep its casting in
+any armour at all is making a real choice about which half of itself to
+be, and that is a finding rather than something to hide behind an empty
+list.
 
 **A trap worth knowing about**, because the first measurement of the
 casting penalty quietly reported nothing at all. `choose_gear` works

@@ -674,6 +674,44 @@ def gear_options(M, budget):
     return out
 
 
+# A build does not buy equipment that switches off a discipline it paid
+# for. `choose_gear` maximises the best SINGLE action, so a hybrid whose
+# best action is its axe sees no cost whatever in armour that ruins its
+# casting: the spellblade's offence read the same 17.09 in every suit of
+# armour at every level while its best spell fell by more than half, and
+# it duly bought full plate and lost the ability to land a spell at all.
+#
+# Pricing the second capability would need a weight nobody can derive
+# from the rules, so this is a legality filter instead -- the same kind
+# of thing as "no shield with a two-handed weapon", which `gear_options`
+# already applies. The line it draws is the one balance.py's field gate
+# already draws: a spell you land less than half the time is not a
+# capability you have.
+CASTING_SUCCESS_FLOOR = 0.5
+
+
+def casting_survives_the_kit(char, foe, M, rounds_budget=4):
+    """Whether what `char` is wearing still lets it land the spell it
+    would have cast unarmoured.
+
+    The weapon is held on BOTH sides of that comparison on purpose. What
+    a two-handed weapon costs a caster is the free-hands trade -- a
+    deliberate, priced decision that the spellblade exists to test, and
+    that the build should stay free to make badly. What the armour costs
+    it is invisible to the score, and that is the only thing guarded
+    here."""
+    bare = copy.copy(char)
+    bare.armour = Armour.load(M, "unarmoured")
+    bare.shield = None
+    pick = best_spell(bare, foe, M, char.spirit / float(rounds_budget))
+    if pick[0] is None:
+        return True                     # nothing to protect
+    skill = char.casting_bonus(M) + domain_bonus(char, pick[0], M)
+    lands = sum(w for face, w, _c in d20_faces(M)
+                if face + skill >= pick[3])
+    return lands >= CASTING_SUCCESS_FLOOR
+
+
 def choose_gear(char, foes, M, budget):
     """Equip the character with the best kit its purse can reach.
 
@@ -711,9 +749,26 @@ def choose_gear(char, foes, M, budget):
     rounds = float(TYPICAL_FIGHT_ROUNDS)
     armour_matters = (can_cast(char, M)
                       and bool(M.get("armour", "hampers_spellcasting")))
+    # Kit that would switch off a discipline this build paid for is not
+    # scored at all -- see CASTING_SUCCESS_FLOOR. If nothing in the shop
+    # passes, the filter is dropped rather than leaving the character
+    # naked: a build that cannot keep its casting in ANY armour is
+    # making a real choice about which half of itself to be, and that
+    # is a finding rather than something to hide behind an empty list.
+    kits = gear_options(M, budget)
+    if can_cast(char, M) and char.skills.get("spellcasting", 0) > 0:
+        keep = (char.weapon, char.armour, char.shield)
+        legal = []
+        for kit in kits:
+            char.weapon, char.armour, char.shield = kit
+            if casting_survives_the_kit(char, foes[0], M):
+                legal.append(kit)
+        char.weapon, char.armour, char.shield = keep
+        kits = legal or kits
+
     offence = {}
     best = (None, -1.0)
-    for weapon, armour, shield in gear_options(M, budget):
+    for weapon, armour, shield in kits:
         char.weapon, char.armour, char.shield = weapon, armour, shield
         total = 0.0
         for foe in foes:

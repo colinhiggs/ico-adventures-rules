@@ -139,12 +139,33 @@ The damaging spells are done: bolts, lances, and the three area families
   Mantle of Warding -- and `MAX_SELF_GUARD_RATIO` deliberately holds
   them below the point where casting one beats getting on with the
   fight. If a robed caster is now too fragile, that cap is the lever,
-  and raising it is a design decision nobody has taken. And the
-  **spellblade comes out incoherent**: the gear chooser keeps it in
-  full plate, because its melee dominates damage-times-survival, and
-  then it cannot land a field at level 5. A build that buys armour that
-  switches off half of what it is wants either a chooser that can see
-  the trade or an archetype that admits which half it is.
+  and raising it is a design decision nobody has taken. The **spellblade came out incoherent** and no
+  longer does: the gear chooser used to keep it in full plate, because
+  its melee dominates damage-times-survival, and it then could not land
+  a field at level 5. A build with ranks in spellcasting now refuses
+  kit that stops it landing the spell it would cast unarmoured -- a
+  legality filter rather than a scoring term, because pricing the
+  second capability needs a weight nobody can derive. It wears light
+  armour and keeps its axe at levels 5 and 10, and picks up a staff at
+  15.
+
+  What that cost is worth writing down. The spellblade loses about a
+  sixth of its contribution -- `151` to `127` at level 5, `196` to
+  `161` at level 10, `245` to `213` at 15 -- because plate was worth
+  eight points off every blow and light armour is worth three. Four
+  round-length failures appeared, of which three are the spellblade
+  dying faster, and all four sit between `2.96` and `3.00` rounds
+  against a floor of `3.00`. That is the honest shape of a hybrid that
+  cannot wear plate, and the alternative was a build that had quietly
+  stopped being a caster while still being scored as one.
+
+  What is still open underneath it: the spell never beats the axe in
+  ANY kit, including one carrying no penalty at all -- best spell
+  `15.7` against a one-handed power at `12.1`, and the axe
+  configuration wins on score even so. The constraint stops the build
+  buying its way out of being a caster; it does not make casting worth
+  doing. That is the contribution spread again, and the guards are
+  still the lever.
 
 - **The strength double-dip is real, worth about ten per cent, and
   should be left alone.** Block skill and melee attack do share an
