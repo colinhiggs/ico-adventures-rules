@@ -124,6 +124,28 @@ The damaging spells are done: bolts, lances, and the three area families
   Constitution has since been given free mastery hit points, faster
   recovery and quicker healing, and that closed most of it.
 
+- **Casters are the weakest thing in the game, and armour no longer
+  hides it.** `armour.hampers_spellcasting` charges the skill penalty
+  off the casting roll as well as the dodge, which is what stopped
+  every caster in the panel buying full plate at every level. The
+  choice was made knowing the price, and the price is that the
+  contribution spread gets **worse**: `2.9x` to `3.4x` at level 10, the
+  evoker falling from `170` to `145`, and a new failure at level 5
+  where there was none. The gate was already failing and this is the
+  same failure louder, not a new kind of one.
+
+  Two things follow that are the actual open work. A caster's
+  protection is meant to come from the guards -- Bulwark, Stoneskin,
+  Mantle of Warding -- and `MAX_SELF_GUARD_RATIO` deliberately holds
+  them below the point where casting one beats getting on with the
+  fight. If a robed caster is now too fragile, that cap is the lever,
+  and raising it is a design decision nobody has taken. And the
+  **spellblade comes out incoherent**: the gear chooser keeps it in
+  full plate, because its melee dominates damage-times-survival, and
+  then it cannot land a field at level 5. A build that buys armour that
+  switches off half of what it is wants either a chooser that can see
+  the trade or an archetype that admits which half it is.
+
 - **The strength double-dip is real, worth about ten per cent, and
   should be left alone.** Block skill and melee attack do share an
   attribute, so strength raises offence and defence together. Measured

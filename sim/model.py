@@ -375,15 +375,15 @@ class Character:
         """Spellcasting takes intelligence OR willpower, whichever is
         better -- see skill-list.
 
-        Armour may get in the way of it, if the armour rule says so. The
-        key is optional and absent by default, so a caster in plate is
-        currently no worse at casting than a caster in a shirt."""
+        Armour gets in the way of it. armour.md charges its skill penalty
+        twice, once off the dodge and once off the casting roll, and the
+        second is the reason a caster is not simply better off in
+        plate."""
         ranks = self.skills.get("spellcasting", 0)
         bonus = ranks + max(self.attr_bonus("intelligence", M),
                             self.attr_bonus("willpower", M))
-        if self.armour and "hampers_casting" in M.keys("armour"):
-            if bool(M.get("armour", "hampers_casting")):
-                bonus += self.armour.skill_penalty
+        if self.armour and bool(M.get("armour", "hampers_spellcasting")):
+            bonus += self.armour.skill_penalty
         if self.weapon:
             bonus -= hand_penalty(self, M, "spellcasting")
         bonus -= sum(int(condition_def(M, n).get("casting_penalty", 0))
@@ -710,8 +710,7 @@ def choose_gear(char, foes, M, budget):
     guard = sustained_dodge_bonus(char, M)
     rounds = float(TYPICAL_FIGHT_ROUNDS)
     armour_matters = (can_cast(char, M)
-                      and "hampers_casting" in M.keys("armour")
-                      and bool(M.get("armour", "hampers_casting")))
+                      and bool(M.get("armour", "hampers_spellcasting")))
     offence = {}
     best = (None, -1.0)
     for weapon, armour, shield in gear_options(M, budget):

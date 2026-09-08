@@ -15,6 +15,7 @@
       "level_is_only_a_budget_and_a_clock": true
     },
     "armour": {
+      "hampers_spellcasting": true,
       "unarmoured": {
         "move_penalty": 0,
         "ap": 0,

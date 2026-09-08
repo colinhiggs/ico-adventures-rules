@@ -196,9 +196,17 @@ and it fights every duel on open ground, so the tight-space penalty
 never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same ten failures with the
-same numbers means the change was neutral, and an eleventh means it was
-not.
+either side of a change to a rule value: the same eleven failures with
+the same numbers means the change was neutral, and a twelfth means it
+was not.
+
+The count is a baseline and not a target, and it moves when the rules
+move. It was six until duels got positions, ten until armour started
+hampering spellcasting, and eleven now -- that last change was made
+knowing it would widen the contribution spread rather than narrow it,
+because a caster who wears full plate at every level is a worse problem
+than a gate reading `3.4x`. Whoever changes it next should say so here
+in the same way.
 
 ## Shopping
 
@@ -253,18 +261,23 @@ whether any weapon is useless, this one whether any is redundant.
 
 Ico does not forbid a caster plate or an acrobat a great axe; it lets
 equipment get in the way of what the character is good at, and lets them
-decline it themselves. Two optional keys make that measurable, and both
-are absent by default, so the model behaves as the book reads until one
-is switched on:
+decline it themselves.
 
-- `weapons.size_skill_penalty` -- a map from weapon size to what
-  carrying one costs the skills it gets in the way of. It comes off
-  defending, whichever way you defend.
-- `armour.hampers_casting` -- when true, armour's skill penalty comes
-  off spellcasting as well as off dodging.
+- `armour.hampers_spellcasting` -- **a rule, not a lever, since
+  2.2.0**. Armour's skill penalty comes off the casting roll as well as
+  off the dodge. It was an optional key here for as long as the book
+  named only the dodge, and switching it on is what showed the book was
+  wrong: with it off, the arithmetic put every caster in full plate at
+  every level, because plate cost them a little movement and nothing
+  else. With it on they wear partial leather, which is the only armour
+  whose skill penalty is zero.
+- `weapons.size_skill_penalty` -- still an optional key, absent by
+  default, so the model behaves as the book reads until it is switched
+  on. A map from weapon size to what carrying one costs the skills it
+  gets in the way of; it comes off defending, whichever way you defend.
 
 **A trap worth knowing about**, because the first measurement of the
-second lever quietly reported nothing at all. `choose_gear` works
+casting penalty quietly reported nothing at all. `choose_gear` works
 offence out once per weapon, on the reasoning that a character's own
 armour is read when it is struck and never when it strikes. Armour that
 interferes with casting breaks that reasoning: it changes what a caster
