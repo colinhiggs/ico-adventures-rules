@@ -402,10 +402,27 @@ class Character:
         ranks = self.skills.get("spellcasting", 0)
         bonus = ranks + max(self.attr_bonus("intelligence", M),
                             self.attr_bonus("willpower", M))
+        relief = casting_in_harness(self, M)
         if self.armour and bool(M.get("armour", "hampers_spellcasting")):
-            bonus += self.armour.skill_penalty
+            # The power forgives points of the armour penalty on the
+            # CASTING roll only. The dodge keeps paying in full, which
+            # is what stops it being a strictly better Untouchable.
+            worn = self.armour.skill_penalty
+            if relief:
+                worn = min(0, worn + relief["armour_penalty_ignored"])
+            bonus += worn
         if self.weapon:
-            bonus -= hand_penalty(self, M, "spellcasting")
+            hands = hand_penalty(self, M, "spellcasting")
+            if relief and weapon_size_within(
+                    self.weapon, relief["max_weapon_size"], M):
+                # A weapon you have trained to cast around does not
+                # occupy the hand at all. Gated on SIZE rather than on
+                # hands, so that the relief buys a sword and not a
+                # great axe -- the point is to make the middle of the
+                # weapon table attractive, and a discount on the
+                # biggest thing in it would do the opposite.
+                hands = 0
+            bonus -= hands
         bonus -= sum(int(condition_def(M, n).get("casting_penalty", 0))
                      for n in self.conditions)
         bonus -= roll_penalty(self, M)
@@ -420,6 +437,51 @@ class Character:
     @property
     def total_hp(self):
         return self.mhp + self.chp
+
+
+WEAPON_SIZES = ("S", "M", "L")
+
+
+def weapon_size_within(weapon, largest, M):
+    """Whether this weapon is no bigger than `largest`, on the S/M/L
+    scale weapons.md already sorts the table by."""
+    if weapon is None:
+        return True
+    try:
+        return (WEAPON_SIZES.index(str(weapon.size))
+                <= WEAPON_SIZES.index(str(largest)))
+    except ValueError:
+        return False
+
+
+def casting_in_harness(char, M):
+    """The cross-discipline power that lets a hybrid cast in its kit,
+    or None if this ruleset does not have it or this character has not
+    earned it.
+
+    Every power in the list today belongs to ONE discipline. This one
+    cannot: what it forgives is the interference between a martial
+    build's kit and a magical build's roll, which is a thing only a
+    character who paid for both ever meets. So it declares
+    `disciplines` where the others declare `discipline`, and is held
+    only by somebody at that grade in all of them.
+
+    Read out of `M.rules` rather than through `M.get`, because a
+    ruleset without the power is not an error -- the demo ruleset has
+    no disciplines at all -- and `M.get` is fail-fast by design."""
+    spec = M.rules.get("discipline-powers", {}).get("casting_in_harness")
+    if not spec:
+        return None
+    grade = str(spec["grade"])
+    if not all(char.has(d, grade) for d in spec["disciplines"]):
+        return None
+    if char.armour and char.armour.move_penalty > int(
+            spec["max_move_penalty"]):
+        return None                     # plate is still plate
+    return {
+        "armour_penalty_ignored": int(spec["armour_penalty_ignored"]),
+        "max_weapon_size": str(spec["max_weapon_size"]),
+    }
 
 
 def focus_of(discipline_grade):
