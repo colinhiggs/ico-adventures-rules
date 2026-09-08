@@ -2243,15 +2243,24 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     a_wins = 0
     capped = 0
 
-    plan_a = _plan(spec_a, spec_b, M, rounds_budget)
-    plan_b = _plan(spec_b, spec_a, M, rounds_budget)
+    # Both of the questions below -- what will you do, and what is a
+    # round of yours worth -- are answered off the same search through
+    # every power at every difficulty. One dict per combatant is what
+    # stops that search running twice for each of them; the budget goes
+    # to both readers for the same reason, so that the plan and the
+    # price are never worked out against different purses.
+    options_a, options_b = {}, {}
+    plan_a = _plan(spec_a, spec_b, M, rounds_budget, options_a)
+    plan_b = _plan(spec_b, spec_a, M, rounds_budget, options_b)
     guard_a = redouble_plan(spec_a, M)
     guard_b = redouble_plan(spec_b, M)
 
     plans = {id(spec_a): (plan_a, guard_a), id(spec_b): (plan_b, guard_b)}
     # What each side gives up by stopping to beat out flames.
-    worth = {id(spec_a): expected_offence(spec_a, spec_b, M),
-             id(spec_b): expected_offence(spec_b, spec_a, M)}
+    worth = {id(spec_a): expected_offence(spec_a, spec_b, M, rounds_budget,
+                                          options_a),
+             id(spec_b): expected_offence(spec_b, spec_a, M, rounds_budget,
+                                          options_b)}
 
     # Position. One integer is the whole of it: Ico counts a diagonal as
     # one square, so the distance between two combatants is a scalar and
@@ -2598,22 +2607,60 @@ def _best_option(char, foe, M, budget, conditional=True):
     return best
 
 
-def expected_offence(char, foe, M, rounds_budget=4):
+def _option(char, foe, M, budget, conditional, options):
+    """`_best_option`, remembered in a caller's own dict.
+
+    Two things ask what the best power this build can bring is, and they
+    ask it about the same character against the same foe on the same
+    budget: `_plan`, which is choosing what to do with the round, and
+    `expected_offence`, which is pricing it. Each answer is a search
+    across sixty difficulties for every power the build owns, and it is
+    the most expensive thing a duel does before the dice come out.
+
+    The dict belongs to the caller rather than to the module on purpose.
+    A cache keyed on some fingerprint of a character would have to know
+    every field the search reads -- the weapon, the arm, the armour it
+    lands on, the conditions on both of them -- and would quietly return
+    somebody else's answer on the day it turned out to know one field
+    fewer than the search does. Handing the same dict to both readers
+    needs no such list: they were given the same character because the
+    caller had the same character.
+
+    `options` may be None, which means the caller wants the answer and
+    is not sharing it with anybody."""
+    if options is None:
+        return _best_option(char, foe, M, budget, conditional)
+    if conditional not in options:
+        options[conditional] = _best_option(char, foe, M, budget, conditional)
+    return options[conditional]
+
+
+def expected_offence(char, foe, M, rounds_budget=4, options=None):
     """Blended expected damage per round: the conditional power when the
     fight offers it, the best unconditional one when it does not.
 
     A caster's best turn is a spell, not a swing, so casting is folded in
     here -- without it a wizard is measured on the staff they are holding
-    and looks like a very bad fighter."""
+    and looks like a very bad fighter.
+
+    Control is deliberately NOT counted. A stun is worth the round it
+    takes away, but `expected_control` is what says so and the
+    contribution gate adds the two; folding it in here as well would
+    charge the foe twice for the same lost round. `_plan` does add it,
+    because a character deciding between a spell and a swing has to
+    weigh them in one currency -- the two functions want different
+    numbers and only the search underneath them is shared."""
     budget = char.stamina / float(rounds_budget)
     plain, _ = attack_expectation(char, foe, M)
-    unconditional = max(plain, _best_option(char, foe, M, budget, False)[1])
+    unconditional = max(plain,
+                        _option(char, foe, M, budget, False, options)[1])
     if can_cast(char, M):
         spell = best_spell(char, foe, M, char.spirit / float(rounds_budget))
         unconditional = max(unconditional, spell[1])
     if not char.has("athletic", "adept"):
         return unconditional
-    conditional = max(unconditional, _best_option(char, foe, M, budget, True)[1])
+    conditional = max(unconditional,
+                      _option(char, foe, M, budget, True, options)[1])
     return (SNEAK_AVAILABILITY * conditional
             + (1 - SNEAK_AVAILABILITY) * unconditional)
 
@@ -2835,9 +2882,6 @@ def reduce_by_armour(raw, defender, M, pierce=0):
     return max(0, int(raw - min(reduction, cap)))
 
 
-_BEST_SPELL_CACHE = {}
-
-
 def best_spell(char, foe, M, spirit_budget):
     """The spell, difficulty and duration giving the best turn against
     one target within a sustainable spirit spend.
@@ -2848,11 +2892,11 @@ def best_spell(char, foe, M, spirit_budget):
     wizard read as a bad fighter.
 
     Returns (spell, damage, cost, difficulty, control, duration_points)."""
-    key = (char.name, char.level, char.casting_bonus(M),
+    key = ("best_spell", char.name, char.level, char.casting_bonus(M),
            round(spirit_budget, 3),
            foe.name, foe.total_hp, foe.armour.ap, foe.stance,
            foe.skills.get("fortitude", 0), foe.skills.get("resolve", 0))
-    got = _BEST_SPELL_CACHE.get(key)
+    got = M.derived.get(key)
     if got is not None:
         return got
     best = (None, -1.0, 0.0, 0, 0.0, 0)
@@ -2868,7 +2912,7 @@ def best_spell(char, foe, M, spirit_budget):
                     continue
                 if damage + control > best[1] + best[4]:
                     best = (spell_id, damage, cost, difficulty, control, extra)
-    _BEST_SPELL_CACHE[key] = best
+    M.derived[key] = best
     return best
 
 
@@ -2958,7 +3002,7 @@ def floor_offence(char, foe, M):
     return best
 
 
-def _plan(char, foe, M, rounds_budget):
+def _plan(char, foe, M, rounds_budget, options=None):
     """What this character means to do with its action each round.
 
     A caster's best turn is a spell, and until this asked, every duel in
@@ -2979,7 +3023,7 @@ def _plan(char, foe, M, rounds_budget):
 
     plans = {}
     for label, conditional in (("open", False), ("flank", True)):
-        best = _best_option(char, foe, M, budget, conditional)
+        best = _option(char, foe, M, budget, conditional, options)
         chosen = (None if best[0] is None or best[1] <= plain
                   else {"power": best[0], "difficulty": best[3]})
         if spell is not None:

@@ -240,21 +240,28 @@ The damaging spells are done: bolts, lances, and the three area families
   duels and not at all in the crowd loop, and a caster duels toe to toe
   with spells that reach ten squares. This is the single largest source
   of doubt in every number the report prints.
-- **What is left of the speed problem is duplicated planning.** A full
-  `balance.py --check` went from thirteen minutes to four, and the
-  remaining time is concentrated in one place: choosing what a
-  combatant means to do. `duel` works that out twice for each side --
-  once in `_plan`, once again in `expected_offence` for what a round of
-  theirs is worth -- and both walk the same sixty candidate
-  difficulties through `power_expectation`. Merging them would take
-  roughly another third off, and the reason it has not been done is
-  that the two disagree slightly about what a spell is worth, so the
-  merge is a small design question rather than a refactor. Below that,
-  `best_difficulty` scans sixty difficulties and stops at none of them:
-  expected cost looks monotonic in difficulty, and if it is, the scan
-  can break rather than continue. That is an assumption about every
-  future power as well as the present ones, so it wants deciding rather
-  than assuming.
+- **What is left of the speed problem is the SPELL search, not the
+  power search.** A full `balance.py --check` went from thirteen
+  minutes to three. The duplicated planning is now shared -- `duel`
+  used to ask what each combatant would do and what a round of theirs
+  was worth off two separate searches through every power at every
+  difficulty, and asks once -- but that turned out to be worth about
+  five per cent end to end rather than the third guessed here, because
+  planning happens once per duel and the trials happen three thousand
+  times. Profiling the rest of a level says where the time really goes:
+  `cast_expectation` walks `spell_options` three and a half million
+  times and `spell_def` seven million, and `spell_def` builds a fresh
+  dictionary on every one of those calls to merge a bolt variant onto
+  its chassis. Both are pure functions of the mechanics and their
+  arguments. Memoising the pair on `Mechanics.derived` was measured at
+  a further **2.7x**, with every duel, skirmish, contribution and
+  offence figure byte-identical -- it is not done only because it was
+  found while doing something else.
+- **`best_difficulty` scans sixty difficulties and stops at none of
+  them.** Expected cost looks monotonic in difficulty, and if it is,
+  the scan can break rather than continue. That is an assumption about
+  every future power as well as the present ones, so it wants deciding
+  rather than assuming.
 - **Four of the six Master signatures do nothing** in the model: Read
   the Blow, Command the Room, School Mastery, Granted Domain.
 - **The Social discipline is unmeasured**, because nothing in the model
