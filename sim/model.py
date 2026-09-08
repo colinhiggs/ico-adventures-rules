@@ -26,7 +26,14 @@ BUILD_DIR = Path(__file__).parent.parent / "build"
 MECHANICS_PATH = BUILD_DIR / "mechanics.json"
 
 ASSUMPTIONS = [
-    "Both sides fight to the death with no morale, terrain or positioning.",
+    "Both sides fight to the death. Nothing checks morale, breaks off, "
+    "surrenders or is spared, so every figure here is the whole of a "
+    "fight rather than the part before somebody ran.",
+    "The ground is open and featureless. There are positions -- a "
+    "distance, a reach and a stride, in the entries below -- but no "
+    "walls, cover or difficult going, so the tight-space penalty in "
+    "reach.md never applies and one of the two counterweights to the "
+    "reach rules cannot be measured at all.",
     "A character takes every mastery hit point allowed first, then "
     "raises tracked combat skills, then widens its power source.",
     "Chargen budgets and level budgets are treated as one pool, except "
