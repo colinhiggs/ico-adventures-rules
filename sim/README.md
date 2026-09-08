@@ -162,11 +162,24 @@ output, and quoting it as damage is the only way a stun and a sword
 swing can be compared at all. It is zero for every build that applies
 no conditions, which today means every martial build.
 
-**Contribution is still a single-target, melee-range measure.** It
-counts damage to one creature and how long the build survives being
-stood next to. It does not count clearing six goblins in a round, and
-it does not count doing so from thirty metres away without being hit at
-all -- read the rank-and-file table alongside it before concluding
+**Contribution is a single-target measure, and no longer a purely
+melee one.** It counts damage to one creature and how long the build
+survives being stood next to -- plus whatever it got done before the
+foe arrived. A build that can only swing opens in contact and is
+scored exactly as it was; a build holding a spell with a range opens
+at that range and acts while the foe walks in, which is the rule
+`crowd_geometry` has applied since the area spells were given one.
+
+That approach is credited at what the SPELL is worth, not at what the
+build's best turn is worth, so a hybrid is not paid for its axe at the
+range of a lance it is not casting. It is deliberately mean in three
+further ways: the foe walks straight in and the caster never gives
+ground, the caster is assumed to act second, and nothing reads the
+foe's own range -- which is safe only while the standard foe carries a
+sword.
+
+What it still does not count is clearing six goblins in a round --
+read the rank-and-file table alongside it before concluding
 anything.
 
 These are targets, not rules. When a gate fails the honest options are
@@ -196,18 +209,22 @@ and it fights every duel on open ground, so the tight-space penalty
 never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same fourteen failures
-with the same numbers means the change was neutral, and a fifteenth
+either side of a change to a rule value: the same thirteen failures
+with the same numbers means the change was neutral, and a fourteenth
 means it was not.
 
 The count is a baseline and not a target, and it moves when the rules
 move. It was six until duels got positions, ten until armour started
 hampering spellcasting, eleven then, and fourteen once a caster stopped
 buying armour that switches its casting off. Each of those was taken
-knowing the count would go up.
+knowing the count would go up. Thirteen is the first time it has come
+DOWN, and not because a rule moved: `contributions` began counting the
+rounds a caster acts before the foe arrives, and the level 5 spread
+had been failing for a blind spot in the measure rather than for
+anything in the book.
 
 **Read the round-length failures with the numbers in front of you.**
-Four of the fourteen sit between `2.96` and `3.00` rounds against a
+Four of the thirteen sit between `2.96` and `3.00` rounds against a
 floor of `3.00`, which is a hair rather than a verdict, and one of them
 is a pairing with no caster in it that moved only because `--check`
 seeds once and runs every duel off one stream -- change anything early

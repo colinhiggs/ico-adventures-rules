@@ -63,6 +63,10 @@ ASSUMPTIONS = [
     "A duel begins at the moment the two of them are in each other's "
     "way -- at the longer of the two reaches -- rather than across a "
     "field they spend rounds walking.",
+    "Contribution, unlike a duel, does open across that field: a build "
+    "acts at the range of the spell it would cast while the foe walks "
+    "in. The foe never gives ground, the caster is assumed to act "
+    "second, and the foe is taken to have no range of its own.",
     "The ground a duel happens on is as wide as the furthest thing in "
     "the ruleset can reach. The rules do not supply an arena, and a "
     "fight on ground with no edge is decided by the absence of walls.",
@@ -2640,6 +2644,70 @@ def acting_range(char, plan, M):
         if ranged is not None:
             return max(reach, ranged)
     return reach
+
+
+def opening_range(char, foe, M, rounds_budget=4):
+    """`acting_range` for a build that has not been handed a plan.
+
+    The crowd loop knows what the hero means to do because it planned
+    the fight first. `contributions` does not plan anything -- it asks
+    each build what its best turn is worth and multiplies -- so the
+    spell has to be resolved here. It is the same call
+    `expected_offence` and `expected_control` make, and the caches
+    behind `best_spell` mean asking a third time costs nothing."""
+    reach = reach_of(char, M)
+    if not can_cast(char, M):
+        return reach
+    pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
+    if pick[0] is None:
+        return reach
+    ranged = spell_range(M, pick[0])
+    return reach if ranged is None else max(reach, ranged)
+
+
+def opening_rounds(char, foe, M, rounds_budget=4):
+    """How many rounds this build acts before the foe can answer.
+
+    A fight starts when the character can first act -- the assumption
+    `crowd_geometry` already makes, for the reason it gives there: the
+    one who can reach furthest is the one who picks the moment. A
+    swordsman opens in contact and this is zero. A caster holding a
+    lance opens ten squares out and the foe has to cross them.
+
+    Deliberately conservative in three ways, because a metric that
+    happens to flatter one archetype should err against it:
+
+    - the foe walks straight in and the caster never gives ground,
+      though `_move` lets a duellist retreat and a caster in a real
+      fight would;
+    - the caster is assumed to act second, so a foe that closes inside
+      one round buys the caster nothing;
+    - a foe with a bow would close none of this, and the standard foe
+      carries a sword. Nothing here reads the foe's own range, which
+      is safe only while that stays true."""
+    opening = opening_range(char, foe, M, rounds_budget)
+    crossing = opening - reach_of(foe, M)
+    if crossing <= 0:
+        return 0
+    stride = max(1, move_of(foe, M))
+    return max(0, -(-crossing // stride) - 1)
+
+
+def opening_value(char, foe, M, rounds_budget=4):
+    """What one of `opening_rounds` is worth: the spell alone, damage
+    plus control.
+
+    Not `expected_offence`, which is the best of everything the build
+    can do and at this distance includes a swing it cannot reach with.
+    Zero for anything that cannot cast, which is what makes the martial
+    half of the panel read exactly as it did before the approach was
+    counted."""
+    if not can_cast(char, M):
+        return 0.0
+    pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
+    if pick[0] is None:
+        return 0.0
+    return pick[1] + pick[4]
 
 
 # How many bodies can stand where they can hit you. Ico counts a

@@ -819,11 +819,47 @@ def minor_beaten_by_twin(minor_id, standard_id, level, chars, M):
     return True
 
 
+def report_contributions(level, chars, M):
+    """The gate's own arithmetic, shown rather than only asserted.
+
+    `contributions` decides MAX_CONTRIBUTION_SPREAD and was for a long
+    time the one figure in the report that could only be reproduced by
+    writing a script against the model. Every column it multiplies is
+    here so a failure can be read as offence, survival or the opening,
+    rather than guessed at."""
+    hr("Contribution at level %d -- (offence + control) x survival" % level)
+    foe = standard_foe(level, M)
+    contrib = contributions(chars, level, M)
+    print("%-12s %8s %8s %8s %8s %6s %10s"
+          % ("build", "offence", "control", "taken", "survival", "open",
+             "contrib"))
+    for name, c in chars.items():
+        taken, _ = m.attack_expectation(
+            foe, c, M, dodge_bonus=m.sustained_dodge_bonus(c, M))
+        survival = min(SURVIVAL_CLAMP_ROUNDS, c.total_hp / max(0.1, taken))
+        print("%-12s %8.2f %8.2f %8.2f %8.2f %6d %10.1f"
+              % (name, m.expected_offence(c, foe, M),
+                 m.expected_control(c, foe, M), taken, survival,
+                 m.opening_rounds(c, foe, M), contrib[name]))
+    if len(contrib) > 1:
+        best = max(contrib, key=contrib.get)
+        worst = min(contrib, key=contrib.get)
+        print("spread %.2fx (%s vs %s), target <= %.1fx"
+              % (contrib[best] / max(0.01, contrib[worst]), best, worst,
+                 MAX_CONTRIBUTION_SPREAD))
+    print("'open' is rounds acting before the foe arrives: zero for "
+          "anything that cannot")
+    print("act at a distance, and credited at the spell's worth rather "
+          "than the build's best.")
+
+
 def contributions(chars, level, M):
     """Offence alone is a bad measure: a defensive signature scores zero
     on it. Contribution is damage dealt per round MULTIPLIED by how many
     rounds the build survives the standard foe, so trading damage for
-    staying power comes out even."""
+    staying power comes out even -- plus whatever the build got done
+    before the foe arrived, which is nothing at all unless it can act
+    at a distance."""
     foe = standard_foe(level, M)
     out = {}
     for name, c in chars.items():
@@ -845,7 +881,22 @@ def contributions(chars, level, M):
         # applies no conditions, which is every martial build.
         offence = m.expected_offence(c, foe, M)
         control = m.expected_control(c, foe, M)
-        out[name] = (offence + control) * survival
+        # A fight does not begin with everyone in contact. The build
+        # that reaches furthest opens the fight at its own range and
+        # acts while the other one walks -- `crowd_geometry` has said so
+        # since area spells were given a range, and this is the same
+        # rule applied to the single-target measure.
+        #
+        # Those rounds are credited at what the SPELL is worth, not at
+        # what the build's best turn is worth. The two differ for a
+        # hybrid, and crediting the better of them would pay the
+        # spellblade's axe at the range of a lance it is not casting.
+        # A build with no spell opens in contact, so every martial in
+        # the panel is untouched by this and the figures stay
+        # comparable with the ones before it.
+        free = m.opening_rounds(c, foe, M)
+        approach = m.opening_value(c, foe, M) * free
+        out[name] = approach + (offence + control) * survival
     return out
 
 
@@ -892,6 +943,7 @@ def main():
         report_attrition(level, chars, M)
         report_powers(level, chars, M)
         report_stances(level, chars, M)
+        report_contributions(level, chars, M)
         report_duels(level, chars, M, args.trials)
 
     report_weapon_matrix(levels[-1], build_all(levels[-1], M), M)

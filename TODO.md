@@ -197,7 +197,77 @@ The damaging spells are done: bolts, lances, and the three area families
   is the change and the design note in `damage.md` needs to say why
   the rate is steeper than parity. If it should not, the missing
   piece is defensive and the guards cannot supply it -- see above --
-  so it would have to be something new. The **spellblade came out incoherent** and no
+  so it would have to be something new.
+
+  **Armour is a second measured dead end, alongside the guards.** The
+  evoker was forced into every entry in the table at level 10 and the
+  one it already picks is the best of them: `partial_leather` at
+  `147`, against `137` in leather, `132` in a breastplate and `100` in
+  full plate. Every one of those is LEGAL -- `casting_survives_the_kit`
+  passes even full plate at this level -- so the caster is optimising
+  and not trapped. Survival spans only `8.03` to `10.39` across the
+  whole ladder, because `max_reduction_fraction` caps what any armour
+  can do, while offence falls from `16.86` to `9.59`. The best figure
+  reachable by re-equipping is the `147` it has, against `197` needed.
+
+  **The steeper rate is also what makes armour unaffordable, which is
+  the argument against step `1` that the sweeps do not show.** Casting
+  skill feeds damage at one point per step, so a point of armour skill
+  penalty costs a caster `1/step` of damage against a warrior's
+  `1/8`. At step `3` that is `0.33` a point; at step `1` it is `1.00`,
+  eight times what the warrior pays. Measured on the ladder: wearing a
+  breastplate costs the evoker `10%` of its contribution at step `3`
+  and `19%` at step `1`. Step `1` does not repair the fragility, it
+  deepens it and pays compensation in damage -- and it overshoots, the
+  evoker reaching `245` and the binding build becoming the generalist
+  at `233`.
+
+  **What the design note already says decides the rate.** Its argument
+  is structural: a blow turns margin into damage and a spell never
+  does, so the caster's one route is steeper to stand in for the
+  warrior's two. Measured at level 10 that is duellist `16` attack
+  bonus giving `2` from skill plus about `4` from margin, against
+  evoker `16` casting bonus giving `5`. Step `3` IS that argument's
+  answer, and the caster is fractionally behind it. Step `1` gives
+  `16` against `6` and leaves the note defending a rate it did not
+  derive.
+
+  **`contributions` now opens at range, and the gap survives it.** The
+  metric measured a caster standing in contact for the whole fight,
+  which is the one situation its design says to avoid, and it did so
+  after the model had gained everything needed to do better -- duels
+  have distance and every spell declares a range. It now credits the
+  rounds a build acts before the foe arrives, at the spell's worth
+  rather than the build's best turn, so no martial figure moves. The
+  standard foe closes five squares from reach one, and the count is
+  deliberately mean -- the caster never gives ground and is assumed to
+  act second -- so a range-10 caster gets **one** free round, not two.
+
+  What that is worth, and it is not nothing: the level 5 spread goes
+  `2.84x` to `2.49x` and PASSES, level 10 goes `3.34x` to `3.00x`,
+  level 15 `2.86x`, and `--check` goes from fourteen failures to
+  **thirteen**. The evoker gains `147` to `164` at level 10 -- the
+  same figure crediting a guard at full value was worth, arrived at
+  honestly.
+
+  But it does not close the gap, and that is the useful part of the
+  result. Measured on top of it, at levels 1, 5 and 10:
+
+  - **distance alone: thirteen failures**, level 10 spread `3.00x`.
+  - **distance plus `damage_per_casting_skill_step` `2`: nine
+    failures**, spread `2.6x` -- still failing, by a tenth. No floor
+    failures at all, the spellblade's `86%` included.
+  - **distance plus `lance.damage_per_step` `2`: fourteen failures**,
+    and worse than the baseline in kind: caster floors break at both
+    ends, `33%` and `29%` at level 1 and `34%` at level 5, exactly as
+    the sweep above warned.
+
+  So the metric was genuinely blind and is less so, the level 5 gate
+  was failing for a reason that was not the rules, and **the level 10
+  question is unchanged**. Nothing here should be read as choosing a
+  number: the closest combination still overpays against the design
+  note's own argument and still misses. The decision above is still
+  the decision. The **spellblade came out incoherent** and no
   longer does: the gear chooser used to keep it in full plate, because
   its melee dominates damage-times-survival, and it then could not land
   a field at level 5. A build with ranks in spellcasting now refuses
@@ -312,8 +382,12 @@ The damaging spells are done: bolts, lances, and the three area families
   it made it **free**. The evoker, the priest and the spellblade now
   finish untouched, where the spellblade in particular was losing
   `9%` of its hit points. The crowd gate never bound on any of them,
-  so nothing moved in `--check`; the contribution spread is measured
-  from duels, and nothing in a duel opens at range yet.
+  so nothing moved in `--check`. The contribution spread did not move
+  either, and the reason given here was wrong: it is not measured from
+  duels. `contributions` is analytic -- `attack_expectation` times
+  `expected_offence` -- and the duel loop feeds only `TARGET_ROUNDS`.
+  So giving duels an opening distance could never have moved it. What
+  moved it was giving `contributions` one; see the caster entry above.
 - **The long-range rule lives in two documents.** `spell-properties`
   owns `long_range_multiplier` and `ranged-weapons` owns
   `long_range_penalty`, and each interpolates the other's half. Nothing
