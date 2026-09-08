@@ -267,7 +267,41 @@ The damaging spells are done: bolts, lances, and the three area families
   question is unchanged**. Nothing here should be read as choosing a
   number: the closest combination still overpays against the design
   note's own argument and still misses. The decision above is still
-  the decision. The **spellblade came out incoherent** and no
+  the decision.
+
+  **Then the caster was allowed to give ground, and the entry above is
+  now mostly answered.** Holding the range rather than standing still
+  for it is what `_crowd_advance` already has a hero do, against a
+  budget as deep as the range; applying the same rule here takes a
+  caster from one free round to three, and two for the generalist,
+  whose plate costs it a stride. Nothing else changed, and no mechanic
+  moved.
+
+      level      standing still     giving ground
+      1          1.57x              1.64x
+      5          2.49x              1.99x
+      10         3.00x  evoker      2.63x  spellblade
+      15         2.86x              2.41x  -- passes
+
+  **The evoker reaches `197.7` at level 10 against the `196.6` it
+  needed.** The build this entry is named after is no longer the
+  weakest thing in the game at any level, and it got there without a
+  number moving -- it was being measured standing in contact for a
+  fight it would have spent backing away.
+
+  What is left of the level 10 failure is the **spellblade** at `187`,
+  and that is the hybrid entry below rather than this one: a build
+  that cannot wear plate without switching off half of itself, whose
+  cost is already written down there. The caster question and the
+  hybrid question were the same failure and are now two, which is the
+  useful part.
+
+  **The ground budget is the assumption to watch, and it was not
+  chosen for its answer.** Measured at level 10: no ground `3.00x`,
+  half `2.76x`, the range `2.63x`, double `2.40x` -- which passes.
+  It is set at the range because that is where the crowd loop sets it,
+  and taking the wider one to clear a gate would be exactly the move
+  the top of this file says not to make. The **spellblade came out incoherent** and no
   longer does: the gear chooser used to keep it in full plate, because
   its melee dominates damage-times-survival, and it then could not land
   a field at level 5. A build with ranks in spellcasting now refuses

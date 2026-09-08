@@ -172,11 +172,23 @@ at that range and acts while the foe walks in, which is the rule
 
 That approach is credited at what the SPELL is worth, not at what the
 build's best turn is worth, so a hybrid is not paid for its axe at the
-range of a lance it is not casting. It is deliberately mean in three
-further ways: the foe walks straight in and the caster never gives
-ground, the caster is assumed to act second, and nothing reads the
-foe's own range -- which is safe only while the standard foe carries a
-sword.
+range of a lance it is not casting.
+
+The build gives ground to hold its range while it does it, against a
+budget as deep as the range -- the rule and the arithmetic
+`_crowd_advance` already uses, and for the reason stated there: capping
+the distance would not bind, because anyone who walks backwards as fast
+as the foe walks forwards backs away for ever, so what has to be capped
+is the total ground given up. Against the standard foe that is three
+rounds for a caster on foot and two for one in plate, the difference
+being what armour costs a stride.
+
+It stays mean in two further ways: the caster is assumed to lose
+initiative every round, and nothing reads the foe's own range -- which
+is safe only while the standard foe carries a sword. **The budget is
+the assumption to watch.** At twice the ground the level 10 spread
+would pass; it is set at the range because that is what the crowd loop
+sets it at, not because of where it puts the gate.
 
 What it still does not count is clearing six goblins in a round --
 read the rank-and-file table alongside it before concluding

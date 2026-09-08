@@ -72,8 +72,10 @@ ASSUMPTIONS = [
     "field they spend rounds walking.",
     "Contribution, unlike a duel, does open across that field: a build "
     "acts at the range of the spell it would cast while the foe walks "
-    "in. The foe never gives ground, the caster is assumed to act "
-    "second, and the foe is taken to have no range of its own.",
+    "in, and gives ground to hold that range against a budget as deep "
+    "as the range itself -- the crowd loop's rule and its arithmetic. "
+    "The caster is assumed to lose initiative every round, and the foe "
+    "is taken to have no range of its own.",
     "The ground a duel happens on is as wide as the furthest thing in "
     "the ruleset can reach. The rules do not supply an arena, and a "
     "fight on ground with no edge is decided by the absence of walls.",
@@ -2653,6 +2655,13 @@ def acting_range(char, plan, M):
     return reach
 
 
+# A caster that outruns its foe is stopped by the ground behind it and
+# not by this, which exists only so that a pathological ruleset -- a
+# range longer than the arena, a foe that cannot walk -- cannot spin
+# here. It binds at nothing the panel does.
+OPENING_ROUNDS_CAP = 25
+
+
 def opening_range(char, foe, M, rounds_budget=4):
     """`acting_range` for a build that has not been handed a plan.
 
@@ -2681,23 +2690,44 @@ def opening_rounds(char, foe, M, rounds_budget=4):
     swordsman opens in contact and this is zero. A caster holding a
     lance opens ten squares out and the foe has to cross them.
 
-    Deliberately conservative in three ways, because a metric that
-    happens to flatter one archetype should err against it:
+    The caster gives ground to hold its range, which is what
+    `_crowd_advance` already has a hero do and for the reason it gives
+    there: everybody stands at the distance it would rather fight at,
+    and a build whose reach IS its range has somewhere to give. The
+    budget is the same too -- as many squares as the opening is deep,
+    because capping the DISTANCE would not bind at all. A caster only
+    ever has to restore the gap it started at, so one that walks
+    backwards as fast as the foe walks forwards would back away for
+    ever; capping the total ground given up is what puts a wall behind
+    it.
 
-    - the foe walks straight in and the caster never gives ground,
-      though `_move` lets a duellist retreat and a caster in a real
-      fight would;
-    - the caster is assumed to act second, so a foe that closes inside
-      one round buys the caster nothing;
+    Still conservative in two ways, because a metric that happens to
+    flatter one archetype should err against it:
+
+    - the foe moves first every round, so the caster is assumed to lose
+      initiative every time and a foe that closes inside one round buys
+      it nothing;
     - a foe with a bow would close none of this, and the standard foe
       carries a sword. Nothing here reads the foe's own range, which
       is safe only while that stays true."""
     opening = opening_range(char, foe, M, rounds_budget)
-    crossing = opening - reach_of(foe, M)
-    if crossing <= 0:
+    quarry = reach_of(foe, M)
+    if opening <= quarry:
         return 0
     stride = max(1, move_of(foe, M))
-    return max(0, -(-crossing // stride) - 1)
+    own = move_of(char, M)
+    gap = opening
+    ground = opening
+    free = 0
+    while free < OPENING_ROUNDS_CAP:
+        gap = max(quarry, gap - stride)
+        if gap <= quarry:
+            break                       # it has arrived; the rest is melee
+        free += 1
+        step = min(own, opening - gap, ground)
+        gap += step
+        ground -= step
+    return free
 
 
 def opening_value(char, foe, M, rounds_budget=4):
