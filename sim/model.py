@@ -92,10 +92,9 @@ ASSUMPTIONS = [
     "bind: anyone who walks backwards as fast as the crowd walks "
     "forwards would back away for ever.",
     "A spell that declares no range reaches no further than the "
-    "caster's own arm. spell-properties says a range is self, touch "
-    "or a number; the four area families declare none of the three, "
-    "so this is a stand-in for a missing rule and it understates "
-    "every caster rather than flattering one.",
+    "caster's own arm. Every spell in the list declares one today, so "
+    "this decides nothing; it is the safe reading of a silence, and "
+    "it understates a caster rather than flattering one.",
     "Eight creatures per square of reach can stand where they can "
     "strike you, that being the ring of squares around you when a "
     "diagonal costs the same as a step. It binds at no crowd size "
@@ -2563,14 +2562,13 @@ def spell_range(M, spell_id):
     number, so `touch` and `self` come back as None and a number comes
     back as itself.
 
-    A spell with no `range` at all also comes back as None, and that is
-    not a shorthand -- it is a hole in `spell-list`. The four area
-    families (blast, burst, field and ward) declare none of the three,
-    so nothing in the ruleset says how far away a caster may put a
-    field. Reading the silence as `touch` understates every caster in
-    the panel, which is the safe direction for a guess to be wrong in:
-    it can only make a caster look worse than the rules allow, never
-    better. TODO.md carries it as a rules gap to fill.
+    A spell with no `range` at all also comes back as None. Every spell
+    in the list declares one now -- the four area families were the
+    ones that did not, and they say `10` like the bolt and the lance --
+    so nothing rides on this today. It stays because reading a silence
+    as `touch` is the safe direction for a guess to be wrong in: it can
+    only make a caster look worse than the rules allow, never better,
+    and the next spell somebody writes may arrive without one.
     """
     value = spell_def(M, spell_id).get("range")
     if value is None or isinstance(value, str):

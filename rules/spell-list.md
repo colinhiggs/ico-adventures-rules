@@ -71,6 +71,7 @@ mechanics:
     template: circle
     area_archetype: concentrated
     minimum_spirit: 2
+    range: 10
     needs_attack_roll: false
     applies_condition: true
   blast:
@@ -79,6 +80,7 @@ mechanics:
     template: any
     area_archetype: balanced
     minimum_spirit: 2
+    range: 10
     needs_attack_roll: false
   field:
     schools: [energy]
@@ -87,6 +89,7 @@ mechanics:
     area_archetype: diffuse
     difficulty_per_damage: 2
     minimum_spirit: 3
+    range: 10
     needs_attack_roll: false
     duration_rounds: 2
     rounds_per_difficulty: 1
@@ -262,6 +265,7 @@ mechanics:
     template: circle
     area_archetype: diffuse
     minimum_spirit: 2
+    range: 10
     needs_attack_roll: false
     no_damage: true
     duration_rounds: 3
@@ -410,13 +414,21 @@ None of them needs an attack roll: everything under the template takes
 the damage, and having nothing to dodge is what an area spell buys with
 its difficulty.
 
+Every one of them is **placed**, not centred on you. Each family lists
+a range below, counted in the same squares as everything else, and the
+template goes anywhere within it — so an area spell is a thing you drop
+on somebody rather than something that happens around you. Extending
+that range costs difficulty at the rate [[spell-properties]] gives, the
+same as it does for a bolt.
+
 The family decides what kind of spell it is; the damage type decides how
 it looks and, for a burst, what it leaves behind.
 
 ### Bursts — {{ mechanics.burst.area_archetype }}
 
 *Base difficulty {{ mechanics.burst.base_difficulty }}, circle,
-minimum spirit {{ mechanics.burst.minimum_spirit }}.*
+range {{ mechanics.burst.range }}, minimum spirit
+{{ mechanics.burst.minimum_spirit }}.*
 
 Small and fierce, and the only area family that applies a condition —
 the same conditions the lances carry, resisted the same way. See
@@ -430,7 +442,8 @@ the same conditions the lances carry, resisted the same way. See
 
 ### Blasts — {{ mechanics.blast.area_archetype }}
 
-*Base difficulty {{ mechanics.blast.base_difficulty }}, minimum spirit
+*Base difficulty {{ mechanics.blast.base_difficulty }}, range
+{{ mechanics.blast.range }}, minimum spirit
 {{ mechanics.blast.minimum_spirit }}.*
 
 A blast takes **any template in [[spell-area]]** — circle, cone, line,
@@ -448,7 +461,8 @@ or swept across a rank.
 ### Fields — {{ mechanics.field.area_archetype }}
 
 *Base difficulty {{ mechanics.field.base_difficulty }}, circle,
-minimum spirit {{ mechanics.field.minimum_spirit }}.*
+range {{ mechanics.field.range }}, minimum spirit
+{{ mechanics.field.minimum_spirit }}.*
 
 A field does not go off; it stays. It lasts
 {{ mechanics.field.duration_rounds }} rounds, plus
@@ -791,6 +805,7 @@ All six share a chassis:
 - **Base difficulty:** {{ mechanics.ward.base_difficulty }}
 - **Template:** {{ mechanics.ward.template }}, priced as
   {{ mechanics.ward.area_archetype }} — see [[spell-area]]
+- **Range:** {{ mechanics.ward.range }}
 - **Duration:** {{ mechanics.ward.duration_rounds }} rounds, plus
   {{ mechanics.ward.rounds_per_difficulty }} for each further point of
   difficulty spent on it

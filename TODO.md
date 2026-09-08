@@ -200,21 +200,18 @@ The damaging spells are done: bolts, lances, and the three area families
   reactions here. A
   positional model would need walls before this means anything, and
   walls are a much larger thing than distance.
-- **The area spells do not say how far away they can be put.**
-  `spell-properties` is explicit that a range is **self**, **touch** or
-  **a number**, and the bolt and lance chassis duly say `10`. The four
-  area families -- `blast`, `burst`, `field` and `ward` -- say nothing
-  at all, so nothing in the ruleset answers "how far off may I drop a
-  fire field". Every caster in the panel clears a crowd with
-  `flame_field`, which makes this the one missing number that decides
-  whether a caster gets to use its range against a crowd or has to
-  stand in the middle of one. The simulator reads the silence as
-  `touch`, which understates a caster rather than flattering it, and
-  says so in `ASSUMPTIONS`. Filling it adds a key to four entries, so
-  it is a MINOR bump; the obvious candidate is the `10` a bolt and a
-  lance already carry, but whether a wide template should be placeable
-  as far off as a single bolt is a design question and not an
-  oversight to be tidied.
+- **The area spells now say how far away they can be put.** *Done:
+  `blast`, `burst`, `field` and `ward` carry `range: 10`, the same
+  figure a bolt and a lance already had, and the prose says once that
+  an area spell is placed rather than centred on the caster.* What it
+  changed is smaller than it looks and worth recording: a caster
+  clearing six goblins already did it in one round to one and a half,
+  so opening at ten squares instead of two did not make it faster --
+  it made it **free**. The evoker, the priest and the spellblade now
+  finish untouched, where the spellblade in particular was losing
+  `9%` of its hit points. The crowd gate never bound on any of them,
+  so nothing moved in `--check`; the contribution spread is measured
+  from duels, and nothing in a duel opens at range yet.
 - **The long-range rule lives in two documents.** `spell-properties`
   owns `long_range_multiplier` and `ranged-weapons` owns
   `long_range_penalty`, and each interpolates the other's half. Nothing

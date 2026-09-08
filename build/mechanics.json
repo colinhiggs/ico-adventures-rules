@@ -983,6 +983,7 @@
         "template": "circle",
         "area_archetype": "concentrated",
         "minimum_spirit": 2,
+        "range": 10,
         "needs_attack_roll": false,
         "applies_condition": true
       },
@@ -994,6 +995,7 @@
         "template": "any",
         "area_archetype": "balanced",
         "minimum_spirit": 2,
+        "range": 10,
         "needs_attack_roll": false
       },
       "field": {
@@ -1005,6 +1007,7 @@
         "area_archetype": "diffuse",
         "difficulty_per_damage": 2,
         "minimum_spirit": 3,
+        "range": 10,
         "needs_attack_roll": false,
         "duration_rounds": 2,
         "rounds_per_difficulty": 1
@@ -1298,6 +1301,7 @@
         "template": "circle",
         "area_archetype": "diffuse",
         "minimum_spirit": 2,
+        "range": 10,
         "needs_attack_roll": false,
         "no_damage": true,
         "duration_rounds": 3,
