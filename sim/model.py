@@ -59,12 +59,25 @@ ASSUMPTIONS = [
     "A build buys the kit that maximises damage per round times rounds "
     "survived against a panel of two opponents, one sword-armed and one "
     "carrying a two-handed sword, and re-equips at every level.",
-    "A reach advantage is worth one free attack as the fight is "
-    "joined, and a quick weapon inside a longer one is worth about one "
-    "avoided swing over a fight. reach.md charges an approach once a "
-    "round rather than once per square, so whether the free attack is "
-    "collected again in later rounds depends on where the two of them "
-    "are standing, which this model cannot ask.",
+    "A duel begins at the moment the two of them are in each other's "
+    "way -- at the longer of the two reaches -- rather than across a "
+    "field they spend rounds walking.",
+    "The ground a duel happens on is as wide as the furthest thing in "
+    "the ruleset can reach. The rules do not supply an arena, and a "
+    "fight on ground with no edge is decided by the absence of walls.",
+    "Everybody stands at their own reach when they can: close enough "
+    "to strike, no closer than they must be.",
+    "Giving ground is chosen over the free attack only when it denies "
+    "an attack outright -- when the one closing has no movement left "
+    "to follow with -- and then only if their round is worth more than "
+    "the free attack would be.",
+    "A quick weapon inside a longer one is worth about one avoided "
+    "swing over a fight, and the override is treated as holding for "
+    "the whole fight rather than being re-checked against the distance "
+    "each round.",
+    "Spending the reaction on reach costs nothing here, because "
+    "Riposte and Deflect are not modelled. At the table it is the "
+    "whole price of the rule.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -522,6 +535,61 @@ def strikes_first_inside(char, other, M):
     if not bool(M.get("reach", "quick_strikes_first_inside")):
         return False
     return char.weapon.quick and reach_of(other, M) > reach_of(char, M)
+
+
+def move_of(char, M):
+    """Squares this character covers in a turn, per movement.md: what
+    its size gives it, what its gait adds, its dexterity, less what its
+    armour costs.
+
+    Everything the duel loop fights is medium and upright, the same
+    assumption reach_of makes about size, so those two terms are read
+    rather than branched on."""
+    squares = (int(M.get("movement", "move_base_by_size", "medium"))
+               + int(M.get("movement", "move_bonus_by_gait", "upright"))
+               + char.attr_bonus(str(M.get("movement", "move_bonus_attribute")), M))
+    if char.armour:
+        squares -= char.armour.move_penalty
+    return max(0, squares)
+
+
+def band_of(char, other, M):
+    """Squares where `char` strikes and `other` cannot answer: the strip
+    inside the longer reach and outside the shorter, per reach.md. Zero
+    when the reaches are equal, which is most pairings."""
+    return max(0, reach_of(char, M) - reach_of(other, M))
+
+
+def arena_radius(M):
+    """How far two combatants may get from each other, in squares.
+
+    The rules do not supply this, any more than they supply a purse, and
+    a fight on ground with no edge is not a measurement of the rules: a
+    faster combatant could never be caught and a slower one could never
+    escape, so the result would be decided by the absence of walls
+    rather than by anything in the book. The model takes the ground to
+    be as wide as the furthest thing in the ruleset can reach -- the
+    longest range there is, at its long band -- so that nobody can leave
+    the fight and a ranged build still gets the whole of what its range
+    is meant to buy.
+
+    "As wide as the best weapon in it" is an assumption wearing a
+    derivation's clothes, which is why it is in ASSUMPTIONS.
+
+    It does not bind on a melee duel and is not meant to. Nobody backs
+    away past their own reach when doing so costs them their attack, and
+    the longest reach here is two squares. It is written now because the
+    withdrawal rule needs a bound to be written against at all, and
+    because ranged weapons will make it bite.
+    """
+    longest = 0
+    for rule_id in ("ranged-weapons", "spell-list"):
+        for entry in M.rules.get(rule_id, {}).values():
+            if isinstance(entry, dict) and isinstance(entry.get("range"), int):
+                longest = max(longest, int(entry["range"]))
+    if not longest:
+        return max(int(M.get("movement", "reach_by_size", "huge")), 1)
+    return longest * int(M.get("spell-properties", "long_range_multiplier"))
 
 
 def opening_attacks(char, other, M):
@@ -2123,27 +2191,32 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     guard_b = redouble_plan(spec_b, M)
 
     plans = {id(spec_a): (plan_a, guard_a), id(spec_b): (plan_b, guard_b)}
-    open_a = opening_attacks(spec_a, spec_b, M)
-    open_b = opening_attacks(spec_b, spec_a, M)
     # What each side gives up by stopping to beat out flames.
     worth = {id(spec_a): expected_offence(spec_a, spec_b, M),
              id(spec_b): expected_offence(spec_b, spec_a, M)}
+
+    # Position. One integer is the whole of it: Ico counts a diagonal as
+    # one square, so the distance between two combatants is a scalar and
+    # there is nothing else on the grid to track.
+    geometry = {
+        id(spec_a): dict(reach=reach_of(spec_a, M), move=move_of(spec_a, M)),
+        id(spec_b): dict(reach=reach_of(spec_b, M), move=move_of(spec_b, M)),
+    }
+    arena = arena_radius(M)
+    # A duel begins at the moment the two of them are in each other's
+    # way, rather than across a field they spend rounds walking. That is
+    # the assumption the closed-form version made too -- it resolved the
+    # reach advantage before round one and started them engaged -- and
+    # keeping it is what makes round counts comparable across the change.
+    start_gap = min(arena, max(geometry[id(spec_a)]["reach"],
+                               geometry[id(spec_b)]["reach"]))
 
     for _ in range(trials):
         a = _fresh(spec_a)
         b = _fresh(spec_b)
         rounds = 0
         fields = []             # persisting spells still on the ground
-
-        # Reach is paid once, as the fight is joined: whoever reaches
-        # further strikes while the other closes, and after that closing
-        # and withdrawing cancel.
-        for _ in range(open_a):
-            _deliver(a, b, _pick(plan_a), M, _guard(b, guard_b, M), fields)
-        for _ in range(open_b):
-            if a.chp > 0:
-                _deliver(b, a, _pick(plan_b), M, _guard(a, guard_a, M),
-                         fields)
+        gap = start_gap
 
         first, second = initiative_order(a, b, M)
         f_key = id(spec_a) if first is a else id(spec_b)
@@ -2153,12 +2226,21 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
 
         while a.chp > 0 and b.chp > 0 and rounds < max_rounds:
             rounds += 1
-            _turn(first, second, _pick(f_plan), s_guard, M, fields,
-                  worth[f_key])
+            # reach.md spends a reaction, and turn-order.md refreshes
+            # that at the start of your turn; a move is per turn too.
+            # Both are stocked per round here because a reaction is
+            # spent on somebody else's turn and has to exist before
+            # yours comes round.
+            budget = {f_key: dict(move=geometry[f_key]["move"], reaction=True),
+                      s_key: dict(move=geometry[s_key]["move"], reaction=True)}
+            gap = _turn(first, second, _pick(f_plan), s_guard, M, fields,
+                        worth[f_key], gap, geometry, budget, arena,
+                        f_key, s_key, s_plan, f_guard, worth[s_key])
             if second.chp <= 0:
                 break
-            _turn(second, first, _pick(s_plan), f_guard, M, fields,
-                  worth[s_key])
+            gap = _turn(second, first, _pick(s_plan), f_guard, M, fields,
+                        worth[s_key], gap, geometry, budget, arena,
+                        s_key, f_key, f_plan, s_guard, worth[f_key])
             _age_fields(fields)
         rounds_total += rounds
         if rounds >= max_rounds:
@@ -2168,20 +2250,93 @@ def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
     return rounds_total / trials, a_wins / trials, capped / trials
 
 
-def _turn(actor, other, plan, other_guard, M, fields, action_value):
+def _turn(actor, other, plan, other_guard, M, fields, action_value,
+          gap, geometry, budget, arena, actor_key, other_key,
+          other_plan, actor_guard, other_worth):
     """One combatant's turn: what the ground and the conditions do to
-    them first, then what they do about it."""
+    them first, then where they go, then what they do about it.
+
+    Returns the distance between the two of them afterwards."""
     if actor.chp <= 0:
-        return
+        return gap
     _stand_in_fields(actor, fields, M)
     if actor.chp <= 0:
-        return
+        return gap
     if not tick_conditions(actor, M):
-        return                          # stunned, or slowed out of reach
+        return gap                      # stunned, or slowed out of reach
     if would_smother(actor, M, action_value):
         smother(actor, M)
-        return                          # the turn went on the flames
-    _deliver(actor, other, plan, M, _guard(other, other_guard, M), fields)
+        return gap                      # the turn went on the flames
+
+    gap = _move(actor, other, M, gap, geometry, budget, arena,
+                actor_key, other_key, other_plan, actor_guard,
+                other_worth, action_value, fields)
+    if actor.chp <= 0 or other.chp <= 0:
+        return gap
+    # Outside your own reach there is nobody to swing at. The action is
+    # not spent on anything else here: a melee build with nothing in
+    # range has nothing to do, which is the honest answer until ranged
+    # weapons reach this loop.
+    if gap <= geometry[actor_key]["reach"]:
+        _deliver(actor, other, plan, M, _guard(other, other_guard, M), fields)
+    return gap
+
+
+def _move(actor, other, M, gap, geometry, budget, arena, actor_key,
+          other_key, other_plan, actor_guard, other_worth, action_value,
+          fields):
+    """Where the actor goes, and what the other one does about it.
+
+    Everybody wants to stand at their own reach: close enough to strike,
+    and no closer than they have to be. For a combatant whose reach is
+    the longer that square is inside their band, where they strike and
+    cannot be struck, so the same rule produces both closing and giving
+    ground without either being a special case."""
+    mine = geometry[actor_key]
+    theirs = geometry[other_key]
+    want = min(mine["reach"], arena)
+    left = budget[actor_key]["move"]
+
+    if gap > want:                      # close
+        step = min(left, gap - want)
+        gap -= step
+    elif gap < want:                    # open, on your own turn, at the
+        step = min(left, want - gap)    # ordinary price -- this is not
+        gap = min(arena, gap + step)    # the reaction step-back
+        budget[actor_key]["move"] = left - step
+        return gap
+    else:
+        return gap
+    budget[actor_key]["move"] = left - step
+
+    # An approach across somebody's band is answered, once a round, out
+    # of their reaction -- reach.md.
+    if step <= 0 or gap > theirs["reach"] or band_of(other, actor, M) <= 0:
+        return gap
+    if not budget[other_key]["reaction"]:
+        return gap
+
+    remaining = budget[actor_key]["move"]
+    # Giving ground only pays against somebody who has over-committed:
+    # they come forward at the ordinary price and you go backwards at
+    # double, so anyone with movement in hand simply follows. Where it
+    # does pay it denies the attack outright, so the two answers are
+    # weighed in the same currency -- what a round of theirs is worth
+    # against what a round of yours is.
+    cost = int(M.get("reach", "step_back_move_cost_multiplier"))
+    denies = (remaining <= 0
+              and budget[other_key]["move"] >= cost
+              and gap + 1 > mine["reach"]
+              and gap + 1 <= arena)
+    if denies and action_value >= other_worth:
+        budget[other_key]["reaction"] = False
+        budget[other_key]["move"] -= cost
+        return gap + 1
+
+    budget[other_key]["reaction"] = False
+    _deliver(other, actor, _pick(other_plan), M,
+             _guard(actor, actor_guard, M), fields)
+    return gap
 
 
 def _cast_at_crowd(hero, crowd, plan, M, fields=None):

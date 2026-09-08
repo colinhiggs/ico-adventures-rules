@@ -69,8 +69,9 @@ The damaging spells are done: bolts, lances, and the three area families
   still alive and still holding the dagger's job — same damage, better
   block, longer reach, equally free to cast around — so a caster who
   never throws anything has no reason to carry a knife instead. Whether
-  a throw at the dagger's range is worth the hand is unmeasured, because
-  the simulator has no positions.
+  a throw at the dagger's range is worth the hand is still unmeasured:
+  duels have distance now, but nothing in the model picks up a ranged
+  weapon or throws anything, so the gear chooser cannot price a throw.
 - **The caster's single-target gap.** *Closed by giving spells a damage
   rate from casting skill.* Against the best conventional martial build
   a caster now contributes 1.5x to 1.8x less across levels 5 to 15,
@@ -176,21 +177,27 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.
-- **The reach rules are unmeasured, and they are a buff.** Crossing a
-  band is answered once a round rather than once per fight, and a
-  fighter who spends their move backing off and their reaction striking
-  can collect that answer every round of a fight. Against a shorter
-  weapon that is close to an extra attack a round, paid for with the
-  move, the reaction that Riposte and Deflect come out of, and
-  `-4` in a corridor. Whether the price covers it is exactly the
-  question `sim/` should answer and cannot: the free attack needs
-  positions and the corridor needs walls. Until then the numbers in
-  `reach.md` are a design judgement, and the simulator still credits
-  reach with the single opening blow it always did.
-- **The tight-space penalty has no home in the simulator, by
-  construction.** Every fight the model runs is on open ground, which is
-  an `ASSUMPTIONS` entry rather than an oversight, so the counterweight
-  to the reach buff is the one part of it that cannot be checked. A
+- **The reach rules are measured now, and they are too strong.** The
+  duel loop has positions, and with them the 2.0.0 rules take about a
+  quarter off every fight where one side outreaches the other — enough
+  to put five more pairings under the round-length floor. A pairing with
+  equal reaches does not move at all, which is what says the effect is
+  the reach rules rather than the rewrite. That measurement is an upper
+  bound rather than an estimate: the model gives the free attack away
+  for nothing because Riposte and Deflect are not modelled, and fights
+  on open ground so the tight-space penalty never applies, so both of
+  the counterweights the rules were given are invisible to it. What to
+  do about it is a design question and not a modelling one — the honest
+  options are to make the free attack cost something the model can see,
+  to narrow when it triggers, or to accept shorter fights between
+  mismatched weapons and move `TARGET_ROUNDS`.
+- **The tight-space penalty still has no home in the simulator, by
+  construction.** Duels have distance now, but distance is not walls.
+  Every fight the model runs is on open ground, which is an
+  `ASSUMPTIONS` entry rather than an oversight, so one of the two
+  counterweights to the reach buff remains unmeasurable — and the other,
+  the reaction, is unmeasurable for a different reason: nothing spends
+  reactions here. A
   positional model would need walls before this means anything, and
   walls are a much larger thing than distance.
 - **The long-range rule lives in two documents.** `spell-properties`

@@ -146,17 +146,31 @@ These are targets, not rules. When a gate fails the honest options are
 to change the rules or to change the target — but change the target
 because the design intent moved, never to make the report quiet.
 
-Six of them fail as of 1.0.3, which is that principle being applied
-rather than ignored: `TARGET_ROUNDS` on three pairings at level 10,
-`MAX_CONTRIBUTION_SPREAD` at level 10 (2.9x against a 2.5x target),
-`FLOOR_RATIO_BAND` for the spellblade, and the dagger and hand axe
-going unchosen. `TODO.md` carries each one with what has been ruled out
-so far — the paragon's lead in particular has been investigated and is
-neither its disciplines nor its weapon.
+Ten of them fail as of 2.0.0, which is that principle being applied
+rather than ignored: `TARGET_ROUNDS` on seven pairings, two at level 1
+and five at level 10; `MAX_CONTRIBUTION_SPREAD` at level 10 (2.9x
+against a 2.5x target); `FLOOR_RATIO_BAND` for the spellblade; and the
+dagger and hand axe going unchosen. `TODO.md` carries each one with what
+has been ruled out so far — the paragon's lead in particular has been
+investigated and is neither its disciplines nor its weapon.
+
+**Five of those seven round-length failures are new, and they are the
+first measurement of the 2.0.0 reach rules.** Every one of them is a
+pairing where one side outreaches the other, and every such pairing lost
+about a quarter of its rounds: 4.00 to 2.96 at level 1, 3.27 to 2.51 and
+4.05 to 2.83 at level 10. A pairing where both reach the same distance
+did not move at all — the paragon against the priest, both at reach two,
+is 3.02 rounds before and after to the decimal.
+
+Read that as an **upper bound** on how strong reach is. The model gives
+the reaching fighter their free attack for nothing, because Riposte and
+Deflect are not modelled and so the reaction it costs buys nothing here,
+and it fights every duel on open ground, so the tight-space penalty
+never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same six failures with the
-same numbers means the change was neutral, and a seventh means it was
+either side of a change to a rule value: the same ten failures with the
+same numbers means the change was neutral, and an eleventh means it was
 not.
 
 ## Shopping
@@ -244,14 +258,33 @@ back to open it again -- and the choice costs the reaching fighter their
 reaction. It is charged once a *round*, not once per square, and a slow
 opponent crossing a wide band pays every round until they arrive.
 
-The model credits that as one free attack before the first round, which
-is what a positionless model can honestly say: the widest band any
-weapon here imposes is one square, so the difference between per-square
-and per-round does not arise, and whether the free attack is collected
-again is a question about where the two of them are standing. The
-step-back, the reaction it costs, and the tight-space penalty are not
-modelled at all -- the first two need positions and the third needs
-walls, and `ASSUMPTIONS` says every fight here is on open ground. **Quickness** is the answer: a
+**Duels have positions**, and resolve all of that properly. One
+integer is the whole of it: Ico counts a diagonal as one square, so the
+distance between two combatants is a scalar and there is nothing else on
+the grid to track. Each of them moves as `movement.md` says -- size,
+gait, dexterity, less what armour costs -- and stands at their own reach
+when they can, which produces closing and giving ground from the same
+rule. An approach across a band is answered out of the reaction, once a
+round; giving ground is chosen over the free attack only where it denies
+an attack outright, which is where reach.md says it pays.
+
+Two things follow that are worth knowing before reading a number.
+**Armour's movement penalty is now worth something**, where before it
+was read in exactly one place and never computed. And **spending the
+reaction on reach costs nothing here**, because Riposte and Deflect are
+not modelled -- at the table that is the whole price of the rule, so the
+report flatters a reach advantage by exactly what a reaction is worth.
+
+The gear chooser still prices reach first-order, as one swing gained
+over a fight, which is now a different answer from the one the duel
+gives. That split is deliberate and predates positions: shopping is done
+once per weapon against a panel, and running duels inside it would cost
+more than the report is worth.
+
+**Everything else in the report is still positionless.** The skirmish
+loop, contribution, damage per round and the adventuring day have no
+distance in them, the tight-space penalty needs walls rather than
+distance, and ranged weapons are still not modelled at all. **Quickness** is the answer: a
 quick weapon inside a longer one strikes first every round, whatever
 initiative said, which in practice is worth about one avoided blow over
 a fight, because a corpse does not answer. **Free hands** decides how
