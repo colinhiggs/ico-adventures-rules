@@ -8,6 +8,84 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.3.0
+
+**One mechanics key added and five weapon damage ratings moved. Nothing
+renamed, removed or re-shaped**, so an adventure built against 2.2.0
+still resolves every `[[link]]`, every `snippets.json` key and every
+name it uses. But five of the eight melee weapons now hit for a
+different number, so **re-read any NPC that carries one**.
+
+### Casting in Harness: a power belonging to two disciplines
+
+`discipline-powers.casting_in_harness` is new. A character who is Adept
+in **both** Martial and Magical may buy it, and it does two things: it
+forgives `2` points of armour's skill penalty **on the casting roll
+only**, and it lets a weapon of size `M` or smaller be held without
+occupying a hand for the purpose of casting.
+
+It is the first power in the list that requires two disciplines, so it
+declares `disciplines` where every other power declares `discipline`.
+Anything reading that list should expect either key.
+
+Two limits are deliberate. Armour heavier than `1` point of movement
+penalty does not qualify, so **full plate is still full plate** and no
+amount of training makes it castable in. And the weapon relief is gated
+on **size rather than hands**, so it buys a sword and not a great axe:
+the point was to make the middle of the weapon table attractive to a
+fighter-mage, and a discount on the biggest thing in it would have done
+the opposite.
+
+The dodge keeps paying the armour penalty in full. That is what stops
+this being a strictly better Untouchable.
+
+### The weapon table got narrower
+
+| weapon | was | now |
+| --- | --- | --- |
+| dagger | `5` | `6` |
+| staff | `5` | `6` |
+| battle axe | `9` | `8` |
+| two-handed sword | `12` | `10` |
+| great axe | `12` | `10` |
+
+The ratings looked like a little over two to one and behaved like four
+to one. Armour comes off every blow and the cap in `damage.md` holds
+that subtraction to half the raw figure, so a small weapon loses a
+*share* of what it deals and a large one loses a *fixed amount*.
+Against the armour a mid-level enemy actually wears, the two ends of
+the table used to arrive as `2` and `8`. They now arrive as `3` and
+`6`.
+
+### What it means for an NPC you have already written
+
+**A brute with a great axe or a two-handed sword hits for two less.**
+That is the largest single change here and it is deliberate: those two
+were ending fights before anybody had spent a resource. An encounter
+built around one will now run longer, which is the point, but if it was
+tuned to be a near-run thing it is now less near.
+
+**A knife-fighter or a staff-carrying caster hits for one more.** Both
+were low enough that armour was taking half of everything they dealt.
+
+**The battle axe lost a point** and is now the sword's equal on damage.
+It is the one weapon in the table that is currently beaten by another
+on every axis, which is recorded in `TODO.md` and will be fixed by
+making a weapon's block value matter rather than by moving damage
+again.
+
+**The bestiary is untouched.** The goblin carries a short sword, and
+the short sword did not move. Any creature you have written yourself
+that names one of the five above will pick up the new number
+automatically, because a stat block keys into the equipment table
+rather than copying out of it.
+
+### What did not change
+
+No document id, no mechanics key and no rule name went away, and
+nothing was re-shaped. `rules_version: "2.2.0"` in an adventure means
+that adventure has not been re-checked, not that it is broken.
+
 ## 2.2.0
 
 **One mechanics key added. Nothing renamed, removed or re-valued**, so
