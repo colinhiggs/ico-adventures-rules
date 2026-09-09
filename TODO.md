@@ -261,19 +261,24 @@ The damaging spells are done: bolts, lances, and the three area families
   again: asking whether a weapon is *somebody's* near-miss saturates.
   With ten varied builds nearly every weapon is one, and it scored the
   old wide table `0.959` against the narrow one's `0.921` -- backwards.
-- **The battle axe is the one real mistake in the weapon table.** The
-  new domination gate names it and is right: it shares the sword's
-  rating, its cost and its size, and the sword has a point of accuracy
-  and two of block on it. There is nothing it wins on.
-  It cannot be fixed with damage -- `9` was measured and produced a
-  battle-axe monoculture -- and making it a few gp cheaper would satisfy
-  the gate while changing nothing at a purse of 150gp or more, which is
-  gaming the measurement rather than fixing the weapon. The real
-  difference between an axe and a sword in this table is block, `3`
-  against `5`, and that difference is worth nothing while a 15gp shield
-  overrides the weapon's block value entirely. So this entry is the
-  block entry below wearing different clothes, and it is the concrete
-  case for fixing it.
+- **The battle axe was the one real mistake in the weapon table.**
+  *Formally fixed; really still waiting on block.* It shared the
+  sword's rating, cost and size while the sword had a point of accuracy
+  and two of block on it, so there was nothing it won on. It is now
+  cheaper (`12gp` against `20gp`, which is where history puts an axe
+  beside a sword) and blocks for `4` rather than `3`. The domination
+  gate passes and every weapon-table gate now passes with it.
+  What did **not** happen is the interesting part, and it is worth
+  keeping: the axe's measured utility did not move by a thousandth --
+  `0.945`, `0.965`, `0.954`, `0.957` across the four levels, before and
+  after, identical. Neither half of the change reaches the measure.
+  The price does not bind at a purse of 150gp upwards, and the block
+  point is worth nothing because a build that blocks nearly always
+  carries a shield and a shield replaces the weapon's value outright.
+  So the axe is no longer a mistake on paper and is still not a choice
+  in play. That is a pre-payment on the entry below rather than a fix:
+  the moment a weapon's block value means something, this weapon
+  already has the numbers to be the axe-shaped answer to the sword.
 - **Weapon block is the most promising dead axis, and there are two
   different ideas here.** They were briefly conflated in conversation
   and are worth keeping apart, because one is a repair and the other is

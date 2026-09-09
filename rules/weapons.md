@@ -49,8 +49,8 @@ mechanics:
     accuracy: 0
     damage: 8
     size: M
-    block_ap: 3
-    cost_gp: 20
+    block_ap: 4
+    cost_gp: 12
   two_handed_sword:
     accuracy: 0
     damage: 10
@@ -212,6 +212,28 @@ that weapon deals. So accuracy widens the ends of the table rather than
 drawing them together, and giving it to the small end is an expensive
 way to lift it. It is a fine way to say what a weapon is *like*; it is
 not a way to make the table narrower.
+
+## Design note: why the axe is the cheap one
+
+A battle axe is a wedge of iron on a stick and a sword is a long
+precision forging in good steel, and history priced them accordingly:
+an axe was within reach of somebody who worked for a living, and a
+sword was months of wages. The table keeps the direction and not the
+ratio — a gap that large would make the sword scenery in a game where
+adventurers are rich by the second level.
+
+What the price buys the axe is a **reason to exist beside the sword**.
+The two now share a damage rating, the sword has a point of accuracy
+and one of block on it, and without the price the axe would be the
+strictly worse object — which is a mistake in a table rather than a
+choice in it.
+
+Being honest about the size of that: at the purses characters carry
+past the first level or two, `8gp` is not a decision. The axe's real
+answer to the sword is meant to be the block value, and that is worth
+less than it looks while a cheap shield replaces a weapon's block
+entirely. Until that is fixed, the price is doing more of the work than
+it should.
 
 ## Design note: what a narrower table costs
 

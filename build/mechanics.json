@@ -1552,8 +1552,8 @@
         "accuracy": 0,
         "damage": 8,
         "size": "M",
-        "block_ap": 3,
-        "cost_gp": 20
+        "block_ap": 4,
+        "cost_gp": 12
       },
       "two_handed_sword": {
         "accuracy": 0,
