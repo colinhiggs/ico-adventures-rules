@@ -8,6 +8,76 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.5.0
+
+**Three mechanics keys added and one value changed. Nothing renamed or
+removed**, so every `[[link]]` and every `snippets.json` key an
+adventure uses still resolves. One of those values will matter to you if
+anything you have written reads a power's prerequisites — see the
+warning below.
+
+### A name for the disciplines that cast
+
+`discipline-list.casting_skill` is new, and with it a term the rules
+have needed for a while. A **casting discipline** is one whose skill
+group contains `spellcasting`, which means Magical and Spiritual. A rule
+that cares whether you cast at all now says *casting discipline* and
+means either; a rule that cares which you are still names one.
+
+Nothing declares the membership separately and nothing should — it
+follows from the skill groups that were already there, so a discipline
+given `spellcasting` becomes a casting discipline by that fact and
+there is no second list to fall out of step with the first.
+
+### ⚠ Casting in Harness now asks for a casting discipline
+
+| | was | now |
+| --- | --- | --- |
+| `discipline-powers.casting_in_harness.disciplines` | `[martial, magical]` | `[martial, casting]` |
+
+**`casting` is not a discipline and will not be found in
+`discipline-list`.** It is the group of them that cast, and any one
+member satisfies it. Anything you have written that reads a power's
+`disciplines` and looks each entry up by name needs to know that.
+
+Why it changed: a war-priest in mail met exactly the collision this
+power forgives, rolled exactly the same `spellcasting` skill, and could
+not take it. That was a gap rather than a decision.
+
+### A god has an opinion about armour
+
+`domains.armour_relief_least` (`0`) and `domains.armour_relief_most`
+(`3`) are new. Every god now grants its priests somewhere in that span
+in relief from armour's interference — on the **spellcasting roll
+only**, never on the dodge.
+
+It is a **grant and not a power**: it costs nothing, cannot be bought,
+and is part of what the god is, like its domains. A god of the
+battlefield grants the full `3` and its priests wear mail because of who
+they serve. A god of libraries grants `0` and expects them at the back.
+A priest wanting more than their god gives can still train for it and
+take Casting in Harness; the two stack, and neither can turn armour into
+a bonus.
+
+**What it does, measured.** At `0` a priest wears partial leather, at
+`2` studded leather, at `3` a chain shirt and later a breastplate. A
+grant of `1` is indistinguishable from none, because the dodge still
+pays the full penalty, so a point of armour buys a point of dodge
+penalty and the arithmetic declines. And nothing reaches far enough to
+make heavy plate free.
+
+### What it means for an NPC you have already written
+
+**Every statted priest needs a number it did not have.** The default is
+`0`, which is the old behaviour exactly, so a priest you leave alone
+behaves as it did. Decide what its god thinks of armour and write the
+grant down; if the god is martial, `3` and a breastplate is now the
+picture the rules support.
+
+**A fighter-priest can now take Casting in Harness**, which was
+previously open only to a fighter-mage. If you have an NPC who fights
+and prays at Adept in both, it has a new option.
+
 ## 2.4.0
 
 **Two values on one weapon. Nothing added, renamed or removed**, so an
