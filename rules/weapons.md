@@ -11,7 +11,7 @@ mechanics:
   large_weapon_skill_penalty: -2
   dagger:
     accuracy: 2
-    damage: 5
+    damage: 6
     size: S
     block_ap: 2
     thrown_range: 4
@@ -33,7 +33,7 @@ mechanics:
     cost_gp: 8
   staff:
     accuracy: 0
-    damage: 5
+    damage: 6
     size: M
     block_ap: 7
     reach_bonus: 1
@@ -47,13 +47,13 @@ mechanics:
     cost_gp: 20
   battle_axe:
     accuracy: 0
-    damage: 9
+    damage: 8
     size: M
     block_ap: 3
     cost_gp: 20
   two_handed_sword:
     accuracy: 0
-    damage: 12
+    damage: 10
     unwieldy: true
     size: L
     block_ap: 4
@@ -61,7 +61,7 @@ mechanics:
     cost_gp: 50
   great_axe:
     accuracy: 0
-    damage: 12
+    damage: 10
     unwieldy: true
     size: L
     block_ap: 2
@@ -185,6 +185,49 @@ Ashri's two-handed sword hits far harder, but it is size L: no finesse,
 and no free hand for a shield.
 
 {% book-only %}
+## Design note: how far apart the ends should be
+
+The damage ratings look like they span a little over two to one, and
+that is not what a fight sees. Armour is subtracted from every blow and
+the cap in [[damage]] holds the subtraction to half the raw figure, so
+a small weapon loses a *share* of what it deals and a large one loses a
+*fixed* amount. Against the armour rating a mid-level enemy actually
+wears, the bare ratings at the two ends of this table used to arrive as
+`2` and `8` — four to one, not two to one. The cap was put there to
+stop plate making light weapons useless, and it does stop that, but the
+tax it leaves behind is heaviest on the weapons it was meant to
+protect.
+
+Compressing the ratings is the direct answer, and it is worth what it
+costs. The two ends now arrive as `3` and `6`. Fights also got longer,
+which they needed to: the biggest weapons were ending duels before
+anybody had spent anything, and taking `2` off the top of the table did
+more for that than any change to hit points would have.
+
+The lever *not* used here is accuracy, and it is worth saying why,
+because it looks like the obvious one. A point of accuracy is worth
+less than a point of damage to a small weapon and more than one to a
+large weapon — it buys extra hits, and an extra hit is worth whatever
+that weapon deals. So accuracy widens the ends of the table rather than
+drawing them together, and giving it to the small end is an expensive
+way to lift it. It is a fine way to say what a weapon is *like*; it is
+not a way to make the table narrower.
+
+## Design note: what a narrower table costs
+
+Several of these weapons are now near-twins, and a few pairs differ
+only in ways a fight rarely notices. That is the deliberate price of
+the paragraph above: the ratings are the axis the game leans on hardest,
+and squeezing them necessarily leaves less room between one weapon and
+the next.
+
+Where that lands the choice is on everything except the rating — the
+free hand, the block value, quickness, reach, the throw, whether it can
+be cast around. Those were always meant to carry weight and the spread
+of damage was letting them off. A player picking between a sword and a
+battle axe is now picking a character rather than a number, which is
+the right kind of decision to be making about a weapon.
+
 ## Design note
 
 A large weapon is the best of the table on damage and the only one that

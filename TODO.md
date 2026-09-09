@@ -200,12 +200,57 @@ The damaging spells are done: bolts, lances, and the three area families
   penalty is still in the right place.
 
   So the real blocker is the entry above: the damage rating is the only
-  live axis and eight weapons already sit about one per rung from `5`
-  to `12`. A ninth weapon has to stand on a rung, and whatever was
+  live axis and eight weapons already sit about one per rung (from `5`
+  to `12` when this was written; `6` to `10` since the ratings were
+  compressed, which makes the crowding worse rather than better). A ninth weapon has to stand on a rung, and whatever was
   standing there dies. Moving reach about changes which rung a weapon
   effectively occupies; it does not make a new one. **A second live
   axis has to come first**, and the entry below is where the candidates
   for one are.
+- **The damage ratings were compressed, and it made the block axis
+  necessary rather than optional.** *Done.* The ratings looked like a
+  little over two to one and were nearer four to one where it counts:
+  armour is subtracted from every blow and `damage.md`'s cap holds the
+  subtraction to half the raw figure, so a small weapon loses a share
+  and a large one loses a fixed amount. Against ap `4` the bare ratings
+  at the two ends arrived as `2` and `8`. They now arrive as `3` and
+  `6`. Ratings went `5,5,6,7,8,9,12,12` to `6,6,6,7,8,8,10,10`.
+  It bought a lot. Round-count failures went from seven to four,
+  because the biggest weapons had been ending duels before anybody
+  spent anything, and the spellblade's empty-reservoir gate came into
+  band as a side effect. Six tables were measured; this one has the
+  flattest weapon usage of any of them, four weapons within `11` and
+  `9` picks across four levels.
+  Two things it did not buy, both worth knowing.
+  *Accuracy cannot compress a table.* It was the obvious lever and it
+  is the wrong one: a point of accuracy is worth `0.71`-`0.87` of a
+  damage point to a small weapon and `1.05`-`1.32` to a large one,
+  because its extra hits are worth whatever that weapon deals. Adding
+  it to the small end was measured and made an extra pairing end too
+  fast. It is an identity axis, not a compression lever.
+  *Dead weapons went from two to four* -- battle axe, hand axe, short
+  sword and two-handed sword. That is the trade that was accepted going
+  in, and mostly it is ties rather than rot: a squeezed table has more
+  weapons than rungs. But two of the four are **dominated** rather than
+  tied, which is a different thing and is not acceptable on its own
+  terms: the battle axe and the sword now share a rating and the sword
+  has a point of accuracy on it, and the two-handed sword remains the
+  great axe's exact twin.
+  There is no room left to fix that with damage, which is the point:
+  compressing the ratings removed the slack that was hiding the fact
+  that **block is dead**. An axe trades block for damage and a sword
+  the other way round, and that trade cannot be priced while a 15gp
+  shield erases the weapon's block value entirely. The entry below is
+  no longer a nice-to-have.
+- **The dead-weapon gate now measures the wrong thing.** It fires when
+  a weapon is never chosen, which under a compressed table is the
+  normal condition rather than a defect -- two weapons that are
+  genuinely equivalent produce a tie, the chooser picks one, and the
+  other is reported dead for ever. What actually wants catching is
+  **domination**: a weapon with no advantage over another on any axis,
+  which is a mistake in the table rather than a consequence of it. That
+  is a change to `balance.py` and not to any rule. Until it is made,
+  this gate cannot pass and its output has to be read by hand.
 - **Weapon block is the most promising dead axis, and there are two
   different ideas here.** They were briefly conflated in conversation
   and are worth keeping apart, because one is a repair and the other is
