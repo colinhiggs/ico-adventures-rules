@@ -161,11 +161,82 @@ The damaging spells are done: bolts, lances, and the three area families
   nine current gate failures are already fights ending too fast. The
   penalty's other end is the round-count gate, so it cannot be spent
   here.
-  The likely answer is that reach wants its own home. There is no spear
-  or polearm in the table; reach was attached to the two biggest damage
-  weapons instead, which is exactly why they dominate. A reaching
-  weapon at moderate damage would make "damage or reach" a real choice
-  and would separate the twins below as a side effect.
+  Giving reach its own home was the obvious answer and it does not
+  work. *Tried and measured, six ways, all worse than today.* There is
+  no spear or polearm in the table even though `reach.md` and
+  `turn-order.md` both talk about them — a polearm holding a band, a
+  spear in a shield wall — so the weapon the rules describe has never
+  existed and reach was attached to the two biggest damage weapons
+  instead. Adding it back costs more than it pays. Counting the way the
+  gate counts, weapons never chosen at any of levels 1, 5, 10 and 15:
+
+  | configuration | never chosen | count |
+  | --- | --- | --- |
+  | today | dagger, hand_axe | **2** |
+  | spear `7` added, two-handers keep reach | dagger, hand_axe, sword | 3 |
+  | spear added, reach off the two-handers | dagger, short_sword, sword, two_handed_sword | 4 |
+  | ...plus a polearm at `10` | + polearm | 5 |
+  | ...plus a polearm at `11` | dagger, great_axe, short_sword, sword, two_handed_sword | 5 |
+  | the penalty follows reach, + spear | hand_axe, short_sword, spear, staff, two_handed_sword | 5 |
+  | the penalty follows reach, + spear + polearm | + polearm | 6 |
+
+  Each failure says something.
+  *The spear itself is fine.* At `7` damage, size M, one hand, reach
+  `1`, it is bought by the duellist, paragon, commander and spellblade
+  from level 10 on. What it kills is the **sword**, because reach is
+  worth about one point of damage and the spear is exactly one point
+  cheaper. At `6` the spear is dead instead. The whole window is one
+  damage point wide.
+  *Taking reach off the two-handers kills them.* Without it the `-2`
+  is a bad trade — the wash above loses to a battle axe that gets `9`
+  damage at size M for no penalty at all — and the sentinel, the only
+  build that ever told the twins apart, abandons both for the battle
+  axe.
+  *Making the penalty follow reach rather than size is the worst of
+  the six*, even though it is what `weapons.md`'s prose asserts. It
+  hands the great axe `12` damage for no penalty whatever, and casters
+  drop the **staff for a dagger** — which costs the staff the one job
+  it exists to do. The prose is wrong about what the penalty buys; the
+  penalty is still in the right place.
+
+  So the real blocker is the entry above: the damage rating is the only
+  live axis and eight weapons already sit about one per rung from `5`
+  to `12`. A ninth weapon has to stand on a rung, and whatever was
+  standing there dies. Moving reach about changes which rung a weapon
+  effectively occupies; it does not make a new one. **A second live
+  axis has to come first**, and the entry below is where the candidates
+  for one are.
+- **Weapon block is the most promising dead axis, and there are two
+  different ideas here.** They were briefly conflated in conversation
+  and are worth keeping apart, because one is a repair and the other is
+  new design.
+  *A block value nobody can collect.* `damage.md` has you block with
+  the shield **or** the weapon, so a shield erases whatever the weapon
+  was worth. The staff's `7` and the short sword's `6` are the two best
+  block values in the game — better than a great shield's `5` — and
+  only a blocker who declines a shield ever sees one, which no build
+  with a spare 15gp does. Letting the two add, or otherwise making the
+  weapon's value collectible, would give small weapons a defensive axis
+  that is currently decoration. It is a change to `damage.md` and not
+  to the weapon table.
+  *Blocking at reach, for somebody else.* The stronger idea. A long
+  weapon can physically get between a blow and the person standing next
+  to you, and a short one cannot, so a reaching weapon could spend its
+  reaction to block for an **ally** within its reach. That is a second
+  axis that belongs to reach specifically, it is paid for out of the
+  same one reaction `reach.md` already spends on the band — so a spear
+  is still choosing between holding the line, striking the approach and
+  covering its neighbour — and it is the mechanical statement of the
+  design note that is already in `reach.md`: *a spear in a shield wall
+  is the oldest good idea in warfare.* A shield wall is exactly a row
+  of people defending their neighbour.
+  It also explains why every measurement above undervalues reach. A
+  rule that only pays when somebody is standing beside you is worth
+  precisely nothing in a duel and nothing in `contributions`, and those
+  are the only two things `sim/` can see — see the simulator gap on
+  parties below. So this one cannot be settled by measuring it as the
+  weapon table is measured today; it would have to be argued at the
+  table, or the simulator would have to grow a second friendly body.
 - **The great axe and the two-handed sword are the same weapon.**
   Identical offence at every level, tied at exactly 100.0% for every
   dodging build. They differ only in block value (`2` against `4`) and
@@ -554,6 +625,26 @@ The damaging spells are done: bolts, lances, and the three area families
 
 ## Simulator gaps
 
+- **Nobody ever has an ally.** Every measurement in `sim/` is one
+  body against one body, or one body against a crowd of enemies. There
+  is no second friendly creature anywhere in the model, so any rule
+  whose whole point is what it does for the person standing next to you
+  is worth exactly zero here and cannot be told apart from a rule that
+  does nothing.
+  That is not a small blind spot. It is why the reach entry in the
+  rules gaps above cannot get an answer: the most promising thing to
+  hang on a long weapon — blocking a blow aimed at an ally — would
+  measure as worthless in a duel and worthless in `contributions`,
+  which between them are everything the simulator can see. Flanking,
+  the shield wall `reach.md`'s design note invokes, Rally and Hold the
+  Line, the into-melee penalty on shooting past a friend, and the whole
+  question of whether the spellblade's flanking role is worth anything
+  are all in the same position.
+  What it would take is a second hero on the friendly side of `duel` --
+  a pair against a foe worth two of them -- rather than a whole party
+  simulator. That is enough to price "this helps the person beside me"
+  against "this helps me", which is the comparison every one of those
+  rules is asking for.
 - **No creature loader.** A bestiary entry is deliberately shaped like
   the simulator's `Character` -- six attributes, ranked skills,
   disciplines, the two hit point pools, stamina and spirit, a stance,
