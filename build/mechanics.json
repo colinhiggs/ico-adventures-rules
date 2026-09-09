@@ -267,7 +267,8 @@
         ],
         "source": "spirit",
         "signature": "full_communion"
-      }
+      },
+      "casting_skill": "spellcasting"
     },
     "discipline-powers": {
       "power_attack": {
@@ -526,7 +527,7 @@
       "casting_in_harness": {
         "disciplines": [
           "martial",
-          "magical"
+          "casting"
         ],
         "grade": "adept",
         "max_move_penalty": 1,
@@ -577,7 +578,9 @@
       "minor_domains_granted_least": 1,
       "minor_domains_granted_most": 2,
       "major_domain_bonus": 3,
-      "spiritual_casts_only_granted_domains": true
+      "spiritual_casts_only_granted_domains": true,
+      "armour_relief_least": 0,
+      "armour_relief_most": 3
     },
     "dying": {
       "wounded_at_or_below_fraction": 0.5,

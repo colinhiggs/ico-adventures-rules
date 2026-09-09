@@ -15,6 +15,8 @@ mechanics:
   minor_domains_granted_most: 2
   major_domain_bonus: 3
   spiritual_casts_only_granted_domains: true
+  armour_relief_least: 0
+  armour_relief_most: 3
 ---
 
 A **domain** is what a spell is *about*, as opposed to the school, which
@@ -54,12 +56,52 @@ that something decides what they can do. Every god grants:
   {{ mechanics.minor_domains_granted_most }} minor domains.** Their
   spells are available, and are cast with no bonus at all.
 
+- **Between {{ mechanics.armour_relief_least }} and
+  {{ mechanics.armour_relief_most }} points of relief from armour**, on
+  the spellcasting roll only. [[armour]] charges its skill penalty
+  against casting as well as against dodging, and this many points of
+  that are forgiven for a priest of this god. A god of the battlefield
+  grants the full {{ mechanics.armour_relief_most }}; a god of libraries
+  and quiet grants {{ mechanics.armour_relief_least }}, and its priests
+  cast in a robe like anybody else.
+
 The choice is made when the character is made and does not change,
 because it is not the character's choice — it is who they serve.
 
 A spiritual caster may cast **any** spell in their granted domains, with
 no preparation of any kind, and **no** spell outside them. See
 [[spell-preparation]].
+
+## Armour, and what a god thinks of it
+
+The relief is a **grant and not a power**. It costs nothing, it cannot
+be bought, and a priest who wants more of it than their god gives has
+only one route: train for it, and take Casting in Harness from
+[[discipline-powers]] like anybody else who fights and casts. The two
+stack — what your god forgives and what your drill-yard forgives are
+different debts — and both come off the same penalty, so neither can
+turn it into a bonus.
+
+Nor does either reach far enough to make heavy plate free. The most a
+god grants is {{ mechanics.armour_relief_most }} points and the heaviest
+armour costs a good deal more than that, so a priest in full plate is
+still a priest paying for it. That is the intended shape: the grant
+makes mail and a breastplate *reasonable* for a war-priest, which they
+were not before, and leaves plate a decision with a price on it.
+
+## What a relief of nothing means
+
+A god granting {{ mechanics.armour_relief_least }} is not a defective
+god, and the number is not a measure of how good a god is to serve. It
+says what this one is *about*. A god of scholarship gives its priests
+the run of the knowledge domain and expects them to stand at the back;
+a god of battle gives them mail and expects them not to. Both are
+playable and neither is a mistake.
+
+This is the first thing beyond domains that varies from god to god, and
+it will not be the last. What a religion grants and what it costs is a
+balance in its own right, and a pantheon whose gods are all generous is
+as flat as one whose gods are all the same.
 
 ## Two priests of different gods
 

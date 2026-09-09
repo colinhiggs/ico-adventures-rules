@@ -53,19 +53,35 @@ The damaging spells are done: bolts, lances, and the three area families
   exemption from healing. If a second such spell is ever wanted, that
   exemption needs to become a general rule rather than a note on one
   entry.
-- **Casting in Harness asks for Magical, and a war-priest has the
-  same problem.** The power forgives part of armour's skill penalty on
-  the casting roll and lets a size `M` weapon stop occupying a hand,
-  and it requires Martial and Magical both at Adept. A Spiritual caster
-  in mail meets exactly the same collision, rolls exactly the same
-  `spellcasting` skill, and cannot take it. That is a gap rather than a
-  decision. It was left because widening the requirement would be the
-  first time two disciplines were treated as interchangeable in a
-  prerequisite, and that is a precedent to set deliberately rather than
-  in passing -- the honest options are a second power for the
-  Spiritual side, a requirement reading "Magical or Spiritual", or a
-  general notion of a casting discipline that both belong to. The
-  third is the tidiest and the largest.
+- **Casting in Harness asked for Magical, and a war-priest had the
+  same problem.** *Closed, by the third option -- the tidiest and the
+  largest.* `discipline-list` now names a **casting discipline**: one
+  whose skill group contains `spellcasting`, which is Magical and
+  Spiritual. Nothing declares the membership separately, so a
+  discipline given `spellcasting` becomes one by that fact and there is
+  no second list to drift. The power asks for `[martial, casting]`.
+  A god also grants its priests between `0` and `3` points of relief
+  from armour on the casting roll, as part of its package alongside its
+  domains -- so a war god's priest wears mail because of who they serve
+  rather than because they trained for it, and the two stack for
+  somebody who did both.
+  Three things measured that are worth keeping.
+  *The grant is monotonic but coarse.* At `0` the priest wears partial
+  leather, at `2` studded leather, at `3` a chain shirt and later a
+  breastplate. A grant of `1` is indistinguishable from none, because
+  the relief is on the casting roll only and the dodge still pays, so
+  one point of armour buys one point of dodge penalty and the chooser
+  declines. The usable span is really `0`, `2`, `3`.
+  *`4` would do nothing.* The heaviest armour a priest will take is a
+  breastplate at `-3`, so `3` cancels it outright and a fourth point
+  has nothing left to forgive.
+  *It does not fix the level 1 skirmisher pairing, whatever it looked
+  like at first.* Across the whole `0` to `3` span that duel moves from
+  `2.988` rounds to `3.001` against a bound of `3.000` -- thirteen
+  thousandths, with only the top of the span clearing, and by one
+  thousandth. The gate now passes and should not be trusted to stay
+  passing; what is actually short there is the skirmisher's level 1
+  damage.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** *Fixed, by granting ten mastery hit
@@ -695,6 +711,18 @@ The damaging spells are done: bolts, lances, and the three area families
   shortbow's `10` buys two rounds and the longbow's `18` buys six.
   Whether that spread is the right shape is exactly what measuring
   would settle.
+
+- **A median over builds is only as good as the panel.** Adding three
+  priests to test the armour grant took the median build's weapon
+  spread from `0.180` to `0.238` and duly failed a gate calibrated at
+  `0.20` -- with no rule changed. Three builds differing in one number
+  are one build voting three times, and every panel-wide statistic
+  reads that as three opinions. The two extra priests were moved out of
+  `ARCHETYPES` into `ARMOUR_PANEL` for that reason and the figure went
+  back to `0.180`.
+  Worth knowing before adding an archetype for any other reason: the
+  gates that take a spread or a median over the panel assume its builds
+  are distinct, and nothing checks that they are.
 
 ## Simulator gaps
 

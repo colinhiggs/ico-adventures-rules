@@ -180,6 +180,7 @@ ARCHETYPES = {
                        "intelligence": 10, "willpower": 18, "charisma": 14},
         "stance": "dodge", "casts": True,
         "major_domain": "war", "minor_domains": ("healing", "nature"),
+        "armour_relief": 3,
         "skill_priority": ["spellcasting", "dodge", "attack_melee", "spot"],
     },
     # The build the free-hands penalty exists to permit: fights and
@@ -215,6 +216,48 @@ STANDARD_FOE = {
     "weapon": "sword", "armour": "scale_mail", "shield": None,
     "stance": "dodge",
 }
+
+
+# The armour grant from domains.md is a span, not a value: a god gives
+# its priests somewhere between nothing and full relief from armour on
+# the casting roll. One priest can only ever sit at one point on that
+# span, so these two sit at the others.
+#
+# They are kept OUT of ARCHETYPES deliberately. They differ from the
+# priest in one number and in nothing else, so in the panel they would
+# be one build voting three times -- which is not a small thing: with
+# all three in, the median build's weapon spread read 0.238 against the
+# 0.180 the same ruleset gives with them out, and a gate calibrated on
+# the panel duly failed. That was the panel changing shape, not the
+# rules changing behaviour.
+#
+# They are also given the SAME domains as the priest, because only
+# damaging spells are modelled and a healing god's priest therefore
+# scores a third of a war god's -- a fact about what the simulator can
+# see rather than about the god. Domain held still, grant moving, so
+# the difference between the three is the grant's doing.
+ARMOUR_PANEL = {
+    "temple_priest": dict(ARCHETYPES["priest"], armour_relief=2),
+    "ascetic": dict(ARCHETYPES["priest"], armour_relief=0),
+}
+
+
+def report_armour_grants(level, chars, M):
+    """What a god's opinion of armour is worth to its priests."""
+    hr("What a god grants against armour, at level %d" % level)
+    print("%-14s %-7s %-16s %-8s %s"
+          % ("priest of", "grant", "wears", "casting", "contribution"))
+    panel = shopping_panel(level, M)
+    builds = {"priest": chars["priest"]}
+    for name, spec in ARMOUR_PANEL.items():
+        built = m.build_character(name, spec, level, M, shopping_foe=panel)
+        if built is not None:
+            builds[name] = built
+    scored = contributions(builds, level, M)
+    for name, c in builds.items():
+        print("%-14s %-7d %-16s %-8d %.0f"
+              % (name, c.armour_relief, c.armour.name,
+                 c.casting_bonus(M), scored.get(name, 0.0)))
 
 
 # The panel a build shops against. Quickness is worth nothing except
@@ -1240,6 +1283,7 @@ def _run(args, levels, M, pool):
         report_stances(level, chars, M)
         report_contributions(level, chars, M)
         report_weapon_utility(level, chars, M)
+        report_armour_grants(level, chars, M)
         report_duels(level, chars, M, args.trials, pool)
 
     report_weapon_matrix(levels[-1], build_all(levels[-1], M, pool), M)

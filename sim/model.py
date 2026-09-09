@@ -425,6 +425,10 @@ class Character:
     # A priest's god grants these; a wizard has neither.
     major_domain: str = None
     minor_domains: tuple = ()
+    # Points of armour's skill penalty this character's god forgives on
+    # the casting roll. A grant rather than a power: it costs nothing,
+    # cannot be bought, and is part of what the god IS -- see domains.md.
+    armour_relief: int = 0
     max_chp: int = 0
 
     def attr_bonus(self, attribute, M):
@@ -459,12 +463,19 @@ class Character:
                             self.attr_bonus("willpower", M))
         relief = casting_in_harness(self, M)
         if self.armour and bool(M.get("armour", "hampers_spellcasting")):
-            # The power forgives points of the armour penalty on the
-            # CASTING roll only. The dodge keeps paying in full, which
-            # is what stops it being a strictly better Untouchable.
-            worn = self.armour.skill_penalty
+            # Two different debts are forgiven here and they stack: what
+            # the god grants, which costs nothing and is part of who it
+            # is, and what the power forgives, which was trained for.
+            # Both come off the CASTING roll only -- the dodge keeps
+            # paying in full, which is what stops either being a
+            # strictly better Untouchable -- and `min(0, ...)` is what
+            # stops the pair of them turning armour into a bonus.
+            forgiven = self.armour_relief
             if relief:
-                worn = min(0, worn + relief["armour_penalty_ignored"])
+                forgiven += int(relief["armour_penalty_ignored"])
+            worn = self.armour.skill_penalty
+            if forgiven:
+                worn = min(0, worn + forgiven)
             bonus += worn
         if self.weapon:
             hands = hand_penalty(self, M, "spellcasting")
@@ -509,6 +520,46 @@ def weapon_size_within(weapon, largest, M):
         return False
 
 
+def disciplines_in(M):
+    """The discipline names in `discipline-list`, and nothing else.
+
+    The document carries settings alongside the six -- `casting_skill`
+    is one -- so a caller wanting the disciplines has to say so rather
+    than iterating the keys. A discipline is an entry that names a skill
+    group; anything else is a setting about them."""
+    return sorted(name for name, spec in M.rules.get("discipline-list", {}).items()
+                  if isinstance(spec, dict) and "skills" in spec)
+
+
+def casting_disciplines(M):
+    """The disciplines that cast, derived rather than declared.
+
+    discipline-list.md says a casting discipline is one whose skill
+    group contains the casting skill, and means Magical and Spiritual.
+    Deriving it here rather than reading a second list is the same
+    decision the rule document makes and for the same reason: a
+    discipline given `spellcasting` becomes one by that fact, and there
+    is no second list to fall out of step."""
+    entries = M.rules.get("discipline-list", {})
+    skill = entries.get("casting_skill")
+    if not skill:
+        return set()
+    return {name for name, spec in entries.items()
+            if isinstance(spec, dict) and skill in spec.get("skills", ())}
+
+
+def holds_requirement(char, requirement, grade, M):
+    """Whether `char` meets one entry in a power's discipline list.
+
+    `casting` is not a discipline. It is the whole group of them that
+    cast, so any one member satisfies it -- which is what lets a power
+    ask for somebody who fights and casts without caring which way they
+    learned the casting."""
+    if requirement == "casting":
+        return any(char.has(d, grade) for d in casting_disciplines(M))
+    return char.has(requirement, grade)
+
+
 def casting_in_harness(char, M):
     """The cross-discipline power that lets a hybrid cast in its kit,
     or None if this ruleset does not have it or this character has not
@@ -516,10 +567,16 @@ def casting_in_harness(char, M):
 
     Every power in the list today belongs to ONE discipline. This one
     cannot: what it forgives is the interference between a martial
-    build's kit and a magical build's roll, which is a thing only a
-    character who paid for both ever meets. So it declares
-    `disciplines` where the others declare `discipline`, and is held
-    only by somebody at that grade in all of them.
+    build's kit and a caster's roll, which is a thing only a character
+    who paid for both ever meets. So it declares `disciplines` where the
+    others declare `discipline`, and is held only by somebody at that
+    grade in all of them.
+
+    One of those entries is `casting` rather than a discipline, and that
+    is the point of the word: a war-priest in mail meets exactly the
+    collision a fighter-mage does and rolls exactly the same skill, so
+    asking for Magical by name was excluding a character with the same
+    problem for no reason anybody could give.
 
     Read out of `M.rules` rather than through `M.get`, because a
     ruleset without the power is not an error -- the demo ruleset has
@@ -528,7 +585,8 @@ def casting_in_harness(char, M):
     if not spec:
         return None
     grade = str(spec["grade"])
-    if not all(char.has(d, grade) for d in spec["disciplines"]):
+    if not all(holds_requirement(char, d, grade, M)
+               for d in spec["disciplines"]):
         return None
     if char.armour and char.armour.move_penalty > int(
             spec["max_move_penalty"]):
@@ -609,7 +667,7 @@ def skill_focus(char, skill_name, M):
     first match instead would make a priest's own spellcasting
     peripheral because Magical sorts earlier."""
     best = "peripheral"
-    for discipline in M.keys("discipline-list"):
+    for discipline in disciplines_in(M):
         group = M.get("discipline-list", discipline, "skills")
         if skill_name in group:
             tier = focus_of(char.disciplines.get(discipline))
@@ -1109,6 +1167,13 @@ def build_character(name, spec, level, M, shopping_foe=None):
         char.stamina += source_points * source_per_point
     char.major_domain = spec.get("major_domain")
     char.minor_domains = tuple(spec.get("minor_domains", ()))
+    # What the god grants against armour, clamped to the span domains.md
+    # allows so that a test build cannot quietly invent a better god
+    # than the rules describe.
+    granted = int(spec.get("armour_relief", 0))
+    char.armour_relief = max(int(M.get("domains", "armour_relief_least")),
+                             min(int(M.get("domains", "armour_relief_most")),
+                                 granted))
     char.spent = {
         "disciplines": disc_spend,
         "mhp_points": mhp_points,

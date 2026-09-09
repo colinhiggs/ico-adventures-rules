@@ -35,7 +35,20 @@ mechanics:
     skills: [resolve, heal, diplomacy, spellcasting, concentration]
     source: spirit
     signature: full_communion
+  casting_skill: spellcasting
 ---
+
+Two of the six teach the same craft from different ends, and the rules
+need a word for that pair. A **casting discipline** is one whose skill
+group contains {{ mechanics.casting_skill }}: Magical, which studies it,
+and Spiritual, which is given it. A rule that cares whether you cast at
+all says *casting discipline* and means either of them; a rule that
+cares which of the two you are says Magical or Spiritual by name.
+
+Nothing declares the membership separately, and nothing should. It
+follows from the skill groups above, so a discipline that is given
+{{ mechanics.casting_skill }} becomes a casting discipline by that fact
+alone and there is no second list to fall out of step with the first.
 
 Each discipline names a group of skills from the [[skill-list]], draws
 its powers from one of the two [[power-sources]], and grants a single

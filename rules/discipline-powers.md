@@ -232,7 +232,7 @@ mechanics:
     grade: master
     major_bonus_applies_to_all_domains: true
   casting_in_harness:
-    disciplines: [martial, magical]
+    disciplines: [martial, casting]
     grade: adept
     max_move_penalty: 1
     armour_penalty_ignored: 2
