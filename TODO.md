@@ -91,12 +91,32 @@ The damaging spells are done: bolts, lances, and the three area families
   block than the short sword, and its one extra damage point is worth
   less than quickness. It is the only weapon in the table that buys
   nothing at all.
-  Whether a throw at the dagger's range is worth the hand is still
-  unmeasured, and that is now the blocker rather than a symptom:
-  nothing in the model picks up a ranged weapon or throws anything, so
-  the gate is marking both weapons on half their sheet. The old reason
-  for that — the simulator has no positions — is stale; `opening_range`,
-  `opening_rounds` and `opening_value` landed with the caster-gap work.
+  *The throw is now measured, and it is not the answer.* The model
+  prices one — Attack (ranged) off dexterity, the weapon's own accuracy
+  and damage, a shield's block against it but not a weapon's — and it
+  comes to zero for two independent reasons, neither of which is about
+  daggers.
+  The first is that **a range of six squares or less buys no rounds at
+  all**. The standard foe strides five and is given the first move, so
+  the shortest range that buys even one round of acting before contact
+  is `7`, at every level. The hand axe throws `3`, the dagger and the
+  javelin `4`, the sling `6`. All four are under it. That is the
+  conservatism in `rounds_at` biting unevenly — it costs a caster
+  holding a bolt one round in three and costs anything short its whole
+  capability — and it is the line to revisit if a throw is ever meant
+  to count. Revisiting it moves every caster's numbers, so it is a
+  decision rather than a tidy-up.
+  The second is that **nobody has the skill**. `attack_ranged` is a
+  Martial skill that `TRACKED_SKILLS` does not list, so no build spends
+  a point on it and every throw is thrown at bare dexterity. It gets
+  worse with level, not better: `2.91` at level 1 and `1.15` at level
+  10, as the targeting difficulty climbs past an arm that never trains.
+  Trained to the rank of the melee attack it competes with, the same
+  throw is worth `9.10` at level 10 against the swing's `11.95` — about
+  three quarters of a melee attack, which is roughly what a thrown
+  weapon should be. So the throw is a real capability in the rules and
+  a dead one in the measurement, and the two fixes for that have very
+  different blast radii.
 - **The weapon table has one live axis, and it is the damage rating.**
   Across twelve build-by-level cells the ranking under the chooser's
   objective *is* the damage-rating ranking, with one exception (the
@@ -518,12 +538,19 @@ The damaging spells are done: bolts, lances, and the three area families
   by eye against the melee table.
   The blocker used to be that the simulator had no positions and so no
   way to represent what an archer is buying. That is no longer true:
-  `opening_range`, `opening_rounds` and `opening_value` landed with the
-  caster-gap work and duels are fought over ground now. What is still
-  missing is narrower — nothing in the model ever picks up a ranged
-  weapon or throws one, so `gear_options` cannot offer a bow and the
-  chooser cannot price a throw. That is the next thing to build, and
-  the dead-weapon gate above is waiting on it.
+  positions landed with the caster-gap work, and *throwing* landed
+  after it — a throw is priced as a shot and counted among the openings
+  a build can take. What is still missing is narrower again: nothing
+  sells a bow. `gear_options` offers weapons off `weapons.md` only, so
+  no build can buy a shortbow, and none of the six shooting weapons has
+  been through `sim/` even now.
+  Two of the numbers can be read against the melee table already, and
+  they do not look well. The shortest range that buys a build a single
+  round before contact is `7` squares, so the sling's `6` and the
+  javelin's `4` buy nothing whatever a build does with them; the
+  shortbow's `10` buys two rounds and the longbow's `18` buys six.
+  Whether that spread is the right shape is exactly what measuring
+  would settle.
 
 ## Simulator gaps
 
@@ -546,16 +573,16 @@ The damaging spells are done: bolts, lances, and the three area families
   entry, which the loader above would have to accept alongside a bare
   table key.
 - **Positions reach duels and the crowd loop; nothing yet picks up a
-  ranged weapon.** Duels have distance and so do skirmishes -- one
-  number per creature, an opening at the hero's own range, ground to
-  give and ground to cross, the band answered out of the reaction, and
-  a limit on how many bodies can stand where they can hit you. What is
-  missing is anything that would use it: no build shoots, throws, or
-  opens a fight at spell range, because the spells a caster actually
-  picks against a crowd declare no range (see the rules gap above).
-  Until that is filled and ranged weapons reach the combat loop, the
-  crowd numbers are the same numbers a positionless model produced,
-  and the machinery is groundwork rather than measurement.
+  bow.** Duels have distance and so do skirmishes -- one number per
+  creature, an opening at the hero's own range, ground to give and
+  ground to cross, the band answered out of the reaction, and a limit
+  on how many bodies can stand where they can hit you. Builds open at
+  spell range and can throw what they are holding. What is still
+  missing is anything that shoots: `gear_options` sells melee weapons
+  only, so no build buys a bow or a sling, and the crowd numbers are
+  still the numbers a positionless model produced because the spells a
+  caster actually picks against a crowd declare no range (see the rules
+  gap above).
 - **The simulator was thirteen minutes and is now under three.**
   *Done, and recorded here because the next person to profile it should
   know where the easy wins have already gone.* Values and the figures

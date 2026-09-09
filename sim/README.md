@@ -441,6 +441,45 @@ every duel in the report measured a wizard on whatever it happened to be
 holding -- which mattered much more once the gear chooser started
 handing it a dagger for its free hand.
 
+## Why nothing throws anything
+
+The model can price a throw and the answer is zero. It is worth writing
+down why, because two different things produce the zero and only one of
+them is about the weapons.
+
+**A range of six squares or less buys nothing at all.** The opening is
+counted the way the crowd loop counts it -- the foe moves first, the
+build gives ground to hold its distance, and the ground it may give is
+as deep as the range it started at. Against the standard foe, which
+strides five, the shortest range that buys even a single round is
+**seven**, at every level. That threshold is invariant and it is
+brutal: the hand axe throws three, the dagger and the javelin four, the
+sling six. All four are below it. Only the shortbow and up clear it.
+
+This is the conservatism in `rounds_at` biting unevenly rather than a
+statement about daggers. Giving the foe the first move costs a caster
+holding a bolt one round out of three; it costs anything under seven
+squares a hundred per cent of what it had. A build that won initiative
+would get its one throw. The model does not credit it, and at these
+ranges that assumption is the whole result — so if the throw is ever
+wanted to count for something, this is the line to revisit first, and
+it moves every caster's numbers when it does.
+
+**Nobody has the skill.** `attack_ranged` is a Martial skill and no
+build spends a point on it, because `TRACKED_SKILLS` does not list it,
+so every throw here is thrown at bare dexterity. That gets worse with
+level rather than better: the throw is worth `2.91` at level 1 and
+`1.15` at level 10, because the targeting difficulty climbs and the
+untrained arm behind the throw does not.
+
+Trained to the same rank as the melee attack it would compete with, the
+same throw is worth `9.10` at level 10 against `11.95` for the swing --
+**about three quarters of a melee attack**, which is a real capability
+and roughly what a thrown weapon ought to be. So the throw is not
+feeble in the rules. It is feeble here because nothing buys the skill
+and the ranges are under the threshold, and those are two separate
+fixes with two separate blast radii.
+
 ## The adventuring day
 
 A single fight from full is not the question a dungeon asks. `model.py`
@@ -538,7 +577,13 @@ land the thing at least half the time before it counts.
   rules leave to the player, so the model makes one: it puts itself out
   when what the fire will still take off it is worth more than the turn.
   A cannier or more reckless opponent would do differently.
-- Ranged weapons are still not modelled, only ranged *spells*.
+- **A throw is modelled; a bow is not.** The dagger and the hand axe
+  carry a throwing range and the model now reads it: a throw is priced
+  as a shot -- Attack (ranged) off dexterity, the weapon's own accuracy
+  and damage, a shield's block value against it but not a weapon's --
+  and counted among the openings a build can take before contact. A bow
+  is still not something `gear_options` can sell, so nothing shoots.
+  What the throw measures is in **Why nothing throws anything** below.
 - Fresh-versus-empty is measured at the two extremes. A character plans
   for a sustainable spend across roughly four rounds, so the model never
   burns its whole reservoir in one climactic fight the way a player
