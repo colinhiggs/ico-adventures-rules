@@ -8,6 +8,19 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.5.1
+
+**No mechanic value changed at all.** `build/` rebuilds byte-identical
+to 2.5.0 apart from the version stamp itself, so an adventure has
+nothing to do and nothing to re-check.
+
+It exists so that a consumer vendoring these outputs can name a release
+rather than a commit two past one. Two documentation commits had landed
+since the tag — the finished work moved out of `TODO.md` into a new
+`DONE.md`, and `SHARING.md` stopped describing the adventures project as
+holding this repository as a git submodule, which it stopped doing in
+September 2026. Neither touches `rules/` or `book/`.
+
 ## 2.5.0
 
 **Three mechanics keys added and one value changed. Nothing renamed or
