@@ -242,15 +242,38 @@ The damaging spells are done: bolts, lances, and the three area families
   the other way round, and that trade cannot be priced while a 15gp
   shield erases the weapon's block value entirely. The entry below is
   no longer a nice-to-have.
-- **The dead-weapon gate now measures the wrong thing.** It fires when
-  a weapon is never chosen, which under a compressed table is the
-  normal condition rather than a defect -- two weapons that are
-  genuinely equivalent produce a tie, the chooser picks one, and the
-  other is reported dead for ever. What actually wants catching is
-  **domination**: a weapon with no advantage over another on any axis,
-  which is a mistake in the table rather than a consequence of it. That
-  is a change to `balance.py` and not to any rule. Until it is made,
-  this gate cannot pass and its output has to be read by hand.
+- **The dead-weapon gate measured the wrong thing.** *Replaced by three
+  that measure the right ones.* It fired when a weapon was never
+  chosen, which under a compressed table is the normal condition rather
+  than a defect: equivalent weapons tie, the chooser takes one, and the
+  other reads as dead for ever. Reading the scores instead of the
+  winner says the table was in much better shape than the gate implied
+  -- the four weapons it called dead sit at `1.000`, `0.96`, `0.95` and
+  `0.92` of being somebody's first choice, and the two-handed sword was
+  "dead" only because it ties the great axe exactly.
+  What replaced it: how much the weapon decides about the character
+  (median build's best-to-worst gap, `<= 20%`), the same inside one
+  class (`<= 30%`), and whether any weapon is beaten on every axis and
+  wins on none. Both spread gates fail on the pre-compression table
+  (`28%` and `38%`) and pass on this one (`18%` and `26%`), which is
+  what makes them gates rather than thresholds fitted to today.
+  One reduction was tried and abandoned, recorded so it is not tried
+  again: asking whether a weapon is *somebody's* near-miss saturates.
+  With ten varied builds nearly every weapon is one, and it scored the
+  old wide table `0.959` against the narrow one's `0.921` -- backwards.
+- **The battle axe is the one real mistake in the weapon table.** The
+  new domination gate names it and is right: it shares the sword's
+  rating, its cost and its size, and the sword has a point of accuracy
+  and two of block on it. There is nothing it wins on.
+  It cannot be fixed with damage -- `9` was measured and produced a
+  battle-axe monoculture -- and making it a few gp cheaper would satisfy
+  the gate while changing nothing at a purse of 150gp or more, which is
+  gaming the measurement rather than fixing the weapon. The real
+  difference between an axe and a sword in this table is block, `3`
+  against `5`, and that difference is worth nothing while a 15gp shield
+  overrides the weapon's block value entirely. So this entry is the
+  block entry below wearing different clothes, and it is the concrete
+  case for fixing it.
 - **Weapon block is the most promising dead axis, and there are two
   different ideas here.** They were briefly conflated in conversation
   and are worth keeping apart, because one is a repair and the other is

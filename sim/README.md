@@ -300,6 +300,62 @@ crossing the floor is not evidence about the change that preceded it.
 Compare the *numbers*, not the count, whenever a failure appears or
 vanishes within a few hundredths of a bound.
 
+## What a weapon is worth
+
+The gear chooser scores every weapon for every build and then keeps the
+winner. For a long time the weapon gate read only that winner, and asked
+"did anybody choose it" — which turns a continuous quantity into a yes
+or no. A weapon `2%` off the pace and a weapon `40%` off both came back
+as *not chosen*, and two weapons that are exactly equivalent produce a
+tie, so the chooser takes one and the other is reported dead for ever
+through no fault of its own.
+
+The scores were being thrown away, so now they are kept. `choose_gear`
+records the best each weapon could do for that build in any kit its
+purse could reach, and the report divides through by the build's own
+best. That normalisation is what lets a paragon and a priest vote on
+*weapons* rather than on which of them is stronger.
+
+Read straight, it says the table is in far better shape than the old
+gate implied. The four weapons the old gate called dead sit at `1.000`,
+`0.96`, `0.95` and `0.92` of being somebody's first choice.
+
+Three things are asked of it, and the first is not what you would
+guess.
+
+**How much does the weapon decide about the character?** The median
+build's gap between its best weapon and its worst, as a share of its
+best. Some gap is the point — a weapon that changed nothing would not
+be worth choosing — but past a certain width the choice stops being the
+player's and starts being arithmetic's. The median rather than the
+worst case on purpose: an evoker's staff is not really competing with
+the axes, it is casting equipment that can also hit people, and gating
+on the worst case would be gating on that.
+
+**Does it matter much which one in a class?** Same figure inside one
+class, as a share of the best weapon *in that class* — not of the whole
+table, or the number moves whenever the top of the table moves and a
+change that narrowed every class would read as though it had widened
+them. Weapons that cost the same hands and sit in the same weight
+should be a choice about the character.
+
+**Is any weapon simply a mistake?** A weapon beaten or matched on every
+axis there is — damage, accuracy, block, reach, throw, cost, quickness,
+casting, wieldiness, and size, since size buys finesse and a free hand
+— and winning on none. That is the complaint the dead-weapon gate was
+reaching for and could not express. It is a different thing from losing
+a close race, and it is the only one of the three that no amount of
+play or taste can rescue.
+
+A note on what the first reduction tried and failed to do. Asking
+instead "is this weapon *somebody's* near-miss" saturates: with ten
+varied builds nearly every weapon is, and the measure scored the old
+wide table `0.959` against the narrow one's `0.921` — backwards. The
+per-build spread separates them properly, `0.275` against `0.180`, and
+both spread gates fail on the old table and pass on this one, which is
+the only evidence that they are gates rather than thresholds fitted to
+today.
+
 ## Shopping
 
 Builds are not handed their gear; they buy it. An archetype names

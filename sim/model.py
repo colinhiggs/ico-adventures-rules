@@ -412,6 +412,12 @@ class Character:
     spirit: int = 0
     power_plan: dict = field(default_factory=dict)
     spent: dict = field(default_factory=dict)
+    # {weapon name: the best this build could score carrying it}, filled
+    # in by choose_gear. The chooser already works this out for every
+    # weapon on the table and then keeps only the winner; balance.py
+    # reads the rest to ask how CLOSE the losers came, which is a
+    # different question from who won and a better one.
+    weapon_values: dict = field(default_factory=dict)
     gold: int = 0
     # {condition name: rounds left}, and the damage a burn repeats.
     conditions: dict = field(default_factory=dict)
@@ -950,6 +956,7 @@ def choose_gear(char, foes, M, budget):
 
     offence = {}
     best = (None, -1.0)
+    per_weapon = {}
     for weapon, armour, shield in kits:
         char.weapon, char.armour, char.shield = weapon, armour, shield
         total = 0.0
@@ -994,9 +1001,16 @@ def choose_gear(char, foes, M, budget):
                 char, foe, M)
             total += approach + gained * (char.total_hp / max(0.1, suffered))
         score = total / len(foes)
+        # The best this weapon can do in any kit its purse can reach,
+        # which is what makes the numbers comparable between weapons:
+        # a weapon is not being marked down for being paired with bad
+        # armour when better armour was affordable.
+        if score > per_weapon.get(weapon.name, -1.0):
+            per_weapon[weapon.name] = score
         if score > best[1]:
             best = ((weapon, armour, shield), score)
     char.weapon, char.armour, char.shield = best[0]
+    char.weapon_values = per_weapon
     return best[0]
 
 

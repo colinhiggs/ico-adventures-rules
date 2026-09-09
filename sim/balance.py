@@ -16,6 +16,7 @@
 
 import argparse
 import copy
+import statistics
 import sys
 from pathlib import Path
 
@@ -37,6 +38,26 @@ SEED = 12345
 TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
+
+# How much the weapon in your hand may decide about your character. The
+# median build's gap between its best weapon and its worst, as a
+# fraction of its best. Some gap is the point -- a weapon that changed
+# nothing would not be worth choosing -- but past a certain width the
+# choice stops being yours and starts being arithmetic's.
+#
+# The median rather than the worst case, deliberately. One or two builds
+# have a legitimately large gap: an evoker's staff is not really
+# competing with the axes, it is a piece of casting equipment that can
+# also hit people. Gating on the worst case would be gating on those.
+MAX_WEAPON_SPREAD = 0.20
+
+# The same question inside one class, where it is asked harder. Two
+# weapons that cost the same hands and sit in the same weight are meant
+# to be a choice about the character rather than about the numbers, so
+# the gap between the best and worst of them -- as a share of the best
+# IN THAT CLASS, not of the whole table -- should be small enough that
+# a player can pick on taste and not be wrong.
+MAX_CLASS_SPREAD = 0.30
 MIN_POWER_COST = 1.0             # expected stamina per use, at any level
 SURVIVAL_CLAMP_ROUNDS = 25.0     # beyond this a fight is a stalemate
 # What a character can still do on the fourth fight of a long day, as a
@@ -284,6 +305,190 @@ def report_sheets(level, chars, M):
         print("not chosen by anybody: " + ", ".join(unbought))
     if len(set(taken)) == 1:
         print("every build chose the same weapon (%s)" % taken[0])
+
+
+# Every axis a weapon can be better on, and which direction is better.
+# A weapon beaten on all of them and beating on none is a mistake in the
+# table; a weapon merely NOT CHOSEN is usually just a tie, and telling
+# those two apart is the whole reason this exists.
+WEAPON_AXES = (
+    ("damage", 1), ("accuracy", 1), ("block_ap", 1), ("reach_bonus", 1),
+    ("thrown_range", 1), ("cost_gp", -1),
+    ("quick", 1), ("aids_spellcasting", 1), ("unwieldy", -1),
+)
+SIZE_ORDER = {"S": 0, "M": 1, "L": 2}
+
+
+def _axis(M, key, field):
+    entry = M.get("weapons", key)
+    value = entry.get(field, 0)
+    return float(value) if not isinstance(value, bool) else float(value)
+
+
+def dominated_weapons(M):
+    """Weapons with nothing whatever to offer over some other weapon.
+
+    Being smaller counts as an advantage in its own right, because size
+    buys finesse and a free hand, and being cheaper counts too. So this
+    only fires on a weapon that is beaten or matched on every axis there
+    is and wins on none -- which no amount of play or taste can rescue,
+    and which is a different complaint from a weapon that simply loses a
+    close race."""
+    keys = weapon_keys_sorted(M)
+    out = []
+    for loser in keys:
+        for winner in keys:
+            if winner == loser:
+                continue
+            better_anywhere = False
+            beaten_everywhere = True
+            for field, direction in WEAPON_AXES:
+                a = _axis(M, loser, field) * direction
+                b = _axis(M, winner, field) * direction
+                if a > b:
+                    beaten_everywhere = False
+                    break
+                if b > a:
+                    better_anywhere = True
+            if not beaten_everywhere:
+                continue
+            a = -SIZE_ORDER.get(str(M.get("weapons", loser, "size")), 1)
+            b = -SIZE_ORDER.get(str(M.get("weapons", winner, "size")), 1)
+            if a > b:
+                continue
+            if b > a:
+                better_anywhere = True
+            if better_anywhere:
+                out.append((loser, winner))
+                break
+    return out
+
+
+def weapon_keys_sorted(M):
+    return sorted(m.weapon_keys(M))
+
+
+# A weapon's class, taken from the size the rules already give it
+# rather than from a new mechanic: S is the light one-handed group that
+# finesse reaches, M the one-handed rest, L the two-handed pair. The
+# question the class gate asks is the one a player asks -- "of the
+# weapons I could reasonably carry, does it matter much which?" -- and
+# that comparison is only fair within a group that costs the same
+# hands.
+WEAPON_CLASS_NAMES = {"S": "light", "M": "one-handed", "L": "two-handed"}
+
+
+def weapon_class(M, key):
+    return WEAPON_CLASS_NAMES.get(str(M.get("weapons", key, "size")), "other")
+
+
+def weapon_spreads(chars):
+    """For each build, how much better its best weapon is than its worst,
+    as a share of its best.
+
+    This is the number the old dead-weapon gate was groping for. It says
+    how much of a character the weapon decides -- zero would mean the
+    choice is pure decoration, and one would mean the character is
+    whatever it is holding."""
+    out = []
+    for name, c in chars.items():
+        values = c.weapon_values
+        if len(values) < 2:
+            continue
+        top = max(values.values())
+        if top <= 0:
+            continue
+        out.append((1.0 - min(values.values()) / top, c.level, name))
+    return out
+
+
+def class_weapon_spreads(chars, M):
+    """The same, inside one class, as a share of the best weapon IN THAT
+    CLASS.
+
+    In that class matters. Measured against the whole table's best, the
+    figure moves whenever the top of the table moves, and a change that
+    narrowed every class would still read as though the classes had
+    widened."""
+    out = []
+    for name, c in chars.items():
+        values = c.weapon_values
+        if len(values) < 2:
+            continue
+        for size, label in WEAPON_CLASS_NAMES.items():
+            group = [v for k, v in values.items()
+                     if str(M.get("weapons", k, "size")) == size]
+            if len(group) < 2 or max(group) <= 0:
+                continue
+            out.append(((max(group) - min(group)) / max(group),
+                        c.level, name, label))
+    return out
+
+
+def weapon_utility(chars):
+    """How close each weapon comes to being the right answer, for the
+    build that likes it most.
+
+    `choose_gear` scores every weapon for every build and then keeps the
+    winner. Reading only the winner turns a continuous quantity into a
+    yes or no: a weapon `2%` behind the best and a weapon `40%` behind
+    both come out as "not chosen", which says the table is broken in
+    both cases and is wrong in the first. This keeps the quantity.
+
+    Each build's scores are divided by its own best, because the builds
+    are not on the same scale -- a paragon out-scores a priest at
+    everything, and dividing lets the two of them vote on WEAPONS rather
+    than on who is stronger. What comes back for a weapon is then the
+    best of those relative scores across all builds, which is the right
+    reduction: a weapon exists to suit somebody. A dagger that is `94%`
+    for a duellist and `60%` for a berserker is doing its job. Only a
+    weapon that is nobody's near-miss is really weak."""
+    out = {}
+    for c in chars.values():
+        values = c.weapon_values
+        if not values:
+            continue
+        top = max(values.values())
+        if top <= 0:
+            continue
+        for key, value in values.items():
+            share = value / top
+            if share > out.get(key, 0.0):
+                out[key] = share
+    return out
+
+
+def report_weapon_utility(level, chars, M):
+    hr("What each weapon is worth at level %d" % level)
+    utility = weapon_utility(chars)
+    if not utility:
+        return utility
+    # Who likes it most, for reading alongside the number.
+    champion = {}
+    for name, c in chars.items():
+        if not c.weapon_values:
+            continue
+        top = max(c.weapon_values.values())
+        for key, value in c.weapon_values.items():
+            share = value / top
+            if share >= utility.get(key, 0.0) - 1e-9:
+                champion.setdefault(key, name)
+    print("%-18s %-12s %-8s %s"
+          % ("weapon", "class", "utility", "best for"))
+    for key in sorted(utility, key=lambda k: -utility[k]):
+        print("%-18s %-12s %-8.3f %s"
+              % (key, weapon_class(M, key), utility[key],
+                 champion.get(key, "-")))
+    for size in ("S", "M", "L"):
+        group = [k for k in utility if str(M.get("weapons", k, "size")) == size]
+        if len(group) < 2:
+            continue
+        lo = min(utility[k] for k in group)
+        hi = max(utility[k] for k in group)
+        print("  %-12s spread %.3f (%.3f-%.3f) across %s"
+              % (WEAPON_CLASS_NAMES[size], hi - lo, lo, hi,
+                 ", ".join(sorted(group))))
+    return utility
 
 
 def report_weapon_matrix(level, chars, M):
@@ -665,12 +870,16 @@ def run_gates(levels, M, trials, pool=None):
     hr("Gates")
     failures = []
     ever_chosen = set()
+    build_spreads = []          # (gap, level, build) over every build
+    class_spreads = []          # (gap, level, build, class) within a class
 
     for level in levels:
         chars = build_all(level, M, pool)
         if not chars:
             continue
         ever_chosen.update(c.weapon.name for c in chars.values())
+        build_spreads.extend(weapon_spreads(chars))
+        class_spreads.extend(class_weapon_spreads(chars, M))
 
         if level >= 5:
             for wkey in m.weapon_keys(M):
@@ -812,15 +1021,37 @@ def run_gates(levels, M, trials, pool=None):
                     % (level, name, cost, MIN_POWER_COST))
 
     # The mirror of MIN_DAMAGE_VS_ANY_ARMOUR. That gate asks whether any
-    # weapon is useless; this one asks whether any weapon is redundant,
-    # which is the cheaper defect to miss and the more expensive one to
-    # have. A weapon no build would carry at any level is a row of the
-    # table that exists only to be read past.
-    unchosen = [w for w in m.weapon_keys(M) if w not in ever_chosen]
-    if unchosen:
-        failures.append(
-            "no build chose %s at any level -- dead weapon%s"
-            % (", ".join(unchosen), "" if len(unchosen) == 1 else "s"))
+    # weapon is useless; these ask whether the table is the right shape.
+    #
+    # This used to be "did anybody choose it", which turned a continuous
+    # quantity into a yes or no and reported a weapon 2% off the pace
+    # identically to one 40% off. Worse, two weapons that are exactly
+    # equivalent produce a tie, the chooser takes one, and the other was
+    # reported dead for ever through no fault of its own. What follows
+    # asks the two questions that were really wanted.
+    if dominated := dominated_weapons(M):
+        for loser, winner in dominated:
+            failures.append(
+                "%s is beaten by %s on every axis and beats it on none "
+                "-- no play or taste can rescue it" % (loser, winner))
+    if build_spreads:
+        worst, level, name = max(build_spreads)
+        median = statistics.median(gap for gap, _l, _n in build_spreads)
+        if median > MAX_WEAPON_SPREAD:
+            failures.append(
+                "the median build's best weapon beats its worst by %.0f%% "
+                "(target <= %.0f%%) -- the weapon is deciding too much of "
+                "the character; worst is %s at L%d, %.0f%%"
+                % (median * 100, MAX_WEAPON_SPREAD * 100, name, level,
+                   worst * 100))
+    if class_spreads:
+        gap, level, name, group = max(class_spreads)
+        if gap > MAX_CLASS_SPREAD:
+            failures.append(
+                "L%d %s gains %.0f%% by picking the right %s weapon "
+                "(target <= %.0f%%) -- within a class the choice should "
+                "be about the character"
+                % (level, name, gap * 100, group, MAX_CLASS_SPREAD * 100))
 
     if failures:
         for f in failures:
@@ -1008,6 +1239,7 @@ def _run(args, levels, M, pool):
         report_powers(level, chars, M)
         report_stances(level, chars, M)
         report_contributions(level, chars, M)
+        report_weapon_utility(level, chars, M)
         report_duels(level, chars, M, args.trials, pool)
 
     report_weapon_matrix(levels[-1], build_all(levels[-1], M, pool), M)
