@@ -81,10 +81,78 @@ The damaging spells are done: bolts, lances, and the three area families
   axe is no longer a short sword with worse everything.* The staff is
   still alive and still holding the dagger's job — same damage, better
   block, longer reach, equally free to cast around — so a caster who
-  never throws anything has no reason to carry a knife instead. Whether
-  a throw at the dagger's range is worth the hand is still unmeasured:
-  duels have distance now, but nothing in the model picks up a ranged
-  weapon or throws anything, so the gear chooser cannot price a throw.
+  never throws anything has no reason to carry a knife instead.
+  Measured against the gear chooser's own objective, the two are not
+  equally dead and the gate names them as though they were. The dagger
+  reaches 94% of the best weapon for the level 10 duellist and beats
+  the short sword there, on quickness against the panel's reaching foe;
+  it is simply never first. The hand axe is bottom or next-to-bottom in
+  every build at every level — too small for reach, not quick, less
+  block than the short sword, and its one extra damage point is worth
+  less than quickness. It is the only weapon in the table that buys
+  nothing at all.
+  Whether a throw at the dagger's range is worth the hand is still
+  unmeasured, and that is now the blocker rather than a symptom:
+  nothing in the model picks up a ranged weapon or throws anything, so
+  the gate is marking both weapons on half their sheet. The old reason
+  for that — the simulator has no positions — is stale; `opening_range`,
+  `opening_rounds` and `opening_value` landed with the caster-gap work.
+- **The weapon table has one live axis, and it is the damage rating.**
+  Across twelve build-by-level cells the ranking under the chooser's
+  objective *is* the damage-rating ranking, with one exception (the
+  level 10 duellist and paragon, where quickness lifts the dagger past
+  the short sword). The other columns are dominated, unreachable or
+  unpriced:
+  - *Accuracy* is worth `0.87` of a damage point, measured, and no
+    weapon carries more than `+2`. It cannot reorder anything.
+  - *Weapon `block_ap`* is nearly dead content. A shield overrides it
+    entirely and shields cost 5–40gp, so only a blocker who declines a
+    shield ever collects one. The staff's `7` and the short sword's `6`
+    are the best block values in the game — better than a great
+    shield's `5` — and almost nobody is in a position to be paid them.
+  - *Armour taxes small weapons harder.* Against ap 4 the tax is 41.9%
+    of the dagger's raw damage and 25.4% of the great axe's.
+    `max_reduction_fraction` stops plate making light weapons useless,
+    which is what it is for, but it makes the tax regressive: a point of
+    damage rating is worth more to a weapon that already has plenty.
+    That is the engine concentrating the table at the top.
+  - *`reduction_ignored` cannot differentiate anything.* `damage_curve`
+    carries a comment promising it to axes and no axe has the key.
+    Measured, one point of ignored reduction is exactly one point of
+    damage rating at every armour value from ap 2 to ap 8 — `12`
+    damage with `1` ignored and `11` damage with `2` agree to three
+    decimals throughout. The two differ only where the cap binds, which
+    is small weapons against plate, and there it is worth `+1.3%`.
+    Tried as a design axis it made things worse: axes ignoring `1`
+    widened the duellist's spread from 1.16x to 1.22x and pushed the
+    dagger from 95% to 89%.
+- **Reach is unpriced, and it is what the two-handers are bought for.**
+  Ablate the reach bonus on the size L weapons and the paragon's great
+  axe falls from first to fifth and the berserker's from first to
+  second. The `-2` defence penalty pays for the damage almost exactly:
+  `+20.7%` offence against `+22.3%` incoming. Reach rides free on top of
+  a trade that has already been settled. The design note in
+  `weapons.md` has this backwards — it says the penalty is what buys
+  the reach.
+  The penalty cannot be raised to cover it. A sweep over levels 1 to 15
+  says `-2` is already the best value the game has: `-1`, `-3` and `-4`
+  each put four measurements out of band against `-2`'s three, and `-3`
+  shortens the fastest fight from 2.5 rounds to 2.3 when four of the
+  nine current gate failures are already fights ending too fast. The
+  penalty's other end is the round-count gate, so it cannot be spent
+  here.
+  The likely answer is that reach wants its own home. There is no spear
+  or polearm in the table; reach was attached to the two biggest damage
+  weapons instead, which is exactly why they dominate. A reaching
+  weapon at moderate damage would make "damage or reach" a real choice
+  and would separate the twins below as a side effect.
+- **The great axe and the two-handed sword are the same weapon.**
+  Identical offence at every level, tied at exactly 100.0% for every
+  dodging build. They differ only in block value (`2` against `4`) and
+  5gp, and weapon block value only reaches a blocker carrying no
+  shield, so only the sentinel tells them apart. The eight-row table
+  has seven weapons in it, and the dead-weapon gate does not see this
+  one because both of them get bought.
 - **The caster's single-target gap.** *Closed by giving spells a damage
   rate from casting skill.* Against the best conventional martial build
   a caster now contributes 1.5x to 1.8x less across levels 5 to 15,
@@ -446,10 +514,16 @@ The damaging spells are done: bolts, lances, and the three area families
 - **Ranged weapons are unmeasured.** *Statted in
   `ranged-weapons.md`: sling, shortbow, longbow, both crossbows, the
   javelin, and throwing ranges on the dagger and hand axe.* Not one of
-  those numbers has been through `sim/`, because the simulator has no
-  positions and so has no way to represent the thing an archer is
-  buying. They are a first pass, priced by eye against the melee table.
-  The entry below on positions is now the blocker for this one.
+  those numbers has been through `sim/`. They are a first pass, priced
+  by eye against the melee table.
+  The blocker used to be that the simulator had no positions and so no
+  way to represent what an archer is buying. That is no longer true:
+  `opening_range`, `opening_rounds` and `opening_value` landed with the
+  caster-gap work and duels are fought over ground now. What is still
+  missing is narrower — nothing in the model ever picks up a ranged
+  weapon or throws one, so `gear_options` cannot offer a bow and the
+  chooser cannot price a throw. That is the next thing to build, and
+  the dead-weapon gate above is waiting on it.
 
 ## Simulator gaps
 
