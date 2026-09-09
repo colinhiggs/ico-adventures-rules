@@ -78,11 +78,25 @@ ASSUMPTIONS = [
     "way -- at the longer of the two reaches -- rather than across a "
     "field they spend rounds walking.",
     "Contribution, unlike a duel, does open across that field: a build "
-    "acts at the range of the spell it would cast while the foe walks "
-    "in, and gives ground to hold that range against a budget as deep "
-    "as the range itself -- the crowd loop's rule and its arithmetic. "
-    "The caster is assumed to lose initiative every round, and the foe "
-    "is taken to have no range of its own.",
+    "acts at the range of the spell it would cast or the weapon it "
+    "would throw while the foe walks in, and gives ground to hold that "
+    "range against a budget as deep as the range itself -- the crowd "
+    "loop's rule and its arithmetic. The build is assumed to lose "
+    "initiative every round, and the foe is taken to have no range of "
+    "its own.",
+    "A build with more than one way to open picks the one worth the "
+    "most over the whole approach, rounds times value, rather than "
+    "simply the longest. A throw that lands nothing at three squares "
+    "is not an opening.",
+    "A throw is priced at short range only, unengaged, and out of "
+    "Attack (ranged) at whatever dexterity the build happens to have. "
+    "No build spends points on that skill, so every throw here is an "
+    "untrained one -- the floor of what throwing is worth, not the "
+    "ceiling.",
+    "Nothing picks the weapon back up. A thrown weapon is gone for the "
+    "rest of the fight in the rules and the model does not count the "
+    "walk to retrieve it, so a build that throws its only weapon is "
+    "flattered by exactly the swing it would have missed.",
     "The ground a duel happens on is as wide as the furthest thing in "
     "the ruleset can reach. The rules do not supply an arena, and a "
     "fight on ground with no edge is decided by the absence of walls.",
@@ -238,6 +252,7 @@ class Weapon:
     unwieldy: bool = False
     reach_bonus: int = 0
     reduction_ignored: int = 0
+    thrown_range: int = 0
 
     @classmethod
     def load(cls, M, key):
@@ -254,6 +269,7 @@ class Weapon:
             unwieldy=bool(entry.get("unwieldy", False)),
             reach_bonus=int(entry.get("reach_bonus", 0)),
             reduction_ignored=int(entry.get("reduction_ignored", 0)),
+            thrown_range=int(entry.get("thrown_range", 0)),
         )
 
 
@@ -482,6 +498,54 @@ def casting_in_harness(char, M):
         "armour_penalty_ignored": int(spec["armour_penalty_ignored"]),
         "max_weapon_size": str(spec["max_weapon_size"]),
     }
+
+
+def ranged_attack_bonus(char, M):
+    """Attack (ranged) plus its attribute, the way `attack_bonus` is
+    Attack (melee) plus its own.
+
+    ranged-weapons.md puts it plainly: a ranged attack is a dexterity
+    attack the way a melee attack is a strength one. There is no finesse
+    branch to make here, because a shot has nothing to be strong with.
+
+    A build that never bought the skill still throws at its dexterity,
+    which is what an untrained arm is worth and is deliberately not
+    rounded up to something kinder."""
+    return (char.skills.get("attack_ranged", 0)
+            + char.attr_bonus(SKILL_ATTRIBUTE["attack_ranged"], M))
+
+
+def throw_range(char, M):
+    """Squares this character's weapon carries when thrown, or 0 for one
+    that is not balanced to be thrown.
+
+    Short range only. ranged-weapons.md allows a throw into long range
+    at a penalty, and pricing the opening at the range it is ACCURATE to
+    is the conservative reading -- a build that opened at double range
+    and missed would have bought itself nothing but a lost weapon."""
+    if char.weapon is None:
+        return 0
+    return char.weapon.thrown_range
+
+
+def throw_expectation(char, foe, M):
+    """Expected damage of one throw.
+
+    The same exchange as any other blow, which is what ranged-weapons.md
+    says it is: the defender sets a targeting difficulty by dodging or
+    blocking, the margin carries into damage, and the weapon keeps its
+    own accuracy and damage because it is the same object arriving by a
+    different route.
+
+    Nothing here charges the engaged penalty. That is right for the only
+    thing this is used for -- the rounds before contact, where by
+    construction nobody is standing over the thrower. It would be wrong
+    for a throw in the middle of a melee, and there is no caller for one
+    of those yet."""
+    if not throw_range(char, M):
+        return 0.0
+    damage, _hits = attack_expectation(char, foe, M, ranged=True)
+    return damage
 
 
 def focus_of(discipline_grade):
@@ -1349,7 +1413,7 @@ def margin_fraction(attacker, M):
 
 
 def damage_curve(attacker, defender, M, bonus=0, pierce=0,
-                 weapon_only=False, use_margin=True):
+                 weapon_only=False, use_margin=True, ranged=False):
     """Everything in a blow that the margin does not change, worked out
     once, as a function of the margin.
 
@@ -1363,19 +1427,31 @@ def damage_curve(attacker, defender, M, bonus=0, pierce=0,
     weapon_only strips the margin and skill terms, leaving the bare
     weapon rating -- what Quick Attack's extra swings deal. use_margin
     drops only the margin, keeping the trained arm behind the blow --
-    what a Whirl sweep deals."""
+    what a Whirl sweep deals.
+
+    ranged says the blow arrived rather than landed, which changes two
+    things and nothing else. The skill in it is Attack (ranged), because
+    ranged-weapons.md makes a shot a dexterity attack the way a swing is
+    a strength one. And a weapon's block value does not apply: that page
+    is explicit that a shield stops an arrow as well as it stops a sword
+    and a blade does not, being no use against something that was never
+    going to touch it."""
     if weapon_only:
         base = attacker.weapon.damage
         fraction = 0.0
     else:
         step = int(M.get("damage", "damage_per_attack_skill_step"))
-        from_skill = attacker.attack_bonus(M) // step if step else 0
+        arm = (ranged_attack_bonus(attacker, M) if ranged
+               else attacker.attack_bonus(M))
+        from_skill = arm // step if step else 0
         base = attacker.weapon.damage + from_skill + bonus
         fraction = margin_fraction(attacker, M) if use_margin else 0.0
     reduction = defender.armour.ap
     if defender.stance == "block":
-        reduction += (defender.shield.block_ap if defender.shield
-                      else defender.weapon.block_ap)
+        if defender.shield:
+            reduction += defender.shield.block_ap
+        elif not ranged:
+            reduction += defender.weapon.block_ap
     # Find the Gap ignores total reduction, shield included, and an axe
     # ignores some of it by being an axe.
     reduction = max(0, reduction - pierce - attacker.weapon.reduction_ignored)
@@ -1390,19 +1466,23 @@ def damage_curve(attacker, defender, M, bonus=0, pierce=0,
 
 
 def damage_from(attacker, defender, margin, M, bonus=0, pierce=0,
-                weapon_only=False, use_margin=True):
+                weapon_only=False, use_margin=True, ranged=False):
     """One blow, for a caller that has only one margin to resolve."""
     return damage_curve(attacker, defender, M, bonus=bonus, pierce=pierce,
-                        weapon_only=weapon_only,
-                        use_margin=use_margin)(margin)
+                        weapon_only=weapon_only, use_margin=use_margin,
+                        ranged=ranged)(margin)
 
 
-def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0):
+def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0,
+                       ranged=False):
     """Exact expected damage of one swing, enumerated over the d20."""
     td = targeting_difficulty(defender, M, dodge_bonus)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
-    at = damage_curve(attacker, defender, M, bonus=bonus, pierce=pierce)
-    skill = attacker.attack_bonus(M) + attacker.weapon.accuracy
+    at = damage_curve(attacker, defender, M, bonus=bonus, pierce=pierce,
+                      ranged=ranged)
+    arm = (ranged_attack_bonus(attacker, M) if ranged
+           else attacker.attack_bonus(M))
+    skill = arm + attacker.weapon.accuracy
     total_damage = 0.0
     hits = 0.0
     for face, weight, _crit in d20_faces(M):
@@ -2750,27 +2830,42 @@ def acting_range(char, plan, M):
 OPENING_ROUNDS_CAP = 25
 
 
+def opening_options(char, foe, M, rounds_budget=4):
+    """Every (range, value) pair this build could open a fight at.
+
+    A build that can only swing has none of these and opens in contact.
+    A caster has the spell it would actually pick; anyone holding a
+    weapon balanced to be thrown has the throw. A fighter-mage with a
+    dagger has both, and they are genuinely different openings rather
+    than two halves of one -- ten squares out it can cast and cannot
+    throw.
+
+    The spell is resolved here rather than handed in because
+    `contributions` plans nothing: it asks each build what its best turn
+    is worth and multiplies. The caches behind `best_spell` mean asking
+    again costs nothing."""
+    out = []
+    if can_cast(char, M):
+        pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
+        if pick[0] is not None:
+            spell_reach = spell_range(M, pick[0])
+            if spell_reach is not None:
+                out.append((spell_reach, pick[1] + pick[4]))
+    thrown = throw_range(char, M)
+    if thrown:
+        out.append((thrown, throw_expectation(char, foe, M)))
+    return out
+
+
 def opening_range(char, foe, M, rounds_budget=4):
-    """`acting_range` for a build that has not been handed a plan.
-
-    The crowd loop knows what the hero means to do because it planned
-    the fight first. `contributions` does not plan anything -- it asks
-    each build what its best turn is worth and multiplies -- so the
-    spell has to be resolved here. It is the same call
-    `expected_offence` and `expected_control` make, and the caches
-    behind `best_spell` mean asking a third time costs nothing."""
-    reach = reach_of(char, M)
-    if not can_cast(char, M):
-        return reach
-    pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
-    if pick[0] is None:
-        return reach
-    ranged = spell_range(M, pick[0])
-    return reach if ranged is None else max(reach, ranged)
+    """The furthest this build can act from, its own reach included."""
+    options = opening_options(char, foe, M, rounds_budget)
+    return max([reach_of(char, M)] + [r for r, _v in options])
 
 
-def opening_rounds(char, foe, M, rounds_budget=4):
-    """How many rounds this build acts before the foe can answer.
+def rounds_at(char, foe, M, opening):
+    """How many rounds a build that acts at `opening` gets before the
+    foe can answer.
 
     A fight starts when the character can first act -- the assumption
     `crowd_geometry` already makes, for the reason it gives there: the
@@ -2778,7 +2873,7 @@ def opening_rounds(char, foe, M, rounds_budget=4):
     swordsman opens in contact and this is zero. A caster holding a
     lance opens ten squares out and the foe has to cross them.
 
-    The caster gives ground to hold its range, which is what
+    The build gives ground to hold its range, which is what
     `_crowd_advance` already has a hero do and for the reason it gives
     there: everybody stands at the distance it would rather fight at,
     and a build whose reach IS its range has somewhere to give. The
@@ -2792,13 +2887,12 @@ def opening_rounds(char, foe, M, rounds_budget=4):
     Still conservative in two ways, because a metric that happens to
     flatter one archetype should err against it:
 
-    - the foe moves first every round, so the caster is assumed to lose
+    - the foe moves first every round, so the build is assumed to lose
       initiative every time and a foe that closes inside one round buys
       it nothing;
     - a foe with a bow would close none of this, and the standard foe
       carries a sword. Nothing here reads the foe's own range, which
       is safe only while that stays true."""
-    opening = opening_range(char, foe, M, rounds_budget)
     quarry = reach_of(foe, M)
     if opening <= quarry:
         return 0
@@ -2818,21 +2912,42 @@ def opening_rounds(char, foe, M, rounds_budget=4):
     return free
 
 
+def opening_plan(char, foe, M, rounds_budget=4):
+    """The opening this build would actually take, as (rounds, value).
+
+    Picked on the product, because rounds and value pull against each
+    other: the longest range is not always the best opening. A caster
+    whose only spell is a touch attack opens at nothing however good the
+    spell is, and a thrower with three squares of range against a foe
+    that strides five gets no rounds at all however hard the axe hits.
+
+    Chosen ONCE and read by both the gear chooser and the contribution
+    gate through the two functions below. That is not tidiness: a
+    chooser marked on a measure it cannot see buys kit that loses on the
+    day, which is exactly what happened here when `contributions`
+    learned about range and `choose_gear` did not."""
+    best = (0, 0.0)
+    for reach_at, value in opening_options(char, foe, M, rounds_budget):
+        free = rounds_at(char, foe, M, reach_at)
+        if free * value > best[0] * best[1]:
+            best = (free, value)
+    return best
+
+
+def opening_rounds(char, foe, M, rounds_budget=4):
+    """How many rounds this build acts before the foe can answer."""
+    return opening_plan(char, foe, M, rounds_budget)[0]
+
+
 def opening_value(char, foe, M, rounds_budget=4):
-    """What one of `opening_rounds` is worth: the spell alone, damage
-    plus control.
+    """What one of `opening_rounds` is worth.
 
     Not `expected_offence`, which is the best of everything the build
     can do and at this distance includes a swing it cannot reach with.
-    Zero for anything that cannot cast, which is what makes the martial
-    half of the panel read exactly as it did before the approach was
-    counted."""
-    if not can_cast(char, M):
-        return 0.0
-    pick = best_spell(char, foe, M, char.spirit / float(rounds_budget))
-    if pick[0] is None:
-        return 0.0
-    return pick[1] + pick[4]
+    Zero for a build with nothing to do at range, which is what makes
+    the martial half of the panel read exactly as it did before the
+    approach was counted -- unless it is carrying something to throw."""
+    return opening_plan(char, foe, M, rounds_budget)[1]
 
 
 # How many bodies can stand where they can hit you. Ico counts a
