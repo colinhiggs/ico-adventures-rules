@@ -596,6 +596,15 @@
       "dead_at_negative_core_of": "constitution",
       "hours_before_waking": 4
     },
+    "experience": {
+      "xp_per_point": 1,
+      "milestone_minor": 2,
+      "milestone_major": 5,
+      "milestone_adventure": 8,
+      "awarded_to_everyone_present": true,
+      "career_xp_sets_level": true,
+      "unspent_xp_carries_over": true
+    },
     "free-hands": {
       "hands_total": 2,
       "penalty_per_missing_hand": 2,

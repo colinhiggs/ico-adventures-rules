@@ -51,6 +51,39 @@ The damaging spells are done: bolts, lances, and the three area families
   what the simulator can say anything about.
 
 ## Rules gaps found while doing the above
+- **The game has no top, and the level clock has consumers past
+  fifteen.** Nothing declares a level cap. `sim/balance.py` measures at
+  1, 5, 10 and 15 and the prose talks about "level fifteen" as though
+  it were the end, but that is habit rather than a rule, and
+  `disciplines.levels_per_master` is `8` — a count, so a second Master
+  arrives at sixteen. Something has to be decided, and the two answers
+  are different games:
+  - **Cap it.** Say sixteen or twenty in `advancement.md`, and the
+    second Master is either the last thing you buy or unreachable.
+    Cheap, honest, and it gives `experience.md`'s thresholds an end to
+    aim at. It also makes the panel's top level the actual top level,
+    which is what every gate currently assumes without saying so.
+  - **Open it up.** Levels past fifteen need something to spend a
+    budget on, and today they have less than nothing: at fifteen every
+    archetype already has between `8` and `38` points it cannot place
+    (see the sink entry below). A sixteenth level under the present
+    menu is mostly a ceiling raise and a power. Options worth measuring
+    are a fourth discipline grade above Master, a second attribute
+    track, or letting a Master grade open a second power pool — all of
+    which are new material rather than a bigger number.
+  Do the sink first either way. Deciding the cap while a level at the
+  top is worth less than a level in the middle decides it against a
+  number that is known to be wrong.
+- **Experience is drafted and threat is not in it yet.** `experience.md`
+  awards points for milestones the adventure names, one experience point
+  to one advancement point, with level derived from the career total.
+  Threat is meant to become a fourth milestone -- an award keyed off a
+  creature's `challenge_level` -- so that earning is a hybrid rather
+  than either thing alone. It is deliberately not there yet: nothing has
+  measured `challenge_level`, and the creature loader below is the
+  prerequisite. When it lands, this should be one more entry in the
+  award list and nothing else in the document should have to move. If it
+  does have to move, the shape was wrong.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** *Fixed, by granting ten mastery hit
