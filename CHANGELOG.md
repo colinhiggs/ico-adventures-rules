@@ -8,6 +8,52 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.4.0
+
+**Two values on one weapon. Nothing added, renamed or removed**, so an
+adventure built against 2.3.0 needs to do nothing at all unless it has
+priced a battle axe.
+
+### The battle axe is cheaper, and blocks a little better
+
+| | was | now |
+| --- | --- | --- |
+| `weapons.battle_axe.cost_gp` | `20` | `12` |
+| `weapons.battle_axe.block_ap` | `3` | `4` |
+
+After 2.3.0 pulled its damage down to `8`, the battle axe shared the
+sword's rating, its price and its size — and the sword had a point of
+accuracy and two of block on it. There was nothing whatever the axe won
+on, which is a mistake in a table rather than a choice in it.
+
+The price is the historically honest direction. An axe was a wedge of
+iron on a stick, within reach of somebody who worked for a living; a
+sword was months of wages. The ratio here is nothing like that large on
+purpose, because a gap of that size would make the sword scenery in a
+game where adventurers are wealthy by the second level.
+
+### What it means for an NPC you have already written
+
+**Almost certainly nothing.** No creature in the bestiary carries one.
+A statted NPC with a battle axe blocks for one more point than it did
+and is unchanged in every other respect, and a shopping list with one
+on it now costs `8gp` less.
+
+### An honest note on how much this changes
+
+Very little, and the reason is worth knowing if you are tuning
+encounters. Neither half of this reaches a character's actual
+effectiveness in the simulator: `8gp` does not bind at the purse a
+character carries past the first level or two, and a weapon's block
+value is only ever collected by somebody blocking **without a shield**,
+which is rare because shields are cheap. The axe's measured worth is
+identical before and after, to three decimals.
+
+So this makes the axe defensible rather than better. It is groundwork
+for making a weapon's block value matter, which is an open question in
+`TODO.md`; when that lands, this weapon already carries the numbers to
+be the axe-shaped answer to the sword.
+
 ## 2.3.0
 
 **One mechanics key added and five weapon damage ratings moved. Nothing
