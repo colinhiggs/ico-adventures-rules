@@ -522,6 +522,16 @@
         "discipline": "spiritual",
         "grade": "master",
         "major_bonus_applies_to_all_domains": true
+      },
+      "casting_in_harness": {
+        "disciplines": [
+          "martial",
+          "magical"
+        ],
+        "grade": "adept",
+        "max_move_penalty": 1,
+        "armour_penalty_ignored": 2,
+        "max_weapon_size": "M"
       }
     },
     "disciplines": {

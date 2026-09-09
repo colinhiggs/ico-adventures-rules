@@ -221,8 +221,8 @@ and it fights every duel on open ground, so the tight-space penalty
 never applies. Both of the rule's counterweights are invisible to it.
 
 Read a failing `--check` as a baseline, then. It is most useful run
-either side of a change to a rule value: the same eleven failures
-with the same numbers means the change was neutral, and a twelfth
+either side of a change to a rule value: the same nine failures
+with the same numbers means the change was neutral, and a tenth
 means it was not.
 
 The count is a baseline and not a target, and it moves when the rules
@@ -240,10 +240,13 @@ spread now passes at every level, and no rule moved for any of it.
 Eleven is the count going back up on purpose: offence is scored over
 the whole arc rather than fresh only, which is what stops a hybrid's
 second capability being priced at zero, and it costs two gates -- the
-spellblade keeps a great axe, so its floor reads 86% again.
+spellblade keeps a great axe, so its floor reads 86% again. Nine is
+Casting in Harness giving two of those back: a hybrid that can buy a
+breastplate survives long enough to stop being the shortest fight on
+the table.
 
 **Read the round-length failures with the numbers in front of you.**
-Six of the eleven sit between `2.96` and `3.00` rounds against a
+Four of the nine sit between `2.96` and `3.00` rounds against a
 floor of `3.00`, which is a hair rather than a verdict, and one of them
 is a pairing with no caster in it that moved only because `--check`
 seeds once and runs every duel off one stream -- change anything early

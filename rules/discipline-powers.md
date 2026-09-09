@@ -231,6 +231,12 @@ mechanics:
     discipline: spiritual
     grade: master
     major_bonus_applies_to_all_domains: true
+  casting_in_harness:
+    disciplines: [martial, magical]
+    grade: adept
+    max_move_penalty: 1
+    armour_penalty_ignored: 2
+    max_weapon_size: M
 ---
 
 These powers are opened by holding the matching discipline at the
@@ -465,6 +471,28 @@ shows you in your major domain extends to every domain you were granted.
 The `+{{ domains:mechanics.major_domain_bonus }}` that applied to one
 now applies to all of them. See [[domains]].
 
+## Crossing disciplines
+
+Every power above belongs to one discipline. This one cannot. What it
+answers is the interference between the kit a martial character carries
+and the roll a magical one makes, and only somebody who has paid for
+both ever meets it.
+
+**Casting in Harness** *(Martial and Magical, both at
+{{ mechanics.casting_in_harness.grade }})* — you have trained to work a
+spell in armour and with your hand full, which is not a thing either
+discipline teaches on its own.
+
+Against your spellcasting roll only, armour's skill penalty is reduced
+by {{ mechanics.casting_in_harness.armour_penalty_ignored }}, provided
+the armour's movement penalty is no worse than
+{{ mechanics.casting_in_harness.max_move_penalty }} — see [[armour]].
+And a weapon of size {{ mechanics.casting_in_harness.max_weapon_size }}
+or smaller no longer occupies a hand a spell needs, per [[free-hands]].
+
+Neither half touches your dodge, and neither half touches anything
+else you roll. The steel still slows the rest of what you do.
+
 ## Example
 
 Bramm is in full plate. Ashri, who holds Martial at Adept, has both
@@ -482,6 +510,31 @@ would be wasted where Power Attack would have added damage.
 Her Martial Master signature, Killing Blow, applies to either: whichever
 power she uses, her margin converts to damage at full value rather than
 half.
+
+Later, Ashri spends several levels reaching Adept in Magical as well,
+which opens Casting in Harness. She buys a breastplate and keeps her
+sword.
+
+The breastplate's skill penalty is
+`{{ armour:mechanics.breastplate.skill_penalty }}`. It still comes off
+her dodge in full, so she is no harder to hit than the steel says she
+is; but against her casting roll it is reduced by
+{{ mechanics.casting_in_harness.armour_penalty_ignored }}, so she casts
+at `-1` instead. Her sword is size
+`{{ weapons:mechanics.sword.size }}`, so it no longer counts against
+the hands the spell wants, and she casts with it in her hand for
+nothing at all.
+
+Had she bought a great axe instead, size
+`{{ weapons:mechanics.great_axe.size }}`, the power would forgive her
+nothing on that half: she would still be short the hand, and pay
+[[free-hands]] for it. Had she bought full plate, whose movement
+penalty is `{{ armour:mechanics.full_plate.move_penalty }}`, she would
+be over the limit and the armour half would do nothing either.
+
+Sela cannot take it at all. She is a priest — Spiritual, not Magical —
+and the power asks for the two disciplines whose equipment and casting
+actually collide.
 
 {% book-only %}
 ## Design note
@@ -573,6 +626,44 @@ where its name is. An Athletic Master now wears a chain shirt, takes
 about a third more damage than they did, and is still the hardest build
 in the game to hit — because they are quick, which is the thing they
 mastered.
+
+## Design note: a power belonging to two disciplines
+
+Casting in Harness is the first power on any of these lists that
+requires two disciplines, and the reason it has to be is worth stating.
+A power that belongs to one discipline is a thing that discipline
+teaches. This one is not: neither Martial nor Magical has anything to
+say on its own about a spell worked in a breastplate, because a
+character with only one of them never has the problem. It is a power
+about a collision, so it is priced to the two things that collide.
+
+The armour half is deliberately partial. Untouchable forgives armour's
+skill penalty outright, and it is a Master signature that stops at
+armour with no movement penalty at all; a power two grades below it
+that forgave more, in heavier armour, would make the senior ability
+look thin. So this one gives back part of the penalty and leaves the
+dodge alone entirely — a hybrid in a breastplate is easier to hit than
+one in leather, and ought to be.
+
+The weapon half is gated on size rather than on hands, and that is the
+half that decides what the power is for. Gated on hands it would
+discount the biggest weapon in the game, which is the opposite of the
+intent: the point is to make the middle of the [[weapons]] table
+worth carrying, not to hand a two-hander to a caster.
+
+What it does not do is make a hybrid a match for either specialist,
+which is the correct outcome. It buys the armour a fighter-mage is
+pictured in, and the freedom to cast with a blade in hand. It does not
+buy a wizard's spell or a duellist's sword, and a character who wants
+either of those should go and buy the discipline that sells it.
+
+The open question is Spiritual. A war-priest in mail has exactly the
+same collision, uses the same spellcasting skill, and cannot take this.
+That is a real gap rather than a considered exclusion, and it is parked
+in `TODO.md` rather than answered here, because widening the
+prerequisite is a larger question than this power: it would be the
+first time two disciplines were treated as interchangeable in a
+requirement, and that is a precedent worth setting deliberately.
 
 ## Design note: buffs, and who delivers them
 

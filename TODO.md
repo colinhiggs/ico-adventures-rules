@@ -53,6 +53,19 @@ The damaging spells are done: bolts, lances, and the three area families
   exemption from healing. If a second such spell is ever wanted, that
   exemption needs to become a general rule rather than a note on one
   entry.
+- **Casting in Harness asks for Magical, and a war-priest has the
+  same problem.** The power forgives part of armour's skill penalty on
+  the casting roll and lets a size `M` weapon stop occupying a hand,
+  and it requires Martial and Magical both at Adept. A Spiritual caster
+  in mail meets exactly the same collision, rolls exactly the same
+  `spellcasting` skill, and cannot take it. That is a gap rather than a
+  decision. It was left because widening the requirement would be the
+  first time two disciplines were treated as interchangeable in a
+  prerequisite, and that is a precedent to set deliberately rather than
+  in passing -- the honest options are a second power for the
+  Spiritual side, a requirement reading "Magical or Spiritual", or a
+  general notion of a casting discipline that both belong to. The
+  third is the tidiest and the largest.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** *Fixed, by granting ten mastery hit
