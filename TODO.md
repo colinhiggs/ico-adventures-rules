@@ -674,7 +674,8 @@ The damaging spells are done: bolts, lances, and the three area families
   still the numbers a positionless model produced because the spells a
   caster actually picks against a crowd declare no range (see the rules
   gap above).
-- **The simulator was thirteen minutes and is now under three.**
+- **The simulator was thirteen minutes, then under three, and is
+  now under two.**
   *Done, and recorded here because the next person to profile it should
   know where the easy wins have already gone.* Values and the figures
   derived from them are cached on the `Mechanics` instance; a blow is
@@ -691,6 +692,25 @@ The damaging spells are done: bolts, lances, and the three area families
   the trials happen three thousand times. And this machine varies by
   twenty-five per cent between batches, so a timing is only worth
   quoting when the two versions were run back to back.
+  *Then parallelised, and it is now a hundred seconds.* A profile put
+  56% of `--check` in gear shopping and 41% in duels, and both are
+  piles of pieces that say nothing to each other, so both go to a pool
+  of workers. Eight of them take `--check` from `4m36s` to `1m43s` on
+  a sixteen-core machine; sixteen workers reach `1m36s`, which is why
+  the default is eight rather than everything. `--jobs` sets it and
+  `ICO_SIM_JOBS` sets it for a machine.
+  The property to protect is that `--jobs` changes the speed and never
+  a number, and `sim/README.md` carries the two-line diff that checks
+  it. Shopping is safe for free, being arithmetic over the die's faces
+  rather than rolls of it. Duels are Monte Carlo and are safe because
+  each one now seeds itself from its own name rather than drawing from
+  one stream in sequence -- which also retires the oldest wart in this
+  file, that the ORDER of the duels was part of the answer and adding
+  an archetype re-rolled every pairing after it. It cost a one-off
+  renumbering when it landed: the count stayed at nine, but
+  `L10 duellist vs berserker` left the failing set and
+  `L1 berserker vs commander` joined it, both of them pairings sitting
+  within a tenth of the three-round bound.
 - **`best_difficulty` scans sixty difficulties and stops at none of
   them.** Expected cost looks monotonic in difficulty, and if it is,
   the scan can break rather than continue. That is an assumption about

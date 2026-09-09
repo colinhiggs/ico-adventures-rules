@@ -65,6 +65,51 @@ tuned to fix the level it is measured at and quietly wreck another;
 `damage_per_attack_skill_step` and the mastery hit point curve are a
 matched pair, and raising either alone makes the game worse.
 
+## Running it on more than one core
+
+Both tools take `--jobs`. The default is `8`, capped at the number of
+cores actually present, and `ICO_SIM_JOBS` sets it once for a machine
+that wants something else.
+
+```bash
+python3 sim/balance.py --check            # 8 workers, the default
+python3 sim/balance.py --check --jobs 1   # serial, for profiling
+python3 sim/sweep.py -m weapons.sword.damage=7,8,9 --jobs 16
+```
+
+On a sixteen-core machine, `--check` goes from **4m36s to 1m43s** at
+eight workers and 1m36s at sixteen. Sixteen is barely better than eight
+and takes the whole machine while it does it, which is why eight is the
+default rather than everything.
+
+The rule that matters more than the speed: **`--jobs` may change how
+long a run takes and may never change a number it reports.** A
+measuring tool whose answers depend on how many cores it was given is
+not measuring anything. Two things make that true.
+
+Gear shopping — the expensive half, 56% of a `--check` — is pure
+arithmetic over the faces of the die and rolls nothing at all, so it is
+identical however it is divided up. Duels are Monte Carlo, and each one
+now seeds itself from its own name: the base seed, the level and the
+two builds. A pairing therefore draws the same numbers whether it ran
+first, last, or on another core.
+
+That second change is worth having on its own account, and it moved the
+numbers once when it landed. Before it, every duel drew from one stream
+in sequence, so the ORDER was part of the answer and adding an
+archetype re-rolled every pairing measured after it. This file used to
+have to warn people about that. It no longer does, at the price of a
+one-off renumbering of every duel-derived figure — small, but enough to
+move a pairing sitting on a bound from one side of it to the other.
+
+To check the invariant still holds after changing anything in here:
+
+```bash
+python3 sim/balance.py --check --jobs 1 > /tmp/j1.txt
+python3 sim/balance.py --check --jobs 8 > /tmp/j8.txt
+diff /tmp/j1.txt /tmp/j8.txt        # must be empty
+```
+
 ## Why it lives here and not in the toolset
 
 The toolset in `rpg-master/rules-toolset/` is generic and contains no

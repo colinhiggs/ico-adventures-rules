@@ -140,6 +140,34 @@ class RulesNotBuilt(Exception):
     pass
 
 
+def override(M, parts, value):
+    """Change one mechanic in memory. `parts` is a rule id followed by
+    the key path within it, as `sweep.py` spells one on its command
+    line.
+
+    Nothing on disk is touched, which is what makes a sweep safe to
+    run. Two things are non-negotiable here and both are easy to get
+    wrong. Everything cached from the old value has to go at that
+    moment, or the model measures the number it has just replaced. And
+    the change has to be recorded on the instance, or a worker process
+    rebuilding from the path alone would quietly measure the unmodified
+    ruleset."""
+    rule_id, keys = parts[0], list(parts[1:])
+    if rule_id not in M.rules:
+        raise KeyError("no rule '%s' in mechanics.json" % rule_id)
+    cur = M.rules[rule_id]
+    for k in keys[:-1]:
+        if k not in cur:
+            raise KeyError("'%s' has no key '%s'" % (rule_id, k))
+        cur = cur[k]
+    if keys[-1] not in cur:
+        raise KeyError("'%s' has no mechanic '%s'"
+                       % (".".join(parts[:-1]), keys[-1]))
+    cur[keys[-1]] = value
+    M.overrides.append((list(parts), value))
+    M.invalidate()
+
+
 def resolve_mechanics_path(path=None):
     """Return the mechanics.json that a --path argument means.
 
@@ -201,6 +229,11 @@ class Mechanics:
         self._cache = {}
         self.derived = {}
         self.generation = 0
+        # What `override` has done to this instance, in order. A sweep
+        # changes values in memory and nothing on disk, so a worker
+        # process handed only `path` would rebuild the ORIGINAL ruleset
+        # and measure the wrong thing. This is the list it replays.
+        self.overrides = []
 
     def invalidate(self):
         """Forget everything cached from the values in `rules`. Call
@@ -2619,9 +2652,19 @@ def initiative_order(a, b, M):
             else (b, a))
 
 
-def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4):
+def duel(spec_a, spec_b, M, trials=4000, max_rounds=100, rounds_budget=4,
+         seed=None):
     """Monte Carlo. Returns (mean rounds, a's win rate, mean rounds
-    where a was the one who fell)."""
+    where a was the one who fell).
+
+    `seed` makes one duel's result depend on which duel it is rather
+    than on when it ran. Callers pass `parallel.duel_seed(...)`, which
+    is built from the base seed and the names of the two builds, so a
+    pairing draws the same numbers whether it ran first, last, or on
+    another core -- and adding an archetype no longer re-rolls every
+    pairing measured after it."""
+    if seed is not None:
+        random.seed(seed)
     rounds_total = 0
     a_wins = 0
     capped = 0

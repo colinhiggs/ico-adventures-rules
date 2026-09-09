@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import balance as b
 import model as m
+import parallel
 
 
 def parse_mechanic(spec):
@@ -50,34 +51,10 @@ def parse_mechanic(spec):
     return parts, values
 
 
-def apply_override(M, parts, value):
-    rule_id, keys = parts[0], parts[1:]
-    if rule_id not in M.rules:
-        raise SystemExit("no rule '%s' in mechanics.json" % rule_id)
-    cur = M.rules[rule_id]
-    for k in keys[:-1]:
-        if k not in cur:
-            raise SystemExit("'%s' has no key '%s'" % (rule_id, k))
-        cur = cur[k]
-    if keys[-1] not in cur:
-        raise SystemExit(
-            "'%s' has no mechanic '%s' (have: %s)"
-            % (".".join(parts[:-1]), keys[-1], ", ".join(sorted(cur))))
-    cur[keys[-1]] = value
-    # model.py memoises both the values themselves and figures worked
-    # out from them, so a sweep that changed one silently without
-    # saying so would measure the value it had replaced.
-    M.invalidate()
-
-
-def measure_level(M, level, trials):
-    chars = b.build_all(level, M)
-    names = list(chars)
-    rounds = []
-    for i, a in enumerate(names):
-        for c in names[i + 1:]:
-            r, _, _ = m.duel(chars[a], chars[c], M, trials=trials)
-            rounds.append(r)
+def measure_level(M, level, trials, pool=None):
+    chars = b.build_all(level, M, pool)
+    rounds = [r for _a, _b, r, _w, _c
+              in b.duel_grid(level, chars, M, trials, pool)]
     contrib = b.contributions(chars, level, M)
     return {
         "fastest": min(rounds),
@@ -88,8 +65,8 @@ def measure_level(M, level, trials):
     }
 
 
-def evaluate(M, levels, trials):
-    per_level = [measure_level(M, level, trials) for level in levels]
+def evaluate(M, levels, trials, pool=None):
+    per_level = [measure_level(M, level, trials, pool) for level in levels]
     out_of_band = 0
     for r in per_level:
         if r["fastest"] < b.TARGET_ROUNDS[0] or r["slowest"] > b.TARGET_ROUNDS[1]:
@@ -115,6 +92,10 @@ def main():
     ap.add_argument("--levels", default="1,5,10,15")
     ap.add_argument("--trials", type=int, default=800)
     ap.add_argument("--seed", type=int, default=12345)
+    ap.add_argument("--jobs", type=int, default=None,
+                    help="worker processes (default %d, or ICO_SIM_JOBS); "
+                         "changes the speed and never a number"
+                         % parallel.DEFAULT_JOBS)
     ap.add_argument("--verbose", action="store_true",
                     help="also print every level of every combination")
     ap.add_argument("--path", default=None,
@@ -146,10 +127,15 @@ def main():
     best = None
     for combo in itertools.product(*[values for _, values in specs]):
         random.seed(args.seed)
+        b.SEED = args.seed
         M = m.Mechanics(args.path)
         for (parts, _), value in zip(specs, combo):
-            apply_override(M, parts, value)
-        r = evaluate(M, levels, args.trials)
+            m.override(M, parts, value)
+        # A pool per combination, because each one is a different
+        # ruleset in memory and a worker rebuilds from the overrides
+        # recorded on the `Mechanics` it was told about.
+        with parallel.Pool(M, args.jobs) as pool:
+            r = evaluate(M, levels, args.trials, pool)
         verdict = "ok" if r["out_of_band"] == 0 else "%d out of band" % r["out_of_band"]
         print("%-10s %-10s %-8.1f %-8.1f %-8.1fx %-7.2f %-6d %s"
               % (combo[0], combo[1] if len(combo) > 1 else "",

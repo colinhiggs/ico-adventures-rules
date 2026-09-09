@@ -22,11 +22,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import model as m
+import parallel
 
 # --- design targets -------------------------------------------------
 # These encode the goals in ch-overview: a fight should be decisive but
 # not a grind, no build should be strictly better, and no weapon should
 # be inert against any armour.
+# The base every duel's own seed is derived from -- see
+# parallel.duel_seed. Set from --seed in main(); the default matters
+# because sweep.py and the tests reach these functions without going
+# through the command line.
+SEED = 12345
+
 TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
@@ -211,16 +218,38 @@ def hr(title):
     print("-" * len(title))
 
 
-def build_all(level, M):
-    """Build every archetype, each of them shopping for its own kit
-    against the standard foe of its level."""
+def _shop(M, task):
+    """One archetype, built and sent shopping. Top-level and taking its
+    own `Mechanics` so that it runs identically in a worker process and
+    in this one."""
+    level, name = task
     panel = shopping_panel(level, M)
-    out = {}
-    for name, spec in ARCHETYPES.items():
-        char = m.build_character(name, spec, level, M, shopping_foe=panel)
-        if char is not None:
-            out[name] = char
-    return out
+    return name, m.build_character(name, ARCHETYPES[name], level, M,
+                                   shopping_foe=panel)
+
+
+def build_all(level, M, pool=None):
+    """Build every archetype, each of them shopping for its own kit
+    against the standard foe of its level.
+
+    This is the expensive half of a run -- a profile of `--check` put
+    56% of its time here, because every build weighs a few hundred kits
+    against the panel -- and every archetype's shopping is independent
+    of every other's, so it is handed to `pool`.
+
+    It is also pure arithmetic: `choose_gear` enumerates the faces of
+    the die rather than rolling any, so nothing here touches the random
+    stream and the answer is identical however many workers there are.
+
+    Each worker rebuilds the panel for itself. That looks wasteful and
+    is not: the panel's two opponents carry pinned gear, so building one
+    does no shopping at all."""
+    tasks = [(level, name) for name in ARCHETYPES]
+    if pool is None:
+        built = [_shop(M, task) for task in tasks]
+    else:
+        built = pool.map(_shop, tasks)
+    return {name: char for name, char in built if char is not None}
 
 
 def report_sheets(level, chars, M):
@@ -579,18 +608,39 @@ def report_powers(level, chars, M):
     return rows
 
 
-def report_duels(level, chars, M, trials):
-    hr("Even duels at level %d (%d trials each)" % (level, trials))
+def _duel(M, task):
+    """One pairing, seeded from its own name. See parallel.duel_seed."""
+    level, a, b, spec_a, spec_b, trials = task
+    rounds, winrate, capped = m.duel(
+        spec_a, spec_b, M, trials=trials,
+        seed=parallel.duel_seed(SEED, level, a, b))
+    return a, b, rounds, winrate, capped
+
+
+def duel_grid(level, chars, M, trials, pool=None):
+    """Every pairing at this level, in a fixed order.
+
+    The order is the order of the results and nothing else: each duel
+    seeds itself, so which worker took which pairing cannot reach the
+    numbers."""
     names = list(chars)
+    tasks = [(level, a, b, chars[a], chars[b], trials)
+             for i, a in enumerate(names) for b in names[i + 1:]]
+    if pool is None:
+        return [_duel(M, task) for task in tasks]
+    return pool.map(_duel, tasks)
+
+
+def report_duels(level, chars, M, trials, pool=None):
+    hr("Even duels at level %d (%d trials each)" % (level, trials))
     print("%-12s %-12s %-9s %s" % ("attacker", "defender", "rounds", "win rate"))
     rounds_seen = []
-    for i, a in enumerate(names):
-        for b in names[i + 1:]:
-            rounds, winrate, capped = m.duel(chars[a], chars[b], M, trials=trials)
-            flag = "  (%.0f%% hit the round cap)" % (capped * 100) if capped else ""
-            print("%-12s %-12s %-9.1f %.0f%%%s"
-                  % (a, b, rounds, winrate * 100, flag))
-            rounds_seen.append((rounds, a, b))
+    for a, b, rounds, winrate, capped in duel_grid(level, chars, M, trials,
+                                                   pool):
+        flag = "  (%.0f%% hit the round cap)" % (capped * 100) if capped else ""
+        print("%-12s %-12s %-9.1f %.0f%%%s"
+              % (a, b, rounds, winrate * 100, flag))
+        rounds_seen.append((rounds, a, b))
     return rounds_seen
 
 
@@ -611,13 +661,13 @@ def report_dpr(level, chars, M):
     return out
 
 
-def run_gates(levels, M, trials):
+def run_gates(levels, M, trials, pool=None):
     hr("Gates")
     failures = []
     ever_chosen = set()
 
     for level in levels:
-        chars = build_all(level, M)
+        chars = build_all(level, M, pool)
         if not chars:
             continue
         ever_chosen.update(c.weapon.name for c in chars.values())
@@ -707,14 +757,12 @@ def run_gates(levels, M, trials):
                     % (level, spread, best, contrib[best], worst, contrib[worst],
                        MAX_CONTRIBUTION_SPREAD))
 
-        names = list(chars)
-        for i, a in enumerate(names):
-            for b in names[i + 1:]:
-                rounds, _, capped = m.duel(chars[a], chars[b], M, trials=trials)
-                if not (TARGET_ROUNDS[0] <= rounds <= TARGET_ROUNDS[1]):
-                    failures.append(
-                        "L%d %s vs %s: %.1f rounds (target %.0f-%.0f)"
-                        % (level, a, b, rounds, *TARGET_ROUNDS))
+        for a, b, rounds, _w, _capped in duel_grid(level, chars, M, trials,
+                                                   pool):
+            if not (TARGET_ROUNDS[0] <= rounds <= TARGET_ROUNDS[1]):
+                failures.append(
+                    "L%d %s vs %s: %.1f rounds (target %.0f-%.0f)"
+                    % (level, a, b, rounds, *TARGET_ROUNDS))
 
         # A minor power must never match its standard twin at the same
         # difficulty, or the standard one is pointless.
@@ -913,6 +961,10 @@ def main():
     ap.add_argument("--check", action="store_true",
                     help="gates only; exit 1 on failure")
     ap.add_argument("--seed", type=int, default=12345)
+    ap.add_argument("--jobs", type=int, default=None,
+                    help="worker processes (default %d, or ICO_SIM_JOBS); "
+                         "changes the speed and never a number"
+                         % parallel.DEFAULT_JOBS)
     ap.add_argument("--path", default=None,
                     help="Ruleset directory to measure (or a mechanics.json), "
                          "instead of this checkout's own build/.")
@@ -920,6 +972,8 @@ def main():
 
     import random
     random.seed(args.seed)
+    global SEED
+    SEED = args.seed
 
     levels = [int(x) for x in args.levels.split(",")]
     global TRIALS_SWARM
@@ -929,11 +983,16 @@ def main():
     print("Ico balance report")
     print("source: %s" % M.path)
 
+    with parallel.Pool(M, args.jobs) as pool:
+        return _run(args, levels, M, pool)
+
+
+def _run(args, levels, M, pool):
     if args.check:
-        return 1 if run_gates(levels, M, args.trials) else 0
+        return 1 if run_gates(levels, M, args.trials, pool) else 0
 
     for level in levels:
-        chars = build_all(level, M)
+        chars = build_all(level, M, pool)
         if not chars:
             print("\n(no affordable builds at level %d)" % level)
             continue
@@ -949,10 +1008,10 @@ def main():
         report_powers(level, chars, M)
         report_stances(level, chars, M)
         report_contributions(level, chars, M)
-        report_duels(level, chars, M, args.trials)
+        report_duels(level, chars, M, args.trials, pool)
 
-    report_weapon_matrix(levels[-1], build_all(levels[-1], M), M)
-    failures = run_gates(levels, M, args.trials)
+    report_weapon_matrix(levels[-1], build_all(levels[-1], M, pool), M)
+    failures = run_gates(levels, M, args.trials, pool)
 
     hr("Simulation assumptions")
     for a in m.ASSUMPTIONS:
