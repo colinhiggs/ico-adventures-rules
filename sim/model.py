@@ -41,6 +41,11 @@ ASSUMPTIONS = [
     "A power's difficulty is chosen once per build by expected-value "
     "search, then held fixed, rather than re-judged each round.",
     "Stamina and spirit do not recover during a fight.",
+    "Half of a build's rounds are fought on an empty reservoir, so "
+    "offence is scored at both ends rather than fresh only. Fresh "
+    "alone is a maximum over what a build COULD do, which prices the "
+    "weapon under a better spell at nothing and cannot tell a hybrid "
+    "from a specialist.",
     "Sneak Attack's condition is met in half of all rounds; "
     "Redouble is sustained at a rate that lasts the whole fight.",
     "Only damaging spells are modelled. Healing, and everything cast for "
@@ -793,7 +798,7 @@ def choose_gear(char, foes, M, budget):
             key = (foe.name, weapon.name,
                    armour.name if armour_matters else None)
             if key not in offence:
-                offence[key] = expected_offence(char, foe, M)
+                offence[key] = arc_offence(char, foe, M)
             taken, _ = attack_expectation(foe, char, M, dodge_bonus=guard)
 
             # Reach and quickness are counted as attacks gained and
@@ -2958,6 +2963,34 @@ def redouble_plan(char, M):
 
 # Roughly how long a fight runs, used to work out how much of one a
 # character can afford to spend a per-attack power on.
+# The share of a build's rounds fought on an empty reservoir. A day is
+# several fights and the reservoir does not refill between them, so a
+# build is scored on the whole arc rather than on its first round of
+# its first fight.
+#
+# This is the number that lets a hybrid be worth what it is worth.
+# `expected_offence` is a MAX over what a build could do, so the moment
+# a spell out-damages a swing, the weapon in the other hand is priced
+# at nothing and a spellblade carrying a sword scores exactly what one
+# carrying a stick scores. That is not a statement about the game; it
+# is what measuring one round of one fight can see. Empty, the spell is
+# gone and the sword is the whole of the answer, so the two ends
+# together price a second capability without anybody having to invent
+# what flexibility is worth -- the only judgement here is how much of a
+# day is spent depleted, which FLOOR_RATIO_BAND already assumes matters.
+DEPLETED_FRACTION = 0.5
+
+
+def arc_offence(char, foe, M, rounds_budget=4, options=None):
+    """Offence over the whole arc: fresh most of the time, empty for
+    `DEPLETED_FRACTION` of it."""
+    fresh = expected_offence(char, foe, M, rounds_budget, options)
+    if DEPLETED_FRACTION <= 0:
+        return fresh
+    return ((1.0 - DEPLETED_FRACTION) * fresh
+            + DEPLETED_FRACTION * floor_offence(char, foe, M))
+
+
 TYPICAL_FIGHT_ROUNDS = 6
 
 
@@ -3343,7 +3376,21 @@ def floor_offence(char, foe, M):
     fourth fight of a long day, what can this character still do that is
     more interesting than swinging? Only outcomes that genuinely cost
     nothing count -- anything the character cannot pay for falls back to
-    a plain attack, exactly as the rules say."""
+    a plain attack, exactly as the rules say.
+
+    Cached on the same contract as `best_spell`, and for the same
+    reason: it used to be asked once per build per level and is now
+    asked once per KIT by the gear chooser, which is a sixty-difficulty
+    search several hundred times over. Everything the answer depends on
+    is in the key -- both of the character's bonuses, since armour and
+    a full hand move them, the weapon it swings, and the foe it is
+    measured against."""
+    key = ("floor_offence", char.name, char.level, char.attack_bonus(M),
+           char.casting_bonus(M), char.weapon.name,
+           foe.name, foe.total_hp, foe.armour.ap, foe.stance)
+    got = M.derived.get(key)
+    if got is not None:
+        return got
     plain, _ = attack_expectation(char, foe, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     td = targeting_difficulty(foe, M)
@@ -3391,6 +3438,7 @@ def floor_offence(char, foe, M):
                         damage += weight * damage_from(char, foe, total - td, M,
                                                        weapon_only=weak)
             best = max(best, damage)
+    M.derived[key] = best
     return best
 
 

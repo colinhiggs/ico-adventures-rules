@@ -879,7 +879,12 @@ def contributions(chars, level, M):
         # and quoting it as damage is the only way a stun and a sword
         # swing can be compared at all. It is zero for every build that
         # applies no conditions, which is every martial build.
-        offence = m.expected_offence(c, foe, M)
+        # Scored over the whole arc rather than fresh only -- see
+        # DEPLETED_FRACTION. This is what prices a hybrid's second
+        # capability: fresh, `expected_offence` is a max and the weapon
+        # under a better spell is worth nothing; empty, the spell is
+        # gone and the weapon is all there is.
+        offence = m.arc_offence(c, foe, M)
         control = m.expected_control(c, foe, M)
         # A fight does not begin with everyone in contact. The build
         # that reaches furthest opens the fight at its own range and
