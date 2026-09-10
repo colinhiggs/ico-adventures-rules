@@ -11,6 +11,11 @@ likely to be thought of again. An entry moves there only when nothing
 about it is outstanding — one that was half done, however large the
 half, stays here with the rest of it.
 
+[balancing_notes.md](balancing_notes.md) is the third file, for a
+question that has been measured hard but not decided. Read it before
+reopening anything it covers: the numbers are expensive to produce and
+the dead ends are the expensive part to rediscover.
+
 ## The spell list
 
 The damaging spells are done: bolts, lances, and the three area families
@@ -496,13 +501,18 @@ The damaging spells are done: bolts, lances, and the three area families
   view of at all. The arithmetic is what it is — a wound that keeps a
   constitution 10 character down for six nights keeps a constitution 18
   character down for two.
-- **High level builds cannot spend their points.** At level 15 every
-  archetype has 8 to 38 points it is unable to place, because the
-  mastery hit point ceiling and the power source ceiling both bind. The
-  power source ceiling is the strange one: raising it converts those
-  points into stamina or spirit and the extra buys nothing whatever,
-  because a senior character already has more reservoir than a fight
-  can spend. The advancement menu needs another sink, not a bigger one.
+- **The advancement point economy is oversupplied.** *Measured at
+  length; see [balancing_notes.md](balancing_notes.md), which supersedes
+  what this entry used to say.* The short form: unspent points were the
+  small half. Counting the reservoir bought past the point where it
+  measurably stops paying, dead points run 7% of the budget at level 5,
+  14% at level 10 and 20% at level 15. Every tracked skill is at its
+  ceiling from level 5 onward, so points do not constrain the combat
+  sheet at all. A supply cut to 13 or 14 a level and a reservoir cap
+  near saturation both measure well; mastery hit points do not work as
+  a sink and neither does raising prices. What is still open is the
+  sink for what is left, and whether points should constrain combat at
+  all.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons
