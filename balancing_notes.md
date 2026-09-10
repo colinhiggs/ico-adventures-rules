@@ -247,6 +247,89 @@ Recorded so they are not built twice.
   third Initiate and 45 with an Adept. Only Master, at a 40-point
   spend, pulls it down — to 25.
 
+### There is no spectrum to balance
+
+Asked because the obvious repair to a dead sink is a *competing* sink:
+make damage buyable so that hit points become worth buying, and let a
+player sit anywhere between a tank and a striker. Before designing
+that, it is worth knowing whether the choice exists at all today.
+
+`sim/balance.py --spectrum` answers it. `build_character` takes an
+`aggression` dial from 0 to 1 which splits the discretionary budget
+between the attack skills and the power source at one end and mastery
+hit points and the defensive skills at the other. It defaults to
+`None`, which is the cascade this model has always used, so no existing
+number moves — `--check` returns the same three failures at the same
+round counts.
+
+Contribution across the dial:
+
+```
+level 1                0%      25%      50%      75%     100%   spread
+berserker              65       90       90       90       90    1.38x
+sentinel               89      116      116      116      116    1.31x
+generalist             53       70       57       57       57    1.32x
+commander              84       97       97       97       97    1.15x
+
+level 5      every build flat, except spellblade 139 -> 118
+level 10     every build flat, except evoker and priest, both falling
+level 15     every build identical to the point, 1.00x throughout
+```
+
+**The game has a real spectrum at level 1 and has lost it by level 5.**
+At level 1 the budget is tight enough that emphasis matters, six of ten
+builds do best at a quarter to offence, and the generalist is the shape
+you would want everywhere — 53 at the defensive end, 70 in the middle,
+57 at the aggressive end, so both ends are worse than the middle.
+
+At level 15 the dial is not merely flat, it is inert: a berserker built
+at 0 and at 1 is the *same character*, every rank, 109 mastery hit
+points and 151 stamina both ways. The budget affords both ends at once,
+so there is nothing to choose.
+
+**Where the dial does move the sheet, the flatness is two dead ends and
+not a balance.** At level 5 the berserker's fortitude runs 8 down to 1
+across the dial and its reservoir 40 up to 61, and contribution does not
+move at all. Testing each separately:
+
+```
+L5  fortitude   0 / 4 / 8 / 12   ->  182 / 182 / 182 / 182
+L5  stamina    20 / 30 / 40 / 61 ->  156 / 182 / 182 / 182
+L10 fortitude   0 / 4 / 8 / 12   ->  306 / 306 / 306 / 306
+L10 stamina    20 / 30 / 40 / 61 ->  237 / 281 / 281 / 306
+```
+
+The marginal point at level 5 and beyond goes either to a skill worth
+nothing or to a reservoir already past saturation. That is the same
+finding as the dead points above, seen from the other side: it is not
+that a character has points left over, it is that *the marginal point
+buys nothing*.
+
+One caveat on fortitude's zero. Contribution is
+`(offence + control) x survival` against the standard foe, and
+fortitude resists poison, disease and duress rather than blows. Its
+score of nothing here is partly a limit of the measurement and not
+proof that the skill is idle in play — but it does mean the defensive
+end of this dial is thinner than it looks, because dodge and block fill
+first and fortitude is what the marginal point actually reaches.
+
+### What this asks of any competing-sink design
+
+Two rules fall out, and the second is the one that is easy to miss.
+
+- **A lever gated by level is not a sink.** Attack ranks and power
+  steps both scale with level on their own, so no amount of budget buys
+  more of them. Only a lever gated by *points spent* can absorb points.
+- **Competing sinks need depth that outruns the budget.** If both ends
+  can be afforded at once, the player is handed both and never chooses,
+  which is what happens here from level 5. It is not enough for the two
+  ends to be balanced against each other; the budget has to be unable
+  to reach both.
+
+The reservoir fails the second rule badly today: its useful ceiling is
+30 at levels 1, 5 and 10 and 50 at level 15, while the budget goes from
+50 points to 260.
+
 ### Still open
 
 - **The sink.** Even at 13 points a level, about 10% of a level 15

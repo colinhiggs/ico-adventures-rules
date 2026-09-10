@@ -378,6 +378,91 @@ GRADE_ORDER = ("initiate", "adept", "master")
 # discipline-list's `skills` lists so it cannot drift from the book.
 TRACKED_SKILLS = ("attack_melee", "dodge", "block", "fortitude", "spot")
 
+# The two things a point can buy that are not a skill. Named so that one
+# spending loop can hold them in the same table as the skills.
+MHP = "@mastery_hp"
+SOURCE = "@power_source"
+
+# Which end of the tank-to-striker spectrum each tracked skill sits at.
+# ASSUMPTION: this is a reading of skill-list.md's prose and not a
+# declared mechanic. Spot is at neither end -- it decides what you
+# notice, not what you hit or how long you last -- so it is bought out
+# of whatever both ends leave rather than being called a defence.
+SKILL_ROLE = {
+    "attack_melee": "offence",
+    "attack_ranged": "offence",
+    "spellcasting": "offence",
+    "block": "defence",
+    "dodge": "defence",
+    "fortitude": "defence",
+    "spot": "neither",
+}
+
+
+class _Buy:
+    """One thing advancement points can go into, priced in points.
+
+    `cap` is in units -- ranks for a skill, points for the two pools --
+    and `cost` is points per unit, so a single greedy loop can spend
+    across all of them. Holding the cap here rather than in the caller
+    is what lets an allocator hand the same table to two different
+    orders and get two different characters out."""
+
+    __slots__ = ("cost", "cap", "taken")
+
+    def __init__(self, cost, cap):
+        self.cost = max(1, int(cost))
+        self.cap = max(0, int(cap))
+        self.taken = 0
+
+    def spend(self, budget):
+        """Take as many units as `budget` affords, up to the cap.
+        Returns the points spent."""
+        units = max(0, min(self.cap - self.taken, budget // self.cost))
+        self.taken += units
+        return units * self.cost
+
+
+def _spend(buys, order, budget):
+    """Walk `order`, filling each entry to its cap before the next.
+    Returns what nobody could take."""
+    for key in order:
+        buy = buys.get(key)
+        if buy is not None:
+            budget -= buy.spend(budget)
+    return budget
+
+
+def _spend_by_aggression(buys, order, budget, aggression):
+    """Split the budget between hitting harder and lasting longer.
+
+    `aggression` runs 0 to 1: at 1 every discretionary point goes to the
+    attack skills and the power source, at 0 to mastery hit points and
+    the defensive skills. The point of the dial is not that either end
+    is a sensible character -- it is that sweeping it draws a curve, and
+    the shape of that curve says whether the choice between the two ends
+    is a real one. A flat curve is a genuine spectrum; a curve peaked at
+    one end is a dominant strategy wearing a choice as a disguise.
+
+    Ceilings mean neither end can absorb an arbitrary budget, so what
+    one end cannot take is offered to the other, and only then counted
+    as unspent. Without that, a high `aggression` would look worse than
+    it is for the accounting reason that the offence list ran out."""
+    aggression = min(1.0, max(0.0, float(aggression)))
+    offence = [s for s in order if SKILL_ROLE.get(s) == "offence"] + [SOURCE]
+    defence = [MHP] + [s for s in order if SKILL_ROLE.get(s) == "defence"]
+    neither = [s for s in order if SKILL_ROLE.get(s, "neither") == "neither"]
+
+    to_offence = int(round(budget * aggression))
+    left = _spend(buys, offence, to_offence)
+    left += _spend(buys, defence, budget - to_offence)
+    # Spot last, and then anything still unplaced back across both ends,
+    # so that the dial decides emphasis rather than waste.
+    left = _spend(buys, neither, left)
+    return _spend(buys, offence + defence, left)
+
+
+
 # Which attribute governs each tracked skill, per skill-list.md prose.
 # ASSUMPTION: skill-list.md states these in prose, not mechanics, so the
 # mapping is duplicated here. Moving it into mechanics would remove this.
@@ -1072,7 +1157,8 @@ def choose_gear(char, foes, M, budget):
     return best[0]
 
 
-def build_character(name, spec, level, M, shopping_foe=None):
+def build_character(name, spec, level, M, shopping_foe=None,
+                    aggression=None):
     """Spend a level's worth of points into a playable sheet.
 
     Priority order is the ASSUMPTION listed at the top: disciplines
@@ -1103,9 +1189,6 @@ def build_character(name, spec, level, M, shopping_foe=None):
 
     points = chargen_disc + chargen_pool + (level - 1) * per_level - disc_spend
 
-    # Survivability first: a player almost always takes the mastery hit
-    # points they are allowed before pushing the last ranks of a skill,
-    # so reserve that budget before spending on skills.
     per_point = int(M.get("advancement", "mastery_hp_per_point"))
     # Optional levers, all absent by default, for asking what else
     # constitution could be worth. Each reads a per-bonus rate and adds
@@ -1122,29 +1205,6 @@ def build_character(name, spec, level, M, shopping_foe=None):
         int(M.get("character-creation", "max_starting_mastery_hp"))
         + mhp_per_level * (level - 1)
     )
-    mhp_points = min(points, -(-mhp_ceiling // per_point))
-    points -= mhp_points
-
-    order = list(spec.get("skill_priority") or TRACKED_SKILLS)
-    if not spec.get("skill_priority"):
-        lead = "block" if char.stance == "block" else "dodge"
-        order.sort(key=lambda s: (s != "attack_melee", s != lead))
-
-    for skill_name in order:
-        focus = skill_focus(char, skill_name, M)
-        cap = skill_cap(focus, level, M)
-        cost = rank_cost(focus, M)
-        ranks = max(0, min(cap, points // cost))
-        char.skills[skill_name] = ranks
-        points -= ranks * cost
-
-    # Leftover points: mastery hit points up to the per-level ceiling,
-    # then everything else widens the power source.
-    free_mhp = ((int(M.get("advancement", "free_mastery_hp_per_level"))
-                 + per_bonus("free_mastery_hp_per_constitution",
-                             "constitution")) * level
-                + int(M.get("character-creation", "free_starting_mastery_hp")))
-    bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
     source_per_point = int(M.get("advancement", "power_source_per_point"))
     uses_spirit = bool(spec.get("casts"))
@@ -1153,8 +1213,43 @@ def build_character(name, spec, level, M, shopping_foe=None):
                                 "max_power_source_bought_per_level"))
                       + per_bonus("power_source_cap_per_attribute",
                                   source_attr)) * level
-    source_points = min(points, source_ceiling)
-    points -= source_points
+
+    order = list(spec.get("skill_priority") or TRACKED_SKILLS)
+    if not spec.get("skill_priority"):
+        lead = "block" if char.stance == "block" else "dodge"
+        order.sort(key=lambda s: (s != "attack_melee", s != lead))
+
+    # Everything a point can go into, priced in points so that one loop
+    # can spend across skills, mastery hit points and a power source
+    # without knowing what any of them are.
+    buys = {MHP: _Buy(1, -(-mhp_ceiling // per_point)),
+            SOURCE: _Buy(1, source_ceiling)}
+    for skill_name in order:
+        focus = skill_focus(char, skill_name, M)
+        buys[skill_name] = _Buy(rank_cost(focus, M),
+                                skill_cap(focus, level, M))
+        char.skills[skill_name] = 0
+
+    if aggression is None:
+        # The cascade this model has always used: survivability first,
+        # because a player almost always takes the mastery hit points
+        # they are allowed before pushing the last ranks of a skill;
+        # then the tracked skills to their caps; then whatever is left
+        # widens the power source.
+        points = _spend(buys, [MHP] + order + [SOURCE], points)
+    else:
+        points = _spend_by_aggression(buys, order, points, aggression)
+
+    for skill_name in order:
+        char.skills[skill_name] = buys[skill_name].taken
+    mhp_points = buys[MHP].taken
+    source_points = buys[SOURCE].taken
+
+    free_mhp = ((int(M.get("advancement", "free_mastery_hp_per_level"))
+                 + per_bonus("free_mastery_hp_per_constitution",
+                             "constitution")) * level
+                + int(M.get("character-creation", "free_starting_mastery_hp")))
+    bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
     char.mhp = free_mhp + bought_mhp
     char.chp = char.attributes["constitution"]

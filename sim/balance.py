@@ -1175,6 +1175,65 @@ def report_contributions(level, chars, M):
           "than the build's best.")
 
 
+AGGRESSION_STEPS = (0.0, 0.25, 0.5, 0.75, 1.0)
+
+
+def _at_aggression(M, task):
+    """One archetype built at one setting of the dial, shopping for its
+    own kit like any other build. Top-level and taking its own
+    `Mechanics` so that it runs the same in a worker as in here."""
+    level, name, aggression = task
+    panel = shopping_panel(level, M)
+    char = m.build_character(name, ARCHETYPES[name], level, M,
+                             shopping_foe=panel, aggression=aggression)
+    return (name, aggression), char
+
+
+def spectrum(level, M, pool=None, steps=AGGRESSION_STEPS):
+    """Every archetype built across the tank-to-striker dial."""
+    tasks = [(level, name, a) for name in ARCHETYPES for a in steps]
+    built = (pool.map(_at_aggression, tasks) if pool is not None
+             else [_at_aggression(M, task) for task in tasks])
+    return {key: char for key, char in built if char is not None}
+
+
+def report_spectrum(level, M, pool=None, steps=AGGRESSION_STEPS):
+    """Contribution against the dial, which is the whole question.
+
+    The advancement menu is only a menu if the ends of it are worth
+    comparable amounts. Reading down a row: flat means a player choosing
+    between hitting harder and lasting longer is making a real choice;
+    rising or falling all the way across means one end is simply better
+    and the other end is a trap for anybody who takes the fiction
+    seriously.
+
+    The dial is a measuring instrument and not a claim about how a
+    character is built. Every other report in this file uses the
+    model's own cascade, which is what `aggression=None` still does."""
+    hr("The tank-to-striker spectrum at level %d" % level)
+    chars = spectrum(level, M, pool, steps)
+    print("contribution against how much of the discretionary budget "
+          "goes to offence")
+    print("%-12s %s %9s %8s" % (
+        "build", "".join("%9s" % ("%d%%" % (a * 100)) for a in steps),
+        "best at", "spread"))
+    for name in sorted(ARCHETYPES):
+        row = {a: chars[(name, a)] for a in steps if (name, a) in chars}
+        if not row:
+            continue
+        scores = {a: contributions({name: c}, level, M)[name]
+                  for a, c in row.items()}
+        best = max(scores, key=scores.get)
+        lo, hi = min(scores.values()), max(scores.values())
+        print("%-12s %s %8d%% %7.2fx" % (
+            name, "".join("%9.0f" % scores[a] for a in steps),
+            best * 100, hi / max(0.01, lo)))
+    print()
+    print("A flat row is a real choice. A row that climbs or falls all "
+          "the way across is a")
+    print("dominant end, and the spread column says by how much.")
+
+
 def contributions(chars, level, M):
     """Offence alone is a bad measure: a defensive signature scores zero
     on it. Contribution is damage dealt per round MULTIPLIED by how many
@@ -1234,6 +1293,9 @@ def main():
     ap.add_argument("--swarm-trials", type=int, default=1200)
     ap.add_argument("--check", action="store_true",
                     help="gates only; exit 1 on failure")
+    ap.add_argument("--spectrum", action="store_true",
+                    help="sweep the tank-to-striker dial and report "
+                         "contribution across it, instead of the full report")
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--jobs", type=int, default=None,
                     help="worker processes (default %d, or ICO_SIM_JOBS); "
@@ -1264,6 +1326,11 @@ def main():
 def _run(args, levels, M, pool):
     if args.check:
         return 1 if run_gates(levels, M, args.trials, pool) else 0
+
+    if args.spectrum:
+        for level in levels:
+            report_spectrum(level, M, pool)
+        return 0
 
     for level in levels:
         chars = build_all(level, M, pool)
