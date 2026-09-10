@@ -1175,6 +1175,153 @@ def report_contributions(level, chars, M):
           "than the build's best.")
 
 
+# ---------------------------------------------------------------------
+# The party as the unit of measurement
+# ---------------------------------------------------------------------
+# Four roles, deliberately NOT drawn from ARCHETYPES. A build measured
+# into a party containing itself is measuring its own redundancy, and a
+# reference drawn from the panel makes the panel vote on itself -- the
+# hazard TODO.md already records about every statistic taken over the
+# panel, with teeth this time. These four are plain on purpose: they are
+# a context to be useful in, not competitors.
+#
+# Attribute totals are 80, as everything else measured here has.
+REFERENCE_ROSTER = {
+    "line": {
+        "disciplines": [("martial", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 14, "dexterity": 10, "constitution": 16,
+                       "intelligence": 10, "willpower": 14, "charisma": 16},
+        "stance": "block", "line": "front",
+    },
+    "striker": {
+        "disciplines": [("martial", "adept"), ("athletic", "initiate")],
+        "attributes": {"strength": 16, "dexterity": 14, "constitution": 12,
+                       "intelligence": 10, "willpower": 12, "charisma": 16},
+        "stance": "dodge", "line": "front",
+    },
+    "caster": {
+        "disciplines": [("magical", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 10, "dexterity": 12, "constitution": 12,
+                       "intelligence": 16, "willpower": 14, "charisma": 16},
+        "stance": "dodge", "casts": True, "line": "back",
+        "skill_priority": ["spellcasting", "attack_ranged", "dodge", "spot"],
+    },
+    "healer": {
+        "disciplines": [("spiritual", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 10, "dexterity": 12, "constitution": 14,
+                       "intelligence": 10, "willpower": 18, "charisma": 16},
+        "stance": "dodge", "casts": True, "line": "back",
+        "major_domain": "healing", "minor_domains": ("war",),
+        "skill_priority": ["spellcasting", "dodge", "attack_melee", "spot"],
+    },
+}
+
+# Replacement level: what the slot holds when nobody good is in it. The
+# whole measure is a difference against this, because a support build
+# scores nothing on its own and the difference it makes to somebody else
+# is the only thing it was ever for.
+STAND_IN = {
+    "disciplines": [("martial", "initiate"), ("awareness", "initiate")],
+    "attributes": {"strength": 13, "dexterity": 13, "constitution": 13,
+                   "intelligence": 13, "willpower": 13, "charisma": 15},
+    "stance": "dodge",
+}
+
+PARTY_TRIALS = 60
+
+
+def _line_for(spec):
+    """Back if it casts and says nothing, front otherwise."""
+    return spec.get("line") or ("back" if spec.get("casts") else "front")
+
+
+def _member(name, spec, level, M, panel):
+    char = m.build_character(name, spec, level, M, shopping_foe=panel)
+    char.line = _line_for(spec)
+    return char
+
+
+def party_for(role, filler_name, filler_spec, level, M):
+    """The reference party with `role`'s slot filled by somebody else.
+
+    The slot keeps the role's own line, so a build measured into the
+    healer's slot stands where the healer stood. Putting it wherever it
+    would rather be would measure the slot instead of the build."""
+    panel = shopping_panel(level, M)
+    party = []
+    for other, spec in REFERENCE_ROSTER.items():
+        if other == role:
+            filler = _member(filler_name, filler_spec, level, M, panel)
+            filler.line = _line_for(spec)
+            party.append(filler)
+        else:
+            party.append(_member(other, spec, level, M, panel))
+    return party
+
+
+def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
+    """How much of the standard day the party gets through.
+
+    Encounters cleared, plus the share of the party still standing at
+    the end. The second term is not decoration: cleared encounters alone
+    is an integer from zero to five, and resolving a difference of a
+    fifth of an encounter out of a five-point scale takes several
+    hundred trials. Partial credit for finishing in one piece is
+    continuous, so it separates two builds that both clear the day but
+    at different cost, at a tenth of the trials.
+
+    The day's crowds are multiplied by the size of the party, because
+    `DEFAULT_DAY` was written for one body and four people walking
+    through a schedule built for one measures nothing at all."""
+    import copy
+    import random as _random
+    schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
+    score = 0.0
+    for trial in range(trials):
+        # Common random numbers. The whole measure is a difference
+        # between two parties that differ in one member, and if the two
+        # runs face different dice most of what comes back is the dice.
+        # Seeding each trial the same way in both runs means the two
+        # days start identically and diverge only where the swapped
+        # member actually changes something -- which cuts the trials
+        # needed for a stable difference by an order of magnitude.
+        if seed is not None:
+            _random.seed(parallel.duel_seed(seed, trial))
+        fighters = [copy.deepcopy(h) for h in party]
+        caps = [m.maxima(h) for h in fighters]
+        full = sum(c["mhp"] + c["chp"] for c in caps)
+        for kind, count in schedule:
+            if not any(h.chp > 0 for h in fighters):
+                break
+            _, survivors = m.party_encounter(fighters, kind, count, M)
+            if survivors == 0:
+                break
+            score += 1
+            for h, cap in zip(fighters, caps):
+                m.recover(h, cap, M, tier)
+        standing = sum(max(0, h.mhp) + max(0, h.chp) for h in fighters)
+        score += standing / max(1, full)
+    return score / trials
+
+
+def party_utility(name, spec, level, M, trials=PARTY_TRIALS):
+    """What this build is worth in each slot, over replacement level.
+
+    Returns {role: encounters the party clears with this build in that
+    slot, minus what it clears with the stand-in there}. The peak names
+    what the build is for; the flatness across the four is how flexible
+    it is."""
+    out = {}
+    for role in REFERENCE_ROSTER:
+        seed = "party|%s|%d" % (role, level)
+        base = party_day(party_for(role, "stand-in", STAND_IN, level, M),
+                         M, trials, seed=seed)
+        with_it = party_day(party_for(role, name, spec, level, M), M, trials,
+                            seed=seed)
+        out[role] = with_it - base
+    return out
+
+
 AGGRESSION_STEPS = (0.0, 0.25, 0.5, 0.75, 1.0)
 
 

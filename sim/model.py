@@ -491,6 +491,9 @@ class Character:
     armour: Armour = None
     shield: Shield = None
     stance: str = "dodge"
+    # Front or back of the party's line. Only party_encounter reads it;
+    # every solo measurement in this file ignores it entirely.
+    line: str = "front"
     mhp: int = 0
     chp: int = 0
     stamina: int = 0
@@ -2597,6 +2600,98 @@ def recover(char, caps, M, tier):
     if prevents_recovery(char, M):
         return          # ill, and rest does not mend you -- conditions.md
     char.mhp = min(caps["mhp"], char.mhp + caps["mhp"] * pct // 100)
+
+
+def party_encounter(heroes, kind, count, M, max_rounds=40):
+    """One fight, fought by a PARTY, each of them spending their own
+    resources. Mutates the heroes and returns (rounds, survivors).
+
+    Kept beside `run_encounter` rather than generalising it, because
+    every number this simulator has ever produced came out of the solo
+    path and none of them should move because a party engine arrived.
+
+    Three ASSUMPTIONS, all of them load-bearing and none of them in the
+    rules, because the rules do not say how four people stand:
+
+    1. **The party holds a line.** Heroes marked `line="front"` are the
+       only ones a mook can reach while any of them still stands; the
+       back rank is reached only once the front has fallen. That is the
+       shield wall `reach.md`'s design note invokes, and it is what
+       makes standing in front of somebody worth anything at all. It is
+       also the strongest assumption here: a model where every mook can
+       reach everybody prices a tank at nothing, and one where the front
+       rank is impenetrable prices it at everything.
+    2. **A mook hits whoever it is likeliest to hurt** among those it
+       can reach -- lowest targeting difficulty, ties to the most
+       wounded. A competent enemy, which is the conservative choice: it
+       makes protecting somebody harder rather than easier, so a
+       defensive build has to earn its score.
+    3. **Nobody gives ground.** The solo loop lets a hero back away and
+       spends real thought on the arena; a party cannot kite as one body
+       without a positioning model this does not have. So the crowd
+       closes from the opening range and the fight is fought there. This
+       understates a caster, who currently buys rounds with its feet."""
+    template = mook(kind, M)
+    on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+
+    plans = [_swarm_plan(h, template, M) for h in heroes]
+    # The party opens where its longest-sighted member can act, because
+    # that is who says when the fight starts.
+    opening = max(1, max(acting_range(h, plans[i], M)
+                         for i, h in enumerate(heroes)))
+    mook_move = move_of(template, M)
+    mook_reach = reach_of(template, M)
+    limit = engagement_limit(mook_reach)
+
+    crowd = [_fresh(template) for _ in range(count)]
+    gaps = [opening] * count
+    rounds = 0
+
+    def standing(line):
+        return [h for h in heroes if h.chp > 0 and h.line == line]
+
+    while any(mk.chp > 0 for mk in crowd) and any(h.chp > 0 for h in heroes) \
+            and rounds < max_rounds:
+        rounds += 1
+
+        for hero, plan in zip(heroes, plans):
+            if hero.chp <= 0:
+                continue
+            reach = reach_of(hero, M) if plan is None else \
+                acting_range(hero, plan, M)
+            targets = [mk for mk, gap in zip(crowd, gaps)
+                       if mk.chp > 0 and gap <= reach]
+            if targets:
+                _swarm_act(hero, targets, plan, M, on_tie, divisor)
+
+        for i, mk in enumerate(crowd):
+            if mk.chp > 0 and gaps[i] > mook_reach:
+                gaps[i] = max(mook_reach, gaps[i] - mook_move)
+
+        reachable = standing("front") or standing("back")
+        if not reachable:
+            break
+        engaged = 0
+        for mk, gap in zip(crowd, gaps):
+            if mk.chp <= 0 or gap > mook_reach:
+                continue
+            engaged += 1
+            if engaged > limit * len(reachable):
+                break
+            target = min(reachable,
+                         key=lambda h: (targeting_difficulty(h, M),
+                                        h.mhp + h.chp))
+            td = targeting_difficulty(target, M)
+            total = d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
+            if (total >= td) if on_tie else (total > td):
+                apply_damage(target, damage_from(mk, target, total - td, M))
+                if target.chp <= 0:
+                    reachable = standing("front") or standing("back")
+                    if not reachable:
+                        break
+
+    return rounds, sum(1 for h in heroes if h.chp > 0)
 
 
 def run_encounter(hero, kind, count, M, max_rounds=40):
