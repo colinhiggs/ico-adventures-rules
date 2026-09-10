@@ -184,16 +184,18 @@ than one that blundered in. That is a strange thing to teach.
 
 ## Design note: a known softness at the top
 
-One number this rests on is not yet true at the top of the game. At
-level fifteen every archetype in the panel has between `8` and `38`
-points it cannot place, because the mastery hit point ceiling and the
-power source ceiling both bind. A level up there is therefore not worth
-a full {{ advancement:mechanics.points_per_level }} points, and the flat
-cost charges as though it were.
+One number this rests on is not yet true at the top of the game. A
+level is worth {{ advancement:mechanics.points_per_level }} points
+everywhere, and at the top of the game a fifth of them buy nothing that
+can be measured — partly points nobody can place, and mostly a power
+source reservoir far past the size any fight can empty. The share is
+about a fourteenth at level five and a seventh at level ten, so it
+grows with the career. The flat cost charges as though none of that were
+happening.
 
-The fix is a further sink on the advancement menu rather than anything
-in this document, and it is worth doing before these numbers are treated
-as settled. What is written here is honest about the middle of the game,
+The fix is a change to the advancement menu rather than anything in this
+document, and it is worth making before these numbers are treated as
+settled. What is written here is honest about the middle of the game,
 where it was designed, and slightly generous to the top, where the menu
 runs out before the budget does.
 {% endbook-only %}

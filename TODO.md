@@ -69,15 +69,16 @@ The damaging spells are done: bolts, lances, and the three area families
     aim at. It also makes the panel's top level the actual top level,
     which is what every gate currently assumes without saying so.
   - **Open it up.** Levels past fifteen need something to spend a
-    budget on, and today they have less than nothing: at fifteen every
-    archetype already has between `8` and `38` points it cannot place
-    (see the sink entry below). A sixteenth level under the present
-    menu is mostly a ceiling raise and a power. Options worth measuring
-    are a fourth discipline grade above Master, a second attribute
-    track, or letting a Master grade open a second power pool — all of
-    which are new material rather than a bigger number.
-  Do the sink first either way. Deciding the cap while a level at the
-  top is worth less than a level in the middle decides it against a
+    budget on, and today they have less than nothing: about a fifth of
+    a level 15 budget already buys nothing measurable — see
+    [balancing_notes.md](balancing_notes.md). A sixteenth level under
+    the present menu is mostly a ceiling raise and a power. Options
+    worth measuring are a fourth discipline grade above Master, a
+    second attribute track, or letting a Master grade open a second
+    power pool — all of which are new material rather than a bigger
+    number.
+  Settle the economy first either way. Deciding the cap while a level
+  at the top is worth a fifth less than it says decides it against a
   number that is known to be wrong.
 - **Experience is drafted and threat is not in it yet.** `experience.md`
   awards points for milestones the adventure names, one experience point
