@@ -1227,7 +1227,13 @@ STAND_IN = {
     "stance": "dodge",
 }
 
-PARTY_TRIALS = 60
+PARTY_TRIALS = 24
+
+# Built party members, keyed by (name, level). Building one costs a few
+# seconds because it shops, and the same four reference members appear
+# in every measurement at a level, so building them once matters more
+# than it looks.
+_MEMBERS = {}
 
 
 def _line_for(spec):
@@ -1236,9 +1242,12 @@ def _line_for(spec):
 
 
 def _member(name, spec, level, M, panel):
-    char = m.build_character(name, spec, level, M, shopping_foe=panel)
-    char.line = _line_for(spec)
-    return char
+    key = (name, level)
+    if key not in _MEMBERS:
+        char = m.build_character(name, spec, level, M, shopping_foe=panel)
+        char.line = _line_for(spec)
+        _MEMBERS[key] = char
+    return _MEMBERS[key]
 
 
 def party_for(role, filler_name, filler_spec, level, M):
@@ -1278,13 +1287,15 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
     schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
     score = 0.0
     for trial in range(trials):
-        # Common random numbers. The whole measure is a difference
-        # between two parties that differ in one member, and if the two
-        # runs face different dice most of what comes back is the dice.
-        # Seeding each trial the same way in both runs means the two
-        # days start identically and diverge only where the swapped
-        # member actually changes something -- which cuts the trials
-        # needed for a stable difference by an order of magnitude.
+        # Common random numbers, and only partly working. Seeding each
+        # trial the same way in both runs makes the two days START
+        # identically, but the moment the parties differ they consume
+        # different numbers of draws and the streams come apart. It is
+        # worth 22% off the standard deviation of a difference, measured
+        # -- 0.376 to 0.295 -- rather than the order of magnitude a
+        # properly paired comparison would give. Getting that would mean
+        # each creature drawing from its own stream keyed by trial,
+        # actor and round, which is a change inside `d20` and not here.
         if seed is not None:
             _random.seed(parallel.duel_seed(seed, trial))
         fighters = [copy.deepcopy(h) for h in party]
@@ -1302,6 +1313,57 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
         standing = sum(max(0, h.mhp) + max(0, h.chp) for h in fighters)
         score += standing / max(1, full)
     return score / trials
+
+
+def _party_task(M, task):
+    """One party's day. Top-level and taking its own `Mechanics` so that
+    it runs the same in a worker as it does here."""
+    level, role, name, trials = task
+    spec = STAND_IN if name == "stand-in" else ARCHETYPES[name]
+    party = party_for(role, name, spec, level, M)
+    return (role, name), party_day(party, M, trials,
+                                   seed="party|%s|%d" % (role, level))
+
+
+def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
+    """What each build is worth in each slot, over replacement level.
+
+    Read across a row: the peak says what the build is FOR, and how far
+    the row falls away from that peak says how much it needs to be put
+    in the right place. Read down a column: who the party would rather
+    have in that slot.
+
+    A row that is high and flat is a flexible build. A row that is high
+    in one place and low elsewhere is a specialist, which is not a
+    criticism -- it is the thing the competing-sink design is trying to
+    make possible. What would be a failure is a row that is flat and
+    LOW, or a build whose peak is somebody else's slot."""
+    roles = list(REFERENCE_ROSTER)
+    tasks = [(level, role, "stand-in", trials) for role in roles]
+    tasks += [(level, role, name, trials)
+              for name in sorted(ARCHETYPES) for role in roles]
+    done = (pool.map(_party_task, tasks) if pool is not None
+            else [_party_task(M, task) for task in tasks])
+    score = {key: value for key, value in done}
+
+    hr("What each build is worth to a party at level %d" % level)
+    print("encounters of the standard day the party gets through, over a "
+          "replacement-level stand-in")
+    print("%-12s %s %9s %9s" % (
+        "build", "".join("%10s" % r for r in roles), "best", "spread"))
+    print("%-12s %s" % ("(stand-in)", "".join(
+        "%10.2f" % score[(r, "stand-in")] for r in roles)))
+    for name in sorted(ARCHETYPES):
+        row = {r: score[(r, name)] - score[(r, "stand-in")] for r in roles}
+        best = max(row, key=row.get)
+        print("%-12s %s %9s %+9.2f" % (
+            name, "".join("%+10.2f" % row[r] for r in roles), best,
+            max(row.values()) - min(row.values())))
+    print()
+    print("The stand-in row is what the party manages with nobody good "
+          "in that slot, out of")
+    print("%d encounters. Everything below it is a difference against "
+          "that." % len(m.DEFAULT_DAY))
 
 
 def party_utility(name, spec, level, M, trials=PARTY_TRIALS):
@@ -1507,6 +1569,10 @@ def main():
     ap.add_argument("--headroom", action="store_true",
                     help="the cheap half of --spectrum: budget against "
                          "ceilings, with no duels and no shopping")
+    ap.add_argument("--party", action="store_true",
+                    help="what each build is worth in each slot of a "
+                         "reference party, over a replacement-level stand-in")
+    ap.add_argument("--party-trials", type=int, default=PARTY_TRIALS)
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--jobs", type=int, default=None,
                     help="worker processes (default %d, or ICO_SIM_JOBS); "
@@ -1541,6 +1607,11 @@ def _run(args, levels, M, pool):
     if args.headroom:
         for level in levels:
             report_headroom(level, M)
+        return 0
+
+    if args.party:
+        for level in levels:
+            report_party_utility(level, M, pool, args.party_trials)
         return 0
 
     if args.spectrum:

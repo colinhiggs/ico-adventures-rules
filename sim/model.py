@@ -2660,8 +2660,16 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
                 continue
             reach = reach_of(hero, M) if plan is None else \
                 acting_range(hero, plan, M)
+            # The line cuts both ways, and it has to. Standing behind
+            # the front rank puts a rank of bodies between you and the
+            # crowd, so a sword cannot reach over it and a spell can.
+            # Without this the back rank is protection at no cost, and
+            # every melee build would rather stand in the wizard's
+            # place -- which is what the first run of this report
+            # reported, and it was measuring the bug.
+            behind = 1 if hero.line == "back" and standing("front") else 0
             targets = [mk for mk, gap in zip(crowd, gaps)
-                       if mk.chp > 0 and gap <= reach]
+                       if mk.chp > 0 and gap + behind <= reach]
             if targets:
                 _swarm_act(hero, targets, plan, M, on_tie, divisor)
 
