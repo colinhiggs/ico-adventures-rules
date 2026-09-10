@@ -313,6 +313,62 @@ proof that the skill is idle in play — but it does mean the defensive
 end of this dial is thinner than it looks, because dodge and block fill
 first and fortitude is what the marginal point actually reaches.
 
+### K, put through the dial
+
+K is 13 points a level with the power source capped at 1 point a level
+— the combination that measured best on the gates. Run through the
+spectrum, it does something the gate numbers gave no sign of.
+
+Builds whose contribution moves at all across the dial, out of ten:
+
+| level | today | K |
+|---|---|---|
+| 1 | 7 | 6 |
+| 5 | 1 | **6** |
+| 10 | 2 | **4** |
+| 15 | 0 | **1** |
+
+At level 5 the panel goes from one build with a live choice to six. The
+generalist spreads 1.50x and the skirmisher 1.49x, where both were flat
+before. At level 10 the skirmisher spreads 2.38x. At level 15 the
+skirmisher is the only build that moves at all, and it is also the only
+build with headroom left.
+
+**Less headroom means the dial bites harder, not less.** That is worth
+stating because it is easy to get backwards: cutting the budget and
+cutting the ceilings both reduce headroom, and while headroom is still
+positive that makes the choice *sharper*. It is only once headroom goes
+negative that the dial dies. K reduces headroom everywhere, which
+revives levels 5 and 10 and leaves 15 as dead as it was.
+
+The cost is at level 1, where the budget is the chargen pool and does
+not move, so all K does there is take two points off the reservoir's
+ceiling. Spreads shrink a little and the skirmisher stops moving.
+
+### Why every curve plateaus at a quarter
+
+Almost every row that moves has the same shape: it rises from 0% to 25%
+and then goes flat. That is not a property of the game, it is the shape
+of the two lists. For a berserker at level 15 under K:
+
+```
+to place 192    offence 33    defence 74    spot 45    capacity 152
+```
+
+A quarter of 192 is 48, which already overfills an offence side worth
+33. Everything above 25% spills back to the other end and changes
+nothing.
+
+**The offence side is the shallow one.** It is one attack skill's ranks
+plus the reservoir, and the reservoir is the shallowest thing in the
+game. That is the single number a competing-sink design has to move: not
+the balance between the ends, but the depth of the offensive one.
+
+`sim/balance.py --headroom` reports this and takes about a twentieth of
+a second, because it needs no duels and no shopping. Run it before the
+sweep rather than after: it says whether there is a choice to measure,
+and the sweep only says how the choice came out.
+
 ### What this asks of any competing-sink design
 
 Two rules fall out, and the second is the one that is easy to miss.

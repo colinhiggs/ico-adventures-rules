@@ -1178,6 +1178,67 @@ def report_contributions(level, chars, M):
 AGGRESSION_STEPS = (0.0, 0.25, 0.5, 0.75, 1.0)
 
 
+def headroom(name, level, M):
+    """Points to place, against places to put them.
+
+    The cheap half of the spectrum question, and worth running first
+    because it needs no duels and no shopping. A dial can only decide
+    anything while the budget is smaller than the ceilings it is being
+    spread across; once it is larger, both ends fill whatever the
+    setting and the choice is not a choice. Positive headroom means the
+    dial bites, and the smaller it is the harder it bites."""
+    spec = ARCHETYPES[name]
+    char = m.build_character(name, spec, level, M)
+    budget = (int(M.get("character-creation", "starting_discipline_budget"))
+              + int(M.get("character-creation", "skill_point_pool"))
+              + (level - 1) * int(M.get("advancement", "points_per_level")))
+    to_place = budget - char.spent["disciplines"]
+
+    order = list(spec.get("skill_priority") or m.TRACKED_SKILLS)
+    if not spec.get("skill_priority"):
+        lead = "block" if char.stance == "block" else "dodge"
+        order.sort(key=lambda s: (s != "attack_melee", s != lead))
+
+    def points_for(skill):
+        focus = m.skill_focus(char, skill, M)
+        return m.skill_cap(focus, level, M) * m.rank_cost(focus, M)
+
+    offence = sum(points_for(s) for s in order
+                  if m.SKILL_ROLE.get(s) == "offence")
+    offence += int(M.get("advancement",
+                         "max_power_source_bought_per_level")) * level
+    defence = -(-(int(M.get("character-creation", "max_starting_mastery_hp"))
+                  + int(M.get("advancement",
+                              "max_mastery_hp_bought_per_level")) * (level - 1))
+                // int(M.get("advancement", "mastery_hp_per_point")))
+    defence += sum(points_for(s) for s in order
+                   if m.SKILL_ROLE.get(s) == "defence")
+    neither = sum(points_for(s) for s in order
+                  if m.SKILL_ROLE.get(s, "neither") == "neither")
+    return to_place, offence, defence, neither
+
+
+def report_headroom(level, M):
+    """Whether a choice exists at all, before asking whether it is fair."""
+    hr("Points to place against places to put them, level %d" % level)
+    print("%-12s %9s %8s %8s %6s %9s %9s"
+          % ("build", "to place", "offence", "defence", "spot", "capacity",
+             "headroom"))
+    for name in sorted(ARCHETYPES):
+        place, off, dfn, rest = headroom(name, level, M)
+        cap = off + dfn + rest
+        print("%-12s %9d %8d %8d %6d %9d %+9d%s"
+              % (name, place, off, dfn, rest, cap, cap - place,
+                 "" if cap > place else "   dial inert"))
+    print()
+    print("The dial can only decide something while capacity exceeds what "
+          "there is to place.")
+    print("The offence column is the shallow one, which is why every curve "
+          "plateaus early.")
+
+
+
+
 def _at_aggression(M, task):
     """One archetype built at one setting of the dial, shopping for its
     own kit like any other build. Top-level and taking its own
@@ -1296,6 +1357,9 @@ def main():
     ap.add_argument("--spectrum", action="store_true",
                     help="sweep the tank-to-striker dial and report "
                          "contribution across it, instead of the full report")
+    ap.add_argument("--headroom", action="store_true",
+                    help="the cheap half of --spectrum: budget against "
+                         "ceilings, with no duels and no shopping")
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--jobs", type=int, default=None,
                     help="worker processes (default %d, or ICO_SIM_JOBS); "
@@ -1326,6 +1390,11 @@ def main():
 def _run(args, levels, M, pool):
     if args.check:
         return 1 if run_gates(levels, M, args.trials, pool) else 0
+
+    if args.headroom:
+        for level in levels:
+            report_headroom(level, M)
+        return 0
 
     if args.spectrum:
         for level in levels:
