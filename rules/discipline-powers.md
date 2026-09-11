@@ -38,6 +38,7 @@ mechanics:
     grade: initiate
     source: stamina
     skill: block
+    costs_the_reaction: true
     base_difficulty: 6
     base_allies: 1
     difficulty_per_step: 5
@@ -47,6 +48,7 @@ mechanics:
     grade: adept
     source: stamina
     skill: attack_melee
+    costs_the_reaction: true
     base_difficulty: 6
     base_ripostes: 1
     difficulty_per_step: 4
@@ -91,6 +93,7 @@ mechanics:
     grade: initiate
     source: stamina
     skill: dodge
+    costs_the_reaction: true
     base_difficulty: 5
     difficulty_per_step: 3
     damage_reduced_per_step: 2
@@ -141,6 +144,7 @@ mechanics:
     grade: adept
     source: stamina
     skill: spot
+    costs_the_reaction: true
     base_difficulty: 10
     base_interruptions: 1
     difficulty_per_step: 5
@@ -271,13 +275,21 @@ each further {{ mechanics.follow_through.difficulty_per_step }} points.
 Nothing happens unless a target actually falls, which limits the power
 to opposition you can drop in a single blow.
 
-**Guard** *(Initiate; stamina, block, base difficulty
+**Guard** *(Initiate, **reaction**; stamina, block, base difficulty
 {{ mechanics.guard.base_difficulty }})* — you place yourself between an
-ally and what is coming. Until your next turn, attacks aimed at
-{{ mechanics.guard.base_allies }} ally within your reach (see
-[[movement]]) are aimed at you instead, resolved against your own targeting difficulty. Each further
+ally and what is coming. Declare it on your turn and it holds until your
+next: attacks aimed at {{ mechanics.guard.base_allies }} ally within
+your reach (see [[movement]]) are aimed at you instead, resolved against
+your own targeting difficulty. Each further
 {{ mechanics.guard.difficulty_per_step }} points of difficulty covers
 {{ mechanics.guard.extra_allies_per_step }} more ally.
+
+Guarding spends your reaction for the round it covers (see
+[[turn-order]]). Standing in front of somebody is therefore a round you
+cannot Riposte, cannot Deflect, and cannot answer anybody crossing your
+reach. Guard is the one reaction declared in advance rather than in
+answer to something, and committing before you know what is coming is
+the whole of its price.
 
 **Riposte** *(Adept, **reaction**; stamina, melee attack, base difficulty
 {{ mechanics.riposte.base_difficulty }})* — a defence that answers back.

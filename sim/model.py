@@ -2714,6 +2714,33 @@ def _worth_healing(heroes, caps, plan):
 # part of this the rules do not supply.
 
 
+# What this model knows how to spend a reaction on. Anything else
+# carrying `costs_the_reaction` is a reaction the party path cannot
+# price yet -- Anticipate, and Guard until it is built -- and
+# `reaction_kit` lists those rather than quietly leaving them out, so a
+# build measured here says what it was not credited for.
+MODELLED_REACTIONS = ("riposte", "deflect")
+
+
+def is_reaction(M, power_id):
+    """Whether a power is paid for out of the reaction. Read from the
+    power's own mechanics, like its discipline and its grade, so moving
+    one on or off the reaction is a rule-file edit and nothing else."""
+    return bool(power_def(M, power_id).get("costs_the_reaction"))
+
+
+def reaction_powers(char, M):
+    """Every reaction this build may spend its one on."""
+    out = []
+    for rule_id in ("discipline-powers", "general-powers"):
+        for power_id, p in sorted(M.rules.get(rule_id, {}).items()):
+            if not isinstance(p, dict) or not p.get("costs_the_reaction"):
+                continue
+            if opens_for(char, power_id, M):
+                out.append(power_id)
+    return out
+
+
 def _free_attack(char, foe, M, on_tie):
     """One swing outside the action economy, resolved as any other."""
     td = targeting_difficulty(foe, M)
@@ -2755,7 +2782,7 @@ def riposte_plan(char, foe, M):
     value is capped at that target's hit points: past the fourth swing
     into a goblin there is nothing left to buy, and without the cap the
     search happily pays for swings at a corpse."""
-    if not opens_for(char, "riposte", M):
+    if not (opens_for(char, "riposte", M) and is_reaction(M, "riposte")):
         return None
     per_attack = attack_expectation(char, foe, M)[0]
     if per_attack <= 0:
@@ -2788,7 +2815,7 @@ def deflect_plan(char, foe, M):
     Reduction beyond the blow is wasted, so the value is capped at what
     one LANDING blow from this foe actually does -- which is the mean
     damage divided by the chance of landing, not the mean damage."""
-    if not opens_for(char, "deflect", M):
+    if not (opens_for(char, "deflect", M) and is_reaction(M, "deflect")):
         return None
     damage, hits = attack_expectation(
         foe, char, M, dodge_bonus=sustained_dodge_bonus(char, M))
@@ -2849,7 +2876,9 @@ def reaction_kit(char, foe, M):
     if deflect is not None:
         hold = max(hold, hit * deflect["value"])
     return {"reach_value": reach_value, "riposte": riposte,
-            "deflect": deflect, "take_reach": reach_value >= hold}
+            "deflect": deflect, "take_reach": reach_value >= hold,
+            "unpriced": [pid for pid in reaction_powers(char, M)
+                         if pid not in MODELLED_REACTIONS]}
 
 
 def _spend_riposte(char, foe, plan, M, on_tie):

@@ -56,6 +56,12 @@ Powers say when they are reactions. Riposte answers an attack that
 missed you, Deflect blunts one that did not, and Anticipate spends the
 reaction to act out of turn entirely.
 
+Guard is the odd one of the four. It is declared on your own turn rather
+than in answer to anything, and it spends the reaction you would
+otherwise have been holding, so that blows meant for somebody near you
+come to you instead. Everything else here is paid for after you know
+what you are paying for; Guard is paid for first.
+
 Not every reaction is a power. Answering somebody who walks into the
 reach of a longer weapon costs the same one — see [[reach]] — so a
 fighter holding a polearm is choosing between their reach and their
@@ -93,4 +99,13 @@ The single reaction is what makes Riposte, Deflect and Guard choices
 rather than free extras. Without a cap, a defensive character answers
 every attack in the round and the action economy quietly stops meaning
 anything.
+
+Guard in particular has to cost something, and the reaction is the only
+thing it can cost without making it unusable. Charging the action would
+mean a character who protects somebody does nothing else all fight,
+which is not a role anybody wants to play. Charging nothing would mean
+every shield in the game is carried by somebody standing in front of
+the wizard for free, which is not a decision. Paying in advance, out of
+the same reaction the counter-attacks want, makes protecting somebody a
+thing you choose over defending yourself.
 {% endbook-only %}
