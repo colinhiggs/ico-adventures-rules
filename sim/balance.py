@@ -1194,10 +1194,17 @@ def report_contributions(level, chars, M):
 #
 # Attribute totals are 80, as everything else measured here has.
 REFERENCE_ROSTER = {
+    # Strength 16 and not 14: block is strength-governed, so the two
+    # points are a point of targeting difficulty, a tenth of the damage
+    # it takes per blow, and half a round of life under fire -- the
+    # whole of the gap between this build at 158 contribution and the
+    # panel's sentinel at 186. Nothing else moved it: awareness adept
+    # and martial master both left every number identical, because the
+    # block skill is at its ceiling and already focused at adept.
     "line": {
         "disciplines": [("martial", "adept"), ("awareness", "initiate")],
-        "attributes": {"strength": 14, "dexterity": 10, "constitution": 16,
-                       "intelligence": 10, "willpower": 14, "charisma": 16},
+        "attributes": {"strength": 16, "dexterity": 10, "constitution": 16,
+                       "intelligence": 10, "willpower": 14, "charisma": 14},
         "stance": "block", "line": "front",
     },
     "striker": {

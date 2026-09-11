@@ -2707,11 +2707,19 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
        also the strongest assumption here: a model where every mook can
        reach everybody prices a tank at nothing, and one where the front
        rank is impenetrable prices it at everything.
-    2. **A mook hits whoever it is likeliest to hurt** among those it
-       can reach -- lowest targeting difficulty, ties to the most
-       wounded. A competent enemy, which is the conservative choice: it
-       makes protecting somebody harder rather than easier, so a
-       defensive build has to earn its score.
+    2. **A mook hits whoever it expects to hurt most** among those it
+       can reach, ties to the most wounded.
+
+       This began as "lowest targeting difficulty", which sounded like
+       the same thing and is not. Armour in these rules LOWERS your
+       targeting difficulty and pays you back in reduction, so hitting
+       whoever is easiest to hit means hitting whoever is in plate --
+       the one target a competent enemy would leave alone. It also
+       handed a defensive build its whole job for free: the tank drew
+       every blow by being armoured, rather than by doing anything.
+       Expected damage is the honest reading of "likeliest to hurt", and
+       it makes a defensive build earn its keep, which is what the old
+       comment claimed and the old code did not do.
     3. **The front rank closes; nobody gives ground.** The party opens
        where its longest-sighted member can act, which with a caster in
        it is spell range, and then its front rank walks forward to meet
@@ -2814,9 +2822,11 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
             engaged += 1
             if engaged > limit * len(reachable):
                 break
-            target = min(reachable,
-                         key=lambda h: (targeting_difficulty(h, M),
-                                        h.mhp + h.chp))
+            target = max(reachable,
+                         key=lambda h: (attack_expectation(
+                             mk, h, M,
+                             dodge_bonus=sustained_dodge_bonus(h, M))[0],
+                             -(h.mhp + h.chp)))
             td = targeting_difficulty(target, M)
             total = d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
             if (total >= td) if on_tie else (total > td):
