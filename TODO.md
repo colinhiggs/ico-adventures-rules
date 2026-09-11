@@ -11,6 +11,11 @@ likely to be thought of again. An entry moves there only when nothing
 about it is outstanding — one that was half done, however large the
 half, stays here with the rest of it.
 
+[balancing_notes.md](balancing_notes.md) is the third file, for a
+question that has been measured hard but not decided. Read it before
+reopening anything it covers: the numbers are expensive to produce and
+the dead ends are the expensive part to rediscover.
+
 ## The spell list
 
 The damaging spells are done: bolts, lances, and the three area families
@@ -51,6 +56,40 @@ The damaging spells are done: bolts, lances, and the three area families
   what the simulator can say anything about.
 
 ## Rules gaps found while doing the above
+- **The game has no top, and the level clock has consumers past
+  fifteen.** Nothing declares a level cap. `sim/balance.py` measures at
+  1, 5, 10 and 15 and the prose talks about "level fifteen" as though
+  it were the end, but that is habit rather than a rule, and
+  `disciplines.levels_per_master` is `8` — a count, so a second Master
+  arrives at sixteen. Something has to be decided, and the two answers
+  are different games:
+  - **Cap it.** Say sixteen or twenty in `advancement.md`, and the
+    second Master is either the last thing you buy or unreachable.
+    Cheap, honest, and it gives `experience.md`'s thresholds an end to
+    aim at. It also makes the panel's top level the actual top level,
+    which is what every gate currently assumes without saying so.
+  - **Open it up.** Levels past fifteen need something to spend a
+    budget on, and today they have less than nothing: about a fifth of
+    a level 15 budget already buys nothing measurable — see
+    [balancing_notes.md](balancing_notes.md). A sixteenth level under
+    the present menu is mostly a ceiling raise and a power. Options
+    worth measuring are a fourth discipline grade above Master, a
+    second attribute track, or letting a Master grade open a second
+    power pool — all of which are new material rather than a bigger
+    number.
+  Settle the economy first either way. Deciding the cap while a level
+  at the top is worth a fifth less than it says decides it against a
+  number that is known to be wrong.
+- **Experience is drafted and threat is not in it yet.** `experience.md`
+  awards points for milestones the adventure names, one experience point
+  to one advancement point, with level derived from the career total.
+  Threat is meant to become a fourth milestone -- an award keyed off a
+  creature's `challenge_level` -- so that earning is a hybrid rather
+  than either thing alone. It is deliberately not there yet: nothing has
+  measured `challenge_level`, and the creature loader below is the
+  prerequisite. When it lands, this should be one more entry in the
+  award list and nothing else in the document should have to move. If it
+  does have to move, the shape was wrong.
 - **Poison** is named in the skill list as something Fortitude resists
   and exists nowhere else. It wants to be a condition.
 - **Level 1 fights are too short.** *Fixed, by granting ten mastery hit
@@ -463,13 +502,18 @@ The damaging spells are done: bolts, lances, and the three area families
   view of at all. The arithmetic is what it is — a wound that keeps a
   constitution 10 character down for six nights keeps a constitution 18
   character down for two.
-- **High level builds cannot spend their points.** At level 15 every
-  archetype has 8 to 38 points it is unable to place, because the
-  mastery hit point ceiling and the power source ceiling both bind. The
-  power source ceiling is the strange one: raising it converts those
-  points into stamina or spirit and the extra buys nothing whatever,
-  because a senior character already has more reservoir than a fight
-  can spend. The advancement menu needs another sink, not a bigger one.
+- **The advancement point economy is oversupplied.** *Measured at
+  length; see [balancing_notes.md](balancing_notes.md), which supersedes
+  what this entry used to say.* The short form: unspent points were the
+  small half. Counting the reservoir bought past the point where it
+  measurably stops paying, dead points run 7% of the budget at level 5,
+  14% at level 10 and 20% at level 15. Every tracked skill is at its
+  ceiling from level 5 onward, so points do not constrain the combat
+  sheet at all. A supply cut to 13 or 14 a level and a reservoir cap
+  near saturation both measure well; mastery hit points do not work as
+  a sink and neither does raising prices. What is still open is the
+  sink for what is left, and whether points should constrain combat at
+  all.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons

@@ -23,6 +23,11 @@ A **level** in Ico is not a template. It is a budget of
 skill ceilings, and it is spent in exactly the same shop as
 [[character-creation]].
 
+The points are the same points [[experience]] awards, one for one, so
+they arrive over the course of an adventure rather than all at once.
+What a level marks is the clock: the grants below that are not points,
+and the ceilings that move.
+
 ## What a level gives
 
 - {{ mechanics.points_per_level }} points to spend, as below.

@@ -14,3 +14,5 @@ budget you spend on that menu.
 {% include discipline-list %}
 
 {% include advancement %}
+
+{% include experience %}

@@ -35,6 +35,11 @@ import parallel
 # through the command line.
 SEED = 12345
 
+# Set by main() when --checkpoint is given. A module global rather than
+# an argument threaded through a dozen reports, for the same reason SEED
+# is one: it is a property of the run and not of any measurement in it.
+CHECKPOINT = None
+
 TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
@@ -876,7 +881,9 @@ def duel_grid(level, chars, M, trials, pool=None):
              for i, a in enumerate(names) for b in names[i + 1:]]
     if pool is None:
         return [_duel(M, task) for task in tasks]
-    return pool.map(_duel, tasks)
+    return pool.map(_duel, tasks, checkpoint=CHECKPOINT, label="duel",
+                    keys=["%d|%s|%s" % (level, a, b)
+                          for _l, a, b, _sa, _sb, _t in tasks])
 
 
 def report_duels(level, chars, M, trials, pool=None):
@@ -1175,6 +1182,393 @@ def report_contributions(level, chars, M):
           "than the build's best.")
 
 
+# ---------------------------------------------------------------------
+# The party as the unit of measurement
+# ---------------------------------------------------------------------
+# Four roles, deliberately NOT drawn from ARCHETYPES. A build measured
+# into a party containing itself is measuring its own redundancy, and a
+# reference drawn from the panel makes the panel vote on itself -- the
+# hazard TODO.md already records about every statistic taken over the
+# panel, with teeth this time. These four are plain on purpose: they are
+# a context to be useful in, not competitors.
+#
+# Attribute totals are 80, as everything else measured here has.
+REFERENCE_ROSTER = {
+    # Strength 16 and not 14: block is strength-governed, so the two
+    # points are a point of targeting difficulty, a tenth of the damage
+    # it takes per blow, and half a round of life under fire -- the
+    # whole of the gap between this build at 158 contribution and the
+    # panel's sentinel at 186. Nothing else moved it: awareness adept
+    # and martial master both left every number identical, because the
+    # block skill is at its ceiling and already focused at adept.
+    "line": {
+        "disciplines": [("martial", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 16, "dexterity": 10, "constitution": 16,
+                       "intelligence": 10, "willpower": 14, "charisma": 14},
+        "stance": "block", "line": "front",
+    },
+    "striker": {
+        "disciplines": [("martial", "adept"), ("athletic", "initiate")],
+        "attributes": {"strength": 16, "dexterity": 14, "constitution": 12,
+                       "intelligence": 10, "willpower": 12, "charisma": 16},
+        "stance": "dodge", "line": "front",
+    },
+    "caster": {
+        "disciplines": [("magical", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 10, "dexterity": 12, "constitution": 12,
+                       "intelligence": 16, "willpower": 14, "charisma": 16},
+        "stance": "dodge", "casts": True, "line": "back",
+        "skill_priority": ["spellcasting", "attack_ranged", "dodge", "spot"],
+    },
+    "healer": {
+        "disciplines": [("spiritual", "adept"), ("awareness", "initiate")],
+        "attributes": {"strength": 10, "dexterity": 12, "constitution": 14,
+                       "intelligence": 10, "willpower": 18, "charisma": 16},
+        "stance": "dodge", "casts": True, "line": "back",
+        "major_domain": "healing", "minor_domains": ("war",),
+        "skill_priority": ["spellcasting", "dodge", "attack_melee", "spot"],
+    },
+}
+
+# Replacement level: what the slot holds when nobody good is in it. The
+# whole measure is a difference against this, because a support build
+# scores nothing on its own and the difference it makes to somebody else
+# is the only thing it was ever for.
+STAND_IN = {
+    "disciplines": [("martial", "initiate"), ("awareness", "initiate")],
+    "attributes": {"strength": 13, "dexterity": 13, "constitution": 13,
+                   "intelligence": 13, "willpower": 13, "charisma": 15},
+    "stance": "dodge",
+}
+
+# Measured, not guessed: six seeds over the same party at 24 trials
+# gave a standard deviation of 0.12 on one estimate, so a DIFFERENCE of
+# two -- which is what every number in the report is -- carries about
+# 0.17. Entries smaller than roughly 0.35 are inside two of those and
+# are not resolved. Resolving 0.10 needs about 280 trials, eleven times
+# the cost. 24 is the number for looking; it is not the number for
+# deciding anything.
+PARTY_TRIALS = 24
+PARTY_ESTIMATE_SD_AT_24 = 0.12
+
+# Built party members, keyed by (name, level). Building one costs a few
+# seconds because it shops, and the same four reference members appear
+# in every measurement at a level, so building them once matters more
+# than it looks.
+_MEMBERS = {}
+
+
+def _line_for(spec):
+    """Back if it casts and says nothing, front otherwise."""
+    return spec.get("line") or ("back" if spec.get("casts") else "front")
+
+
+def _member(name, spec, level, M, panel):
+    """A built member, cached against the shopping rather than the copy.
+
+    The cache exists because building one of these weighs a few hundred
+    kits and the same four appear in every measurement at a level. It
+    returns a COPY, and that is not caution: `party_for` writes `line`
+    on whatever it is handed, so returning the cached object let one
+    task leave a build standing in the back rank and the next task
+    inherit it. With a dozen workers taking tasks in whatever order they
+    come free, a build's rank then depended on what had run before it in
+    that worker -- which is how a berserker came to be measured as the
+    best thing to put in the wizard's slot."""
+    key = (name, level)
+    if key not in _MEMBERS:
+        char = m.build_character(name, spec, level, M, shopping_foe=panel)
+        char.line = _line_for(spec)
+        _MEMBERS[key] = char
+    return copy.deepcopy(_MEMBERS[key])
+
+
+def party_for(role, filler_name, filler_spec, level, M):
+    """The reference party with `role`'s slot filled by somebody else,
+    or the intact roster when `role` is None.
+
+    The slot keeps the role's own line, so a build measured into the
+    healer's slot stands where the healer stood. Putting it wherever it
+    would rather be would measure the slot instead of the build."""
+    panel = shopping_panel(level, M)
+    party = []
+    for other, spec in REFERENCE_ROSTER.items():
+        if other == role:
+            filler = _member(filler_name, filler_spec, level, M, panel)
+            filler.line = _line_for(spec)
+            party.append(filler)
+        else:
+            party.append(_member(other, spec, level, M, panel))
+    return party
+
+
+def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
+    """How much of the standard day the party gets through.
+
+    Encounters cleared, plus the share of the party still standing at
+    the end. The second term is not decoration: cleared encounters alone
+    is an integer from zero to five, and resolving a difference of a
+    fifth of an encounter out of a five-point scale takes several
+    hundred trials. Partial credit for finishing in one piece is
+    continuous, so it separates two builds that both clear the day but
+    at different cost, at a tenth of the trials.
+
+    The day's crowds are multiplied by the size of the party, because
+    `DEFAULT_DAY` was written for one body and four people walking
+    through a schedule built for one measures nothing at all."""
+    import copy
+    import random as _random
+    schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
+    score = 0.0
+    for trial in range(trials):
+        # Common random numbers, and only partly working. Seeding each
+        # trial the same way in both runs makes the two days START
+        # identically, but the moment the parties differ they consume
+        # different numbers of draws and the streams come apart. It is
+        # worth 22% off the standard deviation of a difference, measured
+        # -- 0.376 to 0.295 -- rather than the order of magnitude a
+        # properly paired comparison would give. Getting that would mean
+        # each creature drawing from its own stream keyed by trial,
+        # actor and round, which is a change inside `d20` and not here.
+        if seed is not None:
+            _random.seed(parallel.duel_seed(seed, trial))
+        fighters = [copy.deepcopy(h) for h in party]
+        caps = [m.maxima(h) for h in fighters]
+        full = sum(c["mhp"] + c["chp"] for c in caps)
+        for kind, count in schedule:
+            if not any(h.chp > 0 for h in fighters):
+                break
+            _, survivors = m.party_encounter(fighters, kind, count, M)
+            if survivors == 0:
+                break
+            score += 1
+            for h, cap in zip(fighters, caps):
+                m.recover(h, cap, M, tier)
+        standing = sum(max(0, h.mhp) + max(0, h.chp) for h in fighters)
+        score += standing / max(1, full)
+    return score / trials
+
+
+def _party_task(M, task):
+    """One party's day. Top-level and taking its own `Mechanics` so that
+    it runs the same in a worker as it does here."""
+    level, role, name, trials = task
+    spec = (None if name == "@intact"
+            else STAND_IN if name == "stand-in" else ARCHETYPES[name])
+    party = party_for(None if spec is None else role, name, spec, level, M)
+    return (role, name), party_day(party, M, trials,
+                                   seed="party|%s|%d" % (role, level))
+
+
+def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
+    """What each build is worth in each slot, over replacement level.
+
+    Read across a row: the peak says what the build is FOR, and how far
+    the row falls away from that peak says how much it needs to be put
+    in the right place. Read down a column: who the party would rather
+    have in that slot.
+
+    A row that is high and flat is a flexible build. A row that is high
+    in one place and low elsewhere is a specialist, which is not a
+    criticism -- it is the thing the competing-sink design is trying to
+    make possible. What would be a failure is a row that is flat and
+    LOW, or a build whose peak is somebody else's slot."""
+    roles = list(REFERENCE_ROSTER)
+    tasks = [(level, roles[0], "@intact", trials)]
+    tasks += [(level, role, "stand-in", trials) for role in roles]
+    tasks += [(level, role, name, trials)
+              for name in sorted(ARCHETYPES) for role in roles]
+    done = (pool.map(_party_task, tasks, checkpoint=CHECKPOINT,
+                     label="party")
+            if pool is not None
+            else [_party_task(M, task) for task in tasks])
+    score = {key: value for key, value in done}
+    intact = score[(roles[0], "@intact")]
+
+    hr("What each build is worth to a party at level %d" % level)
+    print("The intact reference party gets through %.2f of %d encounters."
+          % (intact, len(m.DEFAULT_DAY)))
+    print("With a replacement-level stand-in in one slot instead: %s."
+          % ", ".join("%s %.2f" % (r, score[(r, "stand-in")]) for r in roles))
+    print()
+    print("AGAINST THE PURPOSE-BUILT ROLE-HOLDER -- is this build better "
+          "than somebody")
+    print("made for the job, standing where they stood?")
+    print("%-12s %s %9s %9s" % (
+        "build", "".join("%10s" % r for r in roles), "best", "spread"))
+    for name in sorted(ARCHETYPES):
+        row = {r: score[(r, name)] - intact for r in roles}
+        best = max(row, key=row.get)
+        print("%-12s %s %9s %+9.2f" % (
+            name, "".join("%+10.2f" % row[r] for r in roles), best,
+            max(row.values()) - min(row.values())))
+    print()
+    print("AGAINST A REPLACEMENT-LEVEL STAND-IN -- is this build worth "
+          "having at all?")
+    print("%-12s %s %9s %9s" % (
+        "build", "".join("%10s" % r for r in roles), "best", "spread"))
+    for name in sorted(ARCHETYPES):
+        row = {r: score[(r, name)] - score[(r, "stand-in")] for r in roles}
+        best = max(row, key=row.get)
+        print("%-12s %s %9s %+9.2f" % (
+            name, "".join("%+10.2f" % row[r] for r in roles), best,
+            max(row.values()) - min(row.values())))
+    print()
+    noise = PARTY_ESTIMATE_SD_AT_24 * (24.0 / max(1, trials)) ** 0.5 * 2 ** 0.5
+    print("At %d trials one estimate carries about %.2f, so a difference "
+          "carries about %.2f."
+          % (trials, noise / 2 ** 0.5, noise))
+    print("Read nothing smaller than about %.2f as a real difference."
+          % (2 * noise))
+    print()
+    print("The first table asks what a build is FOR: a positive column "
+          "is a slot it fills")
+    print("better than the specialist. The second asks whether it is "
+          "worth having, and")
+    print("rewards whichever hole is biggest, which is why almost "
+          "everything peaks at the")
+    print("slot whose stand-in is weakest. Read the first for role and "
+          "the second for scale.")
+
+
+def party_utility(name, spec, level, M, trials=PARTY_TRIALS):
+    """What this build is worth in each slot, over replacement level.
+
+    Returns {role: encounters the party clears with this build in that
+    slot, minus what it clears with the stand-in there}. The peak names
+    what the build is for; the flatness across the four is how flexible
+    it is."""
+    out = {}
+    for role in REFERENCE_ROSTER:
+        seed = "party|%s|%d" % (role, level)
+        base = party_day(party_for(role, "stand-in", STAND_IN, level, M),
+                         M, trials, seed=seed)
+        with_it = party_day(party_for(role, name, spec, level, M), M, trials,
+                            seed=seed)
+        out[role] = with_it - base
+    return out
+
+
+AGGRESSION_STEPS = (0.0, 0.25, 0.5, 0.75, 1.0)
+
+
+def headroom(name, level, M):
+    """Points to place, against places to put them.
+
+    The cheap half of the spectrum question, and worth running first
+    because it needs no duels and no shopping. A dial can only decide
+    anything while the budget is smaller than the ceilings it is being
+    spread across; once it is larger, both ends fill whatever the
+    setting and the choice is not a choice. Positive headroom means the
+    dial bites, and the smaller it is the harder it bites."""
+    spec = ARCHETYPES[name]
+    char = m.build_character(name, spec, level, M)
+    budget = (int(M.get("character-creation", "starting_discipline_budget"))
+              + int(M.get("character-creation", "skill_point_pool"))
+              + (level - 1) * int(M.get("advancement", "points_per_level")))
+    to_place = budget - char.spent["disciplines"]
+
+    order = list(spec.get("skill_priority") or m.TRACKED_SKILLS)
+    if not spec.get("skill_priority"):
+        lead = "block" if char.stance == "block" else "dodge"
+        order.sort(key=lambda s: (s != "attack_melee", s != lead))
+
+    def points_for(skill):
+        focus = m.skill_focus(char, skill, M)
+        return m.skill_cap(focus, level, M) * m.rank_cost(focus, M)
+
+    offence = sum(points_for(s) for s in order
+                  if m.SKILL_ROLE.get(s) == "offence")
+    offence += int(M.get("advancement",
+                         "max_power_source_bought_per_level")) * level
+    defence = -(-(int(M.get("character-creation", "max_starting_mastery_hp"))
+                  + int(M.get("advancement",
+                              "max_mastery_hp_bought_per_level")) * (level - 1))
+                // int(M.get("advancement", "mastery_hp_per_point")))
+    defence += sum(points_for(s) for s in order
+                   if m.SKILL_ROLE.get(s) == "defence")
+    neither = sum(points_for(s) for s in order
+                  if m.SKILL_ROLE.get(s, "neither") == "neither")
+    return to_place, offence, defence, neither
+
+
+def report_headroom(level, M):
+    """Whether a choice exists at all, before asking whether it is fair."""
+    hr("Points to place against places to put them, level %d" % level)
+    print("%-12s %9s %8s %8s %6s %9s %9s"
+          % ("build", "to place", "offence", "defence", "spot", "capacity",
+             "headroom"))
+    for name in sorted(ARCHETYPES):
+        place, off, dfn, rest = headroom(name, level, M)
+        cap = off + dfn + rest
+        print("%-12s %9d %8d %8d %6d %9d %+9d%s"
+              % (name, place, off, dfn, rest, cap, cap - place,
+                 "" if cap > place else "   dial inert"))
+    print()
+    print("The dial can only decide something while capacity exceeds what "
+          "there is to place.")
+    print("The offence column is the shallow one, which is why every curve "
+          "plateaus early.")
+
+
+
+
+def _at_aggression(M, task):
+    """One archetype built at one setting of the dial, shopping for its
+    own kit like any other build. Top-level and taking its own
+    `Mechanics` so that it runs the same in a worker as in here."""
+    level, name, aggression = task
+    panel = shopping_panel(level, M)
+    char = m.build_character(name, ARCHETYPES[name], level, M,
+                             shopping_foe=panel, aggression=aggression)
+    return (name, aggression), char
+
+
+def spectrum(level, M, pool=None, steps=AGGRESSION_STEPS):
+    """Every archetype built across the tank-to-striker dial."""
+    tasks = [(level, name, a) for name in ARCHETYPES for a in steps]
+    built = (pool.map(_at_aggression, tasks) if pool is not None
+             else [_at_aggression(M, task) for task in tasks])
+    return {key: char for key, char in built if char is not None}
+
+
+def report_spectrum(level, M, pool=None, steps=AGGRESSION_STEPS):
+    """Contribution against the dial, which is the whole question.
+
+    The advancement menu is only a menu if the ends of it are worth
+    comparable amounts. Reading down a row: flat means a player choosing
+    between hitting harder and lasting longer is making a real choice;
+    rising or falling all the way across means one end is simply better
+    and the other end is a trap for anybody who takes the fiction
+    seriously.
+
+    The dial is a measuring instrument and not a claim about how a
+    character is built. Every other report in this file uses the
+    model's own cascade, which is what `aggression=None` still does."""
+    hr("The tank-to-striker spectrum at level %d" % level)
+    chars = spectrum(level, M, pool, steps)
+    print("contribution against how much of the discretionary budget "
+          "goes to offence")
+    print("%-12s %s %9s %8s" % (
+        "build", "".join("%9s" % ("%d%%" % (a * 100)) for a in steps),
+        "best at", "spread"))
+    for name in sorted(ARCHETYPES):
+        row = {a: chars[(name, a)] for a in steps if (name, a) in chars}
+        if not row:
+            continue
+        scores = {a: contributions({name: c}, level, M)[name]
+                  for a, c in row.items()}
+        best = max(scores, key=scores.get)
+        lo, hi = min(scores.values()), max(scores.values())
+        print("%-12s %s %8d%% %7.2fx" % (
+            name, "".join("%9.0f" % scores[a] for a in steps),
+            best * 100, hi / max(0.01, lo)))
+    print()
+    print("A flat row is a real choice. A row that climbs or falls all "
+          "the way across is a")
+    print("dominant end, and the spread column says by how much.")
+
+
 def contributions(chars, level, M):
     """Offence alone is a bad measure: a defensive signature scores zero
     on it. Contribution is damage dealt per round MULTIPLIED by how many
@@ -1234,11 +1628,32 @@ def main():
     ap.add_argument("--swarm-trials", type=int, default=1200)
     ap.add_argument("--check", action="store_true",
                     help="gates only; exit 1 on failure")
+    ap.add_argument("--spectrum", action="store_true",
+                    help="sweep the tank-to-striker dial and report "
+                         "contribution across it, instead of the full report")
+    ap.add_argument("--headroom", action="store_true",
+                    help="the cheap half of --spectrum: budget against "
+                         "ceilings, with no duels and no shopping")
+    ap.add_argument("--party", action="store_true",
+                    help="what each build is worth in each slot of a "
+                         "reference party, over a replacement-level stand-in")
+    ap.add_argument("--party-trials", type=int, default=PARTY_TRIALS)
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--jobs", type=int, default=None,
                     help="worker processes (default %d, or ICO_SIM_JOBS); "
                          "changes the speed and never a number"
                          % parallel.DEFAULT_JOBS)
+    ap.add_argument("--checkpoint", default=None, metavar="FILE",
+                    help="write finished work to FILE as it lands, and "
+                         "resume from it if it is already there. Also a "
+                         "live progress file: done, total, rate and what "
+                         "finished last.")
+    ap.add_argument("--checkpoint-every", type=float, default=30.0,
+                    metavar="SECONDS",
+                    help="how often to write it (default 30). A write "
+                         "costs single-figure milliseconds, so choose "
+                         "this for how much work you would rather not "
+                         "lose.")
     ap.add_argument("--path", default=None,
                     help="Ruleset directory to measure (or a mechanics.json), "
                          "instead of this checkout's own build/.")
@@ -1254,6 +1669,15 @@ def main():
     TRIALS_SWARM = args.swarm_trials
     M = m.Mechanics(args.path)
 
+    global CHECKPOINT
+    if args.checkpoint:
+        CHECKPOINT = parallel.Checkpoint.load(
+            args.checkpoint, parallel.mechanics_stamp(M),
+            interval=args.checkpoint_every)
+        if CHECKPOINT.results:
+            print("resuming from %s: %d result(s) already in hand"
+                  % (args.checkpoint, len(CHECKPOINT.results)))
+
     print("Ico balance report")
     print("source: %s" % M.path)
 
@@ -1264,6 +1688,21 @@ def main():
 def _run(args, levels, M, pool):
     if args.check:
         return 1 if run_gates(levels, M, args.trials, pool) else 0
+
+    if args.headroom:
+        for level in levels:
+            report_headroom(level, M)
+        return 0
+
+    if args.party:
+        for level in levels:
+            report_party_utility(level, M, pool, args.party_trials)
+        return 0
+
+    if args.spectrum:
+        for level in levels:
+            report_spectrum(level, M, pool)
+        return 0
 
     for level in levels:
         chars = build_all(level, M, pool)
