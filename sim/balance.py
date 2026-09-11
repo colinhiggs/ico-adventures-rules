@@ -35,6 +35,11 @@ import parallel
 # through the command line.
 SEED = 12345
 
+# Set by main() when --checkpoint is given. A module global rather than
+# an argument threaded through a dozen reports, for the same reason SEED
+# is one: it is a property of the run and not of any measurement in it.
+CHECKPOINT = None
+
 TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
@@ -876,7 +881,9 @@ def duel_grid(level, chars, M, trials, pool=None):
              for i, a in enumerate(names) for b in names[i + 1:]]
     if pool is None:
         return [_duel(M, task) for task in tasks]
-    return pool.map(_duel, tasks)
+    return pool.map(_duel, tasks, checkpoint=CHECKPOINT, label="duel",
+                    keys=["%d|%s|%s" % (level, a, b)
+                          for _l, a, b, _sa, _sb, _t in tasks])
 
 
 def report_duels(level, chars, M, trials, pool=None):
@@ -1345,7 +1352,9 @@ def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
     tasks += [(level, role, "stand-in", trials) for role in roles]
     tasks += [(level, role, name, trials)
               for name in sorted(ARCHETYPES) for role in roles]
-    done = (pool.map(_party_task, tasks) if pool is not None
+    done = (pool.map(_party_task, tasks, checkpoint=CHECKPOINT,
+                     label="party")
+            if pool is not None
             else [_party_task(M, task) for task in tasks])
     score = {key: value for key, value in done}
     intact = score[(roles[0], "@intact")]
@@ -1601,6 +1610,17 @@ def main():
                     help="worker processes (default %d, or ICO_SIM_JOBS); "
                          "changes the speed and never a number"
                          % parallel.DEFAULT_JOBS)
+    ap.add_argument("--checkpoint", default=None, metavar="FILE",
+                    help="write finished work to FILE as it lands, and "
+                         "resume from it if it is already there. Also a "
+                         "live progress file: done, total, rate and what "
+                         "finished last.")
+    ap.add_argument("--checkpoint-every", type=float, default=30.0,
+                    metavar="SECONDS",
+                    help="how often to write it (default 30). A write "
+                         "costs single-figure milliseconds, so choose "
+                         "this for how much work you would rather not "
+                         "lose.")
     ap.add_argument("--path", default=None,
                     help="Ruleset directory to measure (or a mechanics.json), "
                          "instead of this checkout's own build/.")
@@ -1615,6 +1635,15 @@ def main():
     global TRIALS_SWARM
     TRIALS_SWARM = args.swarm_trials
     M = m.Mechanics(args.path)
+
+    global CHECKPOINT
+    if args.checkpoint:
+        CHECKPOINT = parallel.Checkpoint.load(
+            args.checkpoint, parallel.mechanics_stamp(M),
+            interval=args.checkpoint_every)
+        if CHECKPOINT.results:
+            print("resuming from %s: %d result(s) already in hand"
+                  % (args.checkpoint, len(CHECKPOINT.results)))
 
     print("Ico balance report")
     print("source: %s" % M.path)
