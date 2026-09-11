@@ -1234,7 +1234,15 @@ STAND_IN = {
     "stance": "dodge",
 }
 
+# Measured, not guessed: six seeds over the same party at 24 trials
+# gave a standard deviation of 0.12 on one estimate, so a DIFFERENCE of
+# two -- which is what every number in the report is -- carries about
+# 0.17. Entries smaller than roughly 0.35 are inside two of those and
+# are not resolved. Resolving 0.10 needs about 280 trials, eleven times
+# the cost. 24 is the number for looking; it is not the number for
+# deciding anything.
 PARTY_TRIALS = 24
+PARTY_ESTIMATE_SD_AT_24 = 0.12
 
 # Built party members, keyed by (name, level). Building one costs a few
 # seconds because it shops, and the same four reference members appear
@@ -1398,6 +1406,13 @@ def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
         print("%-12s %s %9s %+9.2f" % (
             name, "".join("%+10.2f" % row[r] for r in roles), best,
             max(row.values()) - min(row.values())))
+    print()
+    noise = PARTY_ESTIMATE_SD_AT_24 * (24.0 / max(1, trials)) ** 0.5 * 2 ** 0.5
+    print("At %d trials one estimate carries about %.2f, so a difference "
+          "carries about %.2f."
+          % (trials, noise / 2 ** 0.5, noise))
+    print("Read nothing smaller than about %.2f as a real difference."
+          % (2 * noise))
     print()
     print("The first table asks what a build is FOR: a positive column "
           "is a slot it fills")
