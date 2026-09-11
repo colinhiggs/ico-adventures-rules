@@ -1249,12 +1249,23 @@ def _line_for(spec):
 
 
 def _member(name, spec, level, M, panel):
+    """A built member, cached against the shopping rather than the copy.
+
+    The cache exists because building one of these weighs a few hundred
+    kits and the same four appear in every measurement at a level. It
+    returns a COPY, and that is not caution: `party_for` writes `line`
+    on whatever it is handed, so returning the cached object let one
+    task leave a build standing in the back rank and the next task
+    inherit it. With a dozen workers taking tasks in whatever order they
+    come free, a build's rank then depended on what had run before it in
+    that worker -- which is how a berserker came to be measured as the
+    best thing to put in the wizard's slot."""
     key = (name, level)
     if key not in _MEMBERS:
         char = m.build_character(name, spec, level, M, shopping_foe=panel)
         char.line = _line_for(spec)
         _MEMBERS[key] = char
-    return _MEMBERS[key]
+    return copy.deepcopy(_MEMBERS[key])
 
 
 def party_for(role, filler_name, filler_spec, level, M):
