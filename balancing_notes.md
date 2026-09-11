@@ -802,13 +802,51 @@ earning its keep by back-rank tanking cannot any more.
   under the 0.21 threshold, so still unresolved after five tables.
   `rally` and `hold_the_line` remain unpriced.
 
-##### The control run
+##### The control run: Guard's grade moves exactly one build
 
-Guard's grade and the mastery hit point fix are confounded in
-everything above. A run isolating the grade — same seed, same trials,
-same fix, Guard back at Initiate — is the next thing measured, and until
-it reports, no number in this section belongs to one change rather than
-the other.
+Guard's grade and the mastery hit point fix were confounded in
+everything above, so the grade was run on its own: same seed, same
+trials, same fix, Guard back at Initiate, built as a separate ruleset so
+that one value is the only difference.
+
+**Nine of the ten rows came back bit-identical**, and so did the intact
+party and all four stand-in baselines. One row moved:
+
+| skirmisher | line | striker | caster | healer | spread |
+|---|---|---|---|---|---|
+| Guard at Initiate | -0.16 | +0.09 | **+0.50** | **+0.37** | 0.67 |
+| Guard at Adept | -0.30 | -0.03 | **-0.30** | **-0.29** | 0.27 |
+
+So the whole effect of the grade is one build, and the direction is
+against the change. Mean spread, now measured at matched noise:
+
+| | mean spread |
+|---|---|
+| Guard at Initiate | 0.573 |
+| Guard at Adept | 0.534 |
+
+Moving Guard to Adept *reduced* differentiation. The earlier 0.560
+against 0.533 was the confounded pair and understated it.
+
+**Almost nobody uses Guard.** Nine builds had it at Initiate and only
+one behaved differently without it, so generalist, priest and the
+stand-in were carrying a power they never declared. The triage rule is
+why: a guardian must be tough enough to survive the round it commits to
+*and* be standing beside somebody softer, and most builds are never
+both. The reference line-holder and striker are Adept either way, which
+is why the reference party did not move at all.
+
+And the one build that did use it was using it for something the design
+wants. Since a guardian joins the rank it covers, a skirmisher in a
+back-rank slot steps up, tanks, and pays the exposure — a mobile
+high-dodge build with a real reason to be somewhere. Spread 0.67, best
+slot the caster's. Moving Guard to Adept deleted the only role Guard was
+creating.
+
+The diagnosis that prompted the move — *a power everybody owns cannot
+differentiate anybody* — was the wrong half of the problem. The trouble
+is not that everybody owns Guard; it is that almost nobody can use it.
+Raising the grade addressed ownership and left use untouched.
 
 #### What the numbers cost
 
@@ -843,11 +881,12 @@ anybody measured the variance. Measure the variance first.
   against the purpose-built healer is the direct test of whether a
   healer role exists, and it is now +0.05, which is to say there is not
   one.
-- **Guard is at Adept now, and it did not help.** Decided and measured:
-  at Initiate nine of ten builds and the stand-in had it, at Adept six
-  do and the stand-in does not, and the spread between builds did not
-  recover. Whatever is flattening these builds is upstream of any one
-  power, which is the question that replaces this one.
+- **Guard's grade: measured, and Adept is the worse of the two.** It
+  moves exactly one build, costs that build the only role Guard was
+  creating, and lowers mean spread from 0.573 to 0.534. The open
+  question is not the grade but why nine builds hold a power only one of
+  them ever declares — which is a question about the triage rule and
+  about what Guard asks of a guardian, not about what it costs to buy.
 - **Re-calibrate level 1 hit points.** The free ten were sized against
   a character holding three more than the rules gave it, and with that
   corrected a second level 1 duel falls under the three-round floor.
