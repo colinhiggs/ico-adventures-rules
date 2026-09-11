@@ -3073,11 +3073,20 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
        Guard that costs a reaction nothing else wants is a free
        ability, and a tank measured against one is flattered by exactly
        the amount the reaction is worth.
-    5. **A guardian covers anybody in the party.** Guard reaches an ally
-       "within your reach", and this model has no distances inside the
-       party -- only the two ranks. So everybody counts as close enough
-       to be stepped in front of, which is the generous reading and the
-       one that gives the tank the best case it can have.
+    5. **A guardian covers anybody in the party, and joins the rank it
+       covers.** Guard reaches an ally "within your reach", and this
+       model has no distances inside the party -- only the two ranks. So
+       everybody counts as close enough to be stepped in front of.
+
+       But the guardian goes where the blows are. Covering the rank in
+       front puts you in it for the round, reachable like anybody else
+       standing there, because Guard says you PLACE YOURSELF between an
+       ally and what is coming. Without that half, the back rank was the
+       best place in the party to tank from -- untargetable by the line
+       assumption above, and still free to volunteer for blows. It was
+       worth up to +0.82 of an encounter to put a melee build in the
+       wizard\'s chair, and a paragon scored higher there than in the
+       line it was built for.
 
        The crowd also does not play around the guard: a mook picks the
        target it expects to hurt most and the blow is redirected after
@@ -3119,6 +3128,21 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     def standing(line):
         return [h for h in heroes if h.chp > 0 and h.line == line]
 
+    def exposed():
+        """Who the crowd can reach: the front rank, plus anybody who
+        stepped out of the back to stand in front of them this round.
+
+        Guard says you PLACE YOURSELF between an ally and what is
+        coming, so a guardian covering the rank in front has walked into
+        it and can be reached like anybody else standing there. Without
+        this the back rank was the best place in the party to tank from:
+        untargetable by the line assumption, and free to volunteer for
+        blows through Guard anyway."""
+        front = standing("front")
+        up = [heroes[i] for i in stepped
+              if heroes[i].chp > 0 and heroes[i].line != "front"]
+        return (front + up) or standing("back")
+
     while any(mk.chp > 0 for mk in crowd) and any(h.chp > 0 for h in heroes) \
             and rounds < max_rounds:
         rounds += 1
@@ -3141,7 +3165,7 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
         blows = min(sum(1 for g, mk in zip(gaps, crowd)
                         if mk.chp > 0 and g - mook_move <= mook_reach),
                     limit * len(can_reach))
-        guarded = {}
+        guarded, stepped = {}, set()
         for j, hero in enumerate(heroes):
             if hero.chp <= 0 or held[j] < 1:
                 continue
@@ -3154,6 +3178,8 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
             if _spend_guard(hero, kits[j]["guard"], M):
                 for a in cover:
                     guarded[a] = j
+                if any(heroes[a].line != hero.line for a in cover):
+                    stepped.add(j)
 
         for hero, plan, support in zip(heroes, plans, supports):
             if hero.chp <= 0:
@@ -3176,7 +3202,8 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
             # every melee build would rather stand in the wizard's
             # place -- which is what the first run of this report
             # reported, and it was measuring the bug.
-            behind = 1 if hero.line == "back" and standing("front") else 0
+            behind = (1 if hero.line == "back" and standing("front")
+                      and where[id(hero)] not in stepped else 0)
             targets = [mk for mk, gap in zip(crowd, gaps)
                        if mk.chp > 0 and gap + behind <= reach]
             if targets:
@@ -3219,14 +3246,15 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
                     break
                 if hero.chp <= 0 or held[j] < 1 or not kits[j]["take_reach"]:
                     continue
-                behind = 1 if hero.line == "back" and standing("front") else 0
+                behind = (1 if hero.line == "back" and standing("front")
+                          and j not in stepped else 0)
                 band = reach_of(hero, M) - behind
                 if band <= mook_reach or not (before > mook_reach >= gaps[i]):
                     continue
                 held[j] -= 1
                 _free_attack(hero, mk, M, on_tie)
 
-        reachable = standing("front") or standing("back")
+        reachable = exposed()
         if not reachable:
             break
         engaged = 0
@@ -3258,7 +3286,7 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
                     amount = max(0, amount - _spend_deflect(target, plan, M))
                 apply_damage(target, amount)
                 if target.chp <= 0:
-                    reachable = standing("front") or standing("back")
+                    reachable = exposed()
                     if not reachable:
                         break
             else:
