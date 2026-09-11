@@ -2688,7 +2688,7 @@ def _worth_healing(heroes, caps, plan):
     return best
 
 
-def party_encounter(heroes, kind, count, M, max_rounds=40):
+def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     """One fight, fought by a PARTY, each of them spending their own
     resources. Mutates the heroes and returns (rounds, survivors).
 
@@ -2712,11 +2712,24 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
        wounded. A competent enemy, which is the conservative choice: it
        makes protecting somebody harder rather than easier, so a
        defensive build has to earn its score.
-    3. **Nobody gives ground.** The solo loop lets a hero back away and
-       spends real thought on the arena; a party cannot kite as one body
-       without a positioning model this does not have. So the crowd
-       closes from the opening range and the fight is fought there. This
-       understates a caster, who currently buys rounds with its feet."""
+    3. **The front rank closes; nobody gives ground.** The party opens
+       where its longest-sighted member can act, which with a caster in
+       it is spell range, and then its front rank walks forward to meet
+       the crowd while the crowd walks forward to meet it.
+
+       Without that walk the melee half of a party stands still for the
+       whole approach: at level 5 against goblins the opening is ten
+       squares against a mook move of four, so three rounds of a
+       5.6-round fight had the two casters shooting and the two melee
+       heroes unable to reach anything. The line-holder acted in 22% of
+       rounds. Closing is what a party with swords in it actually does,
+       and leaving it out was not a neutral simplification -- it handed
+       a third of every fight to whoever had range.
+
+       Retreat is still missing, and is the smaller error of the two: a
+       party cannot kite as one body without a positioning model this
+       does not have, and giving ground would hand the casters back some
+       of what closing takes away."""
     template = mook(kind, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
@@ -2731,6 +2744,13 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
     mook_move = move_of(template, M)
     mook_reach = reach_of(template, M)
     limit = engagement_limit(mook_reach)
+    # How fast the line can walk, and how close it wants to be: the
+    # shortest reach in the front rank, because the line arrives when
+    # its shortest weapon does.
+    front_specs = [(move_of(h, M), reach_of(h, M))
+                   for h in heroes if h.line == "front"]
+    front_move = min((mv for mv, _r in front_specs), default=0) if close else 0
+    front_reach = min((r for _mv, r in front_specs), default=mook_reach)
 
     crowd = [_fresh(template) for _ in range(count)]
     gaps = [opening] * count
@@ -2769,6 +2789,16 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
                        if mk.chp > 0 and gap + behind <= reach]
             if targets:
                 _swarm_act(hero, targets, plan, M, on_tie, divisor)
+
+        # The line walks in, if it has anywhere to walk to and anybody
+        # left to walk. Both sides closing is why contact arrives in one
+        # round or two rather than three.
+        if front_move and any(h.chp > 0 and h.line == "front" for h in heroes):
+            nearest = min((g for g, mk in zip(gaps, crowd) if mk.chp > 0),
+                          default=front_reach)
+            step = min(front_move, max(0, nearest - front_reach))
+            if step:
+                gaps = [max(front_reach, g - step) for g in gaps]
 
         for i, mk in enumerate(crowd):
             if mk.chp > 0 and gaps[i] > mook_reach:

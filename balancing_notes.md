@@ -369,6 +369,98 @@ a second, because it needs no duels and no shopping. Run it before the
 sweep rather than after: it says whether there is a choice to measure,
 and the sweep only says how the choice came out.
 
+### The party as the unit, and what it says so far
+
+**Status: engine built and measured, one assumption known wrong.**
+
+Three of the four roles worth designing for are invisible to a solo
+metric: `(offence + control) x survival` scores tanking as a longer
+fight, gives support nobody to support, and has no varied context for
+flexibility. `sim/model.py` now has `party_encounter`, N heroes against
+a crowd, and `balance.py --party` scores each build into each slot of a
+reference party.
+
+The measure is marginal, because a support build scores nothing alone:
+what the party gets through with this build in a slot, minus what it
+gets through with somebody else there. Two somebodies, answering two
+questions -- a replacement-level stand-in (is this build worth having?)
+and the purpose-built role-holder (what is it FOR?).
+
+#### What 280 trials says at level 5
+
+Noise floor 0.10. The intact reference party clears 3.52 of 5.
+
+| role-holder | worth over a stand-in |
+|---|---|
+| striker | +0.61 |
+| line | +0.32 |
+| caster | +0.21 |
+| **healer** | **+0.16** |
+
+```
+against the role-holders     line   striker    caster    healer   spread
+berserker                   +0.29     +0.19     +0.43     +0.37    0.24
+priest                      +0.23     +0.00     +0.12     +0.22    0.23
+paragon                     +0.22     +0.10     +0.37     +0.38    0.28
+skirmisher                  -0.01     -0.18     -0.24     -0.25    0.23
+commander                   -0.04     -0.29     -0.45     -0.48    0.44
+evoker                      -0.38     -0.57     +0.10     +0.15    0.72
+generalist                  -0.44     -0.83     -0.73     -0.58    0.39
+```
+
+**There is no healer role, and the reason is not statistical.** `mend`
+is a minor spell any caster can take, and the spread of healing across
+every caster in the panel is 6.0 to 7.0 hit points a round -- arithmetic
+over the d20's faces, with no sampling in it, so no number of trials
+will move it. The Spiritual discipline and the healing domain buy
+essentially nothing. Support cannot be one of four competing roles while
+the thing that defines it is available to everybody at nearly full
+strength.
+
+**Three builds beat every specialist in every slot** -- berserker,
+paragon, priest -- and all three are flat, spreads 0.23 to 0.28. The
+best builds in the game are generalists who outperform specialists at
+the specialists' own jobs. That is the party-level form of everything
+above: when a budget can max every ceiling, being good at one thing buys
+nothing. Only the evoker is genuinely specialised, spread 0.72.
+
+#### The assumption that is wrong
+
+The party opens at its longest acting range, which is the casters', and
+nobody closes. At level 5 against goblins that is 10 squares against a
+mook move of 4: **three rounds of a 5.6-round fight in which the two
+casters shoot and the two melee heroes cannot reach anything.** The
+line-holder acts in 22% of rounds and the striker in 46%.
+
+So the engine *overstates* casting rather than understating it, which is
+the opposite of what the first reading of the caster column suggested --
+and the reference caster is still worth only +0.21 with that head start.
+Casters are weaker than the table makes them look, not stronger.
+
+Three more assumptions are in `party_encounter`'s docstring and all
+three are load-bearing: the party holds a line and the back rank is
+reached only once the front falls; a mook hits whoever it is likeliest
+to hurt; the triage rule for when to heal.
+
+#### What the numbers cost
+
+One estimate at 24 trials carries a standard deviation of 0.12, so a
+difference carries 0.17 and nothing below about 0.35 is resolved. 280
+trials brings that to 0.10 and takes 117 minutes across twelve workers.
+Two separate claims were made from single 24-trial estimates -- +0.48
+and +0.06 for the same quantity, whose true value is +0.25 -- before
+anybody measured the variance. Measure the variance first.
+
+#### Still to do here
+
+- Close the front rank to contact, or open nearer, and measure how much
+  of the caster's value is the free approach.
+- Match the references for quality. They are worth +0.16 to +0.61, so
+  "best slot" still partly measures which reference is weakest.
+- Blessings are still uncalled. `blessing_spells`, `ally_bonus` and
+  `ally_td_bonus` remain unpriced, so support is measured as healing
+  only.
+
 ### What this asks of any competing-sink design
 
 Two rules fall out, and the second is the one that is easy to miss.
