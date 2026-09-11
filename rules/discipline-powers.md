@@ -33,6 +33,16 @@ mechanics:
     difficulty_per_step: 8
     extra_follow_through_per_step: 1
     triggers_on_dropping_a_target: true
+  guard:
+    discipline: martial
+    grade: initiate
+    source: stamina
+    skill: block
+    costs_the_reaction: true
+    base_difficulty: 6
+    base_allies: 1
+    difficulty_per_step: 5
+    extra_allies_per_step: 1
   riposte:
     discipline: martial
     grade: adept
@@ -43,16 +53,6 @@ mechanics:
     base_ripostes: 1
     difficulty_per_step: 4
     extra_ripostes_per_step: 1
-  guard:
-    discipline: martial
-    grade: adept
-    source: stamina
-    skill: block
-    costs_the_reaction: true
-    base_difficulty: 6
-    base_allies: 1
-    difficulty_per_step: 5
-    extra_allies_per_step: 1
   find_the_gap:
     discipline: martial
     grade: adept
@@ -275,15 +275,7 @@ each further {{ mechanics.follow_through.difficulty_per_step }} points.
 Nothing happens unless a target actually falls, which limits the power
 to opposition you can drop in a single blow.
 
-**Riposte** *(Adept, **reaction**; stamina, melee attack, base difficulty
-{{ mechanics.riposte.base_difficulty }})* — a defence that answers back.
-When an attack against you misses, spend your reaction (see
-[[turn-order]]) to make an immediate attack against whoever made it. You may answer
-{{ mechanics.riposte.base_ripostes }} attack this way, and
-{{ mechanics.riposte.extra_ripostes_per_step }} more for each further
-{{ mechanics.riposte.difficulty_per_step }} points of difficulty.
-
-**Guard** *(Adept, **reaction**; stamina, block, base difficulty
+**Guard** *(Initiate, **reaction**; stamina, block, base difficulty
 {{ mechanics.guard.base_difficulty }})* — you place yourself between an
 ally and what is coming. Declare it on your turn and it holds until your
 next: attacks aimed at {{ mechanics.guard.base_allies }} ally within
@@ -298,6 +290,14 @@ cannot Riposte, cannot Deflect, and cannot answer anybody crossing your
 reach. Guard is the one reaction declared in advance rather than in
 answer to something, and committing before you know what is coming is
 the whole of its price.
+
+**Riposte** *(Adept, **reaction**; stamina, melee attack, base difficulty
+{{ mechanics.riposte.base_difficulty }})* — a defence that answers back.
+When an attack against you misses, spend your reaction (see
+[[turn-order]]) to make an immediate attack against whoever made it. You may answer
+{{ mechanics.riposte.base_ripostes }} attack this way, and
+{{ mechanics.riposte.extra_ripostes_per_step }} more for each further
+{{ mechanics.riposte.difficulty_per_step }} points of difficulty.
 
 **Find the Gap** *(Adept; stamina, melee attack, base difficulty
 {{ mechanics.find_the_gap.base_difficulty }})* — a blow aimed at a
@@ -601,20 +601,21 @@ larger multiplier than any other signature grants. It is priced by being
 the capstone of a discipline that does no damage: a Master of Social has
 spent a career on a power pool that cannot, on its own, kill anything.
 
-Guard, Deflect, Call the Shot and Read the Room do nothing on their own
-turn and nothing to a target. They exist because a party is not four
-characters taking turns at the same problem, and a discipline whose only
-expression is damage has nothing to offer the fight it is not built for.
+Guard, Deflect, Call the Shot and Read the Room are the first powers
+here that do nothing on their own turn and nothing to a target. They
+exist because a party is not four characters taking turns at the same
+problem, and a discipline whose only expression is damage has nothing to
+offer the fight it is not built for.
 
-Guard sits at Adept and began at Initiate. Measured in a party, at
-Initiate nine of the ten builds on the simulator's panel had it — and so
-did the replacement-level body the whole measure is a difference
-against. A power everybody owns cannot say what anybody is for: it
-raises the floor and moves no build relative to any other, and the
-spread between builds fell by a fifth when it was added. Standing in
-front of somebody is meant to be a thing a defensive fighter is better
-at than everyone else, so it has to cost a grade that not everyone
-reaches.
+Guard stays at Initiate, and it was moved to Adept once to see whether
+it should. The argument for moving it was that nearly every build could
+afford it, so it said nothing about what anybody was for. Measured
+across a party, the grade turned out to move exactly one build in ten:
+almost nobody who *has* Guard ever finds themselves both durable enough
+to stand in front and standing beside somebody softer, so raising the
+price only took it from the one build that did — a light, quick fighter
+stepping up out of the second rank. The power's problem is who can use
+it, not who can buy it, so the price went back.
 
 Whirl scales in reach rather than in force. Pushing the difficulty finds
 one more body, not a heavier cut — which is what makes it a crowd
