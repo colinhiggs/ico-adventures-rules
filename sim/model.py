@@ -2719,7 +2719,7 @@ def _worth_healing(heroes, caps, plan):
 # price yet -- Anticipate, and Guard until it is built -- and
 # `reaction_kit` lists those rather than quietly leaving them out, so a
 # build measured here says what it was not credited for.
-MODELLED_REACTIONS = ("riposte", "deflect")
+MODELLED_REACTIONS = ("guard", "riposte", "deflect")
 
 
 def is_reaction(M, power_id):
@@ -2842,6 +2842,51 @@ def deflect_plan(char, foe, M):
     return best
 
 
+def guard_plan(char, M):
+    """Guard, declared at its base difficulty.
+
+    Difficulty buys MORE allies covered, and this model cannot price
+    that. The crowd picks one target by expected damage and every blow
+    in the round goes to it, so a second ally under the same shield is
+    insurance against something that does not happen here. Guard is
+    therefore measured at its cheapest, which understates a build that
+    has bought breadth -- and the change that would make breadth pay is
+    a crowd that spreads its attacks, which is the same one assumption
+    5 already names as the lever to pull.
+
+    Paying for coverage nobody uses is not a neutral simplification
+    either: the wide version costs three times the stamina and lands
+    less often, and a guardian that buys it is measured as a worse tank
+    for reasons that have nothing to do with tanking."""
+    if not (opens_for(char, "guard", M) and is_reaction(M, "guard")):
+        return None
+    p = power_def(M, "guard")
+    difficulty = int(p["base_difficulty"])
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    skill = char.skill(str(p["skill"]), M)
+    landed, cost = _power_odds(skill, difficulty, M, divisor)
+    if cost > char.stamina / float(TYPICAL_FIGHT_ROUNDS):
+        return None
+    return {"difficulty": difficulty, "allies": int(p["base_allies"]),
+            "value": landed, "cost": cost, "skill": str(p["skill"])}
+
+
+def _spend_guard(char, plan, M):
+    """Step in front. True if the block roll landed and the cover holds
+    until this character's next turn; the reaction is spent either way,
+    exactly as an action is spent on a power that fails."""
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    floor = plan["difficulty"] // divisor
+    if char.stamina < floor:
+        return False
+    roll = d20(M)[0] + char.skill(plan["skill"], M)
+    if roll < plan["difficulty"]:
+        char.stamina = max(0, char.stamina - floor)
+        return False
+    char.stamina -= min(power_cost(plan["difficulty"], roll, M), char.stamina)
+    return True
+
+
 def reaction_kit(char, foe, M):
     """Everything this build could spend its one reaction on, priced.
 
@@ -2877,6 +2922,12 @@ def reaction_kit(char, foe, M):
         hold = max(hold, hit * deflect["value"])
     return {"reach_value": reach_value, "riposte": riposte,
             "deflect": deflect, "take_reach": reach_value >= hold,
+            # What holding the reaction is worth per incoming attack, so
+            # that Guard -- decided live, because it depends on who is
+            # still standing and how hurt they are -- can be weighed in
+            # the same units as everything else here.
+            "hold": hold,
+            "guard": guard_plan(char, M),
             "unpriced": [pid for pid in reaction_powers(char, M)
                          if pid not in MODELLED_REACTIONS]}
 
@@ -2921,6 +2972,43 @@ def _spend_deflect(char, plan, M):
         return 0
     char.stamina -= min(power_cost(plan["difficulty"], roll, M), char.stamina)
     return plan["reduction"]
+
+
+def _guard_choice(j, heroes, reachable, blow, kit, blows):
+    """Who this hero should step in front of this round, or nobody.
+
+    ASSUMPTION, and a triage rule rather than a rule of the game, held
+    to the same standard as `_worth_healing`: cover the allies a blow
+    hurts more than it hurts you, worst first, and only while you expect
+    to survive the ROUND you are committing to -- every blow that falls
+    on them until your next turn, not one of them. A guardian bleeding
+    out in front of a healthy wizard is protecting nobody, and the
+    one-blow version of this test let a hurt guardian take six.
+
+    Only allies the crowd can actually REACH are worth covering.
+    Standing in front of somebody nothing can hit protects nobody, and
+    counting it would credit Guard with the line's work.
+
+    The two sides are weighed per ROUND, which is the only fair way to
+    put them beside each other: Guard covers every blow that falls on
+    the people behind it until this character's next turn, while Riposte
+    and Deflect each answer exactly one. So the cover is worth the
+    damage it moves off somebody softer, times the blows expected, and
+    that has to beat one use of the alternative."""
+    plan = kit["guard"]
+    if plan is None:
+        return []
+    me = heroes[j]
+    if me.chp <= 0 or me.mhp + me.chp <= blow[j] * max(1, blows):
+        return []
+    softer = sorted((a for a in reachable
+                     if a != j and heroes[a].chp > 0 and blow[a] > blow[j]),
+                    key=lambda a: -blow[a])[:plan["allies"]]
+    if not softer:
+        return []
+    if (blow[softer[0]] - blow[j]) * blows < kit["hold"]:
+        return []
+    return softer
 
 
 def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
@@ -2984,7 +3072,19 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
        This is what has to exist before Guard can be priced at all. A
        Guard that costs a reaction nothing else wants is a free
        ability, and a tank measured against one is flattered by exactly
-       the amount the reaction is worth."""
+       the amount the reaction is worth.
+    5. **A guardian covers anybody in the party.** Guard reaches an ally
+       "within your reach", and this model has no distances inside the
+       party -- only the two ranks. So everybody counts as close enough
+       to be stepped in front of, which is the generous reading and the
+       one that gives the tank the best case it can have.
+
+       The crowd also does not play around the guard: a mook picks the
+       target it expects to hurt most and the blow is redirected after
+       it has chosen, which is what the power says happens. An enemy
+       that instead picked the best UNGUARDED target would take most of
+       this back, and that is the first lever to try if Guard measures
+       too strong."""
     template = mook(kind, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
@@ -3026,6 +3126,34 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
         # turn. Every hero acts in the one step below, so here is that
         # start for all of them.
         held = [per_round] * len(heroes)
+
+        # What one blow from this crowd expects to do to each of them,
+        # which is what both the guard decision and its triage read.
+        blow = [attack_expectation(template, h, M,
+                                   dodge_bonus=sustained_dodge_bonus(h, M))[0]
+                if h.chp > 0 else 0.0 for h in heroes]
+        # Who the crowd can reach, and how many of it will swing, as
+        # the guardian has to guess them: before its own turn, and so
+        # before the two sides have finished walking towards each other.
+        front = [i for i, h in enumerate(heroes)
+                 if h.chp > 0 and h.line == "front"]
+        can_reach = front or [i for i, h in enumerate(heroes) if h.chp > 0]
+        blows = min(sum(1 for g, mk in zip(gaps, crowd)
+                        if mk.chp > 0 and g - mook_move <= mook_reach),
+                    limit * len(can_reach))
+        guarded = {}
+        for j, hero in enumerate(heroes):
+            if hero.chp <= 0 or held[j] < 1:
+                continue
+            cover = _guard_choice(j, heroes, can_reach, blow, kits[j], blows)
+            if not cover:
+                continue
+            # Guard costs the reaction and not the action, so a guardian
+            # still fights -- it simply cannot answer anything.
+            held[j] -= 1
+            if _spend_guard(hero, kits[j]["guard"], M):
+                for a in cover:
+                    guarded[a] = j
 
         for hero, plan, support in zip(heroes, plans, supports):
             if hero.chp <= 0:
@@ -3113,9 +3241,15 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
                              mk, h, M,
                              dodge_bonus=sustained_dodge_bonus(h, M))[0],
                              -(h.mhp + h.chp)))
+            j = where[id(target)]
+            # discipline-powers: attacks aimed at a guarded ally are
+            # aimed at the guardian instead, against the guardian's own
+            # targeting difficulty. The mook has already chosen by then.
+            g = guarded.get(j)
+            if g is not None and heroes[g].chp > 0:
+                target, j = heroes[g], g
             td = targeting_difficulty(target, M)
             total = d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
-            j = where[id(target)]
             if (total >= td) if on_tie else (total > td):
                 amount = damage_from(mk, target, total - td, M)
                 plan = kits[j]["deflect"]
