@@ -661,6 +661,155 @@ engine arrived.
   line-holder carries a sword, reach 1 — the shortest weapon in its own
   party — and so has no band to defend.
 
+#### The baseline the rebalancing starts from
+
+*Two changes land here, and they landed in the same run, so nothing
+below is cleanly attributable to either until the control run named at
+the end says otherwise.*
+
+**Guard moved from Initiate to Adept.** At Initiate nine of the ten
+panel builds had it and so did the replacement-level stand-in that every
+worth in the table is a difference against. At Adept six have it and the
+stand-in does not. Guard now sits at exactly Riposte's grade, which is
+where the two things one reaction must choose between belong.
+
+**The free mastery hit point now arrives with the level that grants
+it.** `advancement.md` lists it under *what a level gives*, beside the
+points; the points arrived as `chargen + (level - 1) x per_level` and
+the hit points multiplied by `level`. So a first-level character
+collected a level's grant it had not gained, and every character after
+it carried one extra level's worth for ever — 2 to 4 hit points, all of
+it the constitution bonus, which is up to a tenth of a level 1 build.
+
+Every archetype now starts at exactly 35 mastery hit points: the free
+ten plus the twenty-five buy cap, with constitution no longer reaching
+level one at all.
+
+The free ten themselves were never in question. `char.mhp = free_mhp +
+bought_mhp`, nothing is deducted for them, and `character-creation.md`
+says nobody pays for them. That was checked on a live build before
+anything was touched.
+
+##### The level 1 calibration was made against hit points that were not there
+
+Gates, read as numbers and not as a count — three failures became four:
+
+| pairing | before | after |
+|---|---|---|
+| L1 berserker vs skirmisher | 2.9 | 2.9 |
+| **L1 skirmisher vs priest** | **passing** | **2.6 FAIL** |
+| L5 berserker vs spellblade | 2.3 | 2.3 |
+| L10 berserker vs paragon | 2.8 | 2.7 |
+
+The three that already failed did not move. The new one is not a
+knife-edge pairing tipping over: this file's own guidance records the
+level 1 priest duel as passing by a thousandth of a round, and it is now
+2.6 — it fell by four tenths.
+
+That is the finding rather than the damage. `character-creation.md`'s
+design note records first-level fights being measurably too short, a
+third of pairings under the floor, and the free ten as the fix. **That
+calibration was made against a level 1 character holding three hit
+points the rules never gave it.** The lever the note already names is
+`max_starting_mastery_hp`, and the note also says what raising it costs:
+it raises the price of surviving and the bill lands on whoever has least
+to spare — a level 1 wizard paying in power source.
+
+##### The table, at 60 trials
+
+Noise: one estimate 0.08, a difference 0.11. Nothing below about 0.21 is
+a real difference. Intact reference party 3.21 of 5.
+
+| role-holder | Guard initiate, no mhp fix | this baseline |
+|---|---|---|
+| line | +0.93 | +0.83 |
+| striker | +0.60 | +0.46 |
+| caster | +0.28 | +0.14 |
+| healer | +0.03 | **+0.00** |
+| *intact party* | *3.39* | *3.21* |
+
+```
+against the role-holders     line   striker    caster    healer   spread
+berserker                   +0.84     +0.20     +0.72     +0.70     0.64
+priest                      +0.41     +0.04     -0.07     +0.13     0.47
+spellblade                  +0.07     -0.21     -0.10     -0.25     0.31
+sentinel                    -0.08     -0.08     +0.04     +0.12     0.21
+duellist                    -0.13     +0.01     +0.05     +0.14     0.27
+commander                   -0.18     +0.11     +0.03     +0.14     0.32
+paragon                     -0.25     +0.16     +0.55     +0.72     0.97
+skirmisher                  -0.30     -0.03     -0.30     -0.29     0.27
+generalist                  -1.01     -0.76     -0.69     -0.49     0.52
+evoker                      -1.24     -0.27     +0.00     +0.11     1.35
+```
+
+##### There is no healer role
+
+The party clears 3.21 with the purpose-built healer in the chair and
+3.21 with a replacement-level body in it. Not "small": zero.
+
+This is not the back-rank guarding artefact — the stand-in never guards,
+because the survive-the-round rule rejects a guardian that soft. It is
+the reaction economy doing what healing used to: Guard, Riposte and
+Deflect prevent or repay damage as it happens, and healing it back
+afterwards is the worse trade. Support-as-healing has been outcompeted
+by support-as-interposition, and the arithmetic finding above — `mend`
+available to every caster at 6.0 to 7.0 hit points a round — says the
+Spiritual discipline was never buying much of it anyway.
+
+It also means the `best` column is unreadable. Seven builds name
+"healer" for no reason except that the healer reference is the weakest
+thing to beat.
+
+##### Moving Guard did not restore differentiation
+
+Mean spread in the table above, across the runs:
+
+| | mean spread |
+|---|---|
+| before reactions | 0.699 |
+| Guard at Initiate | 0.560 |
+| Guard at Adept | 0.533 |
+
+No improvement, and the comparison flatters the last row: spread is a
+*range* across four noisy cells, so noise biases it upward, and this run
+has more noise (60 trials) than the one above it (120). A real fall
+would show up damped.
+
+So **the diagnosis was incomplete.** "A power everybody owns cannot
+differentiate anybody" is true, and removing Guard from four builds and
+from the stand-in did not restore the spread, so Guard's grade was not
+what was holding it down. Whatever is flattening these builds is
+upstream of any one power.
+
+The one clear response to the grade change: **the skirmisher lost Guard
+and collapsed in the back-rank slots**, caster +0.37 to -0.30 and healer
++0.43 to -0.29, both far past the threshold. A build that had been
+earning its keep by back-rank tanking cannot any more.
+
+##### What still stands, five tables in
+
+- **The berserker is the best tank in the game.** +0.84 over the
+  purpose-built line-holder and +1.67 over a stand-in there, its own
+  best slot. A dodge-stance 18-strength damage build beats the defensive
+  specialist at defence. Nothing currently expresses a tank role.
+- **The evoker is the only genuine specialist**, spread 1.35, and the
+  only build for which position matters: -1.24 in the line and actually
+  worse than a replacement body there. That is the shape the design
+  wants, and one build in ten has it.
+- **The paragon is flat**: +0.58, +0.62, +0.69, +0.73 against stand-ins,
+  spread 0.15. Good everywhere, for nothing.
+- **Commander and duellist have separated at last** — by 0.05 and 0.10,
+  under the 0.21 threshold, so still unresolved after five tables.
+  `rally` and `hold_the_line` remain unpriced.
+
+##### The control run
+
+Guard's grade and the mastery hit point fix are confounded in
+everything above. A run isolating the grade — same seed, same trials,
+same fix, Guard back at Initiate — is the next thing measured, and until
+it reports, no number in this section belongs to one change rather than
+the other.
+
 #### What the numbers cost
 
 One estimate at 24 trials carries a standard deviation of 0.12, so a
@@ -694,9 +843,15 @@ anybody measured the variance. Measure the variance first.
   against the purpose-built healer is the direct test of whether a
   healer role exists, and it is now +0.05, which is to say there is not
   one.
-- **Decide whether Guard belongs at initiate grade.** See above: at
-  initiate it is universal, and a universal power differentiates
-  nobody.
+- **Guard is at Adept now, and it did not help.** Decided and measured:
+  at Initiate nine of ten builds and the stand-in had it, at Adept six
+  do and the stand-in does not, and the spread between builds did not
+  recover. Whatever is flattening these builds is upstream of any one
+  power, which is the question that replaces this one.
+- **Re-calibrate level 1 hit points.** The free ten were sized against
+  a character holding three more than the rules gave it, and with that
+  corrected a second level 1 duel falls under the three-round floor.
+  `max_starting_mastery_hp` is the lever `character-creation.md` names.
 
 ### What this asks of any competing-sink design
 
