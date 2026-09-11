@@ -3047,6 +3047,12 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     """One fight, fought by a PARTY, each of them spending their own
     resources. Mutates the heroes and returns (rounds, survivors).
 
+    The round count is the gate-bearing number now. A duel between two
+    high-damage, low-defence builds is *expected* to be short -- that is
+    those builds working, not the system failing -- but a balanced party
+    against a crowd is the case the three-to-twelve band was always
+    describing. `balance.py` reads it out of here.
+
     Kept beside `run_encounter` rather than generalising it, because
     every number this simulator has ever produced came out of the solo
     path and none of them should move because a party engine arrived.

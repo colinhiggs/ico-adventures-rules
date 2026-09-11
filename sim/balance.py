@@ -40,7 +40,32 @@ SEED = 12345
 # is one: it is a property of the run and not of any measurement in it.
 CHECKPOINT = None
 
-TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
+# Rounds a fight should last. This gates the PARTY encounter, which is
+# the case it was always describing: a balanced group against a crowd.
+# It no longer gates a duel from below. Two high-damage, low-defence
+# builds settling it in three rounds is those builds working, and a
+# system that forbids it is forbidding a legitimate way to build a
+# character. The ceiling still applies to duels, because a pairing that
+# cannot finish inside twelve rounds is a stalemate whatever anybody
+# built -- and short duels are still reported, as a diagnostic.
+TARGET_ROUNDS = (3.0, 12.0)
+
+# Trials for the party fight-length gate. Measured before it was chosen:
+# six seeds put the reference party at 5.7 rounds with a standard
+# deviation between 0.08 and 0.22 -- six seeds do not separate those two
+# estimates, and neither matters, because the gate asks a coarse
+# question of a wide band. 5.7 is fifteen standard deviations inside the
+# nearer bound at the pessimistic figure. Twelve trials costs about
+# thirty seconds a level.
+PARTY_GATE_TRIALS = 12
+
+# Below this the fight-length reading means nothing, because it is the
+# length of fights the party is LOSING. A party that does not finish one
+# encounter of the day on average is being massacred, and the rounds it
+# survives are not a calibration of anything. This is a floor for
+# READABILITY and not for balance -- it says the number cannot be
+# interpreted, not that the number is wrong.
+PARTY_DAY_READABLE = 1.0
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
 
@@ -919,6 +944,8 @@ def report_dpr(level, chars, M):
 def run_gates(levels, M, trials, pool=None):
     hr("Gates")
     failures = []
+    short_duels = []            # under the floor, reported and not failed
+    party_rounds = []           # (level, mean rounds, cleared) per level
     ever_chosen = set()
     build_spreads = []          # (gap, level, build) over every build
     class_spreads = []          # (gap, level, build, class) within a class
@@ -1016,12 +1043,42 @@ def run_gates(levels, M, trials, pool=None):
                     % (level, spread, best, contrib[best], worst, contrib[worst],
                        MAX_CONTRIBUTION_SPREAD))
 
+        # A duel is no longer gated from below. Two high-damage,
+        # low-defence builds settling it in three rounds is those builds
+        # working, and the band was always describing a party fight
+        # rather than a grudge match. The ceiling still holds for
+        # everyone: a pairing that cannot finish inside twelve rounds is
+        # a stalemate whatever anybody built. The short ones are still
+        # counted and reported, because a floor nobody enforces is still
+        # worth watching.
         for a, b, rounds, _w, _capped in duel_grid(level, chars, M, trials,
                                                    pool):
-            if not (TARGET_ROUNDS[0] <= rounds <= TARGET_ROUNDS[1]):
+            if rounds > TARGET_ROUNDS[1]:
                 failures.append(
-                    "L%d %s vs %s: %.1f rounds (target %.0f-%.0f)"
-                    % (level, a, b, rounds, *TARGET_ROUNDS))
+                    "L%d %s vs %s: %.1f rounds (target <= %.0f)"
+                    % (level, a, b, rounds, TARGET_ROUNDS[1]))
+            elif rounds < TARGET_ROUNDS[0]:
+                short_duels.append("L%d %s vs %s: %.1f rounds"
+                                   % (level, a, b, rounds))
+
+        # The band's real home: a balanced party against a crowd.
+        overall, _means, cleared = party_fight_length(level, M,
+                                                      PARTY_GATE_TRIALS)
+        if cleared < PARTY_DAY_READABLE:
+            # Check this FIRST. A massacre can sit inside the band and
+            # pass, and then the report says the fights are the right
+            # length while the party is being wiped out in them.
+            failures.append(
+                "L%d the standard day is not survivable: the party clears "
+                "%.2f of 5, so its %.1f-round fights are the length of "
+                "defeats and gate nothing"
+                % (level, cleared, overall))
+        elif not (TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1]):
+            failures.append(
+                "L%d a balanced party's fights run %.1f rounds "
+                "(target %.0f-%.0f), clearing %.2f of 5"
+                % (level, overall, *TARGET_ROUNDS, cleared))
+        party_rounds.append((level, overall, cleared))
 
         # A minor power must never match its standard twin at the same
         # difficulty, or the standard one is pointless.
@@ -1109,6 +1166,17 @@ def run_gates(levels, M, trials, pool=None):
         print("\n%d gate failure(s)." % len(failures))
     else:
         print("  all gates pass")
+
+    if party_rounds:
+        print("\n  party fight length, which is what the band now gates:")
+        for level, overall, cleared in party_rounds:
+            print("    L%-3d %.1f rounds, clearing %.2f of 5" % (level, overall, cleared))
+    if short_duels:
+        print("\n  duels under %.0f rounds -- reported, not failed, because a "
+              "short\n  fight between a glass cannon and a glass cannon is "
+              "those builds working:" % TARGET_ROUNDS[0])
+        for s in short_duels:
+            print("    " + s)
     return failures
 
 
@@ -1302,7 +1370,8 @@ def party_for(role, filler_name, filler_spec, level, M):
     return party
 
 
-def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
+def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
+              rounds_out=None):
     """How much of the standard day the party gets through.
 
     Encounters cleared, plus the share of the party still standing at
@@ -1315,7 +1384,15 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
 
     The day's crowds are multiplied by the size of the party, because
     `DEFAULT_DAY` was written for one body and four people walking
-    through a schedule built for one measures nothing at all."""
+    through a schedule built for one measures nothing at all.
+
+    `rounds_out`, if given, collects `(kind, count, rounds)` for every
+    encounter actually fought. Fight length is the gated quantity now,
+    and it is measured here rather than in its own runner so that it is
+    the length of the SAME fights the score came out of -- a party that
+    is losing fights fast and a party that is winning them fast are not
+    telling you the same thing, and only one number can be trusted
+    without the other."""
     import copy
     import random as _random
     schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
@@ -1338,7 +1415,9 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
         for kind, count in schedule:
             if not any(h.chp > 0 for h in fighters):
                 break
-            _, survivors = m.party_encounter(fighters, kind, count, M)
+            rounds, survivors = m.party_encounter(fighters, kind, count, M)
+            if rounds_out is not None:
+                rounds_out.append((kind, count, rounds))
             if survivors == 0:
                 break
             score += 1
@@ -1358,6 +1437,48 @@ def _party_task(M, task):
     party = party_for(None if spec is None else role, name, spec, level, M)
     return (role, name), party_day(party, M, trials,
                                    seed="party|%s|%d" % (role, level))
+
+
+def party_fight_length(level, M, trials=PARTY_TRIALS, seed=None):
+    """How long the reference party's fights run, by encounter and over
+    the day.
+
+    This is what TARGET_ROUNDS gates. Returns (overall mean, per-kind
+    means, cleared), where `cleared` is the day score the same run
+    produced -- carried along because a fight length measured off a
+    party that is being wiped out means something quite different from
+    one measured off a party that is winning."""
+    party = party_for(None, "@intact", None, level, M)
+    got = []
+    cleared = party_day(party, M, trials, seed=seed or SEED, rounds_out=got)
+    # Keyed in DAY order, not sorted: the day escalates on purpose, and
+    # a fight length that climbs through it is the attrition showing.
+    by_kind = {}
+    for kind, count, rounds in got:
+        by_kind.setdefault((kind, count), []).append(rounds)
+    order = [(k, c * len(party)) for k, c in m.DEFAULT_DAY]
+    means = {k: sum(by_kind[k]) / len(by_kind[k])
+             for k in order if k in by_kind}
+    allr = [r for _k, _c, r in got]
+    return (sum(allr) / max(1, len(allr)), means, cleared)
+
+
+def report_party_rounds(level, M, trials=PARTY_TRIALS):
+    """The gated number, printed with the fights it came from."""
+    overall, means, cleared = party_fight_length(level, M, trials)
+    hr("How long a balanced party's fights run, at level %d" % level)
+    print("%-16s %-8s %s" % ("encounter", "rounds", "in band %s" % (TARGET_ROUNDS,)))
+    for (kind, count), mean in means.items():
+        print("%-16s %-8.1f %s"
+              % ("%d %s" % (count, kind), mean,
+                 "yes" if TARGET_ROUNDS[0] <= mean <= TARGET_ROUNDS[1] else "NO"))
+    print("%-16s %-8.1f %s"
+          % ("over the day", overall,
+             "yes" if TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1] else "NO"))
+    print("\nThe party cleared %.2f of 5 in the same run. A short fight from a "
+          "party\nthat is winning and one from a party that is being wiped out "
+          "are not the\nsame reading." % cleared)
+    return overall
 
 
 def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
@@ -1696,6 +1817,7 @@ def _run(args, levels, M, pool):
 
     if args.party:
         for level in levels:
+            report_party_rounds(level, M, args.party_trials)
             report_party_utility(level, M, pool, args.party_trials)
         return 0
 
