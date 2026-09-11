@@ -930,18 +930,57 @@ The reservoir fails the second rule badly today: its useful ceiling is
   the intended behaviour and is worth confirming rather than assuming
   if the value moves.
 
-### Two simulator faults found on the way
+### Why cost does not fall with skill, and where the lever is
+
+`using-powers` prices a power at `base_cost + difficulty - skill_roll`,
+which is exactly the mechanism a design wants if higher-level characters
+are to do more with a reservoir that grows slowly: roll better, pay
+less. It does not work, and the reason is the minimum.
+
+No power may cost less than `difficulty // minimum_cost_divisor`. That
+floor is set by the difficulty you declared and **knows nothing about
+your skill**, so once the formula sinks beneath it, every further point
+of skill buys nothing at all.
+
+| build | level | declared | skill | floor | formula | paid |
+|---|---|---|---|---|---|---|
+| duellist | 1 | 12 | 7 | 4 | 4.5 | 4.5 |
+| duellist | 5 | 20 | 11 | 6 | 8.5 | 8.5 |
+| duellist | 10 | 20 | 16 | 6 | 3.5 | **6.0 floor** |
+| duellist | 15 | 20 | 21 | 6 | -1.5 | **6.0 floor** |
+| evoker | 15 | 30 | 21 | 10 | 8.5 | **10.0 floor** |
+
+Martial builds reach the floor by level 10 and casters by level 15.
+After that the price of a power is a function of the difficulty declared
+and of nothing else.
+
+Two facts sit beside it. Declared difficulty is nearly flat with level
+— 12 to 20 for the martial builds across fifteen levels, 25 to 30 for
+the casters — so characters do not push harder as they improve, they
+succeed more often at the same push. And spend per fight is flat at
+about 10 from level 1 to level 15 while the reservoir goes from 21 to
+145, which is the same fact seen from the other end.
+
+So the lever for *"cost comes down as skill goes up"* is
+`minimum_cost_divisor`, or a floor that is relative to skill rather than
+to declared difficulty. It is not `base_cost`, which is already being
+cancelled out.
+
+### One simulator fault found on the way
 
 Both belong in `TODO.md` under simulator gaps if they are not fixed
 alongside whatever is decided here.
 
-- **`max_cost_of_a_successful_power` is not modelled.** `using-powers`
-  says a successful power never costs more than 10; `sim/model.py`
-  computes `base_cost + difficulty - roll` with a floor and no ceiling.
-  So the simulator overcharges powers, which means it values the
-  reservoir *higher* than the rules do. Every reservoir finding above
-  is therefore conservative — and the drift cost of capping it is an
-  overestimate.
+- **`max_cost_of_a_successful_power` was not modelled. Fixed, and it
+  changed nothing.** `using-powers` says a successful power never costs
+  more than 10; the model computed `base_cost + difficulty - roll` with
+  a floor and no ceiling, so above a declared difficulty of 32 the floor
+  overtook the cap and billed a successful power for reaching further.
+  The cap is in now. Every number this file records was unmoved by it,
+  gates included, because **nothing in the panel ever declares a
+  difficulty above 30** — the fault was real and dormant. Worth having
+  because it is correct, and worth knowing it is not what was hiding
+  anything.
 - **The spend priority is fixed, and becomes load-bearing under a tight
   budget.** `build_character` reserves mastery hit points, then buys
   skills to their caps, then dumps whatever is left into the power

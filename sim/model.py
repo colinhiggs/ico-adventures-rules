@@ -1717,12 +1717,30 @@ def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0,
 
 def power_cost(difficulty, roll, M, minor=False):
     """A minor power has no minimum, so it reaches zero once the roll
-    beats the difficulty by the base cost."""
+    beats the difficulty by the base cost.
+
+    A SUCCESS never costs more than `max_cost_of_a_successful_power`.
+    From the formula alone that is automatic -- a roll that reached the
+    difficulty makes `base + difficulty - roll` at most `base` -- but the
+    minimum does not know it, and once the declared difficulty passes
+    three times the cap the minimum overtakes it and charges a
+    successful power more for having reached further. using-powers says
+    the opposite in as many words: *reaching further is paid for in the
+    risk of failing, not in a larger bill when you succeed.* So on a
+    success the cap wins, and this model used to bill the difference.
+
+    A failed power is not capped, because the cap is written about
+    successes -- and every caller pays a failure straight out of the
+    minimum rather than through here."""
     base = int(M.get("using-powers", "base_cost"))
     raw = base + difficulty - roll
-    if minor:
-        return max(0, raw)
-    return max(difficulty // int(M.get("using-powers", "minimum_cost_divisor")), raw)
+    floor = 0 if minor else difficulty // int(
+        M.get("using-powers", "minimum_cost_divisor"))
+    cost = max(floor, raw)
+    if roll >= difficulty:
+        return min(int(M.get("using-powers",
+                             "max_cost_of_a_successful_power")), cost)
+    return cost
 
 
 def spell_def(M, spell_id):
@@ -2135,6 +2153,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     # power_cost, unrolled: both of the numbers it reads are the same
     # for all ninety-six faces, and only the roll changes.
     base_cost = int(M.get("using-powers", "base_cost"))
+    cost_cap = int(M.get("using-powers", "max_cost_of_a_successful_power"))
     floor_cost = 0 if minor else difficulty // divisor
 
     damage = 0.0
@@ -2143,7 +2162,10 @@ def power_expectation(char, power_id, difficulty, defender, M):
         roll = face + attack
         total = face + skill
         if roll >= difficulty:
-            cost += weight * max(floor_cost, base_cost + difficulty - roll)
+            # power_cost, unrolled -- including its cap, which only
+            # binds here because the floor can outrun it.
+            cost += weight * min(cost_cap,
+                                 max(floor_cost, base_cost + difficulty - roll))
             main, following, swings = curves[is_crit]
             if (total >= td) if on_tie else (total > td):
                 margin = total - td
