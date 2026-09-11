@@ -110,9 +110,10 @@ ASSUMPTIONS = [
     "swing over a fight, and the override is treated as holding for "
     "the whole fight rather than being re-checked against the distance "
     "each round.",
-    "Spending the reaction on reach costs nothing here, because "
-    "Riposte and Deflect are not modelled. At the table it is the "
-    "whole price of the rule.",
+    "Spending the reaction on reach costs nothing in the SOLO path, "
+    "because Riposte and Deflect are not modelled there. At the table "
+    "it is the whole price of the rule. The party path implements all "
+    "three and makes them compete -- see `reaction_kit`.",
     "A round taken off an enemy is worth the damage that enemy would "
     "have dealt in it, which is how a stun and a sword swing are "
     "quoted in the same currency.",
@@ -2688,6 +2689,211 @@ def _worth_healing(heroes, caps, plan):
     return best
 
 
+# ---------------------------------------------------------------------
+# Reactions
+# ---------------------------------------------------------------------
+#
+# turn-order.md gives everybody one reaction a round, spent on somebody
+# else's turn, and its design note says in as many words that this is
+# what makes Riposte, Deflect and Guard choices rather than free extras.
+# Until now the model had only ever spent it on reach, and the
+# assumption list above admitted what that cost: with the two powers it
+# competes with unimplemented, the reach answer was free, which is the
+# opposite of the rule. In the PARTY path they are implemented.
+#
+# The three claimants fire at different moments, which is most of what
+# makes the choice hard:
+#
+#   reach    when a mook crosses your band, during its approach
+#   riposte  when an attack on you misses, during the crowd's attacks
+#   deflect  when one lands, likewise
+#
+# So the reach answer is offered FIRST, and has to be taken or refused
+# before the round's attacks are rolled. That is the position a player
+# is actually in, and the refusal rule in `reaction_kit` is the only
+# part of this the rules do not supply.
+
+
+def _free_attack(char, foe, M, on_tie):
+    """One swing outside the action economy, resolved as any other."""
+    td = targeting_difficulty(foe, M)
+    total = d20(M)[0] + char.attack_bonus(M) + char.weapon.accuracy
+    if (total >= td) if on_tie else (total > td):
+        apply_damage(foe, damage_from(char, foe, total - td, M))
+
+
+def _power_odds(skill, difficulty, M, divisor):
+    """(chance the power roll lands, expected stamina) for one attempt.
+
+    A failed roll still costs the minimum -- using-powers -- so the
+    second number is not simply the cost of success."""
+    landed, cost = 0.0, 0.0
+    for face, weight, _crit in d20_faces(M):
+        roll = face + skill
+        if roll >= difficulty:
+            landed += weight
+            cost += weight * power_cost(difficulty, roll, M)
+        else:
+            cost += weight * (difficulty // divisor)
+    return landed, cost
+
+
+def riposte_plan(char, foe, M):
+    """What difficulty to declare for Riposte, and what one answer is
+    worth once the trigger has fired.
+
+    The difficulty is searched rather than left at base because it buys
+    whole extra attacks -- `extra_ripostes_per_step` -- so a build with
+    the roll to spare gets two swings out of the one reaction. `value`
+    is conditional on having been missed; the chance of that is applied
+    by whoever is choosing between reactions, because how likely an
+    answer is and how good it is are not the same question.
+
+    The extra attacks all fall on the one who swung and missed, and stop
+    when it drops -- the rules do not say where they go, and spilling
+    them onto the rest of the crowd is the generous reading. So the
+    value is capped at that target's hit points: past the fourth swing
+    into a goblin there is nothing left to buy, and without the cap the
+    search happily pays for swings at a corpse."""
+    if not opens_for(char, "riposte", M):
+        return None
+    per_attack = attack_expectation(char, foe, M)[0]
+    if per_attack <= 0:
+        return None
+    p = power_def(M, "riposte")
+    base_d = int(p["base_difficulty"])
+    step = int(p["difficulty_per_step"])
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
+    skill = char.attack_bonus(M)
+    best = None
+    for difficulty in range(base_d, base_d + 40):
+        attacks = (int(p["base_ripostes"])
+                   + ((difficulty - base_d) // step)
+                   * int(p["extra_ripostes_per_step"]))
+        landed, cost = _power_odds(skill, difficulty, M, divisor)
+        if cost > budget:
+            continue
+        value = landed * min(attacks * per_attack, float(foe.mhp + foe.chp))
+        if best is None or value > best["value"]:
+            best = {"difficulty": difficulty, "attacks": attacks,
+                    "value": value, "cost": cost}
+    return best
+
+
+def deflect_plan(char, foe, M):
+    """What difficulty to declare for Deflect, and what it takes off a
+    blow that has already landed.
+
+    Reduction beyond the blow is wasted, so the value is capped at what
+    one LANDING blow from this foe actually does -- which is the mean
+    damage divided by the chance of landing, not the mean damage."""
+    if not opens_for(char, "deflect", M):
+        return None
+    damage, hits = attack_expectation(
+        foe, char, M, dodge_bonus=sustained_dodge_bonus(char, M))
+    if hits <= 0:
+        return None
+    per_blow = damage / hits
+    p = power_def(M, "deflect")
+    base_d = int(p["base_difficulty"])
+    step = int(p["difficulty_per_step"])
+    per_step = int(p["damage_reduced_per_step"])
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
+    skill = char.skill("dodge", M)
+    best = None
+    for difficulty in range(base_d, base_d + 40):
+        reduction = per_step * (1 + (difficulty - base_d) // step)
+        landed, cost = _power_odds(skill, difficulty, M, divisor)
+        if cost > budget:
+            continue
+        value = landed * min(reduction, per_blow)
+        if best is None or value > best["value"]:
+            best = {"difficulty": difficulty, "reduction": reduction,
+                    "value": value, "cost": cost}
+    return best
+
+
+def reaction_kit(char, foe, M):
+    """Everything this build could spend its one reaction on, priced.
+
+    ASSUMPTION -- the refusal rule, and it is the load-bearing one here.
+    The reach answer is offered before the round's attacks are rolled,
+    so taking it means giving up whatever those attacks might have
+    offered. It is taken when it is worth at least as much as the best
+    defensive answer DISCOUNTED by the chance that answer's trigger
+    fires at all: being missed, for Riposte, and being hit, for Deflect.
+
+    Both are valued against ONE incoming attack. A hero nobody attacks
+    loses nothing by holding its reaction, and one attacked three times
+    has it taken by the first of them, so the count only matters in
+    between. Nothing in the rules says how to make this choice; this is
+    a competent player, not a good one, which is the same standard the
+    triage rule is held to.
+
+    All three are capped at what one of these opponents is actually
+    worth killing or worth being hit by. Against a six-hit-point goblin
+    a swing expecting thirteen damage is a swing expecting six, and
+    comparing an uncapped answer with a capped one would decide the
+    choice on overkill."""
+    reach_value = min(attack_expectation(char, foe, M)[0],
+                      float(foe.mhp + foe.chp))
+    riposte = riposte_plan(char, foe, M)
+    deflect = deflect_plan(char, foe, M)
+    _, hit = attack_expectation(foe, char, M,
+                                dodge_bonus=sustained_dodge_bonus(char, M))
+    hold = 0.0
+    if riposte is not None:
+        hold = max(hold, (1.0 - hit) * riposte["value"])
+    if deflect is not None:
+        hold = max(hold, hit * deflect["value"])
+    return {"reach_value": reach_value, "riposte": riposte,
+            "deflect": deflect, "take_reach": reach_value >= hold}
+
+
+def _spend_riposte(char, foe, plan, M, on_tie):
+    """Answer an attack that missed.
+
+    The power roll and the answering attack are one roll: using-powers
+    says one serves both when the skills match, and Riposte's skill IS
+    the melee attack. Extra answers bought with difficulty ride the same
+    roll, exactly as extra attacks do on the hero's own turn."""
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    floor = plan["difficulty"] // divisor
+    if char.stamina < floor:
+        return
+    roll = d20(M)[0] + char.attack_bonus(M)
+    if roll < plan["difficulty"]:
+        char.stamina = max(0, char.stamina - floor)
+        return
+    char.stamina -= min(power_cost(plan["difficulty"], roll, M), char.stamina)
+    total = roll + char.weapon.accuracy
+    td = targeting_difficulty(foe, M)
+    if not ((total >= td) if on_tie else (total > td)):
+        return
+    for _ in range(plan["attacks"]):
+        if foe.chp <= 0:
+            break
+        apply_damage(foe, damage_from(char, foe, total - td, M))
+
+
+def _spend_deflect(char, plan, M):
+    """Blunt a blow that has already landed. Returns what came off it,
+    which is nothing if the roll fails -- the reaction is spent on the
+    attempt either way, exactly as an action is."""
+    divisor = int(M.get("using-powers", "minimum_cost_divisor"))
+    floor = plan["difficulty"] // divisor
+    if char.stamina < floor:
+        return 0
+    roll = d20(M)[0] + char.skill("dodge", M)
+    if roll < plan["difficulty"]:
+        char.stamina = max(0, char.stamina - floor)
+        return 0
+    char.stamina -= min(power_cost(plan["difficulty"], roll, M), char.stamina)
+    return plan["reduction"]
+
+
 def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     """One fight, fought by a PARTY, each of them spending their own
     resources. Mutates the heroes and returns (rounds, survivors).
@@ -2737,7 +2943,19 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
        Retreat is still missing, and is the smaller error of the two: a
        party cannot kite as one body without a positioning model this
        does not have, and giving ground would hand the casters back some
-       of what closing takes away."""
+       of what closing takes away.
+    4. **One reaction each, and three things wanting it.** Reach,
+       Riposte and Deflect all come out of the single reaction
+       turn-order.md grants, so a build that holds a longer weapon
+       spends its answer on the approach and has nothing left when the
+       blow comes. `reaction_kit` prices the three and carries the
+       refusal rule; the reaction refreshes here at the top of the
+       round, because every hero takes its turn in the same step.
+
+       This is what has to exist before Guard can be priced at all. A
+       Guard that costs a reaction nothing else wants is a free
+       ability, and a tank measured against one is flattered by exactly
+       the amount the reaction is worth."""
     template = mook(kind, M)
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
@@ -2745,6 +2963,11 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     plans = [_swarm_plan(h, template, M) for h in heroes]
     supports = [support_plan(h, M) for h in heroes]
     caps = [maxima(h) for h in heroes]
+    kits = [reaction_kit(h, template, M) for h in heroes]
+    per_round = int(M.get("turn-order", "reactions_per_round"))
+    # Heroes are the same objects for the whole fight, so who was hit
+    # can be turned back into whose reaction it is.
+    where = {id(h): i for i, h in enumerate(heroes)}
     # The party opens where its longest-sighted member can act, because
     # that is who says when the fight starts.
     opening = max(1, max(acting_range(h, plans[i], M)
@@ -2770,6 +2993,10 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
     while any(mk.chp > 0 for mk in crowd) and any(h.chp > 0 for h in heroes) \
             and rounds < max_rounds:
         rounds += 1
+        # turn-order.md: the reaction refreshes at the start of your
+        # turn. Every hero acts in the one step below, so here is that
+        # start for all of them.
+        held = [per_round] * len(heroes)
 
         for hero, plan, support in zip(heroes, plans, supports):
             if hero.chp <= 0:
@@ -2809,8 +3036,38 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
                 gaps = [max(front_reach, g - step) for g in gaps]
 
         for i, mk in enumerate(crowd):
-            if mk.chp > 0 and gaps[i] > mook_reach:
-                gaps[i] = max(mook_reach, gaps[i] - mook_move)
+            if mk.chp <= 0 or gaps[i] <= mook_reach:
+                continue
+            before = gaps[i]
+            gaps[i] = max(mook_reach, gaps[i] - mook_move)
+            # reach.md: an approach across the band is answered out of
+            # the reaction, once a round, and only a longer weapon
+            # imposes a band at all. The rank in front counts against a
+            # back-rank weapon here exactly as it does on the hero's own
+            # turn -- a staff cannot answer over the shield wall either.
+            #
+            # The trigger is ARRIVING, not entering: reach.md answers an
+            # opponent "standing in your band" who then moves towards
+            # you, so the swing lands as they come inside the short
+            # weapon's reach and not as they first come inside the long
+            # one's. `_crowd_advance` in the solo path reads it the
+            # other way round -- `before > hero_reach >= after` answers
+            # entry to the band instead. The two agree whenever a mook
+            # covers the whole band in one move, which is most of the
+            # time, and that is why this is only being said here rather
+            # than changed there: changing it moves every duel number
+            # and every gate with them.
+            for j, hero in enumerate(heroes):
+                if mk.chp <= 0:
+                    break
+                if hero.chp <= 0 or held[j] < 1 or not kits[j]["take_reach"]:
+                    continue
+                behind = 1 if hero.line == "back" and standing("front") else 0
+                band = reach_of(hero, M) - behind
+                if band <= mook_reach or not (before > mook_reach >= gaps[i]):
+                    continue
+                held[j] -= 1
+                _free_attack(hero, mk, M, on_tie)
 
         reachable = standing("front") or standing("back")
         if not reachable:
@@ -2829,12 +3086,23 @@ def party_encounter(heroes, kind, count, M, max_rounds=40, close=True):
                              -(h.mhp + h.chp)))
             td = targeting_difficulty(target, M)
             total = d20(M)[0] + mk.attack_bonus(M) + mk.weapon.accuracy
+            j = where[id(target)]
             if (total >= td) if on_tie else (total > td):
-                apply_damage(target, damage_from(mk, target, total - td, M))
+                amount = damage_from(mk, target, total - td, M)
+                plan = kits[j]["deflect"]
+                if plan is not None and held[j] >= 1:
+                    held[j] -= 1
+                    amount = max(0, amount - _spend_deflect(target, plan, M))
+                apply_damage(target, amount)
                 if target.chp <= 0:
                     reachable = standing("front") or standing("back")
                     if not reachable:
                         break
+            else:
+                plan = kits[j]["riposte"]
+                if plan is not None and held[j] >= 1:
+                    held[j] -= 1
+                    _spend_riposte(target, mk, plan, M, on_tie)
 
     return rounds, sum(1 for h in heroes if h.chp > 0)
 
