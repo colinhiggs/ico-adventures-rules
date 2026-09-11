@@ -1249,9 +1249,19 @@ def build_character(name, spec, level, M, shopping_foe=None,
     mhp_points = buys[MHP].taken
     source_points = buys[SOURCE].taken
 
+    # advancement.md lists the free mastery hit point under WHAT A LEVEL
+    # GIVES, beside the points -- so it arrives on the same schedule they
+    # do, and `points` above counts (level - 1) of them. This used to
+    # multiply by `level`, handing a first-level character a level's
+    # grant it had not gained and every character after that one extra
+    # level's worth for ever. It was worth 2 to 4 hit points depending on
+    # constitution, which is up to a tenth of a level 1 build -- and
+    # level 1 is exactly where character-creation.md's design note
+    # records fights being measurably too short and the free ten being
+    # the fix. That calibration was made with this in it.
     free_mhp = ((int(M.get("advancement", "free_mastery_hp_per_level"))
                  + per_bonus("free_mastery_hp_per_constitution",
-                             "constitution")) * level
+                             "constitution")) * (level - 1)
                 + int(M.get("character-creation", "free_starting_mastery_hp")))
     bought_mhp = min(mhp_ceiling, mhp_points * per_point)
 
