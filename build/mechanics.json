@@ -300,17 +300,6 @@
         "extra_follow_through_per_step": 1,
         "triggers_on_dropping_a_target": true
       },
-      "guard": {
-        "discipline": "martial",
-        "grade": "initiate",
-        "source": "stamina",
-        "skill": "block",
-        "costs_the_reaction": true,
-        "base_difficulty": 6,
-        "base_allies": 1,
-        "difficulty_per_step": 5,
-        "extra_allies_per_step": 1
-      },
       "riposte": {
         "discipline": "martial",
         "grade": "adept",
@@ -321,6 +310,17 @@
         "base_ripostes": 1,
         "difficulty_per_step": 4,
         "extra_ripostes_per_step": 1
+      },
+      "guard": {
+        "discipline": "martial",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "block",
+        "costs_the_reaction": true,
+        "base_difficulty": 6,
+        "base_allies": 1,
+        "difficulty_per_step": 5,
+        "extra_allies_per_step": 1
       },
       "find_the_gap": {
         "discipline": "martial",
