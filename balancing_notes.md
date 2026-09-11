@@ -371,7 +371,9 @@ and the sweep only says how the choice came out.
 
 ### The party as the unit, and what it says so far
 
-**Status: engine built and measured, one assumption known wrong.**
+**Status: engine built and measured. Enough diagnostics to start
+rebalancing on; the assumptions are named as they arise and three of
+them have already been wrong.**
 
 Three of the four roles worth designing for are invisible to a solo
 metric: `(offence + control) x survival` scores tanking as a longer
@@ -476,6 +478,189 @@ three are load-bearing: the party holds a line and the back rank is
 reached only once the front falls; a mook hits whoever it is likeliest
 to hurt; the triage rule for when to heal.
 
+#### Reactions, Guard, and the table as it now stands
+
+*Everything above this line was measured before the model played
+reactions at all. Both tables above are superseded and are kept only as
+the record of what each fix was worth.*
+
+Four things landed after the geometry fix, each of them moving the
+table. Two were corrections to the model, one implemented rules it had
+never played, and one was a rule change.
+
+**1. Mook targeting was backwards.** It picked the lowest targeting
+difficulty, and the code called that "whoever it is likeliest to hurt"
+and the conservative choice. Armour in these rules *lowers* targeting
+difficulty and pays back in reduction, so that rule means "hit the one
+in plate" — the single target a competent enemy would leave alone. The
+tank was taking 2.82 a blow and the casters 3.79, and the tank was
+drawing every one of them. It also handed a defensive build its whole
+job for free: it protected the party by wearing armour rather than by
+doing anything. Targeting now goes by expected damage.
+
+**2. The reference line-holder was a worse build than the panel's own
+sentinel** — `strength` 14 against 16, 158 contribution against 186.
+Two attribute points were the entire gap. An awareness grade and a
+martial grade were each tried and left *every number identical*,
+because the block skill is already at its ceiling and already focused.
+The only lever that moved anything was the one track the per-level
+ceilings do not touch, which is the advancement-economy finding above
+arriving from a third direction.
+
+**3. The reaction economy.** `turn-order.md` gives everybody one
+reaction a round and its design note says that is what makes Riposte,
+Deflect and Guard choices rather than free extras. The model had only
+ever spent it on reach, and its own assumption list admitted the cost:
+with the two powers it competes with unimplemented, the reach answer
+was free. All three now compete for the one reaction in the party path.
+Over a whole run they fire at roughly 8.3 Ripostes, 2.4 reach answers
+and 1.1 Deflects per trial, and the party gains **+0.31 encounters** —
+the size of the hole the model had.
+
+**4. Guard costs the reaction.** `turn-order.md` had always claimed it
+did; Guard's own entry never said so, so the rule the design note
+described was written nowhere a player or a program could find it.
+`costs_the_reaction` is now on Guard, Riposte, Deflect and Anticipate,
+the simulator reads it the way `opens_for` reads discipline and grade,
+and `reaction_kit` lists the reactions a build holds that it cannot
+price rather than dropping them from the score. MINOR when a release is
+next cut: four names added, no value moved.
+
+Guard itself is worth about +0.2 to the party and about +0.2 to the
+line-holder's worth. At 120 trials that is two standard deviations —
+suggestive, not settled.
+
+##### The triage rule outweighed the mechanic
+
+This is the expensive lesson of the entry. The first Guard run gave
+line +1.41 and striker +0.89, which would have been the most decisive
+thing ever measured here. It was an artefact of the triage test: it
+asked whether the guardian could survive **one blow** before committing
+to a round of them, so a hurt guardian would step in front of six. The
+party it wrecked worst was the one with a replacement-level body in the
+line, and because every worth in the table is a difference against that
+party, crippling it inflated the line-holder's worth.
+
+Changing the test to "survive the round you are committing to" — one
+line — moved the headline by **0.55, about five times the noise**,
+while Guard itself moves it by 0.2, about two. *The modelling choice
+around the mechanic outweighed the mechanic by more than double.*
+Before any number in this section is quoted, that is the thing to
+remember about all of them.
+
+##### The back rank was the best place to tank from
+
+Guard let anybody cover anybody, and the line assumption made the back
+rank unreachable. Together they handed a melee build in a back-rank
+slot both halves of the deal: untargetable, and still free to volunteer
+for blows. Measured against banning cross-rank guarding outright, same
+seeds:
+
+| party | as built | cross-rank banned | artefact |
+|---|---|---|---|
+| skirmisher in caster | 3.83 | 3.01 | +0.82 |
+| paragon in caster | 4.23 | 3.63 | +0.61 |
+| sentinel in healer | 3.67 | 3.19 | +0.48 |
+| paragon in healer | 4.22 | 4.06 | +0.16 |
+| healer in healer | 3.31 | 3.31 | +0.00 |
+| paragon in line | 3.17 | 3.17 | +0.00 |
+
+Both controls sit at exactly zero — the reference healer has no martial
+discipline and so no Guard, and the paragon in the line is already in
+the front rank. The evoker, the one build in the panel with no martial
+discipline at all, was likewise the one whose back-rank columns did not
+move between tables while commander, duellist, sentinel and skirmisher
+swung between 0.4 and 0.9.
+
+The fix is not the ban. Guard says you *place yourself* between an ally
+and what is coming, so covering the rank in front puts you in it for
+the round: reachable like anybody else standing there, and no longer
+treating that rank as cover for your own weapon. The corrected parties
+land between the two columns, which is what that should look like.
+
+##### The table, at 120 trials
+
+Noise floor: one estimate 0.05, a difference 0.08. Nothing below about
+0.15 is a real difference. The intact reference party clears 3.39 of 5.
+
+| role-holder | before reactions | + reactions | + Guard |
+|---|---|---|---|
+| line | +0.76 | +0.64 | **+0.93** |
+| striker | +0.42 | +0.36 | +0.60 |
+| caster | +0.22 | +0.08 | +0.28 |
+| healer | +0.24 | +0.17 | **+0.03** |
+| *intact party* | *2.83* | *3.14* | *3.39* |
+
+```
+against the role-holders     line   striker    caster    healer   spread
+berserker                   +0.75     +0.15     +0.58     +0.69     0.60
+priest                      +0.23     +0.01     +0.08     +0.15     0.22
+paragon                     -0.34     +0.09     +0.39     +0.53     0.87
+skirmisher                  -0.15     +0.05     +0.37     +0.43     0.58
+sentinel                    -0.22     -0.07     +0.18     +0.22     0.44
+duellist                    -0.28     -0.07     +0.09     +0.15     0.42
+commander                   -0.24     +0.01     +0.06     +0.13     0.37
+spellblade                  -0.20     -0.31     -0.18     -0.15     0.16
+evoker                      -1.18     -0.31     -0.04     +0.05     1.24
+generalist                  -1.15     -0.96     -0.54     -0.44     0.70
+```
+
+##### What the table says that the design should hear
+
+**Making the model more faithful made the builds more alike.** Mean
+spread in the table above, across the three runs: 0.699 before
+reactions, 0.661 with the artefact in, **0.560** corrected. Down a
+fifth, and the wrong way for a design whose goal is competing sinks.
+
+The reason is legible in the mechanics. **Guard is martial *initiate*.**
+Nine of the ten panel builds have it, and so does the replacement-level
+stand-in. A power everybody owns cannot distinguish anybody; it raises
+the floor. If Guard is meant to make tanking a *role*, it is at the
+wrong grade — and that is the same shape as the two findings above,
+where ceilings bound everything a point could buy and only an uncapped
+attribute moved anything.
+
+**The reference healer is worth +0.03 — nothing at all.** This is not
+the back-rank artefact; the stand-in in that chair never guards,
+because the survive-the-round rule rejects a guardian that soft. It is
+a real consequence of the reaction economy: Guard, Riposte and Deflect
+prevent or repay damage as it happens, and healing it back afterwards
+is the worse deal. Support-as-healing has been outcompeted by
+support-as-interposition. It also means eight of ten builds name
+"healer" as their best slot for no reason except that the healer
+reference is the weakest thing to beat, so the `best` column currently
+measures reference quality and not build role.
+
+**The paragon has gone flat**: +0.59, +0.69, +0.66, +0.56 against
+stand-ins, spread 0.13 — the flattest row measured here. Good
+everywhere, which is the "high and flat" failure the report's own
+docstring names.
+
+**Commander and duellist remain identical** across four tables and all
+eight cells. Their combat sheets differ in one skill their shared
+stance never reads. `rally` and `hold_the_line` are still unpriced, so
+the commander still pays five points for nothing — and the excuse the
+code carried for that ("there are no allies") expired when the party
+engine arrived.
+
+##### Two things found and deliberately not changed
+
+- **The two paths read `reach.md` differently.** It answers an opponent
+  "standing in your band" who then moves towards you, so the swing
+  lands as they *arrive* inside the short weapon's reach. The party
+  path does that; `_crowd_advance` in the solo path answers *entry* to
+  the band instead. They agree whenever a mook covers the whole band in
+  one move, which is most of the time. Changing the solo path moves
+  every duel number and every gate with them, so it is recorded here
+  rather than done.
+- **There is no polearm.** `turn-order.md` pictures "a fighter holding
+  a polearm choosing between their reach and their Riposte every round
+  of the fight". The only reach-2 weapons are `great_axe`, `staff` and
+  `two_handed_sword`, all two-handed, so that fighter cannot exist and
+  a shield user never faces the choice at all. The reference
+  line-holder carries a sword, reach 1 — the shortest weapon in its own
+  party — and so has no band to defend.
+
 #### What the numbers cost
 
 One estimate at 24 trials carries a standard deviation of 0.12, so a
@@ -487,13 +672,31 @@ anybody measured the variance. Measure the variance first.
 
 #### Still to do here
 
-- Close the front rank to contact, or open nearer, and measure how much
-  of the caster's value is the free approach.
-- Match the references for quality. They are worth +0.16 to +0.61, so
-  "best slot" still partly measures which reference is weakest.
-- Blessings are still uncalled. `blessing_spells`, `ally_bonus` and
-  `ally_td_bonus` remain unpriced, so support is measured as healing
-  only.
+- **Match the references for quality.** This has gone from a footnote
+  to the dominant effect: the healer reference is worth +0.03 and the
+  line-holder +0.93, so the `best` column is reading which reference is
+  weakest and calling it a build's role. Nothing in the first table
+  means much until the four are level.
+- **Price the ally buffs.** `rally`, `hold_the_line` and
+  `call_the_shot` all carry an ally bonus and none is called, which is
+  why commander and duellist keep measuring as the same build.
+  `blessing_spells` is likewise uncalled, so support is still measured
+  as healing and interposition only.
+- **Let the crowd play around the guard.** A mook picks by expected
+  damage and the blow is redirected afterwards, which is what the power
+  says happens — but an enemy that picked the best *unguarded* target
+  would take much of Guard's value back. This is also what would make
+  `extra_allies_per_step` worth anything: while the crowd concentrates
+  every blow on one target, a second ally under the same shield insures
+  against something that does not happen, so Guard is measured at base
+  difficulty only.
+- **Re-measure the evoker in the healer's slot** — a pure damage caster
+  against the purpose-built healer is the direct test of whether a
+  healer role exists, and it is now +0.05, which is to say there is not
+  one.
+- **Decide whether Guard belongs at initiate grade.** See above: at
+  initiate it is universal, and a universal power differentiates
+  nobody.
 
 ### What this asks of any competing-sink design
 
