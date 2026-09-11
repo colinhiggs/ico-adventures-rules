@@ -388,14 +388,18 @@ and the purpose-built role-holder (what is it FOR?).
 
 #### What 280 trials says at level 5
 
+**Measured before the front rank closed, so the table below is void and
+kept only as the record of what the geometry was worth.** See "the
+assumption that was wrong" underneath it.
+
 Noise floor 0.10. The intact reference party clears 3.52 of 5.
 
-| role-holder | worth over a stand-in |
-|---|---|
-| striker | +0.61 |
-| line | +0.32 |
-| caster | +0.21 |
-| **healer** | **+0.16** |
+| role-holder | worth over a stand-in | after the line closes |
+|---|---|---|
+| striker | +0.61 | +0.64 |
+| line | +0.32 | **+0.70** |
+| caster | +0.21 | +0.36 |
+| healer | +0.16 | **+0.39** |
 
 ```
 against the role-holders     line   striker    caster    healer   spread
@@ -408,14 +412,29 @@ evoker                      -0.38     -0.57     +0.10     +0.15    0.72
 generalist                  -0.44     -0.83     -0.73     -0.58    0.39
 ```
 
-**There is no healer role, and the reason is not statistical.** `mend`
-is a minor spell any caster can take, and the spread of healing across
-every caster in the panel is 6.0 to 7.0 hit points a round -- arithmetic
-over the d20's faces, with no sampling in it, so no number of trials
-will move it. The Spiritual discipline and the healing domain buy
-essentially nothing. Support cannot be one of four competing roles while
-the thing that defines it is available to everybody at nearly full
-strength.
+**Healing is not specialised**, and that part does not depend on any of
+the numbers above. `mend` is a minor spell any caster can take, and the
+spread of healing across every caster in the panel is 6.0 to 7.0 hit
+points a round -- arithmetic over the d20's faces, with no sampling in
+it, so no number of trials and no change of geometry will move it. The
+Spiritual discipline and the healing domain buy essentially nothing over
+any caster with a minor cure.
+
+What that is NOT evidence for, and was briefly claimed to be, is that a
+healer is worth little to a party. The pre-closing table had the healer
+at a quarter of a striker's worth; with the line closing it is +0.39
+against the striker's +0.64, level with the caster. The healer looked
+worthless in fights that were too easy because nobody needed healing,
+which is a fact about the engine and not about the rules.
+
+The test that actually asks whether a healer role exists is the healer
+against **another caster** in the healer's slot, not against a
+replacement-level stand-in: +0.39 over a stand-in includes everything
+that is worth having about being a caster at all. Pre-closing, the
+evoker -- a pure damage caster -- scored +0.15 in the healer's slot,
+meaning it filled that slot BETTER than the purpose-built healer. That
+is the direct evidence, it needs re-measuring under the corrected
+geometry, and it is the number to look at first.
 
 **Three builds beat every specialist in every slot** -- berserker,
 paragon, priest -- and all three are flat, spreads 0.23 to 0.28. The
@@ -424,18 +443,33 @@ the specialists' own jobs. That is the party-level form of everything
 above: when a budget can max every ceiling, being good at one thing buys
 nothing. Only the evoker is genuinely specialised, spread 0.72.
 
-#### The assumption that is wrong
+#### The assumption that was wrong, and what fixing it cost
 
-The party opens at its longest acting range, which is the casters', and
-nobody closes. At level 5 against goblins that is 10 squares against a
+*Fixed: the front rank now walks in. Everything above it measured
+before that, and the whole build-by-slot table wants re-running.*
+
+The party opened at its longest acting range, which is the casters', and
+nobody closed. At level 5 against goblins that is 10 squares against a
 mook move of 4: **three rounds of a 5.6-round fight in which the two
 casters shoot and the two melee heroes cannot reach anything.** The
 line-holder acts in 22% of rounds and the striker in 46%.
 
-So the engine *overstates* casting rather than understating it, which is
-the opposite of what the first reading of the caster column suggested --
-and the reference caster is still worth only +0.21 with that head start.
-Casters are weaker than the table makes them look, not stronger.
+So the engine *overstated* casting rather than understating it, which is
+the opposite of what the first reading of the caster column suggested.
+
+Closing the line costs the party a great deal: the intact reference
+party falls from 3.52 encounters to 2.77, because it engages sooner and
+loses the volley. Harder fights make everybody in a slot matter more, so
+every role-holder is worth more than it was and the ordering changes --
+the line-holder goes from third to first. The lesson is more general
+than the fix: **a geometry that makes fights easy compresses every
+difference between builds**, and this report had been measuring a party
+three rounds' grace away from the fight it was supposed to be in.
+
+What closing does not fix is the line-holder's own participation, which
+stays at about 21% of rounds. Its idle rounds were never mostly the
+approach: it stands at the front and dies in 41% of encounters, and
+closing sooner means being hit sooner.
 
 Three more assumptions are in `party_encounter`'s docstring and all
 three are load-bearing: the party holds a line and the back rank is
