@@ -2602,6 +2602,92 @@ def recover(char, caps, M, tier):
     char.mhp = min(caps["mhp"], char.mhp + caps["mhp"] * pct // 100)
 
 
+def apply_heal(target, amount, caps, M):
+    """Put hit points back, in the order spell-list declares.
+
+    `heal_order` is core first and mastery second, which is the opposite
+    of the order damage takes them off, and deliberately so: core hit
+    points are the ones that do not come back on their own."""
+    order = M.get("spell-list", "heal_order")
+    for pool in order:
+        if amount <= 0:
+            break
+        if pool == "core":
+            room = max(0, caps["chp"] - target.chp)
+            take = min(room, amount)
+            target.chp += take
+        else:
+            room = max(0, caps["mhp"] - target.mhp)
+            take = min(room, amount)
+            target.mhp += take
+        amount -= take
+    return amount
+
+
+def support_plan(hero, M):
+    """The best healing a hero can sustain, or None if it cannot heal.
+
+    Priced the same way `_swarm_plan` prices an attack: chosen once,
+    against the reservoir the hero actually has, and then cast every
+    round it is the right play."""
+    spell, restored, cost, difficulty = best_heal(hero, M, hero.spirit)
+    if spell is None or restored <= 0:
+        return None
+    return {"spell": spell, "difficulty": difficulty,
+            "amount": heal_amount(M, spell, difficulty),
+            # A spell, so its tier comes from spell-list rather than
+            # from the power tables `is_minor` reads.
+            "minor": spell_def(M, spell).get("tier") == "minor"}
+
+
+def _support_act(hero, ally, plan, M, caps):
+    """One round spent healing somebody instead of hitting somebody.
+
+    Rolled rather than taken as an expectation, because this happens
+    inside a fight whose whole point is that the dice decide when
+    somebody falls over."""
+    face, _crit = d20(M)
+    roll = face + hero.casting_bonus(M)
+    if roll < plan["difficulty"]:
+        # A failure costs the minimum, per using-powers.
+        floor_cost = 0 if plan["minor"] else (
+            plan["difficulty"] // int(M.get("using-powers",
+                                            "minimum_cost_divisor")))
+        hero.spirit = max(0, hero.spirit - floor_cost)
+        return 0
+    cost = power_cost(plan["difficulty"], roll, M, plan["minor"])
+    if cost > hero.spirit:
+        return 0
+    hero.spirit -= cost
+    before = ally.mhp + ally.chp
+    apply_heal(ally, plan["amount"], caps, M)
+    return ally.mhp + ally.chp - before
+
+
+def _worth_healing(heroes, caps, plan):
+    """Who to heal, or nobody.
+
+    ASSUMPTION, and it is a triage rule rather than a rule of the game:
+    heal the ally who has lost the most, once they have lost at least
+    what the heal puts back and are down to half or less. Healing
+    somebody who is barely scratched wastes most of the spell, and
+    healing nobody while the front rank drops is worse. Nothing in the
+    rules says when to heal; this is a competent player, not a good
+    one."""
+    best, worst_loss = None, 0
+    for hero, cap in zip(heroes, caps):
+        if hero.chp <= 0:
+            continue
+        full = cap["mhp"] + cap["chp"]
+        now = max(0, hero.mhp) + max(0, hero.chp)
+        lost = full - now
+        if lost < plan["amount"] or now * 2 > full:
+            continue
+        if lost > worst_loss:
+            best, worst_loss = hero, lost
+    return best
+
+
 def party_encounter(heroes, kind, count, M, max_rounds=40):
     """One fight, fought by a PARTY, each of them spending their own
     resources. Mutates the heroes and returns (rounds, survivors).
@@ -2636,6 +2722,8 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
     plans = [_swarm_plan(h, template, M) for h in heroes]
+    supports = [support_plan(h, M) for h in heroes]
+    caps = [maxima(h) for h in heroes]
     # The party opens where its longest-sighted member can act, because
     # that is who says when the fight starts.
     opening = max(1, max(acting_range(h, plans[i], M)
@@ -2655,9 +2743,18 @@ def party_encounter(heroes, kind, count, M, max_rounds=40):
             and rounds < max_rounds:
         rounds += 1
 
-        for hero, plan in zip(heroes, plans):
+        for hero, plan, support in zip(heroes, plans, supports):
             if hero.chp <= 0:
                 continue
+            # A round is one action, so healing somebody costs the
+            # attack. That trade is the whole of what makes support a
+            # role rather than a free extra.
+            if support is not None:
+                patient = _worth_healing(heroes, caps, support)
+                if patient is not None:
+                    _support_act(hero, patient, support, M,
+                                 caps[heroes.index(patient)])
+                    continue
             reach = reach_of(hero, M) if plan is None else \
                 acting_range(hero, plan, M)
             # The line cuts both ways, and it has to. Standing behind

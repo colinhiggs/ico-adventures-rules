@@ -1251,7 +1251,8 @@ def _member(name, spec, level, M, panel):
 
 
 def party_for(role, filler_name, filler_spec, level, M):
-    """The reference party with `role`'s slot filled by somebody else.
+    """The reference party with `role`'s slot filled by somebody else,
+    or the intact roster when `role` is None.
 
     The slot keeps the role's own line, so a build measured into the
     healer's slot stands where the healer stood. Putting it wherever it
@@ -1319,8 +1320,9 @@ def _party_task(M, task):
     """One party's day. Top-level and taking its own `Mechanics` so that
     it runs the same in a worker as it does here."""
     level, role, name, trials = task
-    spec = STAND_IN if name == "stand-in" else ARCHETYPES[name]
-    party = party_for(role, name, spec, level, M)
+    spec = (None if name == "@intact"
+            else STAND_IN if name == "stand-in" else ARCHETYPES[name])
+    party = party_for(None if spec is None else role, name, spec, level, M)
     return (role, name), party_day(party, M, trials,
                                    seed="party|%s|%d" % (role, level))
 
@@ -1339,20 +1341,37 @@ def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
     make possible. What would be a failure is a row that is flat and
     LOW, or a build whose peak is somebody else's slot."""
     roles = list(REFERENCE_ROSTER)
-    tasks = [(level, role, "stand-in", trials) for role in roles]
+    tasks = [(level, roles[0], "@intact", trials)]
+    tasks += [(level, role, "stand-in", trials) for role in roles]
     tasks += [(level, role, name, trials)
               for name in sorted(ARCHETYPES) for role in roles]
     done = (pool.map(_party_task, tasks) if pool is not None
             else [_party_task(M, task) for task in tasks])
     score = {key: value for key, value in done}
+    intact = score[(roles[0], "@intact")]
 
     hr("What each build is worth to a party at level %d" % level)
-    print("encounters of the standard day the party gets through, over a "
-          "replacement-level stand-in")
+    print("The intact reference party gets through %.2f of %d encounters."
+          % (intact, len(m.DEFAULT_DAY)))
+    print("With a replacement-level stand-in in one slot instead: %s."
+          % ", ".join("%s %.2f" % (r, score[(r, "stand-in")]) for r in roles))
+    print()
+    print("AGAINST THE PURPOSE-BUILT ROLE-HOLDER -- is this build better "
+          "than somebody")
+    print("made for the job, standing where they stood?")
     print("%-12s %s %9s %9s" % (
         "build", "".join("%10s" % r for r in roles), "best", "spread"))
-    print("%-12s %s" % ("(stand-in)", "".join(
-        "%10.2f" % score[(r, "stand-in")] for r in roles)))
+    for name in sorted(ARCHETYPES):
+        row = {r: score[(r, name)] - intact for r in roles}
+        best = max(row, key=row.get)
+        print("%-12s %s %9s %+9.2f" % (
+            name, "".join("%+10.2f" % row[r] for r in roles), best,
+            max(row.values()) - min(row.values())))
+    print()
+    print("AGAINST A REPLACEMENT-LEVEL STAND-IN -- is this build worth "
+          "having at all?")
+    print("%-12s %s %9s %9s" % (
+        "build", "".join("%10s" % r for r in roles), "best", "spread"))
     for name in sorted(ARCHETYPES):
         row = {r: score[(r, name)] - score[(r, "stand-in")] for r in roles}
         best = max(row, key=row.get)
@@ -1360,10 +1379,14 @@ def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
             name, "".join("%+10.2f" % row[r] for r in roles), best,
             max(row.values()) - min(row.values())))
     print()
-    print("The stand-in row is what the party manages with nobody good "
-          "in that slot, out of")
-    print("%d encounters. Everything below it is a difference against "
-          "that." % len(m.DEFAULT_DAY))
+    print("The first table asks what a build is FOR: a positive column "
+          "is a slot it fills")
+    print("better than the specialist. The second asks whether it is "
+          "worth having, and")
+    print("rewards whichever hole is biggest, which is why almost "
+          "everything peaks at the")
+    print("slot whose stand-in is weakest. Read the first for role and "
+          "the second for scale.")
 
 
 def party_utility(name, spec, level, M, trials=PARTY_TRIALS):
