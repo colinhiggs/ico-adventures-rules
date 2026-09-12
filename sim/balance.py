@@ -1370,8 +1370,45 @@ def party_for(role, filler_name, filler_spec, level, M):
     return party
 
 
+# The reference party's capability at level 5, which is the level
+# DEFAULT_DAY was written against. `day_scale` is normalised on it so
+# that a level 5 party still meets the day it has always met, and every
+# other level is scaled to the same challenge. Measured, not declared:
+# recompute it with `--day-anchor` if the numbers underneath move.
+DAY_ANCHOR_CAPABILITY = 8662.7
+DAY_ANCHOR_SCALE = 4.0
+
+
+def party_capability(party, M):
+    """What the party brings, as one number: what it can absorb times
+    what it can deal.
+
+    Hit points alone will not do. Across fifteen levels a party's hit
+    points grow 2.1x while its damage grows 3.4x, so a day scaled on
+    survivability alone gets easier every level -- which is the thing
+    being fixed. The product is the crudest measure that moves with
+    both, and it is deliberately made of things the refactor will
+    change, so the day follows the numbers down instead of having to be
+    re-tuned behind them."""
+    foe = m.mook("orc", M)
+    hp = sum(max(0, h.mhp) + max(0, h.chp) for h in party)
+    dmg = sum(m.attack_expectation(h, foe, M)[0] for h in party)
+    return hp * dmg
+
+
+def day_scale(party, M):
+    """How far to multiply `DEFAULT_DAY` for this party.
+
+    Scaled on capability rather than on party size, so that the same
+    schedule is the same challenge at every level. It is NOT scaled on
+    fight length, deliberately: length is the gated quantity, and a day
+    tuned to produce a given length would make its own gate vacuous."""
+    return max(1.0, DAY_ANCHOR_SCALE
+               * party_capability(party, M) / DAY_ANCHOR_CAPABILITY)
+
+
 def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
-              rounds_out=None):
+              rounds_out=None, scale=None):
     """How much of the standard day the party gets through.
 
     Encounters cleared, plus the share of the party still standing at
@@ -1395,7 +1432,10 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
     without the other."""
     import copy
     import random as _random
-    schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
+    if scale is None:
+        scale = day_scale(party, M)
+    schedule = [(kind, max(1, int(round(count * scale))))
+                for kind, count in m.DEFAULT_DAY]
     score = 0.0
     for trial in range(trials):
         # Common random numbers, and only partly working. Seeding each
