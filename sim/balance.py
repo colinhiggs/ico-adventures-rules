@@ -1351,7 +1351,13 @@ def _member(name, spec, level, M, panel):
     come free, a build's rank then depended on what had run before it in
     that worker -- which is how a berserker came to be measured as the
     best thing to put in the wizard's slot."""
-    key = (name, level)
+    # Keyed on the RULESET as well as the build. Without that an
+    # override applied in this process -- which is what a sweep is --
+    # hands back a member built before it, and the sweep reports the
+    # numbers it was trying to change. Worker processes were safe by
+    # accident, each starting with an empty cache; anything measuring
+    # in-process was not.
+    key = (name, level, parallel.mechanics_stamp(M))
     if key not in _MEMBERS:
         char = m.build_character(name, spec, level, M, shopping_foe=panel)
         char.line = _line_for(spec)
