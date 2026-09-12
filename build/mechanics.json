@@ -657,7 +657,7 @@
     },
     "gnoll": {
       "challenge_level": 10,
-      "typical_number": 6,
+      "typical_number": 9,
       "attributes": {
         "strength": 16,
         "dexterity": 14,
@@ -667,7 +667,7 @@
         "charisma": 8
       },
       "skills": {
-        "attack_melee": 10,
+        "attack_melee": 17,
         "dodge": 8,
         "spot": 7,
         "stealth": 6,
@@ -692,7 +692,7 @@
         "magical",
         "social"
       ],
-      "mastery_hit_points": 20,
+      "mastery_hit_points": 6,
       "core_hit_points": 14,
       "stamina": 34,
       "spirit": 0,
@@ -745,7 +745,7 @@
     },
     "hill-giant": {
       "challenge_level": 15,
-      "typical_number": 2,
+      "typical_number": 4,
       "attributes": {
         "strength": 18,
         "dexterity": 8,
@@ -755,7 +755,7 @@
         "charisma": 8
       },
       "skills": {
-        "attack_melee": 14,
+        "attack_melee": 22,
         "block": 11,
         "dodge": 4,
         "spot": 6,
@@ -779,7 +779,7 @@
         "magical",
         "social"
       ],
-      "mastery_hit_points": 60,
+      "mastery_hit_points": 160,
       "core_hit_points": 18,
       "stamina": 48,
       "spirit": 0,

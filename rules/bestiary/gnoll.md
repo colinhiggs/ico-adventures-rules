@@ -8,7 +8,7 @@ summary: >
   Fast, accurate, and entirely uninterested in a fair fight.
 mechanics:
   challenge_level: 10
-  typical_number: 6
+  typical_number: 9
   attributes:
     strength: 16
     dexterity: 14
@@ -17,7 +17,7 @@ mechanics:
     willpower: 10
     charisma: 8
   skills:
-    attack_melee: 10
+    attack_melee: 17
     dodge: 8
     spot: 7
     stealth: 6
@@ -30,7 +30,7 @@ mechanics:
   levels_up: true
   preferred_disciplines: [athletic, martial]
   outlawed_disciplines: [magical, social]
-  mastery_hit_points: 20
+  mastery_hit_points: 6
   core_hit_points: 14
   stamina: 34
   spirit: 0
@@ -98,4 +98,14 @@ It is given Sneak Attack rather than more hit points on purpose. A
 creature that punishes an existing weakness makes the party's own
 attrition into a threat, which is what a day of encounters is supposed
 to be about, and it does that without needing a bigger number anywhere.
+
+It is also, deliberately, *less* durable than a
+[[hobgoblin|hobgoblin]] three threat levels beneath it, and the reason
+is the whole argument of this bestiary. A creature's threat is its
+accuracy. Attack {{ mechanics.skills.attack_melee }} lands on a
+tenth-level party most of the time and
+{{ mechanics.mastery_hit_points }} mastery hit points means the party
+kills better than two of them a round, so a gnoll pack is a race rather
+than a grind — which is what the measurement asked for. Hit points only
+ever bought duration.
 {% endbook-only %}

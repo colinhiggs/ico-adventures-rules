@@ -50,14 +50,22 @@ CHECKPOINT = None
 # built -- and short duels are still reported, as a diagnostic.
 TARGET_ROUNDS = (3.0, 12.0)
 
-# Trials for the party fight-length gate. Measured before it was chosen:
-# six seeds put the reference party at 5.7 rounds with a standard
-# deviation between 0.08 and 0.22 -- six seeds do not separate those two
-# estimates, and neither matters, because the gate asks a coarse
-# question of a wide band. 5.7 is fifteen standard deviations inside the
-# nearer bound at the pessimistic figure. Twelve trials costs about
-# thirty seconds a level.
-PARTY_GATE_TRIALS = 12
+# Trials for the party fight-length gate.
+#
+# Twelve was measured and chosen at level 5, where eight seeds put the
+# standard deviation at 0.08 to 0.22 against a band of 3 to 12 -- fifteen
+# deviations of headroom, so precision did not matter. That reasoning
+# did not survive the creature ladder. At level 10 the same eight seeds
+# give a standard deviation of 0.55, seven times as large, against a
+# mean of 11.6 that sits a few tenths under the ceiling. A twelve-trial
+# gate there fails about a quarter of the time on the draw alone, which
+# is a coin toss wearing a gate's clothes.
+#
+# Thirty-six brings it to about 0.32. The real answer is headroom rather
+# than trials -- a day whose fights run nine rounds does not care about
+# a standard deviation of half a round -- and level 10 is the one that
+# has none, for the reason in `day_for`.
+PARTY_GATE_TRIALS = 36
 
 # Below this the fight-length reading means nothing, because it is the
 # length of fights the party is LOSING. A party that does not finish one

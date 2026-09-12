@@ -4,12 +4,12 @@ title: Hill Giant
 kind: creature
 tags: [bestiary, creature, giant]
 summary: >
-  Two of these is an encounter. It reaches further than anything a party
-  carries, it hits once for what a lesser creature manages in a round,
-  and there are never enough of it to queue.
+  A few of these is an encounter. It reaches further than anything a
+  party carries, it hits once for what a lesser creature manages in a
+  round, and there are never enough of it to queue.
 mechanics:
   challenge_level: 15
-  typical_number: 2
+  typical_number: 4
   attributes:
     strength: 18
     dexterity: 8
@@ -18,7 +18,7 @@ mechanics:
     willpower: 12
     charisma: 8
   skills:
-    attack_melee: 14
+    attack_melee: 22
     block: 11
     dodge: 4
     spot: 6
@@ -30,7 +30,7 @@ mechanics:
   levels_up: true
   preferred_disciplines: [martial, awareness]
   outlawed_disciplines: [magical, social]
-  mastery_hit_points: 60
+  mastery_hit_points: 160
   core_hit_points: 18
   stamina: 48
   spirit: 0
@@ -43,8 +43,9 @@ mechanics:
 
 A hill giant is three times the height of a man and swings something
 that started as a tree. It is not clever and it does not need to be.
-Everything about the encounter is decided by the fact that there are
-`2` of it and it reaches further than anything the party is holding.
+Everything about the encounter is decided by the fact that there are so
+few of it and that it reaches further than anything the party is
+holding.
 
 {% table mechanics.attributes header=Attribute value_header=Score %}
 
@@ -56,7 +57,7 @@ It is the answer to a problem the rest of this book has: the
 [[reach|engagement limit]] means a crowd can only ever get so many
 bodies onto a party at once, so past a point more enemies is a longer
 fight rather than a harder one. A giant is the other shape. There are
-two, both of them can reach, and neither is waiting for a turn.
+a handful, every one of them can reach, and none is waiting for a turn.
 
 Its weapon has reach, which almost nothing else on this side of the
 table has. A party that wants to fight it has to cross its band, and
@@ -71,8 +72,8 @@ same swing carries into the next one. And Find the Gap, because
 {{ mechanics.mastery_hit_points }} mastery hit points is not actually
 its most dangerous number — armour is no answer to it.
 
-It breaks at half, and half of `2` is one. A giant whose companion has
-fallen leaves, which is the one mercy in the entry.
+It breaks at half, and half of a giant band is one or two. Giants whose
+companions have fallen leave, which is the one mercy in the entry.
 
 ## Giants with a career
 
@@ -101,11 +102,19 @@ difficulty, and at twenty times the standard day it still clears it
 while the fights run past the round band from the other end. More bodies
 buys duration and not danger.
 
-The giant is the encounter that is not subject to that at all. Two
-creatures, both engaged, both hitting for a great deal. It is deliberate
-that its hit points are large and its threat does not mostly come from
-them: reach, Follow Through and Find the Gap are all about landing the
-blow rather than surviving one.
+The giant is the encounter that is not subject to that at all. A few
+creatures, every one engaged, every one hitting for a great deal.
+
+Its hit points are large — larger than a fifteenth-level character's,
+which is the point, and they were not when this entry was first written.
+Measured, the first draft of this creature was a threat to nobody: it had
+fewer hit points than one of the people fighting it and dealt a fifth of
+what the party dealt back, so a fifteenth-level party cleared its whole
+day without noticing. What fixed it was not mostly the hit points
+either. Attack {{ mechanics.skills.attack_melee }} is the number that
+moved this creature from no threat at all to a fair fight, and reach,
+Follow Through and Find the Gap are all about landing the blow rather
+than surviving one.
 
 It levels because there is nowhere else to go. The book could keep
 inventing bigger creatures for every tier above this, or it could say
