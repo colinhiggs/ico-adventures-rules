@@ -1784,7 +1784,11 @@ def contributions(chars, level, M):
 
 def main():
     ap = argparse.ArgumentParser(description="Measure the Ico rules.")
-    ap.add_argument("--levels", default="1,5,10")
+    ap.add_argument("--levels", default="1,5,10,15",
+                    help="levels to report on. 15 is in the default because "
+                         "the standard day now scales to reach it, and a "
+                         "curve gated only to level 10 is a curve nobody "
+                         "has checked the top of.")
     ap.add_argument("--trials", type=int, default=3000)
     ap.add_argument("--swarm-trials", type=int, default=1200)
     ap.add_argument("--check", action="store_true",
