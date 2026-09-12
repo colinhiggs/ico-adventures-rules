@@ -892,7 +892,221 @@ anybody measured the variance. Measure the variance first.
   corrected a second level 1 duel falls under the three-round floor.
   `max_starting_mastery_hp` is the lever `character-creation.md` names.
 
-### What this asks of any competing-sink design
+### Making power damage carry the scaling
+
+**Status: measured, not decided.** Opened because plain damage does not
+scale at all and something has to.
+
+### The finding underneath everything else here
+
+A duel's plain swings are flat across fifteen levels. Attack skill and
+targeting difficulty rise together, so the margin a blow lands with does
+not grow: measured, the margin contributes **4.8 damage at level 1, at
+level 5 and at level 15**, and the whole of a plain swing goes from 7.4
+to 7.7 over fourteen levels. Every point of damage progression in this
+game comes from powers.
+
+That makes the power curve the single lever that decides whether a
+high-level fight takes as long as a low-level one, and it is why
+`margin_to_damage_fraction` is not the lever it looks like: it scales
+every level by the same factor and moves no ratio at all.
+
+### What the scaling has to be
+
+For fights to hold their length, total damage must grow as total hit
+points do. Plain damage is flat and core hit points are flat, so the
+whole of both curves lands on the power term:
+
+| level | total hp | plain | power now | power needs |
+|---|---|---|---|---|
+| 1 | 31 | 7.4 | 2.3 | 2.3 |
+| 5 | 51 | 7.2 | 6.8 | 8.9 |
+| 10 | 76 | 7.7 | 8.5 | 16.2 |
+| 15 | 101 | 7.7 | 11.1 | 24.1 |
+
+**10.5x, not 4.5x.** Worth stating plainly because the obvious target --
+*make power damage scale like mastery hit points* -- is already true:
+power damage grows 4.8x against mastery's 4.5x, and fights still stretch
+from 3.2 rounds to 5.4. Matching mastery does not pay for the flat
+terms.
+
+### Why no linear knob can do it
+
+Damage is `steps x damage_per_step` and steps grow linearly with skill.
+Every knob on that expression is a *multiplier*: doubling what a step is
+worth doubles first level and fifteenth alike, so the ratio between them
+never moves however hard anything is turned. Measured against the
+stamina budget, the linear form delivers 3.4x against the 10.5x wanted.
+A ratio only moves if the shape changes.
+
+### The quadratic, measured
+
+`damage = steps^2 / divisor` -- steps buy a *pitch* and the damage is the
+pitch squared. Implemented behind one optional mechanic,
+`using-powers.damage_pitch_divisor`, so dropping the key restores linear
+exactly.
+
+It does what it was built for. Power damage grows **14.1x** (2.3 to
+32.5) and duel length goes from 3.2/3.7/4.7/5.4 rounds to
+**3.2/3.1/3.0/2.6**. It is self-limiting without a cap, because expected
+damage is the curve times the chance of making the roll, so pushing
+further multiplies a bigger number by a smaller chance and the product
+peaks at a finite difficulty that rises with skill. And it delivers the
+two regimes a high-level character wants for free: at level 15 a 3-step
+use is worth 2.25 damage and costs 4.4 (about ten a day), a 13-step use
+is worth 27.5 and costs 10 (about four a day).
+
+### What it costs, and why it was not adopted
+
+Nine gate failures, and five are the same one. **Powers end up carrying
+85% of a level 15 character's damage**, so an empty reservoir leaves it
+a quarter of its output against a band that wants 35 to 85%.
+
+| divisor | L1 dmg/kept/rnds | L5 | L10 | L15 |
+|---|---|---|---|---|
+| /4 | 9.8 / 86% / 3.2 | 16.3 / 56% / 3.1 | 25.3 / 30% / 3.0 | 38.3 / 22% / 2.6 |
+| /6 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 18.8 / 52% / 4.0 | 25.8 / 33% / 3.9 |
+| /9 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 16.4 / 67% / 4.6 | 20.7 / 59% / 4.9 |
+| /12 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 16.1 / 68% / 4.7 | 18.1 / 67% / 5.6 |
+
+The flatter the fight-length curve, the more of a character's damage
+lives in its reservoir. That is not a defect of the quadratic; it is
+what *"powers carry all the scaling"* means once plain damage is flat,
+and any design that puts the whole curve on powers meets it.
+
+Two side effects, both real:
+
+- **Accuracy becomes paramount.** Squaring the payoff puts far more
+  behind the hit roll, so whoever rolls highest compounds. The
+  contribution spread blew out to 3.0x with the skirmisher on top, and
+  the berserker abandoned its great axe for a *staff* at level 10 --
+  under a quadratic the axe's `-2` unwieldy penalty costs more than its
+  `+4` damage gains, because the roll now gates a much larger prize.
+  The weapon-spread gate failed at 40%.
+- **It is harder arithmetic at a table.** Players find a linear step
+  count easier than a squared one, and this is used on every attack.
+
+Neither is fatal. Both are the reason a design that reaches the same
+place with two linear terms is worth trying first -- see the entry
+below. The implementation is kept: `step_damage` is one function behind
+one optional key, so this can be re-measured at any divisor by adding
+the key back.
+
+### The multiplicative alternative, measured
+
+Two linear terms that multiply reach the same place as one curved one,
+with arithmetic a table can do. **How hard** a power is pushed stays
+linear in the steps declared; **how often** it can be thrown becomes the
+second term. Their product is the scaling.
+
+#### Why the second lever was dead
+
+It was not dormant, it was *coupled to the first*. The minimum a power
+can cost is `difficulty // minimum_cost_divisor` -- a fraction of how
+hard you pushed -- so a character whose skill has doubled declares a
+harder version of the same power and pays a proportionally larger
+minimum. Measured across fifteen levels, cost per use rises 4.4 to 8.1
+while the pool rises 18 to 46, and the two very nearly cancel:
+
+| level | pool | cost | uses a day | rounds powered | steps |
+|---|---|---|---|---|---|
+| 1 | 18 | 4.4 | 4.1 | 20% | 3 |
+| 5 | 26 | 5.0 | 5.1 | 26% | 5 |
+| 10 | 36 | 6.5 | 5.5 | 28% | 8 |
+| 15 | 46 | 8.1 | 5.6 | 28% | 10 |
+
+**Effect 3.3x times frequency 1.4x is 4.6x**, against the 10.5x wanted.
+Pushing effect up raises cost, which cuts frequency: the two levers were
+fighting each other through the difficulty declaration.
+
+#### Decoupling them
+
+`using-powers.minimum_cost_flat`, optional, replaces the fraction with a
+number that does not know the difficulty at all. Then pool growth
+reaches the player as uses. Implemented as one function, `minimum_cost`,
+which every one of the model's fifteen floor sites now goes through;
+without the key it is the divisor exactly as before.
+
+| combination | L1 | L5 | L10 | L15 | product |
+|---|---|---|---|---|---|
+| as now | 3st/20%/c4.4 | 5st/26%/c5.0 | 8st/28%/c6.5 | 10st/28%/c8.1 | 4.6x |
+| flat 2, pool 4, base 12 | 4st/22%/c4.6 | 5st/39%/c4.6 | 8st/61%/c4.6 | 10st/83%/c4.6 | **9.5x** |
+
+Effect 2.5x times frequency 3.8x. The higher `base_cost` is what holds
+level 1 to a fifth of its rounds while the pool carries level 15 to four
+fifths -- few uses early, many late, which is what was wanted.
+
+#### It does not hit the quadratic's wall
+
+This is the result that separates the two designs. Damage kept with an
+empty reservoir runs **62% to 66% at every level**, comfortably inside
+the 35-85% band, where the quadratic put five builds at 22-31%. Keeping
+the effect linear keeps plain swings a real share of output. Four gate
+failures against the quadratic's nine, and both reservoir failures are
+single builds one or six points outside the band rather than a
+collapse.
+
+#### What it breaks, and what that says about the ladder
+
+The party day falls apart in the middle:
+
+| level | fight length | cleared of 5 |
+|---|---|---|
+| 1 | 4.1 | 2.75 |
+| 5 | 10.8 | **1.15** |
+| 10 | 10.7 | **1.91** |
+| 15 | 8.9 | 3.30 |
+
+Not because characters got weaker. **A flat minimum is worth far more to
+a creature than to a character**, because creatures declare high
+difficulties out of small pools and were the ones the proportional floor
+was pricing out:
+
+| who | pool | cost d/3 -> flat | uses a day | gain |
+|---|---|---|---|---|
+| hobgoblin | 20 | 4.4 -> 4.6 | 4.5 -> 4.3 | 1.0x |
+| gnoll | 34 | 8.1 -> 4.6 | 4.2 -> 7.4 | 1.8x |
+| hill giant | 48 | 9.1 -> 4.6 | 5.3 -> 10.4 | 2.0x |
+| striker L5 | 32 | 5.8 -> 4.6 | 5.6 -> 7.0 | 1.2x |
+| striker L10 | 52 | 5.5 -> 4.2 | 9.5 -> 12.4 | 1.3x |
+
+The gnoll and the giant double their power uses while the party gains a
+fifth. Levels 5 and 10 collapsed because the day is made of those.
+
+Two things a rework of powers into a ladder of difficulties would have
+to settle, both visible in these numbers:
+
+- **The difficulty range is too narrow to carry two levers.** Steps run
+  only 4 to 10 across fifteen levels, most of that capped by what a roll
+  can reach, so effect manages 2.5x and frequency is left doing 3.8x of
+  the work. A wider ladder -- more rungs, further apart, with real
+  differences of effect between them -- is what would let the first
+  lever pull its weight.
+- **Frequency saturates and cannot be pushed past it.** Nobody powers
+  more than every round, so the whole lever is `1 / (level 1
+  frequency)`. Holding level 1 *down* is what makes the design work,
+  which is a happy accident of wanting that anyway.
+- **Creatures need their own rung.** Built from the same parts but with
+  pools a fraction of a character's, they take any change to the cost
+  rule disproportionately. Either their power budgets scale with threat,
+  or the cost rule needs a term that knows how large a reservoir it is
+  spending from.
+
+#### Where the three designs stand
+
+| | scaling | arithmetic | weight on the hit roll | reservoir dependence |
+|---|---|---|---|---|
+| linear | 4.6x | easiest | normal | fine |
+| multiplicative | 9.5x | linear | normal | fine, 62-66% kept |
+| quadratic | 14.1x | squared | extreme | fails, 22-31% kept |
+
+Both alternatives are one optional mechanic away from the committed
+rules -- `damage_pitch_divisor` and `minimum_cost_flat` -- and neither
+key is in the ruleset. `step_damage` and `minimum_cost` are in the model
+and fall back to the current behaviour exactly when the keys are absent,
+so either can be re-measured by adding one line to `using-powers.md`.
+
+## What this asks of any competing-sink design
 
 Two rules fall out, and the second is the one that is easy to miss.
 

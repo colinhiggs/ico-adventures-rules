@@ -1719,6 +1719,59 @@ def attack_expectation(attacker, defender, M, bonus=0, pierce=0, dodge_bonus=0,
     return total_damage, hits
 
 
+def minimum_cost(difficulty, M, minor=False):
+    """The least a power can cost, failed or succeeded.
+
+    `minimum_cost_divisor` makes it a fraction of the difficulty
+    DECLARED, which ties the price of a power to how hard you pushed.
+    That is the coupling that stops a reservoir ever going further: a
+    character whose skill has doubled declares a harder version of the
+    same power, pays a proportionally larger minimum, and gets no more
+    uses out of a bigger pool than it did out of a small one. Measured,
+    cost per use rises 4.4 to 8.1 across fifteen levels while the pool
+    rises 18 to 46, and the two very nearly cancel.
+
+    `minimum_cost_flat`, if `using-powers` carries it, replaces that with
+    a number that does not know the difficulty at all. Then pool growth
+    reaches the player as uses, and how OFTEN a power can be thrown
+    becomes a second lever beside how HARD it can be pushed."""
+    if minor and bool(M.get("using-powers", "minor_powers_ignore_minimum_cost")):
+        return 0
+    if "minimum_cost_flat" in M.keys("using-powers"):
+        return int(M.get("using-powers", "minimum_cost_flat"))
+    return difficulty // int(M.get("using-powers", "minimum_cost_divisor"))
+
+
+def step_damage(p, steps, M):
+    """What a power's difficulty steps are worth in damage.
+
+    Linear -- `steps x damage_per_step` -- unless `using-powers` carries
+    `damage_pitch_divisor`, in which case the steps buy a PITCH and the
+    damage is the pitch squared: `damage_per_step x steps^2 / divisor`.
+
+    The linear form cannot hold a fight's length across levels and the
+    arithmetic says why. Steps grow linearly with skill, so the damage a
+    power adds grows linearly too, while hit points grow with everything
+    a level buys. Turning `damage_per_step` or `difficulty_per_step`
+    multiplies first level and fifteenth by the SAME factor, so the ratio
+    never moves however hard either is turned. A curve is the only thing
+    that moves a ratio.
+
+    It is self-limiting without needing a cap. Expected damage is the
+    curve times the chance of making the roll, so pushing further
+    multiplies a bigger number by a smaller chance and the product peaks
+    at a finite difficulty -- one that rises with skill, which is the
+    whole point."""
+    per_step = int(p.get("damage_per_step", 0))
+    if not per_step:
+        return 0
+    keys = M.keys("using-powers")
+    if "damage_pitch_divisor" not in keys:
+        return steps * per_step
+    divisor = int(M.get("using-powers", "damage_pitch_divisor"))
+    return per_step * (steps * steps) // max(1, divisor)
+
+
 def power_cost(difficulty, roll, M, minor=False):
     """A minor power has no minimum, so it reaches zero once the roll
     beats the difficulty by the base cost.
@@ -1738,9 +1791,7 @@ def power_cost(difficulty, roll, M, minor=False):
     minimum rather than through here."""
     base = int(M.get("using-powers", "base_cost"))
     raw = base + difficulty - roll
-    floor = 0 if minor else difficulty // int(
-        M.get("using-powers", "minimum_cost_divisor"))
-    cost = max(floor, raw)
+    cost = max(minimum_cost(difficulty, M, minor), raw)
     if roll >= difficulty:
         return min(int(M.get("using-powers",
                              "max_cost_of_a_successful_power")), cost)
@@ -2124,7 +2175,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     base_d = int(p["base_difficulty"])
     step = int(p.get("difficulty_per_step", p.get("difficulty_per_extra_attack", 1)))
     steps = max(0, (difficulty - base_d) // step)
-    bonus = steps * int(p.get("damage_per_step", 0))
+    bonus = step_damage(p, steps, M)
     pierce = steps * int(p.get("reduction_ignored_per_step", 0))
     extra_attacks = steps if "difficulty_per_extra_attack" in p else 0
     weak_extras = bool(p.get("extra_attacks_deal_weapon_damage_only"))
@@ -2146,7 +2197,10 @@ def power_expectation(char, power_id, difficulty, defender, M):
     curves = {}
     for is_crit in (False, True):
         extra = crit_steps if is_crit else 0
-        b = bonus + extra * per_step_damage
+        # Recomputed from the step count rather than added on, because a
+        # curve's increments are not equal and a critical's extra steps
+        # are worth what the steps it lands on are worth.
+        b = step_damage(p, steps + extra, M)
         pc = pierce + extra * per_step_pierce
         main = damage_curve(char, defender, M, bonus=b, pierce=pc)
         following = (damage_curve(char, defender, M, weapon_only=True)
@@ -2158,7 +2212,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     # for all ninety-six faces, and only the roll changes.
     base_cost = int(M.get("using-powers", "base_cost"))
     cost_cap = int(M.get("using-powers", "max_cost_of_a_successful_power"))
-    floor_cost = 0 if minor else difficulty // divisor
+    floor_cost = minimum_cost(difficulty, M, minor)
 
     damage = 0.0
     cost = 0.0
@@ -2827,7 +2881,7 @@ def _power_odds(skill, difficulty, M, divisor):
             landed += weight
             cost += weight * power_cost(difficulty, roll, M)
         else:
-            cost += weight * (difficulty // divisor)
+            cost += weight * minimum_cost(difficulty, M)
     return landed, cost
 
 
@@ -2942,7 +2996,7 @@ def _spend_guard(char, plan, M):
     until this character's next turn; the reaction is spent either way,
     exactly as an action is spent on a power that fails."""
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    floor = plan["difficulty"] // divisor
+    floor = minimum_cost(plan["difficulty"], M)
     if char.stamina < floor:
         return False
     roll = d20(M)[0] + char.skill(plan["skill"], M)
@@ -3006,7 +3060,7 @@ def _spend_riposte(char, foe, plan, M, on_tie):
     the melee attack. Extra answers bought with difficulty ride the same
     roll, exactly as extra attacks do on the hero's own turn."""
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    floor = plan["difficulty"] // divisor
+    floor = minimum_cost(plan["difficulty"], M)
     if char.stamina < floor:
         return
     roll = d20(M)[0] + char.attack_bonus(M)
@@ -3029,7 +3083,7 @@ def _spend_deflect(char, plan, M):
     which is nothing if the roll fails -- the reaction is spent on the
     attempt either way, exactly as an action is."""
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    floor = plan["difficulty"] // divisor
+    floor = minimum_cost(plan["difficulty"], M)
     if char.stamina < floor:
         return 0
     roll = d20(M)[0] + char.skill("dodge", M)
@@ -3510,7 +3564,7 @@ def _swarm_act(hero, targets, plan, M, on_tie, divisor, fields=None):
     p = power_def(M, plan["power"])
     minor = is_minor(M, plan["power"])
     difficulty = plan["difficulty"]
-    floor = 0 if minor else difficulty // divisor
+    floor = minimum_cost(difficulty, M, minor)
     sweep = "extra_targets_per_step" in p
     chain = "extra_follow_through_per_step" in p
     step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
@@ -4009,7 +4063,7 @@ def _guard(defender, plan, M):
     if plan is None:
         return 0
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
-    floor = plan["difficulty"] // divisor
+    floor = minimum_cost(plan["difficulty"], M)
     if defender.stamina < floor:
         return 0
     roll = d20(M)[0] + defender.skill("dodge", M)
@@ -4121,7 +4175,7 @@ def redouble_plan(char, M):
             roll = face + skill
             expected_cost += weight * (
                 power_cost(difficulty, roll, M) if roll >= difficulty
-                else difficulty // int(M.get("using-powers", "minimum_cost_divisor")))
+                else minimum_cost(difficulty, M))
         value = chance * bonus
         if best is None or value > best["value"]:
             best = {"difficulty": difficulty, "bonus": bonus,
@@ -4599,7 +4653,7 @@ def floor_offence(char, foe, M):
                 steps = max(0, (difficulty - base_d) // step) if free else 0
                 damage += weight * damage_from(
                     char, foe, total - td, M,
-                    bonus=0 if extras_power else steps * int(p.get("damage_per_step", 0)),
+                    bonus=0 if extras_power else step_damage(p, steps, M),
                     pierce=0 if extras_power else steps * int(p.get("reduction_ignored_per_step", 0)))
                 if extras_power:
                     for _ in range(steps):
@@ -4754,7 +4808,7 @@ def _act(actor, target, plan, M, dodge_bonus=0):
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
 
     minor = is_minor(M, plan["power"])
-    floor = 0 if minor else difficulty // divisor
+    floor = minimum_cost(difficulty, M, minor)
 
     def swing():
         if (total >= td) if on_tie else (total > td):
@@ -4772,7 +4826,7 @@ def _act(actor, target, plan, M, dodge_bonus=0):
             swing()
             return
         actor.stamina -= cost
-        bonus = steps * int(p.get("damage_per_step", 0))
+        bonus = step_damage(p, steps, M)
         pierce = steps * int(p.get("reduction_ignored_per_step", 0))
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
         extras = steps if "difficulty_per_extra_attack" in p else 0
