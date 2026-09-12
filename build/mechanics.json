@@ -8,8 +8,8 @@
       "free_mastery_hp_per_constitution": 1,
       "mastery_hp_per_point": 2,
       "max_mastery_hp_bought_per_level": 1,
-      "power_source_per_point": 3,
-      "max_power_source_bought_per_level": 3,
+      "power_source_per_point": 4,
+      "max_power_source_bought_per_level": 1,
       "powers_per_level": 1,
       "attribute_point_every_n_levels": 4,
       "level_is_only_a_budget_and_a_clock": true
@@ -109,7 +109,7 @@
       "attribute_min": 3,
       "attribute_max": 18,
       "starting_discipline_budget": 20,
-      "max_starting_mastery_hp": 25,
+      "max_starting_mastery_hp": 8,
       "free_starting_mastery_hp": 10,
       "skill_point_pool": 30,
       "starting_powers": 1,
@@ -182,6 +182,13 @@
       "critical_rerolls_and_adds": true,
       "critical_chains": true,
       "critical_power_effect_steps": 1
+    },
+    "creature-advancement": {
+      "advances_as_a_character": true,
+      "stat_block_is_before_any_levels": true,
+      "threat_per_level": 1,
+      "outlawed_disciplines_bar_their_powers": true,
+      "unintelligent_creatures_do_not_level": true
     },
     "damage": {
       "margin_to_damage_fraction": 0.5,
@@ -277,6 +284,8 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 4,
+        "max_difficulty": 18,
+        "base_damage": 1,
         "difficulty_per_step": 2,
         "damage_per_step": 1
       },
@@ -287,8 +296,20 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 2,
+        "max_difficulty": 10,
         "difficulty_per_step": 4,
         "damage_per_step": 1
+      },
+      "hammer_blow": {
+        "discipline": "martial",
+        "grade": "adept",
+        "source": "stamina",
+        "skill": "attack_melee",
+        "base_difficulty": 18,
+        "max_difficulty": 34,
+        "base_damage": 8,
+        "difficulty_per_step": 2,
+        "damage_per_step": 2
       },
       "follow_through": {
         "discipline": "martial",
@@ -296,6 +317,7 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 4,
+        "max_difficulty": 20,
         "difficulty_per_step": 8,
         "extra_follow_through_per_step": 1,
         "triggers_on_dropping_a_target": true
@@ -307,6 +329,7 @@
         "skill": "block",
         "costs_the_reaction": true,
         "base_difficulty": 6,
+        "max_difficulty": 21,
         "base_allies": 1,
         "difficulty_per_step": 5,
         "extra_allies_per_step": 1
@@ -318,6 +341,7 @@
         "skill": "attack_melee",
         "costs_the_reaction": true,
         "base_difficulty": 6,
+        "max_difficulty": 38,
         "base_ripostes": 1,
         "difficulty_per_step": 4,
         "extra_ripostes_per_step": 1
@@ -328,6 +352,7 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 6,
+        "max_difficulty": 22,
         "difficulty_per_step": 2,
         "reduction_ignored_per_step": 1
       },
@@ -337,6 +362,7 @@
         "source": "stamina",
         "skill": "dodge",
         "base_difficulty": 4,
+        "max_difficulty": 24,
         "difficulty_per_step": 10,
         "dodge_bonus_per_step": 1
       },
@@ -347,6 +373,7 @@
         "source": "stamina",
         "skill": "dodge",
         "base_difficulty": 2,
+        "max_difficulty": 16,
         "difficulty_per_step": 14,
         "dodge_bonus_per_step": 1
       },
@@ -356,6 +383,7 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 8,
+        "max_difficulty": 40,
         "base_targets": 2,
         "difficulty_per_step": 4,
         "extra_targets_per_step": 1,
@@ -368,6 +396,7 @@
         "skill": "dodge",
         "costs_the_reaction": true,
         "base_difficulty": 5,
+        "max_difficulty": 20,
         "difficulty_per_step": 3,
         "damage_reduced_per_step": 2
       },
@@ -377,6 +406,8 @@
         "source": "stamina",
         "skill": "attack_melee",
         "base_difficulty": 6,
+        "max_difficulty": 22,
+        "base_damage": 2,
         "difficulty_per_step": 2,
         "damage_per_step": 2
       },
@@ -386,6 +417,7 @@
         "source": "stamina",
         "skill": "spot",
         "base_difficulty": 4,
+        "max_difficulty": 18,
         "difficulty_per_step": 2,
         "initiative_bonus_per_step": 2
       },
@@ -396,6 +428,7 @@
         "source": "stamina",
         "skill": "spot",
         "base_difficulty": 2,
+        "max_difficulty": 14,
         "difficulty_per_step": 6,
         "reduction_ignored_per_step": 1
       },
@@ -406,6 +439,7 @@
         "source": "stamina",
         "skill": "spot",
         "base_difficulty": 2,
+        "max_difficulty": 12,
         "difficulty_per_step": 5,
         "facts_per_step": 1
       },
@@ -415,6 +449,7 @@
         "source": "stamina",
         "skill": "spot",
         "base_difficulty": 6,
+        "max_difficulty": 30,
         "difficulty_per_step": 3,
         "ally_bonus_per_step": 1
       },
@@ -425,6 +460,7 @@
         "skill": "spot",
         "costs_the_reaction": true,
         "base_difficulty": 10,
+        "max_difficulty": 40,
         "base_interruptions": 1,
         "difficulty_per_step": 5,
         "extra_interruptions_per_step": 1
@@ -435,6 +471,7 @@
         "source": "spirit",
         "skill": "willpower",
         "base_difficulty": 8,
+        "max_difficulty": 32,
         "base_undead": 2,
         "difficulty_per_step": 3,
         "extra_undead_per_step": 1
@@ -462,6 +499,7 @@
         "source": "spirit",
         "skill": "bluff",
         "base_difficulty": 2,
+        "max_difficulty": 14,
         "difficulty_per_step": 6,
         "check_bonus_per_step": 1
       },
@@ -471,6 +509,7 @@
         "source": "spirit",
         "skill": "intimidate",
         "base_difficulty": 4,
+        "max_difficulty": 19,
         "difficulty_per_step": 3,
         "penalty_per_step": 1
       },
@@ -480,6 +519,7 @@
         "source": "spirit",
         "skill": "diplomacy",
         "base_difficulty": 6,
+        "max_difficulty": 22,
         "base_allies": 2,
         "difficulty_per_step": 4,
         "extra_allies_per_step": 1,
@@ -491,6 +531,7 @@
         "source": "spirit",
         "skill": "diplomacy",
         "base_difficulty": 10,
+        "max_difficulty": 38,
         "base_allies": 2,
         "difficulty_per_step": 4,
         "extra_allies_per_step": 1,
@@ -502,6 +543,7 @@
         "source": "spirit",
         "skill": "diplomacy",
         "base_difficulty": 10,
+        "max_difficulty": 40,
         "base_creatures": 1,
         "difficulty_per_step": 5,
         "extra_creatures_per_step": 1,
@@ -627,16 +669,20 @@
       "fast_attack": {
         "source": "stamina",
         "skill": "attack_used",
-        "base_difficulty": 1,
-        "difficulty_per_extra_attack": 15,
+        "base_difficulty": 22,
+        "max_difficulty": 47,
+        "base_extra_attacks": 1,
+        "difficulty_per_extra_attack": 25,
         "extra_attacks_may_be_split_between_targets": true
       },
       "quick_attack": {
         "tier": "minor",
         "source": "stamina",
         "skill": "attack_used",
-        "base_difficulty": 1,
-        "difficulty_per_extra_attack": 14,
+        "base_difficulty": 18,
+        "max_difficulty": 48,
+        "base_extra_attacks": 1,
+        "difficulty_per_extra_attack": 30,
         "extra_attacks_may_be_split_between_targets": true,
         "extra_attacks_deal_weapon_damage_only": true
       },
@@ -644,9 +690,57 @@
         "source": "stamina",
         "skill": "fortitude",
         "base_difficulty": 8,
+        "max_difficulty": 26,
         "difficulty_per_step": 3,
         "mastery_hp_per_step": 2
       }
+    },
+    "gnoll": {
+      "challenge_level": 10,
+      "typical_number": 9,
+      "attributes": {
+        "strength": 16,
+        "dexterity": 14,
+        "constitution": 14,
+        "intelligence": 8,
+        "willpower": 10,
+        "charisma": 8
+      },
+      "skills": {
+        "attack_melee": 17,
+        "dodge": 8,
+        "spot": 7,
+        "stealth": 6,
+        "fortitude": 6,
+        "resolve": 3
+      },
+      "disciplines": {
+        "martial": "initiate",
+        "athletic": "adept"
+      },
+      "powers": [
+        "power_attack",
+        "sneak_attack",
+        "redouble"
+      ],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "athletic",
+        "martial"
+      ],
+      "outlawed_disciplines": [
+        "magical",
+        "social"
+      ],
+      "mastery_hit_points": 6,
+      "core_hit_points": 14,
+      "stamina": 34,
+      "spirit": 0,
+      "stance": "dodge",
+      "weapon": "battle_axe",
+      "armour": "chain_shirt",
+      "shield": "none",
+      "morale_breaks_at_core_fraction": 0.34
     },
     "goblin": {
       "challenge_level": 1,
@@ -669,6 +763,15 @@
       },
       "disciplines": {},
       "powers": [],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "athletic",
+        "awareness"
+      ],
+      "outlawed_disciplines": [
+        "magical",
+        "spiritual"
+      ],
       "mastery_hit_points": 4,
       "core_hit_points": 8,
       "stamina": 5,
@@ -677,6 +780,53 @@
       "weapon": "short_sword",
       "ranged_weapon": "shortbow",
       "armour": "partial_leather",
+      "shield": "none",
+      "morale_breaks_at_core_fraction": 0.5
+    },
+    "hill-giant": {
+      "challenge_level": 15,
+      "typical_number": 4,
+      "attributes": {
+        "strength": 18,
+        "dexterity": 8,
+        "constitution": 18,
+        "intelligence": 8,
+        "willpower": 12,
+        "charisma": 8
+      },
+      "skills": {
+        "attack_melee": 22,
+        "block": 11,
+        "dodge": 4,
+        "spot": 6,
+        "fortitude": 12,
+        "resolve": 6
+      },
+      "disciplines": {
+        "martial": "adept"
+      },
+      "powers": [
+        "power_attack",
+        "hammer_blow",
+        "follow_through",
+        "find_the_gap"
+      ],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "martial",
+        "awareness"
+      ],
+      "outlawed_disciplines": [
+        "magical",
+        "social"
+      ],
+      "mastery_hit_points": 160,
+      "core_hit_points": 18,
+      "stamina": 48,
+      "spirit": 0,
+      "stance": "block",
+      "weapon": "two_handed_sword",
+      "armour": "leather",
       "shield": "none",
       "morale_breaks_at_core_fraction": 0.5
     },
@@ -693,6 +843,50 @@
       "attack_roll": "1d20",
       "dodge_targeting_base": 10,
       "block_targeting_base": "block_skill"
+    },
+    "hobgoblin": {
+      "challenge_level": 5,
+      "typical_number": 8,
+      "attributes": {
+        "strength": 14,
+        "dexterity": 12,
+        "constitution": 14,
+        "intelligence": 10,
+        "willpower": 12,
+        "charisma": 10
+      },
+      "skills": {
+        "attack_melee": 6,
+        "block": 6,
+        "dodge": 3,
+        "spot": 3,
+        "fortitude": 4,
+        "resolve": 4
+      },
+      "disciplines": {
+        "martial": "initiate"
+      },
+      "powers": [
+        "power_attack",
+        "guard"
+      ],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "martial",
+        "social"
+      ],
+      "outlawed_disciplines": [
+        "magical"
+      ],
+      "mastery_hit_points": 12,
+      "core_hit_points": 14,
+      "stamina": 20,
+      "spirit": 0,
+      "stance": "block",
+      "weapon": "sword",
+      "armour": "scale_mail",
+      "shield": "shield",
+      "morale_breaks_at_core_fraction": 0.25
     },
     "languages": {
       "languages_have_ranks": false,
@@ -724,6 +918,45 @@
         "large": 2,
         "huge": 3
       }
+    },
+    "orc": {
+      "challenge_level": 2,
+      "typical_number": 5,
+      "attributes": {
+        "strength": 14,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "willpower": 10,
+        "charisma": 8
+      },
+      "skills": {
+        "attack_melee": 4,
+        "dodge": 2,
+        "block": 2,
+        "spot": 2,
+        "fortitude": 4,
+        "resolve": 2
+      },
+      "disciplines": {},
+      "powers": [],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "martial",
+        "athletic"
+      ],
+      "outlawed_disciplines": [
+        "magical"
+      ],
+      "mastery_hit_points": 6,
+      "core_hit_points": 14,
+      "stamina": 14,
+      "spirit": 0,
+      "stance": "dodge",
+      "weapon": "hand_axe",
+      "armour": "leather",
+      "shield": "none",
+      "morale_breaks_at_core_fraction": 0.34
     },
     "power-sources": {
       "stamina_base": "constitution",
@@ -917,6 +1150,7 @@
       "bolt": {
         "tier": "minor",
         "base_difficulty": 2,
+        "max_difficulty": 14,
         "schools": [
           "energy"
         ],
@@ -961,6 +1195,7 @@
           "energy"
         ],
         "base_difficulty": 8,
+        "max_difficulty": 34,
         "damage": 10,
         "difficulty_per_step": 2,
         "damage_per_step": 1,
@@ -1007,6 +1242,7 @@
           "energy"
         ],
         "base_difficulty": 6,
+        "max_difficulty": 32,
         "template": "circle",
         "area_archetype": "concentrated",
         "minimum_spirit": 2,
@@ -1019,6 +1255,7 @@
           "energy"
         ],
         "base_difficulty": 6,
+        "max_difficulty": 32,
         "template": "any",
         "area_archetype": "balanced",
         "minimum_spirit": 2,
@@ -1030,6 +1267,7 @@
           "energy"
         ],
         "base_difficulty": 8,
+        "max_difficulty": 34,
         "template": "circle",
         "area_archetype": "diffuse",
         "difficulty_per_damage": 2,
@@ -1136,6 +1374,7 @@
           "death"
         ],
         "base_difficulty": 6,
+        "max_difficulty": 14,
         "range": 10,
         "minimum_spirit": 2,
         "needs_attack_roll": false,
@@ -1152,6 +1391,7 @@
           "light"
         ],
         "base_difficulty": 30,
+        "max_difficulty": 38,
         "range": "touch",
         "minimum_spirit": 10,
         "needs_attack_roll": false,
@@ -1166,6 +1406,7 @@
       },
       "guard": {
         "base_difficulty": 8,
+        "max_difficulty": 34,
         "range": "touch",
         "minimum_spirit": 2,
         "needs_attack_roll": false,
@@ -1241,6 +1482,7 @@
       },
       "blessing": {
         "base_difficulty": 8,
+        "max_difficulty": 34,
         "range": "touch",
         "minimum_spirit": 2,
         "needs_attack_roll": false,
@@ -1325,6 +1567,7 @@
       },
       "ward": {
         "base_difficulty": 6,
+        "max_difficulty": 32,
         "template": "circle",
         "area_archetype": "diffuse",
         "minimum_spirit": 2,
@@ -1406,6 +1649,7 @@
       "mend": {
         "tier": "minor",
         "base_difficulty": 4,
+        "max_difficulty": 16,
         "schools": [
           "life_force"
         ],
@@ -1423,6 +1667,7 @@
       },
       "cure_wounds": {
         "base_difficulty": 16,
+        "max_difficulty": 40,
         "schools": [
           "life_force"
         ],
@@ -1443,6 +1688,7 @@
       },
       "cleanse": {
         "base_difficulty": 10,
+        "max_difficulty": 18,
         "schools": [
           "life_force"
         ],
@@ -1456,6 +1702,7 @@
       },
       "restoration": {
         "base_difficulty": 14,
+        "max_difficulty": 22,
         "schools": [
           "life_force"
         ],
@@ -1513,6 +1760,8 @@
       "minimum_cost_divisor": 3,
       "minor_powers_ignore_minimum_cost": true,
       "difficulty_declared_before_rolling": true,
+      "declaration_within_the_powers_band": true,
+      "band_runs_base_difficulty_to_max_difficulty": true,
       "failure_spends_the_action": true,
       "failure_costs_the_minimum": true,
       "unaffordable_power_does_not_take_effect": true,

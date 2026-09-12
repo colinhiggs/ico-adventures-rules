@@ -661,6 +661,193 @@ engine arrived.
   line-holder carries a sword, reach 1 — the shortest weapon in its own
   party — and so has no band to defend.
 
+#### The baseline the rebalancing starts from
+
+*Two changes land here, and they landed in the same run, so nothing
+below is cleanly attributable to either until the control run named at
+the end says otherwise.*
+
+**Guard moved from Initiate to Adept.** At Initiate nine of the ten
+panel builds had it and so did the replacement-level stand-in that every
+worth in the table is a difference against. At Adept six have it and the
+stand-in does not. Guard now sits at exactly Riposte's grade, which is
+where the two things one reaction must choose between belong.
+
+**The free mastery hit point now arrives with the level that grants
+it.** `advancement.md` lists it under *what a level gives*, beside the
+points; the points arrived as `chargen + (level - 1) x per_level` and
+the hit points multiplied by `level`. So a first-level character
+collected a level's grant it had not gained, and every character after
+it carried one extra level's worth for ever — 2 to 4 hit points, all of
+it the constitution bonus, which is up to a tenth of a level 1 build.
+
+Every archetype now starts at exactly 35 mastery hit points: the free
+ten plus the twenty-five buy cap, with constitution no longer reaching
+level one at all.
+
+The free ten themselves were never in question. `char.mhp = free_mhp +
+bought_mhp`, nothing is deducted for them, and `character-creation.md`
+says nobody pays for them. That was checked on a live build before
+anything was touched.
+
+##### The level 1 calibration was made against hit points that were not there
+
+Gates, read as numbers and not as a count — three failures became four:
+
+| pairing | before | after |
+|---|---|---|
+| L1 berserker vs skirmisher | 2.9 | 2.9 |
+| **L1 skirmisher vs priest** | **passing** | **2.6 FAIL** |
+| L5 berserker vs spellblade | 2.3 | 2.3 |
+| L10 berserker vs paragon | 2.8 | 2.7 |
+
+The three that already failed did not move. The new one is not a
+knife-edge pairing tipping over: this file's own guidance records the
+level 1 priest duel as passing by a thousandth of a round, and it is now
+2.6 — it fell by four tenths.
+
+That is the finding rather than the damage. `character-creation.md`'s
+design note records first-level fights being measurably too short, a
+third of pairings under the floor, and the free ten as the fix. **That
+calibration was made against a level 1 character holding three hit
+points the rules never gave it.** The lever the note already names is
+`max_starting_mastery_hp`, and the note also says what raising it costs:
+it raises the price of surviving and the bill lands on whoever has least
+to spare — a level 1 wizard paying in power source.
+
+##### The table, at 60 trials
+
+Noise: one estimate 0.08, a difference 0.11. Nothing below about 0.21 is
+a real difference. Intact reference party 3.21 of 5.
+
+| role-holder | Guard initiate, no mhp fix | this baseline |
+|---|---|---|
+| line | +0.93 | +0.83 |
+| striker | +0.60 | +0.46 |
+| caster | +0.28 | +0.14 |
+| healer | +0.03 | **+0.00** |
+| *intact party* | *3.39* | *3.21* |
+
+```
+against the role-holders     line   striker    caster    healer   spread
+berserker                   +0.84     +0.20     +0.72     +0.70     0.64
+priest                      +0.41     +0.04     -0.07     +0.13     0.47
+spellblade                  +0.07     -0.21     -0.10     -0.25     0.31
+sentinel                    -0.08     -0.08     +0.04     +0.12     0.21
+duellist                    -0.13     +0.01     +0.05     +0.14     0.27
+commander                   -0.18     +0.11     +0.03     +0.14     0.32
+paragon                     -0.25     +0.16     +0.55     +0.72     0.97
+skirmisher                  -0.30     -0.03     -0.30     -0.29     0.27
+generalist                  -1.01     -0.76     -0.69     -0.49     0.52
+evoker                      -1.24     -0.27     +0.00     +0.11     1.35
+```
+
+##### There is no healer role
+
+The party clears 3.21 with the purpose-built healer in the chair and
+3.21 with a replacement-level body in it. Not "small": zero.
+
+This is not the back-rank guarding artefact — the stand-in never guards,
+because the survive-the-round rule rejects a guardian that soft. It is
+the reaction economy doing what healing used to: Guard, Riposte and
+Deflect prevent or repay damage as it happens, and healing it back
+afterwards is the worse trade. Support-as-healing has been outcompeted
+by support-as-interposition, and the arithmetic finding above — `mend`
+available to every caster at 6.0 to 7.0 hit points a round — says the
+Spiritual discipline was never buying much of it anyway.
+
+It also means the `best` column is unreadable. Seven builds name
+"healer" for no reason except that the healer reference is the weakest
+thing to beat.
+
+##### Moving Guard did not restore differentiation
+
+Mean spread in the table above, across the runs:
+
+| | mean spread |
+|---|---|
+| before reactions | 0.699 |
+| Guard at Initiate | 0.560 |
+| Guard at Adept | 0.533 |
+
+No improvement, and the comparison flatters the last row: spread is a
+*range* across four noisy cells, so noise biases it upward, and this run
+has more noise (60 trials) than the one above it (120). A real fall
+would show up damped.
+
+So **the diagnosis was incomplete.** "A power everybody owns cannot
+differentiate anybody" is true, and removing Guard from four builds and
+from the stand-in did not restore the spread, so Guard's grade was not
+what was holding it down. Whatever is flattening these builds is
+upstream of any one power.
+
+The one clear response to the grade change: **the skirmisher lost Guard
+and collapsed in the back-rank slots**, caster +0.37 to -0.30 and healer
++0.43 to -0.29, both far past the threshold. A build that had been
+earning its keep by back-rank tanking cannot any more.
+
+##### What still stands, five tables in
+
+- **The berserker is the best tank in the game.** +0.84 over the
+  purpose-built line-holder and +1.67 over a stand-in there, its own
+  best slot. A dodge-stance 18-strength damage build beats the defensive
+  specialist at defence. Nothing currently expresses a tank role.
+- **The evoker is the only genuine specialist**, spread 1.35, and the
+  only build for which position matters: -1.24 in the line and actually
+  worse than a replacement body there. That is the shape the design
+  wants, and one build in ten has it.
+- **The paragon is flat**: +0.58, +0.62, +0.69, +0.73 against stand-ins,
+  spread 0.15. Good everywhere, for nothing.
+- **Commander and duellist have separated at last** — by 0.05 and 0.10,
+  under the 0.21 threshold, so still unresolved after five tables.
+  `rally` and `hold_the_line` remain unpriced.
+
+##### The control run: Guard's grade moves exactly one build
+
+Guard's grade and the mastery hit point fix were confounded in
+everything above, so the grade was run on its own: same seed, same
+trials, same fix, Guard back at Initiate, built as a separate ruleset so
+that one value is the only difference.
+
+**Nine of the ten rows came back bit-identical**, and so did the intact
+party and all four stand-in baselines. One row moved:
+
+| skirmisher | line | striker | caster | healer | spread |
+|---|---|---|---|---|---|
+| Guard at Initiate | -0.16 | +0.09 | **+0.50** | **+0.37** | 0.67 |
+| Guard at Adept | -0.30 | -0.03 | **-0.30** | **-0.29** | 0.27 |
+
+So the whole effect of the grade is one build, and the direction is
+against the change. Mean spread, now measured at matched noise:
+
+| | mean spread |
+|---|---|
+| Guard at Initiate | 0.573 |
+| Guard at Adept | 0.534 |
+
+Moving Guard to Adept *reduced* differentiation. The earlier 0.560
+against 0.533 was the confounded pair and understated it.
+
+**Almost nobody uses Guard.** Nine builds had it at Initiate and only
+one behaved differently without it, so generalist, priest and the
+stand-in were carrying a power they never declared. The triage rule is
+why: a guardian must be tough enough to survive the round it commits to
+*and* be standing beside somebody softer, and most builds are never
+both. The reference line-holder and striker are Adept either way, which
+is why the reference party did not move at all.
+
+And the one build that did use it was using it for something the design
+wants. Since a guardian joins the rank it covers, a skirmisher in a
+back-rank slot steps up, tanks, and pays the exposure — a mobile
+high-dodge build with a real reason to be somewhere. Spread 0.67, best
+slot the caster's. Moving Guard to Adept deleted the only role Guard was
+creating.
+
+The diagnosis that prompted the move — *a power everybody owns cannot
+differentiate anybody* — was the wrong half of the problem. The trouble
+is not that everybody owns Guard; it is that almost nobody can use it.
+Raising the grade addressed ownership and left use untouched.
+
 #### What the numbers cost
 
 One estimate at 24 trials carries a standard deviation of 0.12, so a
@@ -694,11 +881,242 @@ anybody measured the variance. Measure the variance first.
   against the purpose-built healer is the direct test of whether a
   healer role exists, and it is now +0.05, which is to say there is not
   one.
-- **Decide whether Guard belongs at initiate grade.** See above: at
-  initiate it is universal, and a universal power differentiates
-  nobody.
+- **Guard's grade: measured, and Adept is the worse of the two.** It
+  moves exactly one build, costs that build the only role Guard was
+  creating, and lowers mean spread from 0.573 to 0.534. The open
+  question is not the grade but why nine builds hold a power only one of
+  them ever declares — which is a question about the triage rule and
+  about what Guard asks of a guardian, not about what it costs to buy.
+- **Re-calibrate level 1 hit points.** The free ten were sized against
+  a character holding three more than the rules gave it, and with that
+  corrected a second level 1 duel falls under the three-round floor.
+  `max_starting_mastery_hp` is the lever `character-creation.md` names.
 
-### What this asks of any competing-sink design
+### Making power damage carry the scaling
+
+**Status: measured, not decided.** Opened because plain damage does not
+scale at all and something has to.
+
+### The finding underneath everything else here
+
+A duel's plain swings are flat across fifteen levels. Attack skill and
+targeting difficulty rise together, so the margin a blow lands with does
+not grow: measured, the margin contributes **4.8 damage at level 1, at
+level 5 and at level 15**, and the whole of a plain swing goes from 7.4
+to 7.7 over fourteen levels. Every point of damage progression in this
+game comes from powers.
+
+That makes the power curve the single lever that decides whether a
+high-level fight takes as long as a low-level one, and it is why
+`margin_to_damage_fraction` is not the lever it looks like: it scales
+every level by the same factor and moves no ratio at all.
+
+### What the scaling has to be
+
+For fights to hold their length, total damage must grow as total hit
+points do. Plain damage is flat and core hit points are flat, so the
+whole of both curves lands on the power term:
+
+| level | total hp | plain | power now | power needs |
+|---|---|---|---|---|
+| 1 | 31 | 7.4 | 2.3 | 2.3 |
+| 5 | 51 | 7.2 | 6.8 | 8.9 |
+| 10 | 76 | 7.7 | 8.5 | 16.2 |
+| 15 | 101 | 7.7 | 11.1 | 24.1 |
+
+**10.5x, not 4.5x.** Worth stating plainly because the obvious target --
+*make power damage scale like mastery hit points* -- is already true:
+power damage grows 4.8x against mastery's 4.5x, and fights still stretch
+from 3.2 rounds to 5.4. Matching mastery does not pay for the flat
+terms.
+
+### Why no linear knob can do it
+
+Damage is `steps x damage_per_step` and steps grow linearly with skill.
+Every knob on that expression is a *multiplier*: doubling what a step is
+worth doubles first level and fifteenth alike, so the ratio between them
+never moves however hard anything is turned. Measured against the
+stamina budget, the linear form delivers 3.4x against the 10.5x wanted.
+A ratio only moves if the shape changes.
+
+### The quadratic, measured
+
+`damage = steps^2 / divisor` -- steps buy a *pitch* and the damage is the
+pitch squared. Implemented behind one optional mechanic,
+`using-powers.damage_pitch_divisor`, so dropping the key restores linear
+exactly.
+
+It does what it was built for. Power damage grows **14.1x** (2.3 to
+32.5) and duel length goes from 3.2/3.7/4.7/5.4 rounds to
+**3.2/3.1/3.0/2.6**. It is self-limiting without a cap, because expected
+damage is the curve times the chance of making the roll, so pushing
+further multiplies a bigger number by a smaller chance and the product
+peaks at a finite difficulty that rises with skill. And it delivers the
+two regimes a high-level character wants for free: at level 15 a 3-step
+use is worth 2.25 damage and costs 4.4 (about ten a day), a 13-step use
+is worth 27.5 and costs 10 (about four a day).
+
+### What it costs, and why it was not adopted
+
+Nine gate failures, and five are the same one. **Powers end up carrying
+85% of a level 15 character's damage**, so an empty reservoir leaves it
+a quarter of its output against a band that wants 35 to 85%.
+
+| divisor | L1 dmg/kept/rnds | L5 | L10 | L15 |
+|---|---|---|---|---|
+| /4 | 9.8 / 86% / 3.2 | 16.3 / 56% / 3.1 | 25.3 / 30% / 3.0 | 38.3 / 22% / 2.6 |
+| /6 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 18.8 / 52% / 4.0 | 25.8 / 33% / 3.9 |
+| /9 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 16.4 / 67% / 4.6 | 20.7 / 59% / 4.9 |
+| /12 | 9.8 / 86% / 3.2 | 14.0 / 66% / 3.7 | 16.1 / 68% / 4.7 | 18.1 / 67% / 5.6 |
+
+The flatter the fight-length curve, the more of a character's damage
+lives in its reservoir. That is not a defect of the quadratic; it is
+what *"powers carry all the scaling"* means once plain damage is flat,
+and any design that puts the whole curve on powers meets it.
+
+Two side effects, both real:
+
+- **Accuracy becomes paramount.** Squaring the payoff puts far more
+  behind the hit roll, so whoever rolls highest compounds. The
+  contribution spread blew out to 3.0x with the skirmisher on top, and
+  the berserker abandoned its great axe for a *staff* at level 10 --
+  under a quadratic the axe's `-2` unwieldy penalty costs more than its
+  `+4` damage gains, because the roll now gates a much larger prize.
+  The weapon-spread gate failed at 40%.
+- **It is harder arithmetic at a table.** Players find a linear step
+  count easier than a squared one, and this is used on every attack.
+
+Neither is fatal. Both are the reason a design that reaches the same
+place with two linear terms is worth trying first -- see the entry
+below. The implementation is kept: `step_damage` is one function behind
+one optional key, so this can be re-measured at any divisor by adding
+the key back.
+
+### The multiplicative alternative, measured
+
+Two linear terms that multiply reach the same place as one curved one,
+with arithmetic a table can do. **How hard** a power is pushed stays
+linear in the steps declared; **how often** it can be thrown becomes the
+second term. Their product is the scaling.
+
+#### Why the second lever was dead
+
+It was not dormant, it was *coupled to the first*. The minimum a power
+can cost is `difficulty // minimum_cost_divisor` -- a fraction of how
+hard you pushed -- so a character whose skill has doubled declares a
+harder version of the same power and pays a proportionally larger
+minimum. Measured across fifteen levels, cost per use rises 4.4 to 8.1
+while the pool rises 18 to 46, and the two very nearly cancel:
+
+| level | pool | cost | uses a day | rounds powered | steps |
+|---|---|---|---|---|---|
+| 1 | 18 | 4.4 | 4.1 | 20% | 3 |
+| 5 | 26 | 5.0 | 5.1 | 26% | 5 |
+| 10 | 36 | 6.5 | 5.5 | 28% | 8 |
+| 15 | 46 | 8.1 | 5.6 | 28% | 10 |
+
+**Effect 3.3x times frequency 1.4x is 4.6x**, against the 10.5x wanted.
+Pushing effect up raises cost, which cuts frequency: the two levers were
+fighting each other through the difficulty declaration.
+
+#### Decoupling them
+
+`using-powers.minimum_cost_flat`, optional, replaces the fraction with a
+number that does not know the difficulty at all. Then pool growth
+reaches the player as uses. Implemented as one function, `minimum_cost`,
+which every one of the model's fifteen floor sites now goes through;
+without the key it is the divisor exactly as before.
+
+| combination | L1 | L5 | L10 | L15 | product |
+|---|---|---|---|---|---|
+| as now | 3st/20%/c4.4 | 5st/26%/c5.0 | 8st/28%/c6.5 | 10st/28%/c8.1 | 4.6x |
+| flat 2, pool 4, base 12 | 4st/22%/c4.6 | 5st/39%/c4.6 | 8st/61%/c4.6 | 10st/83%/c4.6 | **9.5x** |
+
+Effect 2.5x times frequency 3.8x. The higher `base_cost` is what holds
+level 1 to a fifth of its rounds while the pool carries level 15 to four
+fifths -- few uses early, many late, which is what was wanted.
+
+#### It does not hit the quadratic's wall
+
+This is the result that separates the two designs. Damage kept with an
+empty reservoir runs **62% to 66% at every level**, comfortably inside
+the 35-85% band, where the quadratic put five builds at 22-31%. Keeping
+the effect linear keeps plain swings a real share of output. Four gate
+failures against the quadratic's nine, and both reservoir failures are
+single builds one or six points outside the band rather than a
+collapse.
+
+#### What it breaks, and what that says about the ladder
+
+> **Corrected.** Most of this subsection turned out to be an artefact of
+> the crowd planner scoring whole kills — see *The simulator fault that
+> nearly became the headline* below. Re-measured with that fixed, the
+> day does not fall apart: the same design clears `3.29` at level 5 and
+> `4.26` at level 10 rather than `1.15` and `1.91`. The creature
+> asymmetry is also smaller than it reads here, because the two columns
+> compared were not carrying the same reservoir knobs. The numbers below
+> are left as they were taken; *Re-measuring the multiplicative design
+> on the ladder* is the one to read.
+
+The party day falls apart in the middle:
+
+| level | fight length | cleared of 5 |
+|---|---|---|
+| 1 | 4.1 | 2.75 |
+| 5 | 10.8 | **1.15** |
+| 10 | 10.7 | **1.91** |
+| 15 | 8.9 | 3.30 |
+
+Not because characters got weaker. **A flat minimum is worth far more to
+a creature than to a character**, because creatures declare high
+difficulties out of small pools and were the ones the proportional floor
+was pricing out:
+
+| who | pool | cost d/3 -> flat | uses a day | gain |
+|---|---|---|---|---|
+| hobgoblin | 20 | 4.4 -> 4.6 | 4.5 -> 4.3 | 1.0x |
+| gnoll | 34 | 8.1 -> 4.6 | 4.2 -> 7.4 | 1.8x |
+| hill giant | 48 | 9.1 -> 4.6 | 5.3 -> 10.4 | 2.0x |
+| striker L5 | 32 | 5.8 -> 4.6 | 5.6 -> 7.0 | 1.2x |
+| striker L10 | 52 | 5.5 -> 4.2 | 9.5 -> 12.4 | 1.3x |
+
+The gnoll and the giant double their power uses while the party gains a
+fifth. Levels 5 and 10 collapsed because the day is made of those.
+
+Two things a rework of powers into a ladder of difficulties would have
+to settle, both visible in these numbers:
+
+- **The difficulty range is too narrow to carry two levers.** Steps run
+  only 4 to 10 across fifteen levels, most of that capped by what a roll
+  can reach, so effect manages 2.5x and frequency is left doing 3.8x of
+  the work. A wider ladder -- more rungs, further apart, with real
+  differences of effect between them -- is what would let the first
+  lever pull its weight.
+- **Frequency saturates and cannot be pushed past it.** Nobody powers
+  more than every round, so the whole lever is `1 / (level 1
+  frequency)`. Holding level 1 *down* is what makes the design work,
+  which is a happy accident of wanting that anyway.
+- **Creatures need their own rung.** Built from the same parts but with
+  pools a fraction of a character's, they take any change to the cost
+  rule disproportionately. Either their power budgets scale with threat,
+  or the cost rule needs a term that knows how large a reservoir it is
+  spending from.
+
+#### Where the three designs stand
+
+| | scaling | arithmetic | weight on the hit roll | reservoir dependence |
+|---|---|---|---|---|
+| linear | 4.6x | easiest | normal | fine |
+| multiplicative | 9.5x | linear | normal | fine, 62-66% kept |
+| quadratic | 14.1x | squared | extreme | fails, 22-31% kept |
+
+Both alternatives are one optional mechanic away from the committed
+rules -- `damage_pitch_divisor` and `minimum_cost_flat` -- and neither
+key is in the ruleset. `step_damage` and `minimum_cost` are in the model
+and fall back to the current behaviour exactly when the keys are absent,
+so either can be re-measured by adding one line to `using-powers.md`.
+
+## What this asks of any competing-sink design
 
 Two rules fall out, and the second is the one that is easy to miss.
 
@@ -736,18 +1154,57 @@ The reservoir fails the second rule badly today: its useful ceiling is
   the intended behaviour and is worth confirming rather than assuming
   if the value moves.
 
-### Two simulator faults found on the way
+### Why cost does not fall with skill, and where the lever is
+
+`using-powers` prices a power at `base_cost + difficulty - skill_roll`,
+which is exactly the mechanism a design wants if higher-level characters
+are to do more with a reservoir that grows slowly: roll better, pay
+less. It does not work, and the reason is the minimum.
+
+No power may cost less than `difficulty // minimum_cost_divisor`. That
+floor is set by the difficulty you declared and **knows nothing about
+your skill**, so once the formula sinks beneath it, every further point
+of skill buys nothing at all.
+
+| build | level | declared | skill | floor | formula | paid |
+|---|---|---|---|---|---|---|
+| duellist | 1 | 12 | 7 | 4 | 4.5 | 4.5 |
+| duellist | 5 | 20 | 11 | 6 | 8.5 | 8.5 |
+| duellist | 10 | 20 | 16 | 6 | 3.5 | **6.0 floor** |
+| duellist | 15 | 20 | 21 | 6 | -1.5 | **6.0 floor** |
+| evoker | 15 | 30 | 21 | 10 | 8.5 | **10.0 floor** |
+
+Martial builds reach the floor by level 10 and casters by level 15.
+After that the price of a power is a function of the difficulty declared
+and of nothing else.
+
+Two facts sit beside it. Declared difficulty is nearly flat with level
+— 12 to 20 for the martial builds across fifteen levels, 25 to 30 for
+the casters — so characters do not push harder as they improve, they
+succeed more often at the same push. And spend per fight is flat at
+about 10 from level 1 to level 15 while the reservoir goes from 21 to
+145, which is the same fact seen from the other end.
+
+So the lever for *"cost comes down as skill goes up"* is
+`minimum_cost_divisor`, or a floor that is relative to skill rather than
+to declared difficulty. It is not `base_cost`, which is already being
+cancelled out.
+
+### One simulator fault found on the way
 
 Both belong in `TODO.md` under simulator gaps if they are not fixed
 alongside whatever is decided here.
 
-- **`max_cost_of_a_successful_power` is not modelled.** `using-powers`
-  says a successful power never costs more than 10; `sim/model.py`
-  computes `base_cost + difficulty - roll` with a floor and no ceiling.
-  So the simulator overcharges powers, which means it values the
-  reservoir *higher* than the rules do. Every reservoir finding above
-  is therefore conservative — and the drift cost of capping it is an
-  overestimate.
+- **`max_cost_of_a_successful_power` was not modelled. Fixed, and it
+  changed nothing.** `using-powers` says a successful power never costs
+  more than 10; the model computed `base_cost + difficulty - roll` with
+  a floor and no ceiling, so above a declared difficulty of 32 the floor
+  overtook the cap and billed a successful power for reaching further.
+  The cap is in now. Every number this file records was unmoved by it,
+  gates included, because **nothing in the panel ever declares a
+  difficulty above 30** — the fault was real and dormant. Worth having
+  because it is correct, and worth knowing it is not what was hiding
+  anything.
 - **The spend priority is fixed, and becomes load-bearing under a tight
   budget.** `build_character` reserves mastery hit points, then buys
   skills to their caps, then dumps whatever is left into the power
@@ -757,3 +1214,491 @@ alongside whatever is decided here.
   remove them — at 190 points with skills wanting 123 and mastery
   wanting 53 there is no allocation that also funds a reservoir — but
   the model is choosing *which* thing starves, and it should not be.
+
+## Reworking powers into a ladder of difficulties
+
+The measurements above ended with three things a ladder would have to
+settle, and this is the ladder built against them. It landed in the
+rules rather than staying here, so what follows is the case for the
+numbers rather than an undecided question — with one genuine surprise
+in the middle, which is why it is written down at this length.
+
+### What a rung is
+
+A power now names a **band**: a base difficulty, which is the least it
+may be declared at, and a `max_difficulty`, which is the most. Above the
+top of a band there is no bigger number to say. Reaching further means
+owning the next power up.
+
+Powers therefore come in rungs, and the martial damage line is the pair
+the rest is built around:
+
+| rung | grade | band | damage added |
+|---|---|---|---|
+| Precise Strike (minor) | Initiate | 2–10 | 0 to +2 |
+| Power Attack | Initiate | 4–18 | +1 to +8 |
+| Hammer Blow | Adept | 18–34 | +8 to +24 |
+
+`base_damage` is the new key that makes this work, in the same idiom as
+`base_allies` and `base_targets`: **the rung above opens at exactly the
+damage the rung below closes at**, and then climbs at twice the rate
+over twice the span. Buying the grade is never a step backwards and
+never a discontinuity.
+
+### Why a rung and not a steeper line
+
+Because a steeper line cannot move the ratio, and the arithmetic says so
+in one step. With a fixed exchange rate `r` of damage per point of
+difficulty, a base difficulty `bd`, plain damage `B` and attack skill
+`A`, maximising `hit chance x damage` puts the best declaration at
+
+    D* = (A + 21 + bd - B/r) / 2
+
+and the damage the power adds there at `(r(A + 21 - bd) - B) / 2`.
+Turning `r` multiplies level 1 and level 15 by the same factor. Only
+`bd` and `r` *changing together above a difficulty a beginner cannot
+reach* moves the ratio, and that is what a second rung is.
+
+Measured on the reference striker against the standard foe, which is
+the same measurement the earlier entries in this file use:
+
+| level | before | after |
+|---|---|---|
+| 1 | Fast Attack d16, `+5.38` | Power Attack d10, `+3.65` |
+| 5 | Fast Attack d16, `+8.33` | Power Attack d14, `+5.45` |
+| 10 | Fast Attack d16, `+10.28` | Fast Attack d22, `+8.38` |
+| 15 | Fast Attack d31, `+11.92` | Hammer Blow d24, `+12.70` |
+
+**The effect lever goes from 2.2x to 3.5x**, which is the number the
+multiplicative design needed and could not get: it had effect 2.5x doing
+a third of the work while frequency 3.8x did the rest, against a
+frequency lever that saturates at every round. The rungs also give the
+progression something to be about — the crossovers land at level 10 and
+level 15 rather than nowhere.
+
+### Fast Attack was the whole problem
+
+The left column above is the finding. **Every reference build declared
+Fast Attack at difficulty 16 from level 1 to level 10 and nothing else
+was ever close**, because one extra swing is worth more than any amount
+of extra damage on one and it was reachable at first level. With one
+power answering every question at every level, the damage ladder was
+decorative before it was built.
+
+Its band moved to 22–47, one extra attack at the base and a second at
+the top. The base difficulty was chosen by sweeping it:
+
+| base | L1 | L5 | L10 | L15 |
+|---|---|---|---|---|
+| 14 | Fast | Fast | Fast | Hammer |
+| 18 | Fast | Fast | Fast | Hammer |
+| **22** | **Power** | **Power** | **Fast** | **Hammer** |
+| 26 | Power | Power | Hammer | Hammer |
+
+At 22 it is out of reach early, a live competitor with the Adept rung in
+the middle, and beaten by it at the top — which is the relationship a
+general power and a bought one should have. At 26 it is dead.
+
+Quick Attack, its minor twin, went to 18–48 with a *coarser* step than
+Fast Attack's rather than a finer one. That is load-bearing and was
+nearly got wrong: a minor power whose steps are cheaper than its
+standard twin's overtakes it somewhere, and a free version of the best
+power in the game is not a trade-off. `minor_beaten_by_twin` did not
+catch it, because its skip rule asked whether the standard power was
+"above its first step" rather than whether it granted anything at all,
+and a rung with a base effect grants something at its first number. Both
+are fixed.
+
+### Creatures got their own rung, which was the point
+
+The third open question was creatures, and the band answers it directly.
+Against the reference line-holder:
+
+| creature | martial grade | before | after |
+|---|---|---|---|
+| hobgoblin | Initiate | Power Attack d18, `5.13` | d18, `5.37` |
+| gnoll | Initiate | Power Attack d22, `12.24` | d18, `12.04`, cost `7.3`→`6.0` |
+| hill giant | Adept | Power Attack d28, `20.04` | **Hammer Blow** d28, `25.79` |
+
+The gnoll was declaring at `22` on a reservoir of `34` because nothing
+stopped it; now its grade does, and the power it can still afford costs
+it less. The giant gained a fifth of its output by standing on the rung
+its grade already said it held. Neither creature's stat block moved.
+
+That is the mechanism `creature-advancement.md` needed and did not have:
+a dangerous individual of an ordinary kind is now a creature that bought
+a grade, rather than a creature with an invented weapon.
+
+### The simulator fault that nearly became the headline
+
+The first ladder run reported the failing level 10 party fight length
+falling from `12.4` rounds to `4.2`, and clearing `3.34` of the day to
+`4.02`. That would have been the headline. It was wrong, and finding out
+why is the most useful thing in this entry.
+
+Every first-order number said the opposite. Party damage per round was
+**down** about a fifth at both levels after the change; creature damage
+was flat or up. Nothing in the arithmetic could produce a fight three
+times shorter.
+
+`_swarm_plan` picks one power and one difficulty for a round against a
+crowd, and it scored the options in **whole kills**. Where nothing a
+build holds can one-shot the mook in front of it, every option scores
+exactly zero, and the comparison falls to whichever one *could* kill on
+a face nobody rolls. The only faces that drop a hobgoblin at level 5 are
+runaway criticals — and a runaway critical clears a declared `44` as
+easily as a declared `4`. So the difficulty cost nothing in the measure
+while costing the whole action in the fight, since `_swarm_act` spends
+the round on a failed declaration:
+
+| Follow Through at | chance of making it | scored kills |
+|---|---|---|
+| 4 | 1.00 | 0.0038 |
+| 20 | 0.60 | 0.0075 |
+| 44 | 0.02 | **0.0131** |
+
+The level 5 and level 10 reference parties were declaring Follow Through
+at `44` and standing there for most of the fight. The ladder's ceilings
+made that declaration impossible, so the fight length improved — for a
+reason that had nothing to do with the rules being better.
+
+`_expected_kills` is now `_expected_bodies` and scores **fractions of a
+body**: damage capped at one mook's hit points, divided by them. At
+level 5 that is a plain attack at half a hobgoblin against a lottery
+ticket at a fiftieth of one, and the plain attack wins. On identical
+rules:
+
+| level | kill count | body fractions |
+|---|---|---|
+| 5 | 9.8 rounds | 6.2 |
+| 10 | 12.4 rounds | 5.0 |
+
+**Every party number in this file taken before that fix is worth less
+than it looks**, including the ones that motivated this whole effort.
+
+### What the ladder actually does to a party, honestly
+
+Both columns below use the corrected planner, so the only difference is
+the rules:
+
+| level | before: rounds / cleared | after: rounds / cleared |
+|---|---|---|
+| 1 | 3.9 / 4.99 | 3.8 / 5.00 |
+| 5 | 6.2 / 4.35 | 6.0 / 4.45 |
+| 10 | 5.0 / 5.25 | 4.2 / 4.50 |
+| 15 | 6.4 / 4.53 | 6.5 / 4.00 |
+
+Fight length barely moves, which is what the first-order arithmetic
+predicted and what should have been expected all along. What does move
+is the **day**, and in the right direction: level 10 was clearing more
+than the whole of it — `5.25` of `5`, a day that was not a day — and
+level 15 tightened from `4.53` to `4.00`. The giant's rung is most of
+the second.
+
+Gate count is unchanged at one, and the failure is a different one:
+
+- before: `L10 berserker takes 4.4 rounds to clear 6 goblins (target 4)`
+- after: `L5 spellblade keeps 85% of its damage with an empty reservoir
+  (band 35-85%)`
+
+The second is a hairline — one build, one level, exactly on the bound —
+and it is the fresh side that moved rather than the floor: a level 5
+spellblade can no longer reach Fast Attack, so its reservoir buys it
+less. Read with `CLAUDE.md`'s rule about comparing numbers rather than
+counts, this is the change costing about half a point on one build.
+
+Precise Strike was given a `base_damage` for continuity and it was taken
+away again, measured: **a floor on a power that costs nothing is a
+permanent floor**, and it alone put that spellblade at 94% — nine points
+outside the band rather than on it — and pushed three more duels under
+the three-round floor. That is the cleanest argument in this entry for
+why the other ten powers whose bands open on nothing should be fixed
+together and measured, rather than tidied up one at a time.
+
+### Still open
+
+- **The spell list has two rungs and stops.** Bolt into Lance is a
+  ladder; nothing sits above Lance, so a caster's top rung arrives early
+  and afterwards only widens. Bands are on every spell so the mechanic
+  is universal, but whether the damaging spells need a third rung the
+  way the martial line did has not been measured.
+- **Ten powers open their bands on nothing.** See `TODO.md`. The fix is
+  a flat buff to ten powers and has to be measured as one.
+- **A floor ratio above 100% is incoherent and the level 1 skirmisher
+  now reports one.** `floor_offence` can exceed `expected_offence`
+  because they are different computations rather than a restriction of
+  one another — the blend over rounds and conditional availability is in
+  one and not the other. It was 89% before the ladder and 103% after,
+  so the ladder made an existing fault visible rather than causing it.
+  The gate exempts level 1 from the ceiling, which is why nothing failed.
+- **The multiplicative design has not been re-measured on the ladder.**
+  That was the point of building it: effect 3.5x and frequency somewhere
+  under 3x would land near the 10.5x the scaling needs, without the flat
+  minimum having to do all the work that broke the bestiary. The knobs
+  are unchanged and uncommitted.
+
+## Re-measuring the multiplicative design on the ladder
+
+The ladder was built to make the multiplicative design work. It does,
+and the useful result is that **the half of it that needed a new
+mechanic turns out not to be needed at all.**
+
+Everything below uses the corrected crowd planner, so it is comparable
+with the entry above it and *not* with the multiplicative entry before
+that.
+
+### The configurations
+
+The "knobs" are the five uncommitted progression values the earlier
+entry settled on: `max_starting_mastery_hp: 5`,
+`max_power_source_bought_per_level: 1`, `power_source_per_point: 4`,
+`base_cost: 12`, and `minimum_cost_flat: 2`.
+
+| | configuration | fails | day cleared, L1/L5/L10/L15 |
+|---|---|---|---|
+| 1 | no ladder, committed | 1 | 4.99 / 4.35 / 5.25 / 4.53 |
+| 2 | ladder, committed | 1 | 5.00 / 4.45 / 4.50 / 4.00 |
+| 3 | no ladder + all knobs | **5** | 2.72 / 3.29 / 4.26 / 4.00 |
+| 4 | ladder + knobs, **proportional** floor | **3** | 2.56 / 3.37 / 3.93 / 3.93 |
+| 5 | ladder + knobs, **flat** floor | **3** | 2.72 / 3.31 / 3.84 / 3.77 |
+| 6 | ladder + mastery knob only | 2 | 3.16 / 3.41 / 3.84 / 3.87 |
+| 7 | ladder + pool and cost knobs only | 2 | 4.31 / 3.94 / 3.97 / 4.00 |
+
+Fight length is inside the 3–12 band at every level of all seven.
+
+### The ladder takes the design from five failures to three
+
+Rows 3 and 5 are the same design with and without the ladder. The two
+failures it removes are precisely the two that were about powers:
+
+- `L5 spellblade keeps 91% of its damage with an empty reservoir` — gone,
+  because the ladder gives the spellblade something to spend a fresh
+  reservoir on that a beginner cannot reach.
+- `L10 berserker takes 4.4 rounds to clear 6 goblins` — gone.
+
+The three that survive are **all at level 1 and none of them is about the
+cost rule**. Rows 6 and 7 split them cleanly:
+
+| failure | caused by |
+|---|---|
+| L1 evoker can neither land nor afford any field | the spirit pool knobs |
+| L1 priest keeps 34% with an empty reservoir (floor 35%) | the spirit pool knobs |
+| L1 contribution spread 2.6x (priest 74 vs spellblade 28) | the mastery knob |
+
+All three are the brief's own instructions arriving: mastery hit points
+starting near core (`35` down to `15`) and a reservoir that grows slowly
+from a smaller start. Level 1 has not been re-tuned for either, and the
+level 1 day says so — `5.00` of five encounters cleared becomes `3.16`
+under the mastery knob alone and `4.31` under the pool knobs alone.
+
+### The flat minimum is no longer worth having
+
+This is the result worth keeping. Rows 4 and 5 differ **only** in the
+floor rule, and they measure the same: three failures, the same three,
+and a day within a rounding error at every level. `minimum_cost_flat`
+buys nothing the gates can see once the ladder is in.
+
+It is not that the floor stopped mattering — it still nearly doubles the
+frequency lever:
+
+| ladder + knobs, floor rule | effect | frequency | product |
+|---|---|---|---|
+| proportional, `difficulty / 3` | 3.5x | 2.75x | **9.6x** |
+| flat `2` | 3.5x | 4.50x | **15.7x** |
+
+It is that **the effect lever now covers the ground on its own**. Before
+the ladder, the same two rows were 3.3x x 1.4x = 4.6x and 2.5x x 3.8x =
+9.5x: only the flat floor could reach ten, and it had to carry the
+design. With the rungs in, the proportional floor reaches 9.6x — what
+the flat floor used to reach — using the lever that costs no new
+mechanic.
+
+Frequency ratios are only comparable between rows carrying the same
+reservoir knobs, which is worth stating because it is what the earlier
+entry got wrong. On the committed pool, which grows eightfold on its
+own, frequency is 4.70x without the ladder and 4.41x with it — the
+ladder does not touch that lever, and any comparison that mixes pool
+settings will say it does.
+
+### The bestiary objection was smaller than recorded
+
+The earlier entry's reason for rejecting the flat minimum was that it is
+worth far more to a creature than to a character. Measured like for like
+— same reservoir knobs on both sides, which the earlier table did not do
+— it is worth roughly the same to both:
+
+| who | uses a day, proportional -> flat | gain |
+|---|---|---|
+| hobgoblin | 2.9 -> 4.3 | 1.50x |
+| gnoll | 5.4 -> 10.0 | 1.85x |
+| hill giant | 5.2 -> 10.4 | 1.99x |
+| striker L5 | 5.7 -> 7.0 | 1.23x |
+| striker L10 | 6.8 -> 11.3 | 1.65x |
+| striker L15 | 8.6 -> 15.7 | 1.82x |
+
+The ladder is why: a level 15 striker used to declare Fast Attack at
+`31` and pay a proportional floor of `10`, so the flat rule was an
+enormous discount to creatures and a small one to characters. Capped at
+Hammer Blow's `24`, the character is in the same position the creature
+was. The asymmetry was real and the ceilings closed it — which removes
+the objection rather than vindicating it, and leaves the argument
+against the flat floor resting on it buying nothing.
+
+### Reservoir dependence stays healthy
+
+The wall the quadratic hit is nowhere near. Share of damage kept with an
+empty reservoir, across all ten builds:
+
+| configuration | L5 | L10 | L15 |
+|---|---|---|---|
+| ladder, committed | 46–85% | 51–64% | 48–67% |
+| ladder + knobs, flat floor | 43–84% | 46–61% | 47–63% |
+| (the quadratic, for contrast) | — | 22–31% | — |
+
+Note that the level 5 spellblade at `85%` — the single hairline failure
+the ladder alone carries — comes *inside* the band at `84%` once the
+pool knobs are in. The progression knobs fix it.
+
+### What this settles and what it leaves
+
+**Settled.** The multiplicative design works on the ladder, and it works
+without `minimum_cost_flat`. Neither experimental key —
+`damage_pitch_divisor` or `minimum_cost_flat` — needs to enter the
+ruleset. The model keeps both behind absent-key fallbacks so this can be
+re-run, but nothing is waiting on them.
+
+**Left open.** The five progression knobs are still uncommitted, and
+what stands between them and the rules is level 1 rather than anything
+about powers: three gate failures, all at level 1, all downstream of
+mastery hit points starting at `15` and a reservoir starting smaller.
+That is a level 1 tuning job — starting spirit, the evoker's field
+affordability, and the spread between a priest and a spellblade on their
+first day — and it is now the only thing between the brief's principles
+and the rules.
+
+## Level 1, tuned, and the progression knobs landed
+
+The entry above left three gate failures, all at level 1, as the only
+thing between the brief's progression principles and the rules. Two of
+the three turned out to be one knob that was not needed, and the third
+was a real trade that has been taken deliberately.
+
+### Two of the three were `base_cost`, not the reservoir
+
+`base_cost: 12` was introduced to hold level 1 down in the
+*flat-minimum* design. Once the flat minimum was dropped it had no job
+left, and it was doing damage:
+
+| | evoker's field | priest's floor | contribution spread |
+|---|---|---|---|
+| `base_cost: 12` | **none affordable** | **34%** (floor 35%) | **2.62x** |
+| `base_cost: 10` | flame field at d16 | 39% | 2.51x |
+
+Both failures are the same mechanism. `base_cost` is how far a roll must
+beat a declared difficulty before a minor power costs nothing, so
+raising it narrows every free band at once — which is exactly what the
+reservoir floor measures — and it raises the price of everything else,
+which is what priced a first-level evoker out of a field. Neither had
+anything to do with the reservoir knobs it was bundled with.
+
+**Committed: `base_cost` stays at `10`.** Only three of the five knobs
+were ever needed.
+
+### The third was mastery, and the fix was eight rather than five
+
+The remaining failure — contribution spread `2.62x` against a bound of
+`2.5x` — is caused by the mastery cut, and the mechanism is worth
+recording because it is not obvious. Offence and damage taken are
+*identical* between the two configurations. Only survival moves, and it
+moves by the same factor for everybody. What widens the spread is that
+`contributions` credits a build's **opening rounds at range** on top of
+its melee term: cut hit points and the melee term shrinks while the
+opening does not, so builds that can act at a distance lose less than
+builds that cannot. Priest against spellblade, not caster against
+fighter.
+
+Sweeping the creation cap on bought mastery hit points:
+
+| cap | L1 mastery | L1 spread |
+|---|---|---|
+| 5 | 15 | 2.51x |
+| **8** | **18** | **2.39x** |
+| 10 | 20 | 2.32x |
+| 25 (before) | 35 | 1.97x |
+
+`8` is the smallest value that clears the bound, and `18` sits inside
+the brief's stated zone of ten to twenty. **Committed: `8`.**
+
+### Grant or cap made no difference at all, and that is a finding
+
+`character-creation.md` carries a design note arguing that raising a
+*cap* is never free — it changes what a build can afford, and hits the
+builds shortest of points hardest — which is why the flat ten was
+granted rather than sold. Lowering a cap should by the same argument
+hand points back. It does not:
+
+| free grant | cap | L1 mastery | L1 spread | total reservoir |
+|---|---|---|---|---|
+| 10 | 8 | 18 | 2.39x | 27–36 |
+| 14 | 4 | 18 | 2.39x | 27–36 |
+| 18 | 0 | 18 | 2.39x | 27–36 |
+
+Every split summing to eighteen measures identically, to the digit. The
+reason is the reservoir ceiling that landed beside it: with only
+`max_power_source_bought_per_level: 1`, refunded points **cannot** be
+spent on stamina or spirit, and at level 1 the skills they could go to
+are already at their ceilings. The points come back and have nowhere to
+go. So the simplest edit wins — the grant stays at `10` and the cap
+comes down to `8`.
+
+### What it cost: level 1 duels
+
+Honestly, this is the bill:
+
+| | L1 mean | under three | L8 mean | L15 mean |
+|---|---|---|---|---|
+| before | 4.47 | 2 of 45 | 4.78 | 4.76 |
+| after | **3.01** | **26 of 45** | 4.21 | 4.51 |
+
+First-level duels are short again — shorter than the state the flat ten
+was written to repair, which reported a third of pairings under the
+floor. This is accepted rather than missed, on two grounds.
+
+The party is the unit that gates, and a party's first-level fights run
+`4.1` rounds, inside the band. And the arithmetic admits no compromise:
+a first-level character deals about `11` damage a round, so four rounds
+of trading blows needs about `44` hit points between the two pools —
+three times a starting constitution. **Either mastery starts far above
+core, or first-level fights are quick.** The brief chose the first
+clause; this is the second one arriving. Both design notes that claimed
+otherwise have been rewritten rather than left standing.
+
+Level 15 is *better* than before on the same measure: `0` of `45`
+pairings under three, against `1`.
+
+### Where it leaves the gates
+
+| configuration | fails | day cleared, L1/L5/L10/L15 |
+|---|---|---|
+| before any of this | 1 | 4.99 / 4.35 / 5.25 / 4.53 |
+| ladder only | 1 | 5.00 / 4.45 / 4.50 / 4.00 |
+| **ladder + tuned progression** | **1** | 3.16 / 3.48 / 3.87 / 3.92 |
+
+One failure throughout, and at the end it is the same hairline the
+ladder alone carried: the level 5 spellblade exactly on the `85%`
+reservoir bound. The day is the thing that changed most, and for the
+better — it used to run from `5.25` of five encounters at level 10,
+which is not a day, down to `4.00`; it now runs `3.16` to `3.92`, which
+is the same day at every level.
+
+### Still open
+
+- **The level 5 spellblade.** It has been within a point of that bound
+  through every configuration measured in this file, which makes it a
+  question about that build rather than about any of these changes: a
+  hybrid's reservoir buys it very little, and `Casting in Harness` was
+  the last thing to move it.
+- **Whether the round band's floor should be level-aware.** Level 1
+  duels now sit on it by design. Either the floor is wrong for level 1,
+  or first-level damage is too high for first-level hit points, and
+  nothing here decides which.

@@ -11,7 +11,7 @@ mechanics:
   attribute_min: 3
   attribute_max: 18
   starting_discipline_budget: 20
-  max_starting_mastery_hp: 25
+  max_starting_mastery_hp: 8
   free_starting_mastery_hp: 10
   skill_point_pool: 30
   starting_powers: 1
@@ -75,10 +75,10 @@ willpower `12`.
 She spends her whole discipline budget on Martial, reaching Adept, which
 focuses her combat skills and leaves every other group peripheral.
 
-Of her pool for skills and mastery she puts `13` points into mastery hit
-points, buying the maximum she is allowed, and the remaining `17` into
+Of her pool for skills and mastery she puts `4` points into mastery hit
+points, buying the maximum she is allowed, and the remaining `26` into
 skill ranks — which at a point each in her focused group takes her melee
-attack and block to their ceilings with a little left for fortitude.
+attack and block to their ceilings with plenty left for fortitude.
 
 She takes Power Attack as her power, buys a sword, a shield and a chain
 shirt, and pockets the change.
@@ -88,7 +88,7 @@ shirt, and pockets the change.
 
 A first-level fight was measurably too short — duels averaged barely
 above the three-round floor and a third of the pairings fell under it,
-while the same builds at level 8 and 15 sat comfortably inside the
+while the same builds at level `8` and `15` sat comfortably inside the
 band. First level had too few hit points, and nothing else about it was
 wrong.
 
@@ -104,20 +104,46 @@ altogether and buy an axe.
 Granting the hit points instead costs nobody anything. The character
 that results has the same hit points, the same skills and the same
 reservoir it always had, and the fights come out the right length: mean
-rounds of 5.65 at level 1 against 4.81 at level 8 and 5.77 at level 15,
+rounds of `5.65` at level `1` against `4.81` at level `8` and `5.77` at
+level `15`,
 which is as flat as this game has ever measured.
 
 The general lesson is worth keeping. Raising a *cap* looks free and is
 not — it changes what a build can afford, and the builds it changes
 most are the ones already shortest of points.
-## Design note
 
-The opening mastery ceiling is deliberately generous compared with what
-a level adds later. A starting character has almost no cushion in front
-of their core hit points, and without a real opening reserve first-level
-fights end in two exchanges. The rest of the curve is nearly flat by
-comparison — see [[advancement]] — so this is the one point in a career
-where hit points arrive in bulk.
+## Design note: and then the ceiling came down anyway
+
+Those numbers are no longer what this document measures, and the reason
+is a deliberate decision taken later: **mastery hit points should start
+at about the same size as core hit points**, so that the cushion in
+front of a character's body is something they accumulate over a career
+rather than something they are handed at creation. The ceiling on what a
+starting character may buy came down accordingly, and a first-level
+character now begins with roughly the mastery its constitution is worth
+rather than several times it.
+
+What that costs is exactly what the note above predicted it would buy,
+run backwards. Mean duel length at level `1` is `3.01` rounds, with `26`
+of the `45` pairings under three; at level `8` it is `4.21` and at level
+`15` `4.51`. First-level duels are short again.
+
+That is accepted rather than overlooked, for two reasons. A duel is not
+the unit the game is balanced on — a **party's** fights run `4.1` rounds
+at first level, comfortably inside the band, and that is the measure
+that gates. And the arithmetic leaves no room to have it both ways: a
+first-level character deals about `11` damage a round and would need
+something near `44` hit points between them to trade blows for four
+rounds, which is three times a starting constitution. Either mastery
+starts far above core or first-level fights are quick. This ruleset now
+chooses quick.
+
+The grant-versus-cap lesson survives intact, and is now visible in the
+numbers themselves: the free grant is larger than the amount a character
+may buy on top of it. Most of a starting character's cushion is given,
+and only the last of it is paid for.
+
+## Design note
 
 Creation and levelling deliberately use the same shop at the same
 prices. There is nothing you can buy on levelling that you could not

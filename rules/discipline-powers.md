@@ -4,8 +4,8 @@ title: Discipline Powers
 tags: [powers, progression, reference]
 summary: >
   The powers each discipline opens, and the signature ability each
-  grants at Master grade. Every power scales — you choose how hard to
-  push it.
+  grants at Master grade. Every power scales inside its own band of
+  difficulties; the grade above opens the rung above.
 mechanics:
   power_attack:
     discipline: martial
@@ -13,6 +13,8 @@ mechanics:
     source: stamina
     skill: attack_melee
     base_difficulty: 4
+    max_difficulty: 18
+    base_damage: 1
     difficulty_per_step: 2
     damage_per_step: 1
   precise_strike:
@@ -22,14 +24,26 @@ mechanics:
     source: stamina
     skill: attack_melee
     base_difficulty: 2
+    max_difficulty: 10
     difficulty_per_step: 4
     damage_per_step: 1
+  hammer_blow:
+    discipline: martial
+    grade: adept
+    source: stamina
+    skill: attack_melee
+    base_difficulty: 18
+    max_difficulty: 34
+    base_damage: 8
+    difficulty_per_step: 2
+    damage_per_step: 2
   follow_through:
     discipline: martial
     grade: initiate
     source: stamina
     skill: attack_melee
     base_difficulty: 4
+    max_difficulty: 20
     difficulty_per_step: 8
     extra_follow_through_per_step: 1
     triggers_on_dropping_a_target: true
@@ -40,6 +54,7 @@ mechanics:
     skill: block
     costs_the_reaction: true
     base_difficulty: 6
+    max_difficulty: 21
     base_allies: 1
     difficulty_per_step: 5
     extra_allies_per_step: 1
@@ -50,6 +65,7 @@ mechanics:
     skill: attack_melee
     costs_the_reaction: true
     base_difficulty: 6
+    max_difficulty: 38
     base_ripostes: 1
     difficulty_per_step: 4
     extra_ripostes_per_step: 1
@@ -59,6 +75,7 @@ mechanics:
     source: stamina
     skill: attack_melee
     base_difficulty: 6
+    max_difficulty: 22
     difficulty_per_step: 2
     reduction_ignored_per_step: 1
   redouble:
@@ -67,6 +84,7 @@ mechanics:
     source: stamina
     skill: dodge
     base_difficulty: 4
+    max_difficulty: 24
     difficulty_per_step: 10
     dodge_bonus_per_step: 1
   sidestep:
@@ -76,6 +94,7 @@ mechanics:
     source: stamina
     skill: dodge
     base_difficulty: 2
+    max_difficulty: 16
     difficulty_per_step: 14
     dodge_bonus_per_step: 1
   whirl:
@@ -84,6 +103,7 @@ mechanics:
     source: stamina
     skill: attack_melee
     base_difficulty: 8
+    max_difficulty: 40
     base_targets: 2
     difficulty_per_step: 4
     extra_targets_per_step: 1
@@ -95,6 +115,7 @@ mechanics:
     skill: dodge
     costs_the_reaction: true
     base_difficulty: 5
+    max_difficulty: 20
     difficulty_per_step: 3
     damage_reduced_per_step: 2
   sneak_attack:
@@ -103,6 +124,8 @@ mechanics:
     source: stamina
     skill: attack_melee
     base_difficulty: 6
+    max_difficulty: 22
+    base_damage: 2
     difficulty_per_step: 2
     damage_per_step: 2
   forewarned:
@@ -111,6 +134,7 @@ mechanics:
     source: stamina
     skill: spot
     base_difficulty: 4
+    max_difficulty: 18
     difficulty_per_step: 2
     initiative_bonus_per_step: 2
   weak_point:
@@ -120,6 +144,7 @@ mechanics:
     source: stamina
     skill: spot
     base_difficulty: 2
+    max_difficulty: 14
     difficulty_per_step: 6
     reduction_ignored_per_step: 1
   read_the_room:
@@ -129,6 +154,7 @@ mechanics:
     source: stamina
     skill: spot
     base_difficulty: 2
+    max_difficulty: 12
     difficulty_per_step: 5
     facts_per_step: 1
   call_the_shot:
@@ -137,6 +163,7 @@ mechanics:
     source: stamina
     skill: spot
     base_difficulty: 6
+    max_difficulty: 30
     difficulty_per_step: 3
     ally_bonus_per_step: 1
   anticipate:
@@ -146,6 +173,7 @@ mechanics:
     skill: spot
     costs_the_reaction: true
     base_difficulty: 10
+    max_difficulty: 40
     base_interruptions: 1
     difficulty_per_step: 5
     extra_interruptions_per_step: 1
@@ -155,6 +183,7 @@ mechanics:
     source: spirit
     skill: willpower
     base_difficulty: 8
+    max_difficulty: 32
     base_undead: 2
     difficulty_per_step: 3
     extra_undead_per_step: 1
@@ -178,6 +207,7 @@ mechanics:
     source: spirit
     skill: bluff
     base_difficulty: 2
+    max_difficulty: 14
     difficulty_per_step: 6
     check_bonus_per_step: 1
   rattle:
@@ -186,6 +216,7 @@ mechanics:
     source: spirit
     skill: intimidate
     base_difficulty: 4
+    max_difficulty: 19
     difficulty_per_step: 3
     penalty_per_step: 1
   rally:
@@ -194,6 +225,7 @@ mechanics:
     source: spirit
     skill: diplomacy
     base_difficulty: 6
+    max_difficulty: 22
     base_allies: 2
     difficulty_per_step: 4
     extra_allies_per_step: 1
@@ -204,6 +236,7 @@ mechanics:
     source: spirit
     skill: diplomacy
     base_difficulty: 10
+    max_difficulty: 38
     base_allies: 2
     difficulty_per_step: 4
     extra_allies_per_step: 1
@@ -214,6 +247,7 @@ mechanics:
     source: spirit
     skill: diplomacy
     base_difficulty: 10
+    max_difficulty: 40
     base_creatures: 1
     difficulty_per_step: 5
     extra_creatures_per_step: 1
@@ -251,21 +285,41 @@ for.
 
 ## Martial
 
-**Power Attack** *(Initiate; stamina, melee attack, base difficulty
-{{ mechanics.power_attack.base_difficulty }})* — a heavier swing at the
-cost of control. Each further
-{{ mechanics.power_attack.difficulty_per_step }} points of difficulty
-adds {{ mechanics.power_attack.damage_per_step }} damage to the blow.
+**Power Attack** *(Initiate; stamina, melee attack, difficulty
+{{ mechanics.power_attack.base_difficulty }} to
+{{ mechanics.power_attack.max_difficulty }})*
+— a heavier swing at the cost of control. It adds
+{{ mechanics.power_attack.base_damage }} damage at the base difficulty
+and {{ mechanics.power_attack.damage_per_step }} more for each further
+{{ mechanics.power_attack.difficulty_per_step }} points.
 
-**Precise Strike** *(Initiate, **minor**; stamina, melee attack, base
-difficulty {{ mechanics.precise_strike.base_difficulty }})* — placing
-the blow rather than forcing it. Each further
+**Precise Strike** *(Initiate, **minor**; stamina, melee attack,
+difficulty {{ mechanics.precise_strike.base_difficulty }} to
+{{ mechanics.precise_strike.max_difficulty }})*
+— placing the blow rather than forcing it. Each further
 {{ mechanics.precise_strike.difficulty_per_step }} points of difficulty
 adds {{ mechanics.precise_strike.damage_per_step }} damage.
 
-**Follow Through** *(Initiate; stamina, melee attack, base
-difficulty {{ mechanics.follow_through.base_difficulty }})* — when your
-attack drops a target outright, carry the same swing into another enemy
+**Hammer Blow** *(Adept; stamina, melee attack, difficulty
+{{ mechanics.hammer_blow.base_difficulty }} to
+{{ mechanics.hammer_blow.max_difficulty }})*
+— the same swing with everything behind it and no pretence of
+recovering the weapon quickly. It is the rung above Power Attack: it
+opens at {{ mechanics.hammer_blow.base_damage }} damage, which is
+exactly what Power Attack reaches at the top of its own band, and adds
+{{ mechanics.hammer_blow.damage_per_step }} more for each further
+{{ mechanics.hammer_blow.difficulty_per_step }} points — twice the rate,
+and further to climb before it stops.
+
+Nothing stops an Adept declaring Power Attack instead, and below
+difficulty {{ mechanics.hammer_blow.base_difficulty }} there is no
+choice in it. What the grade buys is the right to keep going.
+
+**Follow Through** *(Initiate; stamina, melee attack,
+difficulty {{ mechanics.follow_through.base_difficulty }} to
+{{ mechanics.follow_through.max_difficulty }})*
+— when your attack drops a target outright, carry the same swing into
+another enemy
 you can reach and resolve it as a fresh attack. The chain runs
 {{ mechanics.follow_through.extra_follow_through_per_step }} body deep
 for the base difficulty, and
@@ -275,8 +329,9 @@ each further {{ mechanics.follow_through.difficulty_per_step }} points.
 Nothing happens unless a target actually falls, which limits the power
 to opposition you can drop in a single blow.
 
-**Guard** *(Initiate, **reaction**; stamina, block, base difficulty
-{{ mechanics.guard.base_difficulty }})* — you place yourself between an
+**Guard** *(Initiate, **reaction**; stamina, block, difficulty
+{{ mechanics.guard.base_difficulty }} to
+{{ mechanics.guard.max_difficulty }})* — you place yourself between an
 ally and what is coming. Declare it on your turn and it holds until your
 next: attacks aimed at {{ mechanics.guard.base_allies }} ally within
 your reach (see [[movement]]) are aimed at you instead, resolved against
@@ -291,16 +346,18 @@ reach. Guard is the one reaction declared in advance rather than in
 answer to something, and committing before you know what is coming is
 the whole of its price.
 
-**Riposte** *(Adept, **reaction**; stamina, melee attack, base difficulty
-{{ mechanics.riposte.base_difficulty }})* — a defence that answers back.
+**Riposte** *(Adept, **reaction**; stamina, melee attack, difficulty
+{{ mechanics.riposte.base_difficulty }} to
+{{ mechanics.riposte.max_difficulty }})* — a defence that answers back.
 When an attack against you misses, spend your reaction (see
 [[turn-order]]) to make an immediate attack against whoever made it. You may answer
 {{ mechanics.riposte.base_ripostes }} attack this way, and
 {{ mechanics.riposte.extra_ripostes_per_step }} more for each further
 {{ mechanics.riposte.difficulty_per_step }} points of difficulty.
 
-**Find the Gap** *(Adept; stamina, melee attack, base difficulty
-{{ mechanics.find_the_gap.base_difficulty }})* — a blow aimed at a
+**Find the Gap** *(Adept; stamina, melee attack, difficulty
+{{ mechanics.find_the_gap.base_difficulty }} to
+{{ mechanics.find_the_gap.max_difficulty }})* — a blow aimed at a
 join or a strap. Each further
 {{ mechanics.find_the_gap.difficulty_per_step }} points of difficulty
 ignores {{ mechanics.find_the_gap.reduction_ignored_per_step }} point of
@@ -313,22 +370,25 @@ instead of the usual half. See [[damage]].
 
 ## Athletic
 
-**Redouble** *(Initiate; stamina, dodge, base difficulty
-{{ mechanics.redouble.base_difficulty }})* — thrown weight and a
+**Redouble** *(Initiate; stamina, dodge, difficulty
+{{ mechanics.redouble.base_difficulty }} to
+{{ mechanics.redouble.max_difficulty }})* — thrown weight and a
 second movement. Each further
 {{ mechanics.redouble.difficulty_per_step }} points of difficulty adds
 {{ mechanics.redouble.dodge_bonus_per_step }} to your targeting
 difficulty against one attack, if you are dodging.
 
-**Sidestep** *(Initiate, **minor**; stamina, dodge, base difficulty
-{{ mechanics.sidestep.base_difficulty }})* — a small, cheap shift of
+**Sidestep** *(Initiate, **minor**; stamina, dodge, difficulty
+{{ mechanics.sidestep.base_difficulty }} to
+{{ mechanics.sidestep.max_difficulty }})* — a small, cheap shift of
 weight. Each further
 {{ mechanics.sidestep.difficulty_per_step }} points of difficulty adds
 {{ mechanics.sidestep.dodge_bonus_per_step }} to your targeting
 difficulty against one attack, if you are dodging.
 
-**Whirl** *(Adept; stamina, melee attack, base difficulty
-{{ mechanics.whirl.base_difficulty }})* — one sweeping cut taken at
+**Whirl** *(Adept; stamina, melee attack, difficulty
+{{ mechanics.whirl.base_difficulty }} to
+{{ mechanics.whirl.max_difficulty }})* — one sweeping cut taken at
 everything within reach. Make a single attack roll and compare it to the
 targeting difficulty of {{ mechanics.whirl.base_targets }} enemies you
 can reach; each further {{ mechanics.whirl.difficulty_per_step }} points
@@ -338,19 +398,23 @@ A sweep has no time for precision, so **Whirl converts no margin into
 damage**: each blow deals the weapon's rating plus the damage your skill
 adds, and nothing for how cleanly the roll landed.
 
-**Deflect** *(Initiate, **reaction**; stamina, dodge, base difficulty
-{{ mechanics.deflect.base_difficulty }})* — you cannot avoid the blow,
+**Deflect** *(Initiate, **reaction**; stamina, dodge, difficulty
+{{ mechanics.deflect.base_difficulty }} to
+{{ mechanics.deflect.max_difficulty }})* — you cannot avoid the blow,
 so you take it at an angle. Spend your reaction (see [[turn-order]]) to
 reduce the damage of one blow that has already landed by {{ mechanics.deflect.damage_reduced_per_step }}, and
 by {{ mechanics.deflect.damage_reduced_per_step }} more for each further
 {{ mechanics.deflect.difficulty_per_step }} points of difficulty. This
 reduction is not armour and is not subject to the cap in [[damage]].
 
-**Sneak Attack** *(Adept; stamina, melee attack, base difficulty
-{{ mechanics.sneak_attack.base_difficulty }})* — usable only against a
-target who is unaware of you or already engaged with someone else. Each
-further {{ mechanics.sneak_attack.difficulty_per_step }} points of
-difficulty adds {{ mechanics.sneak_attack.damage_per_step }} damage.
+**Sneak Attack** *(Adept; stamina, melee attack, difficulty
+{{ mechanics.sneak_attack.base_difficulty }} to
+{{ mechanics.sneak_attack.max_difficulty }})*
+— usable only against a target who is unaware of you or already engaged
+with someone else. It adds {{ mechanics.sneak_attack.base_damage }}
+damage at the base difficulty and
+{{ mechanics.sneak_attack.damage_per_step }} more for each further
+{{ mechanics.sneak_attack.difficulty_per_step }} points.
 
 **Untouchable** *(Master signature)* — armour's skill penalty does not
 worsen your targeting difficulty while dodging, provided the armour is
@@ -360,21 +424,24 @@ you cannot move like that in plate.
 
 ## Awareness
 
-**Forewarned** *(Initiate; stamina, spot, base difficulty
-{{ mechanics.forewarned.base_difficulty }})* — you saw it coming. Each
+**Forewarned** *(Initiate; stamina, spot, difficulty
+{{ mechanics.forewarned.base_difficulty }} to
+{{ mechanics.forewarned.max_difficulty }})* — you saw it coming. Each
 further {{ mechanics.forewarned.difficulty_per_step }} points of
 difficulty adds {{ mechanics.forewarned.initiative_bonus_per_step }} to
 your place in the order for the coming fight — see [[turn-order]].
 
-**Weak Point** *(Initiate, **minor**; stamina, spot, base difficulty
-{{ mechanics.weak_point.base_difficulty }})* — you spot the strap, the
+**Weak Point** *(Initiate, **minor**; stamina, spot, difficulty
+{{ mechanics.weak_point.base_difficulty }} to
+{{ mechanics.weak_point.max_difficulty }})* — you spot the strap, the
 gap, the badly-set plate, and say so. Each further
 {{ mechanics.weak_point.difficulty_per_step }} points of difficulty
 ignores {{ mechanics.weak_point.reduction_ignored_per_step }} point of
 the target's damage reduction on your next blow.
 
-**Read the Room** *(Initiate, **minor**; stamina, spot, base difficulty
-{{ mechanics.read_the_room.base_difficulty }})* — a moment spent working
+**Read the Room** *(Initiate, **minor**; stamina, spot, difficulty
+{{ mechanics.read_the_room.base_difficulty }} to
+{{ mechanics.read_the_room.max_difficulty }})* — a moment spent working
 out who actually matters. Learn
 {{ mechanics.read_the_room.facts_per_step }} true thing about the
 opposition — which of them is the most dangerous, which is the least
@@ -383,15 +450,17 @@ armoured, which is about to break — and
 {{ mechanics.read_the_room.difficulty_per_step }} points of difficulty.
 The Dungeon Master answers honestly.
 
-**Call the Shot** *(Adept; stamina, spot, base difficulty
-{{ mechanics.call_the_shot.base_difficulty }})* — you saw the opening
+**Call the Shot** *(Adept; stamina, spot, difficulty
+{{ mechanics.call_the_shot.base_difficulty }} to
+{{ mechanics.call_the_shot.max_difficulty }})* — you saw the opening
 and said so in time. An ally's next attack gains
 `+{{ mechanics.call_the_shot.ally_bonus_per_step }}` for each
 {{ mechanics.call_the_shot.difficulty_per_step }} points of difficulty
 beyond the base.
 
-**Anticipate** *(Adept, **reaction**; stamina, spot, base difficulty
-{{ mechanics.anticipate.base_difficulty }})* — you were already moving.
+**Anticipate** *(Adept, **reaction**; stamina, spot, difficulty
+{{ mechanics.anticipate.base_difficulty }} to
+{{ mechanics.anticipate.max_difficulty }})* — you were already moving.
 Spend your reaction (see [[turn-order]]) to act immediately, out of
 turn, interrupting whoever is acting.
 {{ mechanics.anticipate.base_interruptions }} interruption comes with
@@ -405,23 +474,26 @@ inverting the usual guess in [[hitting]].
 
 ## Social
 
-**Winning Manner** *(Initiate, **minor**; spirit, bluff, base difficulty
-{{ mechanics.winning_manner.base_difficulty }})* — you are simply easy
+**Winning Manner** *(Initiate, **minor**; spirit, bluff, difficulty
+{{ mechanics.winning_manner.base_difficulty }} to
+{{ mechanics.winning_manner.max_difficulty }})* — you are simply easy
 to agree with. Add `+{{ mechanics.winning_manner.check_bonus_per_step }}`
 to one social skill check for each
 {{ mechanics.winning_manner.difficulty_per_step }} points of difficulty
 beyond the base.
 
-**Rattle** *(Initiate; spirit, intimidate, base difficulty
-{{ mechanics.rattle.base_difficulty }})* — a word, a look, a laugh at
+**Rattle** *(Initiate; spirit, intimidate, difficulty
+{{ mechanics.rattle.base_difficulty }} to
+{{ mechanics.rattle.max_difficulty }})* — a word, a look, a laugh at
 the wrong moment. One creature that can see and hear you takes
 `-{{ mechanics.rattle.penalty_per_step }}` on its next roll for each
 further {{ mechanics.rattle.difficulty_per_step }} points of difficulty.
 This is Social's contribution to a fight, and it works on anything with
 a mind to unsettle.
 
-**Rally** *(Initiate; spirit, diplomacy, base difficulty
-{{ mechanics.rally.base_difficulty }})* — a word at the right moment.
+**Rally** *(Initiate; spirit, diplomacy, difficulty
+{{ mechanics.rally.base_difficulty }} to
+{{ mechanics.rally.max_difficulty }})* — a word at the right moment.
 {{ mechanics.rally.base_allies }} allies who can hear you gain
 `+{{ mechanics.rally.ally_bonus }}` on their next attack roll, and
 {{ mechanics.rally.extra_allies_per_step }} more ally for each further
@@ -429,8 +501,9 @@ a mind to unsettle.
 Difficulty buys *how many*, never how much: a commander reaches further
 across the field, they do not shout louder.
 
-**Hold the Line** *(Adept; spirit, diplomacy, base difficulty
-{{ mechanics.hold_the_line.base_difficulty }})* — you tell them where to
+**Hold the Line** *(Adept; spirit, diplomacy, difficulty
+{{ mechanics.hold_the_line.base_difficulty }} to
+{{ mechanics.hold_the_line.max_difficulty }})* — you tell them where to
 stand and they stand there. {{ mechanics.hold_the_line.base_allies }}
 allies who can hear you gain
 `+{{ mechanics.hold_the_line.ally_td_bonus }}` to their targeting
@@ -438,8 +511,9 @@ difficulty until your next turn, and
 {{ mechanics.hold_the_line.extra_allies_per_step }} more ally for each
 further {{ mechanics.hold_the_line.difficulty_per_step }} points.
 
-**Command** *(Adept; spirit, diplomacy, base difficulty
-{{ mechanics.command.base_difficulty }})* — one word, obeyed before the
+**Command** *(Adept; spirit, diplomacy, difficulty
+{{ mechanics.command.base_difficulty }} to
+{{ mechanics.command.max_difficulty }})* — one word, obeyed before the
 creature has decided whether to. Name a single simple instruction —
 *drop it*, *stop*, *run* — and
 {{ mechanics.command.base_creatures }} creature must obey unless it
@@ -465,8 +539,9 @@ memory slots, per [[spell-preparation]]. This is the one power on any of
 these lists that is not used during a fight and has no difficulty at
 all; it may be taken again at a later level, and stacks.
 
-**Turn Undead** *(Spiritual, Adept; spirit, willpower, base difficulty
-{{ mechanics.turn_undead.base_difficulty }})* — you hold up what you
+**Turn Undead** *(Spiritual, Adept; spirit, willpower, difficulty
+{{ mechanics.turn_undead.base_difficulty }} to
+{{ mechanics.turn_undead.max_difficulty }})* — you hold up what you
 believe in and the dead give ground. {{ mechanics.turn_undead.base_undead }}
 undead creatures within sight flee from you, and
 {{ mechanics.turn_undead.extra_undead_per_step }} more for each further
@@ -607,6 +682,16 @@ exist because a party is not four characters taking turns at the same
 problem, and a discipline whose only expression is damage has nothing to
 offer the fight it is not built for.
 
+Guard stays at Initiate, and it was moved to Adept once to see whether
+it should. The argument for moving it was that nearly every build could
+afford it, so it said nothing about what anybody was for. Measured
+across a party, the grade turned out to move exactly one build in ten:
+almost nobody who *has* Guard ever finds themselves both durable enough
+to stand in front and standing beside somebody softer, so raising the
+price only took it from the one build that did — a light, quick fighter
+stepping up out of the second rank. The power's problem is who can use
+it, not who can buy it, so the price went back.
+
 Whirl scales in reach rather than in force. Pushing the difficulty finds
 one more body, not a heavier cut — which is what makes it a crowd
 answer rather than a better way to fight one opponent.
@@ -703,4 +788,46 @@ against difficulty. An extra action cannot, because it multiplies
 everything a character does rather than adding to one part of it, and a
 power that hands one out is either compulsory or decorative with very
 little ground in between.
+
+## Design note — the ladder
+
+Hammer Blow exists because Power Attack was the whole of a fighter's
+career. Measured across fifteen levels the reference builds declared the
+same power every time, at a difficulty that crept up with their attack
+bonus and nothing else, and the damage it added grew by rather less than
+half of what it needed to grow by for fights to stay the same length.
+The cause is arithmetic rather than pricing: the best difficulty to
+declare is a formula in the attack bonus, so turning the damage per step
+or the difficulty per step multiplies the first level and the fifteenth
+by the same factor and the ratio between them never moves.
+
+A rung moves it, because a rung changes the *rate*, and only above a
+difficulty a beginner cannot reach. Power Attack now opens at
+{{ mechanics.power_attack.base_damage }} damage and closes at the
+difficulty where Hammer Blow opens, at the same number; above that the
+rate doubles. The measured effect of the second rung is the whole of
+what the first one could not do on its own.
+
+Three properties are deliberate, and each is a thing a simpler design
+gets wrong:
+
+- **The rungs are continuous.** The upper one opens at exactly the
+  damage the lower one closes at, so an Adept is never worse off for
+  having bought the grade and never suddenly far better either.
+- **The upper rung is bought with a grade, not reached with a roll.**
+  Reaching further is the one thing a good roll does not buy — it buys a
+  cheaper power, which is what [[using-powers]] has always said.
+- **Creatures stand on the rung their grade says.** A gnoll with Martial
+  at Initiate cannot declare past Power Attack's ceiling however good
+  its attack skill is, and the [[hill-giant]], which holds the grade,
+  can. Before the ceilings existed, the bestiary's better fighters were
+  quietly declaring at veteran difficulties out of reservoirs a third
+  the size, which is most of why the mid-level encounters measured
+  harder than their threat levels claimed.
+
+Fast Attack sits above both rungs and is deliberately not a damage power
+at all — see [[general-powers]]. A second swing is worth more than any
+amount of extra damage on one, so it is priced at a difficulty that only
+a practised character reaches, and it competes with the Adept rung
+rather than replacing it.
 {% endbook-only %}

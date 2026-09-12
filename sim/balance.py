@@ -40,7 +40,40 @@ SEED = 12345
 # is one: it is a property of the run and not of any measurement in it.
 CHECKPOINT = None
 
-TARGET_ROUNDS = (3.0, 12.0)      # rounds for an even duel
+# Rounds a fight should last. This gates the PARTY encounter, which is
+# the case it was always describing: a balanced group against a crowd.
+# It no longer gates a duel from below. Two high-damage, low-defence
+# builds settling it in three rounds is those builds working, and a
+# system that forbids it is forbidding a legitimate way to build a
+# character. The ceiling still applies to duels, because a pairing that
+# cannot finish inside twelve rounds is a stalemate whatever anybody
+# built -- and short duels are still reported, as a diagnostic.
+TARGET_ROUNDS = (3.0, 12.0)
+
+# Trials for the party fight-length gate.
+#
+# Twelve was measured and chosen at level 5, where eight seeds put the
+# standard deviation at 0.08 to 0.22 against a band of 3 to 12 -- fifteen
+# deviations of headroom, so precision did not matter. That reasoning
+# did not survive the creature ladder. At level 10 the same eight seeds
+# give a standard deviation of 0.55, seven times as large, against a
+# mean of 11.6 that sits a few tenths under the ceiling. A twelve-trial
+# gate there fails about a quarter of the time on the draw alone, which
+# is a coin toss wearing a gate's clothes.
+#
+# Thirty-six brings it to about 0.32. The real answer is headroom rather
+# than trials -- a day whose fights run nine rounds does not care about
+# a standard deviation of half a round -- and level 10 is the one that
+# has none, for the reason in `day_for`.
+PARTY_GATE_TRIALS = 36
+
+# Below this the fight-length reading means nothing, because it is the
+# length of fights the party is LOSING. A party that does not finish one
+# encounter of the day on average is being massacred, and the rounds it
+# survives are not a calibration of anything. This is a floor for
+# READABILITY and not for balance -- it says the number cannot be
+# interpreted, not that the number is wrong.
+PARTY_DAY_READABLE = 1.0
 MAX_CONTRIBUTION_SPREAD = 2.5    # best archetype / worst, offence x survival
 MIN_DAMAGE_VS_ANY_ARMOUR = 1.0   # expected damage per swing, level 5+
 
@@ -612,8 +645,6 @@ def free_bands(level, chars, M):
     promise, measured."""
     hr("Quick Attack free band at level %d" % level)
     p = m.power_def(M, "quick_attack")
-    base = int(p["base_difficulty"])
-    step = int(p["difficulty_per_extra_attack"])
     base_cost = int(M.get("using-powers", "base_cost"))
     print("%-12s %-7s %-14s %-14s %s"
           % ("build", "skill", "always free", "free half", "extra attacks free"))
@@ -621,7 +652,7 @@ def free_bands(level, chars, M):
         skill = c.attack_bonus(M)
         always = skill - base_cost + 1
         half = skill
-        n = max(0, (always - base) // step)
+        n = m.extra_attacks(p, min(always, m.difficulty_band(p, 60)[-1]))
         print("%-12s %-7d %-14s %-14s %d"
               % (name, skill, "diff <= %d" % always, "diff <= %d" % half, n))
 
@@ -637,9 +668,9 @@ def best_field(char, foe, M, budget):
     for spell_id in m.combat_spells(M):
         if not m.persists(M, spell_id):
             continue
-        base = int(m.spell_def(M, spell_id)["base_difficulty"])
+        sp = m.spell_def(M, spell_id)
         for extra in range(0, 5):
-            for difficulty in range(base, base + 70):
+            for difficulty in m.difficulty_band(sp, 70):
                 success = sum(w for face, w, _c in m.d20_faces(M)
                               if face + char.casting_bonus(M) >= difficulty)
                 if success < MIN_FIELD_SUCCESS:
@@ -673,7 +704,7 @@ def report_fields(level, chars, M):
         return {}
     out = {}
     for name, c in sorted(casters.items()):
-        for kind in sorted(m.MOOKS):
+        for kind in m.creature_ids(M):
             foe = m.mook(kind, M)
             field = best_field(c, foe, M, c.spirit / 4.0)
             if field is None:
@@ -919,6 +950,8 @@ def report_dpr(level, chars, M):
 def run_gates(levels, M, trials, pool=None):
     hr("Gates")
     failures = []
+    short_duels = []            # under the floor, reported and not failed
+    party_rounds = []           # (level, mean rounds, cleared) per level
     ever_chosen = set()
     build_spreads = []          # (gap, level, build) over every build
     class_spreads = []          # (gap, level, build, class) within a class
@@ -1016,12 +1049,42 @@ def run_gates(levels, M, trials, pool=None):
                     % (level, spread, best, contrib[best], worst, contrib[worst],
                        MAX_CONTRIBUTION_SPREAD))
 
+        # A duel is no longer gated from below. Two high-damage,
+        # low-defence builds settling it in three rounds is those builds
+        # working, and the band was always describing a party fight
+        # rather than a grudge match. The ceiling still holds for
+        # everyone: a pairing that cannot finish inside twelve rounds is
+        # a stalemate whatever anybody built. The short ones are still
+        # counted and reported, because a floor nobody enforces is still
+        # worth watching.
         for a, b, rounds, _w, _capped in duel_grid(level, chars, M, trials,
                                                    pool):
-            if not (TARGET_ROUNDS[0] <= rounds <= TARGET_ROUNDS[1]):
+            if rounds > TARGET_ROUNDS[1]:
                 failures.append(
-                    "L%d %s vs %s: %.1f rounds (target %.0f-%.0f)"
-                    % (level, a, b, rounds, *TARGET_ROUNDS))
+                    "L%d %s vs %s: %.1f rounds (target <= %.0f)"
+                    % (level, a, b, rounds, TARGET_ROUNDS[1]))
+            elif rounds < TARGET_ROUNDS[0]:
+                short_duels.append("L%d %s vs %s: %.1f rounds"
+                                   % (level, a, b, rounds))
+
+        # The band's real home: a balanced party against a crowd.
+        overall, _means, cleared = party_fight_length(level, M,
+                                                      PARTY_GATE_TRIALS)
+        if cleared < PARTY_DAY_READABLE:
+            # Check this FIRST. A massacre can sit inside the band and
+            # pass, and then the report says the fights are the right
+            # length while the party is being wiped out in them.
+            failures.append(
+                "L%d the standard day is not survivable: the party clears "
+                "%.2f of 5, so its %.1f-round fights are the length of "
+                "defeats and gate nothing"
+                % (level, cleared, overall))
+        elif not (TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1]):
+            failures.append(
+                "L%d a balanced party's fights run %.1f rounds "
+                "(target %.0f-%.0f), clearing %.2f of 5"
+                % (level, overall, *TARGET_ROUNDS, cleared))
+        party_rounds.append((level, overall, cleared))
 
         # A minor power must never match its standard twin at the same
         # difficulty, or the standard one is pointless.
@@ -1109,6 +1172,17 @@ def run_gates(levels, M, trials, pool=None):
         print("\n%d gate failure(s)." % len(failures))
     else:
         print("  all gates pass")
+
+    if party_rounds:
+        print("\n  party fight length, which is what the band now gates:")
+        for level, overall, cleared in party_rounds:
+            print("    L%-3d %.1f rounds, clearing %.2f of 5" % (level, overall, cleared))
+    if short_duels:
+        print("\n  duels under %.0f rounds -- reported, not failed, because a "
+              "short\n  fight between a glass cannon and a glass cannon is "
+              "those builds working:" % TARGET_ROUNDS[0])
+        for s in short_duels:
+            print("    " + s)
     return failures
 
 
@@ -1123,26 +1197,43 @@ def minor_beaten_by_twin(minor_id, standard_id, level, chars, M):
     standard = m.power_def(M, standard_id)
     char = chars.get("duellist") or list(chars.values())[0]
     foe = standard_foe(level, M)
+    # Where both rungs overlap. Two powers with ceilings need not cover
+    # the same band at all, and a difficulty one of them cannot be
+    # declared at is not a difficulty at which either dominates.
     base = max(int(minor["base_difficulty"]), int(standard["base_difficulty"]))
-    for difficulty in range(base, base + 60):
+    top = max(m.difficulty_band(minor, 60)[-1],
+              m.difficulty_band(standard, 60)[-1])
+    band = [d for d in range(base, top + 1)
+            if d in m.difficulty_band(minor, 60)
+            and d in m.difficulty_band(standard, 60)]
+    def granted(p):
+        """How much of its effect a power delivers at this difficulty.
+
+        A rung can carry a base effect -- `base_damage`,
+        `base_extra_attacks` -- so "below its first step" is no longer
+        the same question as "grants nothing". Asking the second
+        directly is what keeps this comparison from silently skipping
+        the whole overlap once a power gains a floor."""
+        step = int(p.get("difficulty_per_step",
+                         p.get("difficulty_per_extra_attack", 1)))
+        per = (int(p.get("damage_per_step", 0))
+               + int(p.get("dodge_bonus_per_step", 0))
+               + int(p.get("reduction_ignored_per_step", 0)))
+        steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
+        return (int(p.get("base_damage", 0)) + steps * per
+                + m.extra_attacks(p, difficulty))
+
+    for difficulty in band:
         # Only compare where the STANDARD power actually grants
-        # something. Below its first step it delivers nothing at all,
-        # and "the minor one is better than nothing" is not dominance.
-        std_step = int(standard.get("difficulty_per_step",
-                                    standard.get("difficulty_per_extra_attack", 1)))
-        if (difficulty - int(standard["base_difficulty"])) // std_step < 1:
+        # something. Where it delivers nothing at all, "the minor one is
+        # better than nothing" is not dominance.
+        if granted(standard) < 1:
             continue
         if "difficulty_per_extra_attack" in minor:
             a, _ = m.power_expectation(char, minor_id, difficulty, foe, M)
             b, _ = m.power_expectation(char, standard_id, difficulty, foe, M)
         else:
-            def effect(p):
-                step = int(p.get("difficulty_per_step", 1))
-                per = (int(p.get("damage_per_step", 0))
-                       + int(p.get("dodge_bonus_per_step", 0))
-                       + int(p.get("reduction_ignored_per_step", 0)))
-                return max(0, (difficulty - int(p["base_difficulty"])) // step) * per
-            a, b = effect(minor), effect(standard)
+            a, b = granted(minor), granted(standard)
         if a > b:
             return False
     return True
@@ -1275,7 +1366,13 @@ def _member(name, spec, level, M, panel):
     come free, a build's rank then depended on what had run before it in
     that worker -- which is how a berserker came to be measured as the
     best thing to put in the wizard's slot."""
-    key = (name, level)
+    # Keyed on the RULESET as well as the build. Without that an
+    # override applied in this process -- which is what a sweep is --
+    # hands back a member built before it, and the sweep reports the
+    # numbers it was trying to change. Worker processes were safe by
+    # accident, each starting with an empty cache; anything measuring
+    # in-process was not.
+    key = (name, level, parallel.mechanics_stamp(M))
     if key not in _MEMBERS:
         char = m.build_character(name, spec, level, M, shopping_foe=panel)
         char.line = _line_for(spec)
@@ -1302,7 +1399,100 @@ def party_for(role, filler_name, filler_spec, level, M):
     return party
 
 
-def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
+# How far to multiply the day's encounters beyond the band each creature
+# normally travels in. It is a CONSTANT now, and that is the point: the
+# ladder in `day_for` does the scaling with level, by fighting the party
+# something its own size instead of more of something beneath it.
+#
+# 0.75 is measured, and it is chosen to keep fights inside the round
+# band. At 1.0 a tenth-level day runs 17.4 rounds, which is past the
+# ceiling from the other end; at 0.75 every level lands under twelve.
+# The cost is that the day is then a real test only at level 5 -- see
+# the note in `day_for` about what that says, which is about the
+# creatures and not about the scale.
+DAY_SCALE = 0.75
+
+
+def party_capability(party, M):
+    """What the party brings, as one number: what it can absorb times
+    what it can deal.
+
+    Hit points alone will not do. Across fifteen levels a party's hit
+    points grow 2.1x while its damage grows 3.4x, so a day scaled on
+    survivability alone gets easier every level -- which is the thing
+    being fixed. The product is the crudest measure that moves with
+    both, and it is deliberately made of things the refactor will
+    change, so the day follows the numbers down instead of having to be
+    re-tuned behind them."""
+    foe = m.mook("orc", M)
+    hp = sum(max(0, h.mhp) + max(0, h.chp) for h in party)
+    dmg = sum(m.attack_expectation(h, foe, M)[0] for h in party)
+    return hp * dmg
+
+
+# The shape of a day, as fractions of each creature's own
+# `typical_number`: which rung of the ladder each encounter comes from,
+# and how big it is against the band that creature normally travels in.
+# It escalates, and the last fight is the one that is meant to hurt.
+#
+# The counts are NOT written here. Every creature says how many of it
+# there usually are, and a hill giant travelling in twos is as much a
+# fact about hill giants as its hit points are.
+DAY_SHAPE = (("lesser", 0.67), ("tier", 0.60), ("lesser", 1.00),
+             ("tier", 0.80), ("tier", 1.20))
+
+
+def day_creatures(level, M):
+    """(lesser, tier) -- the toughest creature this level has caught up
+    with, and the rung below it.
+
+    Picked off `challenge_level` rather than named here, so the day
+    follows the bestiary: write a creature at threat 7 and the levels
+    that should be fighting it start fighting it."""
+    ladder = [(int(m.creature_def(M, k)["challenge_level"]), k)
+              for k in m.creature_ids(M)]
+    caught = [k for threat, k in ladder if threat <= level] or [ladder[0][1]]
+    tier = caught[-1]
+    return (caught[-2] if len(caught) > 1 else tier), tier
+
+
+def day_for(level, M, scale=1.0):
+    """The standard day at this level: what it is made of and how much.
+
+    The old day was five fixed entries of goblins and orcs at every
+    level, and it could not be made to work. A goblin cannot reach a
+    tenth-level character's targeting difficulty, so the only lever was
+    number, and past the engagement limit number is duration rather than
+    danger -- measured, a fifteenth-level party cleared twenty times the
+    goblin day while the fights ran past the round band from the other
+    end. What scales is the creature."""
+    lesser, tier = day_creatures(level, M)
+    out = []
+    for which, fraction in DAY_SHAPE:
+        kind = lesser if which == "lesser" else tier
+        typical = int(m.creature_def(M, kind).get("typical_number", 5))
+        out.append((kind, max(1, int(round(typical * fraction * scale)))))
+    return out
+
+
+def day_scale(party, M):
+    """How far to multiply this level's encounters.
+
+    A constant, because `day_for` now picks creatures by threat and that
+    is where the scaling with level belongs. Scaling both would scale
+    twice: a fifteenth-level party would meet hill giants AND four times
+    as many of them.
+
+    `party_capability` is kept beside it because the measurement that
+    retired it is worth being able to repeat -- capability scaling was
+    what the day used while it was made of goblins at every level, and
+    it got the day from unreadable to readable without ever getting it
+    level."""
+    return DAY_SCALE
+
+
+def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
+              rounds_out=None, scale=None):
     """How much of the standard day the party gets through.
 
     Encounters cleared, plus the share of the party still standing at
@@ -1315,10 +1505,21 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
 
     The day's crowds are multiplied by the size of the party, because
     `DEFAULT_DAY` was written for one body and four people walking
-    through a schedule built for one measures nothing at all."""
+    through a schedule built for one measures nothing at all.
+
+    `rounds_out`, if given, collects `(kind, count, rounds)` for every
+    encounter actually fought. Fight length is the gated quantity now,
+    and it is measured here rather than in its own runner so that it is
+    the length of the SAME fights the score came out of -- a party that
+    is losing fights fast and a party that is winning them fast are not
+    telling you the same thing, and only one number can be trusted
+    without the other."""
     import copy
     import random as _random
-    schedule = [(kind, count * len(party)) for kind, count in m.DEFAULT_DAY]
+    if scale is None:
+        scale = day_scale(party, M)
+    level = max(h.level for h in party)
+    schedule = day_for(level, M, scale)
     score = 0.0
     for trial in range(trials):
         # Common random numbers, and only partly working. Seeding each
@@ -1338,7 +1539,9 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None):
         for kind, count in schedule:
             if not any(h.chp > 0 for h in fighters):
                 break
-            _, survivors = m.party_encounter(fighters, kind, count, M)
+            rounds, survivors = m.party_encounter(fighters, kind, count, M)
+            if rounds_out is not None:
+                rounds_out.append((kind, count, rounds))
             if survivors == 0:
                 break
             score += 1
@@ -1358,6 +1561,48 @@ def _party_task(M, task):
     party = party_for(None if spec is None else role, name, spec, level, M)
     return (role, name), party_day(party, M, trials,
                                    seed="party|%s|%d" % (role, level))
+
+
+def party_fight_length(level, M, trials=PARTY_TRIALS, seed=None):
+    """How long the reference party's fights run, by encounter and over
+    the day.
+
+    This is what TARGET_ROUNDS gates. Returns (overall mean, per-kind
+    means, cleared), where `cleared` is the day score the same run
+    produced -- carried along because a fight length measured off a
+    party that is being wiped out means something quite different from
+    one measured off a party that is winning."""
+    party = party_for(None, "@intact", None, level, M)
+    got = []
+    cleared = party_day(party, M, trials, seed=seed or SEED, rounds_out=got)
+    # Keyed in DAY order, not sorted: the day escalates on purpose, and
+    # a fight length that climbs through it is the attrition showing.
+    by_kind = {}
+    for kind, count, rounds in got:
+        by_kind.setdefault((kind, count), []).append(rounds)
+    order = [(k, c * len(party)) for k, c in m.DEFAULT_DAY]
+    means = {k: sum(by_kind[k]) / len(by_kind[k])
+             for k in order if k in by_kind}
+    allr = [r for _k, _c, r in got]
+    return (sum(allr) / max(1, len(allr)), means, cleared)
+
+
+def report_party_rounds(level, M, trials=PARTY_TRIALS):
+    """The gated number, printed with the fights it came from."""
+    overall, means, cleared = party_fight_length(level, M, trials)
+    hr("How long a balanced party's fights run, at level %d" % level)
+    print("%-16s %-8s %s" % ("encounter", "rounds", "in band %s" % (TARGET_ROUNDS,)))
+    for (kind, count), mean in means.items():
+        print("%-16s %-8.1f %s"
+              % ("%d %s" % (count, kind), mean,
+                 "yes" if TARGET_ROUNDS[0] <= mean <= TARGET_ROUNDS[1] else "NO"))
+    print("%-16s %-8.1f %s"
+          % ("over the day", overall,
+             "yes" if TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1] else "NO"))
+    print("\nThe party cleared %.2f of 5 in the same run. A short fight from a "
+          "party\nthat is winning and one from a party that is being wiped out "
+          "are not the\nsame reading." % cleared)
+    return overall
 
 
 def report_party_utility(level, M, pool=None, trials=PARTY_TRIALS):
@@ -1623,7 +1868,11 @@ def contributions(chars, level, M):
 
 def main():
     ap = argparse.ArgumentParser(description="Measure the Ico rules.")
-    ap.add_argument("--levels", default="1,5,10")
+    ap.add_argument("--levels", default="1,5,10,15",
+                    help="levels to report on. 15 is in the default because "
+                         "the standard day now scales to reach it, and a "
+                         "curve gated only to level 10 is a curve nobody "
+                         "has checked the top of.")
     ap.add_argument("--trials", type=int, default=3000)
     ap.add_argument("--swarm-trials", type=int, default=1200)
     ap.add_argument("--check", action="store_true",
@@ -1696,6 +1945,7 @@ def _run(args, levels, M, pool):
 
     if args.party:
         for level in levels:
+            report_party_rounds(level, M, args.party_trials)
             report_party_utility(level, M, pool, args.party_trials)
         return 0
 

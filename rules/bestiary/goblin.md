@@ -25,6 +25,9 @@ mechanics:
     fortitude: 1
   disciplines: {}
   powers: []
+  levels_up: true
+  preferred_disciplines: [athletic, awareness]
+  outlawed_disciplines: [magical, spiritual]
   mastery_hit_points: 4
   core_hit_points: 8
   stamina: 5
@@ -91,12 +94,33 @@ run, and a group that runs on the third round is the difference between
 a goblin ambush and a goblin massacre. This is a judgement for whoever
 is running the fight, not a roll.
 
-## Variants
+## Goblins with a career
 
-- **Goblin boss.** One grade of the Martial discipline, a shield, and
-  enough stamina to spend on a power. Worth roughly two ordinary
-  goblins and worth killing first, since the band's morale is really
-  its morale.
+A goblin levels — see [[creature-advancement]]. The block above is a
+goblin that has not done anything yet, which is most of them and none of
+the ones worth naming.
+
+It prefers **Athletic** and **Awareness**, which is what it already is:
+dexterity {{ mechanics.attributes.dexterity }} against strength
+{{ mechanics.attributes.strength }}, and the best thing on the sheet is
+Stealth. It is barred from **Magical** and **Spiritual**. A goblin that
+casts is a goblin shaman, and a goblin shaman is a different entry with
+a different problem in it.
+
+- **Goblin boss** *(`2` levels, threat `3`)*. Martial initiate and a
+  shield, which is the first goblin a party meets that would rather be
+  in front than behind. Worth killing first, because the band's morale
+  is really its morale.
+- **Goblin skulk** *(`4` levels, threat `5`)*. Every point into
+  Athletic and then into Dodge, which Athletic made cheap. It has
+  gained almost no hit points and is very hard to hit — a solid blow
+  still ends it, and the trouble is landing one. This is what a goblin
+  becomes when it survives: not tougher, harder to catch.
+- **Goblin warlord** *(`8` levels, threat `9`)*. Athletic adept,
+  Awareness adept, and enough Martial to carry a real weapon. It still
+  has {{ mechanics.core_hit_points }} core hit points and it still
+  breaks — but it goes last, having spent the fight telling everything
+  else where to stand.
 
 {% book-only %}
 ## Design note
@@ -111,8 +135,17 @@ measurement rather than a guess. And anything the players can do to a
 goblin, a goblin can do back, which is the whole argument for not
 having a second set of rules for the other side of the table.
 
-What it does not get is a level or an advancement budget. A goblin was
-never built by spending points; `challenge_level` says which party this
-is a fair fight for and nothing else, and it is chosen by measuring, not
-by adding up what the creature has.
+`challenge_level` says which party this is a fair fight for and nothing
+else. It is chosen by measuring, not by adding up what the creature
+has, and that has not changed now that goblins have careers — a levelled
+creature's threat is a starting guess to be checked, exactly as this
+one's was.
+
+This entry used to say a creature never gets a level or an advancement
+budget. That was a gap rather than a principle, and it showed up in the
+simulator: a day scaled for a fifteenth-level party wanted about forty
+goblins, because a goblin cannot reach that party's targeting difficulty
+and forty of something that cannot hit you is a long fight rather than a
+hard one. What scales is accuracy, and accuracy is what a career buys.
+See [[creature-advancement]].
 {% endbook-only %}
