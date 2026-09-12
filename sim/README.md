@@ -610,6 +610,33 @@ Offence is looked up from a cache keyed on stamina rather than
 recomputed per trial; the difficulty search is far too slow to run
 inside the loop, and stamina is what actually varies.
 
+### What the crowd planner scores, and what it used to
+
+Against a crowd, `_swarm_plan` picks one power and one difficulty for
+the round and holds it. It scores each option in **bodies' worth of the
+crowd cleared**: a whole body for a blow that drops a mook, and the
+fraction of one for a blow that does not. Overkill is capped, because a
+great axe through a dying goblin clears no more of the room than a
+dagger does.
+
+It used to score whole kills only, and that was wrong in a way worth
+recording. Where nothing a build holds can one-shot the mook in front of
+it, every option scores exactly zero, and the comparison falls to
+whichever one *could* kill on a face nobody rolls. Since the only faces
+that drop a hobgoblin at fifth level are runaway criticals, and a
+runaway critical clears a declared `44` as easily as a declared `4`, the
+difficulty cost nothing in the measure while costing the whole action in
+the fight — `_swarm_act` spends the round on a failed declaration. The
+fifth- and tenth-level reference parties were throwing Follow Through at
+`44` and standing there.
+
+Measured, that one line was most of two levels' worth of party fight
+length: on identical rules, level 10 ran `12.4` rounds under the kill
+count and `5.0` under this one, and level 5 ran `9.8` against `6.2`.
+Any party number taken before this changed is worth less than it looks,
+and the ladder's own effect on fight length had to be re-measured
+against the corrected baseline rather than the published one.
+
 ## Conditions and persistence
 
 Conditions are read out of `conditions.md` and resolved the way the book

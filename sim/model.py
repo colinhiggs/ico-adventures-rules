@@ -1763,13 +1763,14 @@ def step_damage(p, steps, M):
     at a finite difficulty -- one that rises with skill, which is the
     whole point."""
     per_step = int(p.get("damage_per_step", 0))
+    base = int(p.get("base_damage", 0))
     if not per_step:
-        return 0
+        return base
     keys = M.keys("using-powers")
     if "damage_pitch_divisor" not in keys:
-        return steps * per_step
+        return base + steps * per_step
     divisor = int(M.get("using-powers", "damage_pitch_divisor"))
-    return per_step * (steps * steps) // max(1, divisor)
+    return base + per_step * (steps * steps) // max(1, divisor)
 
 
 def power_cost(difficulty, roll, M, minor=False):
@@ -1913,8 +1914,7 @@ def best_self_guard(char, foe, M):
         if not castable(char, spell_id, M):
             continue
         sp = spell_def(M, spell_id)
-        base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 60):
+        for difficulty in difficulty_band(sp, 60):
             got = self_guard_value(char, spell_id, difficulty, foe, M)
             if got is None:
                 break
@@ -1983,8 +1983,7 @@ def best_self_blessing(char, foe, M):
         if not castable(char, spell_id, M):
             continue
         sp = spell_def(M, spell_id)
-        base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 60):
+        for difficulty in difficulty_band(sp, 60):
             got = self_blessing_value(char, spell_id, difficulty, foe, M)
             if got is None:
                 break
@@ -2051,8 +2050,7 @@ def best_heal(char, M, spirit_budget, free_only=False):
     for spell_id in healing_spells(M):
         sp = spell_def(M, spell_id)
         minor = sp.get("tier") == "minor"
-        base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 70):
+        for difficulty in difficulty_band(sp, 70):
             if free_only:
                 if not minor:
                     continue
@@ -2154,6 +2152,32 @@ def circle_squares(M, radius):
     return int(M.get("spell-area", "circle_squares", "radius_%d" % radius))
 
 
+def difficulty_band(p, span=60):
+    """The difficulties a power may be declared at.
+
+    A power is a RUNG: it names the least difficulty that invokes it at
+    all, and -- once `max_difficulty` is present -- the most it can be
+    pushed to. Declaring beyond that is not expensive, it is impossible;
+    reaching further means owning the next rung up.
+
+    The ceiling is what makes a ladder out of what was a single sloped
+    line. Without it every power runs to whatever a roll can reach, so
+    the cheap opening trick and the boss-fight version of it are the
+    same declaration at two numbers, a creature with a good attack skill
+    declares as hard as a veteran, and a low rung never stops being the
+    answer. With it, a rung covers the range it was priced for and no
+    more.
+
+    `span` is what a search should try when a power names no ceiling,
+    and exists only so that this replaces the bare `range(base, base +
+    N)` the searches used to carry without changing any of them.
+    """
+    lo = int(p["base_difficulty"])
+    if "max_difficulty" in p:
+        return range(lo, int(p["max_difficulty"]) + 1)
+    return range(lo, lo + span)
+
+
 def power_def(M, power_id):
     for rule_id in ("discipline-powers", "general-powers"):
         if power_id in M.rules.get(rule_id, {}):
@@ -2177,7 +2201,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
     steps = max(0, (difficulty - base_d) // step)
     bonus = step_damage(p, steps, M)
     pierce = steps * int(p.get("reduction_ignored_per_step", 0))
-    extra_attacks = steps if "difficulty_per_extra_attack" in p else 0
+    swings = extra_attacks(p, difficulty)
     weak_extras = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
     attack = char.attack_bonus(M)
@@ -2206,7 +2230,7 @@ def power_expectation(char, power_id, difficulty, defender, M):
         following = (damage_curve(char, defender, M, weapon_only=True)
                      if weak_extras else main)
         curves[is_crit] = (main, following,
-                           extra_attacks + (extra if extra_attacks else 0))
+                           swings + (extra if swings else 0))
 
     # power_cost, unrolled: both of the numbers it reads are the same
     # for all ninety-six faces, and only the roll changes.
@@ -2242,9 +2266,8 @@ def best_difficulty(char, power_id, defender, M, stamina_budget):
     """Pick the difficulty maximising expected damage subject to an
     expected stamina spend the character can sustain."""
     p = power_def(M, power_id)
-    base_d = int(p["base_difficulty"])
     best = (None, -1.0, 0.0)
-    for difficulty in range(base_d, base_d + 60):
+    for difficulty in difficulty_band(p, 60):
         damage, cost = power_expectation(char, power_id, difficulty, defender, M)
         if cost > stamina_budget:
             continue
@@ -2320,6 +2343,24 @@ def mook(kind, M):
     return char
 
 
+def extra_attacks(p, difficulty):
+    """How many further swings an attack-granting power buys here.
+
+    `base_extra_attacks` is what the power grants for merely being
+    invoked, in the same idiom as `base_allies` and `base_targets`. It
+    is what lets Fast Attack open at the difficulty where an extra swing
+    actually arrives rather than at a number that buys nothing: a band
+    whose bottom half grants you nothing is not a band."""
+    if "difficulty_per_extra_attack" not in p:
+        return 0
+    base_d = int(p["base_difficulty"])
+    if difficulty < base_d:
+        return 0                 # below the band the power is not there
+    step = int(p["difficulty_per_extra_attack"])
+    steps = (difficulty - base_d) // step
+    return int(p.get("base_extra_attacks", 0)) + steps
+
+
 def chain_length(p, difficulty):
     """How many further bodies a Follow Through cascades into."""
     if "extra_follow_through_per_step" not in p:
@@ -2381,7 +2422,6 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
         sp = spell_def(M, spell_id)
         if "area_archetype" not in sp:
             continue
-        base = int(sp["base_difficulty"])
         durations = range(0, 5) if persists(M, spell_id) else (0,)
         cond = spell_condition(M, spell_id)
         resist = (foe.skill(resist_skill(M, cond), M) if cond else 0)
@@ -2389,7 +2429,7 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
         for extra in durations:
             rounds = spell_rounds(M, spell_id, extra)
             ticks = field_ticks(rounds) if persists(M, spell_id) else 1.0
-            for difficulty in range(base, base + 70):
+            for difficulty in difficulty_band(sp, 70):
                 # Pick the shape that kills, not the one that covers most.
                 need = _hp_needed(foe, M, spell_id, difficulty, ticks)
                 damage, squares, bodies = spell_best_for_crowd(
@@ -2432,12 +2472,15 @@ def _swarm_plan(hero, foe, M):
         base_d = int(p["base_difficulty"])
         step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
                    else p["difficulty_per_step"])
+        ceiling = difficulty_band(p, 6 * max(1, step))[-1]
         for extras in range(0, 6):
             difficulty = base_d + extras * step
-            value = _expected_kills(hero, foe, M, power_id, difficulty, budget)
+            if difficulty > ceiling:
+                break
+            value = _expected_bodies(hero, foe, M, power_id, difficulty, budget)
             if value > best[1]:
                 best = ({"power": power_id, "difficulty": difficulty}, value)
-    plain = _expected_kills(hero, foe, M, None, 0, budget)
+    plain = _expected_bodies(hero, foe, M, None, 0, budget)
 
     spell_plan = _spell_swarm_plan(hero, foe, M, SWARM_CROWD_ASSUMED,
                                    hero.spirit / 4.0)
@@ -2454,47 +2497,74 @@ def _swarm_plan(hero, foe, M):
     return best[0]
 
 
-def _expected_kills(hero, foe, M, power_id, difficulty, budget):
-    """Expected number of mooks dropped in one round."""
+def _expected_bodies(hero, foe, M, power_id, difficulty, budget):
+    """Bodies' worth of a crowd cleared in one round.
+
+    A whole body for a blow that drops a mook, and the fraction of one
+    for a blow that does not -- damage capped at a mook's hit points,
+    divided by them, which is what the unit means. Overkill on a dying
+    goblin still clears nothing.
+
+    Counting only whole kills was measurably wrong, and the way it was
+    wrong is worth keeping written down because it survived a long
+    time. Where nothing in a build's hand one-shots the mook in front
+    of it, every option scores exactly zero and the comparison is
+    decided by whichever one could kill on a face nobody ever rolls.
+    Follow Through declared at `44` scored above a plain attack for a
+    fifth-level party, because the only faces that drop a hobgoblin at
+    all are runaway criticals, and a runaway critical clears `44` as
+    easily as it clears `4` -- so the difficulty cost nothing in this
+    measure while costing the whole action in the fight. Measured, that
+    one line was most of two levels' worth of party fight length.
+
+    In fractions of a body the same comparison is a plain attack at
+    half a hobgoblin against a lottery ticket at a fiftieth of one.
+    """
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     td = targeting_difficulty(foe, M)
     skill = hero.attack_bonus(M)
-    hp = foe.total_hp
-    total_kills = 0.0
+    hp = max(1, foe.total_hp)
+
+    def share(damage):
+        """What one blow of this size is worth against one mook."""
+        return min(damage, hp) / float(hp)
+
+    total = 0.0
     for face, weight, _crit in d20_faces(M):
         roll = face + skill
-        total = roll + hero.weapon.accuracy
-        landed = (total >= td) if on_tie else (total > td)
+        aimed = roll + hero.weapon.accuracy
+        landed = (aimed >= td) if on_tie else (aimed > td)
         if not landed:
             continue
+        margin = aimed - td
         if power_id is None:
-            total_kills += weight * (1 if damage_from(hero, foe, total - td, M) >= hp else 0)
+            total += weight * share(damage_from(hero, foe, margin, M))
             continue
         p = power_def(M, power_id)
         minor = p.get("tier") == "minor"
         if roll < difficulty:
-            continue
+            continue            # the power failed and took the action
         if power_cost(difficulty, roll, M, minor) > budget:
-            total_kills += weight * (1 if damage_from(hero, foe, total - td, M) >= hp else 0)
+            total += weight * share(damage_from(hero, foe, margin, M))
             continue
         if "extra_follow_through_per_step" in p:
-            each = damage_from(hero, foe, total - td, M)
-            if each >= hp:
-                total_kills += weight * (1 + chain_length(p, difficulty))
+            each = damage_from(hero, foe, margin, M)
+            # The chain only runs out of a body that actually fell.
+            reached = 1 + (chain_length(p, difficulty) if each >= hp else 0)
+            total += weight * reached * share(each)
             continue
         if "extra_targets_per_step" in p:
             reach = sweep_targets(p, difficulty)
-            each = damage_from(hero, foe, total - td, M, use_margin=False)
-            total_kills += weight * reach * (1 if each >= hp else 0)
+            each = damage_from(hero, foe, margin, M, use_margin=False)
+            total += weight * reach * share(each)
             continue
-        step = int(p["difficulty_per_extra_attack"])
-        extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
+        extras = extra_attacks(p, difficulty)
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
-        kills = 1 if damage_from(hero, foe, total - td, M) >= hp else 0
-        each = damage_from(hero, foe, total - td, M, weapon_only=weak)
-        kills += extras * (1 if each >= hp else 0)
-        total_kills += weight * kills
-    return total_kills
+        got = share(damage_from(hero, foe, margin, M))
+        got += extras * share(damage_from(hero, foe, margin, M,
+                                          weapon_only=weak))
+        total += weight * got
+    return total
 
 
 def crowd_geometry(hero, template, plan, M):
@@ -2914,7 +2984,7 @@ def riposte_plan(char, foe, M):
     budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
     skill = char.attack_bonus(M)
     best = None
-    for difficulty in range(base_d, base_d + 40):
+    for difficulty in difficulty_band(p, 40):
         attacks = (int(p["base_ripostes"])
                    + ((difficulty - base_d) // step)
                    * int(p["extra_ripostes_per_step"]))
@@ -2950,7 +3020,7 @@ def deflect_plan(char, foe, M):
     budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
     skill = char.skill("dodge", M)
     best = None
-    for difficulty in range(base_d, base_d + 40):
+    for difficulty in difficulty_band(p, 40):
         reduction = per_step * (1 + (difficulty - base_d) // step)
         landed, cost = _power_odds(skill, difficulty, M, divisor)
         if cost > budget:
@@ -3567,9 +3637,7 @@ def _swarm_act(hero, targets, plan, M, on_tie, divisor, fields=None):
     floor = minimum_cost(difficulty, M, minor)
     sweep = "extra_targets_per_step" in p
     chain = "extra_follow_through_per_step" in p
-    step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
-               else p["difficulty_per_step"])
-    extras = max(0, (difficulty - int(p["base_difficulty"])) // step)
+    extras = extra_attacks(p, difficulty)
     weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
     if hero.stamina < floor or roll < difficulty:
@@ -4165,7 +4233,7 @@ def redouble_plan(char, M):
     per_step = int(p["dodge_bonus_per_step"])
     skill = char.skill("dodge", M)
     best = None
-    for difficulty in range(base, base + 40):
+    for difficulty in difficulty_band(p, 40):
         chance = max(0.0, min(1.0, (20 - (difficulty - skill) + 1) / 20.0))
         if chance <= 0:
             break
@@ -4549,10 +4617,9 @@ def best_spell(char, foe, M, spirit_budget):
     best = (None, -1.0, 0.0, 0, 0.0, 0)
     for spell_id in spells_for(char, M):
         sp = spell_def(M, spell_id)
-        base = int(sp["base_difficulty"])
         durations = range(0, 5) if persists(M, spell_id) else (0,)
         for extra in durations:
-            for difficulty in range(base, base + 70):
+            for difficulty in difficulty_band(sp, 70):
                 damage, cost, control = cast_expectation(
                     char, spell_id, difficulty, foe, M, extra)
                 if cost > spirit_budget:
@@ -4567,13 +4634,12 @@ def best_spell_free(char, spell_id, foe, M):
     """Expected damage from a minor spell using only outcomes that cost
     nothing, which is all an empty caster can pay for."""
     sp = spell_def(M, spell_id)
-    base = int(sp["base_difficulty"])
     needs_aim = bool(sp.get("needs_attack_roll"))
     td = targeting_difficulty(foe, M) if needs_aim else 0
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
     best = 0.0
-    for difficulty in range(base, base + 60):
+    for difficulty in difficulty_band(sp, 60):
         damage, _sq = spell_shape(M, spell_id, difficulty)
         damage += spell_skill_damage(char, M, spell_id)
         total = 0.0
@@ -4641,7 +4707,7 @@ def floor_offence(char, foe, M):
         extras_power = "difficulty_per_extra_attack" in p
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
-        for difficulty in range(base_d, base_d + 60):
+        for difficulty in difficulty_band(p, 60):
             damage = 0.0
             for face, weight, _crit in d20_faces(M):
                 roll = face + skill
@@ -4651,14 +4717,14 @@ def floor_offence(char, foe, M):
                 free = (roll >= difficulty
                         and power_cost(difficulty, roll, M, minor=True) == 0)
                 steps = max(0, (difficulty - base_d) // step) if free else 0
+                swings = extra_attacks(p, difficulty) if free else 0
                 damage += weight * damage_from(
                     char, foe, total - td, M,
                     bonus=0 if extras_power else step_damage(p, steps, M),
                     pierce=0 if extras_power else steps * int(p.get("reduction_ignored_per_step", 0)))
-                if extras_power:
-                    for _ in range(steps):
-                        damage += weight * damage_from(char, foe, total - td, M,
-                                                       weapon_only=weak)
+                for _ in range(swings):
+                    damage += weight * damage_from(char, foe, total - td, M,
+                                                   weapon_only=weak)
             best = max(best, damage)
     M.derived[key] = best
     return best
@@ -4711,8 +4777,7 @@ def cheapest_spell(char, foe, M):
         if sp.get("tier") != "minor":
             continue
         skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
-        base = int(sp["base_difficulty"])
-        for difficulty in range(base, base + 40):
+        for difficulty in difficulty_band(sp, 40):
             damage, _sq = spell_shape(M, spell_id, difficulty)
             damage += spell_skill_damage(char, M, spell_id)
             got = sum(w for face, w, _c in d20_faces(M)
@@ -4829,7 +4894,7 @@ def _act(actor, target, plan, M, dodge_bonus=0):
         bonus = step_damage(p, steps, M)
         pierce = steps * int(p.get("reduction_ignored_per_step", 0))
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
-        extras = steps if "difficulty_per_extra_attack" in p else 0
+        extras = extra_attacks(p, difficulty)
         if (total >= td) if on_tie else (total > td):
             apply_damage(target, damage_from(actor, target, total - td, M,
                                              bonus=bonus, pierce=pierce))

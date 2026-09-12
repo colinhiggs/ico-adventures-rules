@@ -645,8 +645,6 @@ def free_bands(level, chars, M):
     promise, measured."""
     hr("Quick Attack free band at level %d" % level)
     p = m.power_def(M, "quick_attack")
-    base = int(p["base_difficulty"])
-    step = int(p["difficulty_per_extra_attack"])
     base_cost = int(M.get("using-powers", "base_cost"))
     print("%-12s %-7s %-14s %-14s %s"
           % ("build", "skill", "always free", "free half", "extra attacks free"))
@@ -654,7 +652,7 @@ def free_bands(level, chars, M):
         skill = c.attack_bonus(M)
         always = skill - base_cost + 1
         half = skill
-        n = max(0, (always - base) // step)
+        n = m.extra_attacks(p, min(always, m.difficulty_band(p, 60)[-1]))
         print("%-12s %-7d %-14s %-14s %d"
               % (name, skill, "diff <= %d" % always, "diff <= %d" % half, n))
 
@@ -670,9 +668,9 @@ def best_field(char, foe, M, budget):
     for spell_id in m.combat_spells(M):
         if not m.persists(M, spell_id):
             continue
-        base = int(m.spell_def(M, spell_id)["base_difficulty"])
+        sp = m.spell_def(M, spell_id)
         for extra in range(0, 5):
-            for difficulty in range(base, base + 70):
+            for difficulty in m.difficulty_band(sp, 70):
                 success = sum(w for face, w, _c in m.d20_faces(M)
                               if face + char.casting_bonus(M) >= difficulty)
                 if success < MIN_FIELD_SUCCESS:
@@ -1199,26 +1197,43 @@ def minor_beaten_by_twin(minor_id, standard_id, level, chars, M):
     standard = m.power_def(M, standard_id)
     char = chars.get("duellist") or list(chars.values())[0]
     foe = standard_foe(level, M)
+    # Where both rungs overlap. Two powers with ceilings need not cover
+    # the same band at all, and a difficulty one of them cannot be
+    # declared at is not a difficulty at which either dominates.
     base = max(int(minor["base_difficulty"]), int(standard["base_difficulty"]))
-    for difficulty in range(base, base + 60):
+    top = max(m.difficulty_band(minor, 60)[-1],
+              m.difficulty_band(standard, 60)[-1])
+    band = [d for d in range(base, top + 1)
+            if d in m.difficulty_band(minor, 60)
+            and d in m.difficulty_band(standard, 60)]
+    def granted(p):
+        """How much of its effect a power delivers at this difficulty.
+
+        A rung can carry a base effect -- `base_damage`,
+        `base_extra_attacks` -- so "below its first step" is no longer
+        the same question as "grants nothing". Asking the second
+        directly is what keeps this comparison from silently skipping
+        the whole overlap once a power gains a floor."""
+        step = int(p.get("difficulty_per_step",
+                         p.get("difficulty_per_extra_attack", 1)))
+        per = (int(p.get("damage_per_step", 0))
+               + int(p.get("dodge_bonus_per_step", 0))
+               + int(p.get("reduction_ignored_per_step", 0)))
+        steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
+        return (int(p.get("base_damage", 0)) + steps * per
+                + m.extra_attacks(p, difficulty))
+
+    for difficulty in band:
         # Only compare where the STANDARD power actually grants
-        # something. Below its first step it delivers nothing at all,
-        # and "the minor one is better than nothing" is not dominance.
-        std_step = int(standard.get("difficulty_per_step",
-                                    standard.get("difficulty_per_extra_attack", 1)))
-        if (difficulty - int(standard["base_difficulty"])) // std_step < 1:
+        # something. Where it delivers nothing at all, "the minor one is
+        # better than nothing" is not dominance.
+        if granted(standard) < 1:
             continue
         if "difficulty_per_extra_attack" in minor:
             a, _ = m.power_expectation(char, minor_id, difficulty, foe, M)
             b, _ = m.power_expectation(char, standard_id, difficulty, foe, M)
         else:
-            def effect(p):
-                step = int(p.get("difficulty_per_step", 1))
-                per = (int(p.get("damage_per_step", 0))
-                       + int(p.get("dodge_bonus_per_step", 0))
-                       + int(p.get("reduction_ignored_per_step", 0)))
-                return max(0, (difficulty - int(p["base_difficulty"])) // step) * per
-            a, b = effect(minor), effect(standard)
+            a, b = granted(minor), granted(standard)
         if a > b:
             return False
     return True
