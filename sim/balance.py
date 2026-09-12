@@ -1370,23 +1370,18 @@ def party_for(role, filler_name, filler_spec, level, M):
     return party
 
 
-# The reference party's capability at level 5, and the multiple of
-# DEFAULT_DAY that makes a level 5 party's day a real test. Both
-# measured, and both belong to the CREATURES as much as to the party:
-# when `mook` started reading the bestiary instead of a table in
-# sim/model.py the goblin went from six hit points to twelve, and the
-# same multiplier became a different day. The scale fell from 4.0 to
-# 1.6 for that reason and not because anything was rebalanced.
+# How far to multiply the day's encounters beyond the band each creature
+# normally travels in. It is a CONSTANT now, and that is the point: the
+# ladder in `day_for` does the scaling with level, by fighting the party
+# something its own size instead of more of something beneath it.
 #
-# 1.6 is chosen for measurement resolution rather than for verisimilitude.
-# It puts the reference party at about 3.5 of 5, which means it fails
-# part of the day -- a day every party finishes compresses every score
-# into the top of the range and stops separating builds, which is what
-# the whole party report is for. The cost is that fights land near the
-# top of the round band; at a scale the party comfortably clears they
-# run about seven rounds instead.
-DAY_ANCHOR_CAPABILITY = 9158.0
-DAY_ANCHOR_SCALE = 1.6
+# 0.75 is measured, and it is chosen to keep fights inside the round
+# band. At 1.0 a tenth-level day runs 17.4 rounds, which is past the
+# ceiling from the other end; at 0.75 every level lands under twelve.
+# The cost is that the day is then a real test only at level 5 -- see
+# the note in `day_for` about what that says, which is about the
+# creatures and not about the scale.
+DAY_SCALE = 0.75
 
 
 def party_capability(party, M):
@@ -1406,15 +1401,65 @@ def party_capability(party, M):
     return hp * dmg
 
 
-def day_scale(party, M):
-    """How far to multiply `DEFAULT_DAY` for this party.
+# The shape of a day, as fractions of each creature's own
+# `typical_number`: which rung of the ladder each encounter comes from,
+# and how big it is against the band that creature normally travels in.
+# It escalates, and the last fight is the one that is meant to hurt.
+#
+# The counts are NOT written here. Every creature says how many of it
+# there usually are, and a hill giant travelling in twos is as much a
+# fact about hill giants as its hit points are.
+DAY_SHAPE = (("lesser", 0.67), ("tier", 0.60), ("lesser", 1.00),
+             ("tier", 0.80), ("tier", 1.20))
 
-    Scaled on capability rather than on party size, so that the same
-    schedule is the same challenge at every level. It is NOT scaled on
-    fight length, deliberately: length is the gated quantity, and a day
-    tuned to produce a given length would make its own gate vacuous."""
-    return max(1.0, DAY_ANCHOR_SCALE
-               * party_capability(party, M) / DAY_ANCHOR_CAPABILITY)
+
+def day_creatures(level, M):
+    """(lesser, tier) -- the toughest creature this level has caught up
+    with, and the rung below it.
+
+    Picked off `challenge_level` rather than named here, so the day
+    follows the bestiary: write a creature at threat 7 and the levels
+    that should be fighting it start fighting it."""
+    ladder = [(int(m.creature_def(M, k)["challenge_level"]), k)
+              for k in m.creature_ids(M)]
+    caught = [k for threat, k in ladder if threat <= level] or [ladder[0][1]]
+    tier = caught[-1]
+    return (caught[-2] if len(caught) > 1 else tier), tier
+
+
+def day_for(level, M, scale=1.0):
+    """The standard day at this level: what it is made of and how much.
+
+    The old day was five fixed entries of goblins and orcs at every
+    level, and it could not be made to work. A goblin cannot reach a
+    tenth-level character's targeting difficulty, so the only lever was
+    number, and past the engagement limit number is duration rather than
+    danger -- measured, a fifteenth-level party cleared twenty times the
+    goblin day while the fights ran past the round band from the other
+    end. What scales is the creature."""
+    lesser, tier = day_creatures(level, M)
+    out = []
+    for which, fraction in DAY_SHAPE:
+        kind = lesser if which == "lesser" else tier
+        typical = int(m.creature_def(M, kind).get("typical_number", 5))
+        out.append((kind, max(1, int(round(typical * fraction * scale)))))
+    return out
+
+
+def day_scale(party, M):
+    """How far to multiply this level's encounters.
+
+    A constant, because `day_for` now picks creatures by threat and that
+    is where the scaling with level belongs. Scaling both would scale
+    twice: a fifteenth-level party would meet hill giants AND four times
+    as many of them.
+
+    `party_capability` is kept beside it because the measurement that
+    retired it is worth being able to repeat -- capability scaling was
+    what the day used while it was made of goblins at every level, and
+    it got the day from unreadable to readable without ever getting it
+    level."""
+    return DAY_SCALE
 
 
 def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
@@ -1444,8 +1489,8 @@ def party_day(party, M, trials=PARTY_TRIALS, tier="breather", seed=None,
     import random as _random
     if scale is None:
         scale = day_scale(party, M)
-    schedule = [(kind, max(1, int(round(count * scale))))
-                for kind, count in m.DEFAULT_DAY]
+    level = max(h.level for h in party)
+    schedule = day_for(level, M, scale)
     score = 0.0
     for trial in range(trials):
         # Common random numbers, and only partly working. Seeding each
