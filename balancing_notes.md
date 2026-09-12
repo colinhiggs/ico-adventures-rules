@@ -1204,3 +1204,225 @@ alongside whatever is decided here.
   remove them — at 190 points with skills wanting 123 and mastery
   wanting 53 there is no allocation that also funds a reservoir — but
   the model is choosing *which* thing starves, and it should not be.
+
+## Reworking powers into a ladder of difficulties
+
+The measurements above ended with three things a ladder would have to
+settle, and this is the ladder built against them. It landed in the
+rules rather than staying here, so what follows is the case for the
+numbers rather than an undecided question — with one genuine surprise
+in the middle, which is why it is written down at this length.
+
+### What a rung is
+
+A power now names a **band**: a base difficulty, which is the least it
+may be declared at, and a `max_difficulty`, which is the most. Above the
+top of a band there is no bigger number to say. Reaching further means
+owning the next power up.
+
+Powers therefore come in rungs, and the martial damage line is the pair
+the rest is built around:
+
+| rung | grade | band | damage added |
+|---|---|---|---|
+| Precise Strike (minor) | Initiate | 2–10 | 0 to +2 |
+| Power Attack | Initiate | 4–18 | +1 to +8 |
+| Hammer Blow | Adept | 18–34 | +8 to +24 |
+
+`base_damage` is the new key that makes this work, in the same idiom as
+`base_allies` and `base_targets`: **the rung above opens at exactly the
+damage the rung below closes at**, and then climbs at twice the rate
+over twice the span. Buying the grade is never a step backwards and
+never a discontinuity.
+
+### Why a rung and not a steeper line
+
+Because a steeper line cannot move the ratio, and the arithmetic says so
+in one step. With a fixed exchange rate `r` of damage per point of
+difficulty, a base difficulty `bd`, plain damage `B` and attack skill
+`A`, maximising `hit chance x damage` puts the best declaration at
+
+    D* = (A + 21 + bd - B/r) / 2
+
+and the damage the power adds there at `(r(A + 21 - bd) - B) / 2`.
+Turning `r` multiplies level 1 and level 15 by the same factor. Only
+`bd` and `r` *changing together above a difficulty a beginner cannot
+reach* moves the ratio, and that is what a second rung is.
+
+Measured on the reference striker against the standard foe, which is
+the same measurement the earlier entries in this file use:
+
+| level | before | after |
+|---|---|---|
+| 1 | Fast Attack d16, `+5.38` | Power Attack d10, `+3.65` |
+| 5 | Fast Attack d16, `+8.33` | Power Attack d14, `+5.45` |
+| 10 | Fast Attack d16, `+10.28` | Fast Attack d22, `+8.38` |
+| 15 | Fast Attack d31, `+11.92` | Hammer Blow d24, `+12.70` |
+
+**The effect lever goes from 2.2x to 3.5x**, which is the number the
+multiplicative design needed and could not get: it had effect 2.5x doing
+a third of the work while frequency 3.8x did the rest, against a
+frequency lever that saturates at every round. The rungs also give the
+progression something to be about — the crossovers land at level 10 and
+level 15 rather than nowhere.
+
+### Fast Attack was the whole problem
+
+The left column above is the finding. **Every reference build declared
+Fast Attack at difficulty 16 from level 1 to level 10 and nothing else
+was ever close**, because one extra swing is worth more than any amount
+of extra damage on one and it was reachable at first level. With one
+power answering every question at every level, the damage ladder was
+decorative before it was built.
+
+Its band moved to 22–47, one extra attack at the base and a second at
+the top. The base difficulty was chosen by sweeping it:
+
+| base | L1 | L5 | L10 | L15 |
+|---|---|---|---|---|
+| 14 | Fast | Fast | Fast | Hammer |
+| 18 | Fast | Fast | Fast | Hammer |
+| **22** | **Power** | **Power** | **Fast** | **Hammer** |
+| 26 | Power | Power | Hammer | Hammer |
+
+At 22 it is out of reach early, a live competitor with the Adept rung in
+the middle, and beaten by it at the top — which is the relationship a
+general power and a bought one should have. At 26 it is dead.
+
+Quick Attack, its minor twin, went to 18–48 with a *coarser* step than
+Fast Attack's rather than a finer one. That is load-bearing and was
+nearly got wrong: a minor power whose steps are cheaper than its
+standard twin's overtakes it somewhere, and a free version of the best
+power in the game is not a trade-off. `minor_beaten_by_twin` did not
+catch it, because its skip rule asked whether the standard power was
+"above its first step" rather than whether it granted anything at all,
+and a rung with a base effect grants something at its first number. Both
+are fixed.
+
+### Creatures got their own rung, which was the point
+
+The third open question was creatures, and the band answers it directly.
+Against the reference line-holder:
+
+| creature | martial grade | before | after |
+|---|---|---|---|
+| hobgoblin | Initiate | Power Attack d18, `5.13` | d18, `5.37` |
+| gnoll | Initiate | Power Attack d22, `12.24` | d18, `12.04`, cost `7.3`→`6.0` |
+| hill giant | Adept | Power Attack d28, `20.04` | **Hammer Blow** d28, `25.79` |
+
+The gnoll was declaring at `22` on a reservoir of `34` because nothing
+stopped it; now its grade does, and the power it can still afford costs
+it less. The giant gained a fifth of its output by standing on the rung
+its grade already said it held. Neither creature's stat block moved.
+
+That is the mechanism `creature-advancement.md` needed and did not have:
+a dangerous individual of an ordinary kind is now a creature that bought
+a grade, rather than a creature with an invented weapon.
+
+### The simulator fault that nearly became the headline
+
+The first ladder run reported the failing level 10 party fight length
+falling from `12.4` rounds to `4.2`, and clearing `3.34` of the day to
+`4.02`. That would have been the headline. It was wrong, and finding out
+why is the most useful thing in this entry.
+
+Every first-order number said the opposite. Party damage per round was
+**down** about a fifth at both levels after the change; creature damage
+was flat or up. Nothing in the arithmetic could produce a fight three
+times shorter.
+
+`_swarm_plan` picks one power and one difficulty for a round against a
+crowd, and it scored the options in **whole kills**. Where nothing a
+build holds can one-shot the mook in front of it, every option scores
+exactly zero, and the comparison falls to whichever one *could* kill on
+a face nobody rolls. The only faces that drop a hobgoblin at level 5 are
+runaway criticals — and a runaway critical clears a declared `44` as
+easily as a declared `4`. So the difficulty cost nothing in the measure
+while costing the whole action in the fight, since `_swarm_act` spends
+the round on a failed declaration:
+
+| Follow Through at | chance of making it | scored kills |
+|---|---|---|
+| 4 | 1.00 | 0.0038 |
+| 20 | 0.60 | 0.0075 |
+| 44 | 0.02 | **0.0131** |
+
+The level 5 and level 10 reference parties were declaring Follow Through
+at `44` and standing there for most of the fight. The ladder's ceilings
+made that declaration impossible, so the fight length improved — for a
+reason that had nothing to do with the rules being better.
+
+`_expected_kills` is now `_expected_bodies` and scores **fractions of a
+body**: damage capped at one mook's hit points, divided by them. At
+level 5 that is a plain attack at half a hobgoblin against a lottery
+ticket at a fiftieth of one, and the plain attack wins. On identical
+rules:
+
+| level | kill count | body fractions |
+|---|---|---|
+| 5 | 9.8 rounds | 6.2 |
+| 10 | 12.4 rounds | 5.0 |
+
+**Every party number in this file taken before that fix is worth less
+than it looks**, including the ones that motivated this whole effort.
+
+### What the ladder actually does to a party, honestly
+
+Both columns below use the corrected planner, so the only difference is
+the rules:
+
+| level | before: rounds / cleared | after: rounds / cleared |
+|---|---|---|
+| 1 | 3.9 / 4.99 | 3.8 / 5.00 |
+| 5 | 6.2 / 4.35 | 6.0 / 4.45 |
+| 10 | 5.0 / 5.25 | 4.2 / 4.50 |
+| 15 | 6.4 / 4.53 | 6.5 / 4.00 |
+
+Fight length barely moves, which is what the first-order arithmetic
+predicted and what should have been expected all along. What does move
+is the **day**, and in the right direction: level 10 was clearing more
+than the whole of it — `5.25` of `5`, a day that was not a day — and
+level 15 tightened from `4.53` to `4.00`. The giant's rung is most of
+the second.
+
+Gate count is unchanged at one, and the failure is a different one:
+
+- before: `L10 berserker takes 4.4 rounds to clear 6 goblins (target 4)`
+- after: `L5 spellblade keeps 85% of its damage with an empty reservoir
+  (band 35-85%)`
+
+The second is a hairline — one build, one level, exactly on the bound —
+and it is the fresh side that moved rather than the floor: a level 5
+spellblade can no longer reach Fast Attack, so its reservoir buys it
+less. Read with `CLAUDE.md`'s rule about comparing numbers rather than
+counts, this is the change costing about half a point on one build.
+
+Precise Strike was given a `base_damage` for continuity and it was taken
+away again, measured: **a floor on a power that costs nothing is a
+permanent floor**, and it alone put that spellblade at 94% — nine points
+outside the band rather than on it — and pushed three more duels under
+the three-round floor. That is the cleanest argument in this entry for
+why the other ten powers whose bands open on nothing should be fixed
+together and measured, rather than tidied up one at a time.
+
+### Still open
+
+- **The spell list has two rungs and stops.** Bolt into Lance is a
+  ladder; nothing sits above Lance, so a caster's top rung arrives early
+  and afterwards only widens. Bands are on every spell so the mechanic
+  is universal, but whether the damaging spells need a third rung the
+  way the martial line did has not been measured.
+- **Ten powers open their bands on nothing.** See `TODO.md`. The fix is
+  a flat buff to ten powers and has to be measured as one.
+- **A floor ratio above 100% is incoherent and the level 1 skirmisher
+  now reports one.** `floor_offence` can exceed `expected_offence`
+  because they are different computations rather than a restriction of
+  one another — the blend over rounds and conditional availability is in
+  one and not the other. It was 89% before the ladder and 103% after,
+  so the ladder made an existing fault visible rather than causing it.
+  The gate exempts level 1 from the ceiling, which is why nothing failed.
+- **The multiplicative design has not been re-measured on the ladder.**
+  That was the point of building it: effect 3.5x and frequency somewhere
+  under 3x would land near the 10.5x the scaling needs, without the flat
+  minimum having to do all the work that broke the bestiary. The knobs
+  are unchanged and uncommitted.

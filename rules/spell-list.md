@@ -10,6 +10,7 @@ mechanics:
   bolt:
     tier: minor
     base_difficulty: 2
+    max_difficulty: 14
     schools: [energy]
     range: 10
     needs_attack_roll: true
@@ -37,6 +38,7 @@ mechanics:
   lance:
     schools: [energy]
     base_difficulty: 8
+    max_difficulty: 34
     damage: 10
     difficulty_per_step: 2
     damage_per_step: 1
@@ -68,6 +70,7 @@ mechanics:
   burst:
     schools: [energy]
     base_difficulty: 6
+    max_difficulty: 32
     template: circle
     area_archetype: concentrated
     minimum_spirit: 2
@@ -77,6 +80,7 @@ mechanics:
   blast:
     schools: [energy]
     base_difficulty: 6
+    max_difficulty: 32
     template: any
     area_archetype: balanced
     minimum_spirit: 2
@@ -85,6 +89,7 @@ mechanics:
   field:
     schools: [energy]
     base_difficulty: 8
+    max_difficulty: 34
     template: circle
     area_archetype: diffuse
     difficulty_per_damage: 2
@@ -149,6 +154,7 @@ mechanics:
     schools: [life_force]
     domains: [healing, death]
     base_difficulty: 6
+    max_difficulty: 14
     range: 10
     minimum_spirit: 2
     needs_attack_roll: false
@@ -158,6 +164,7 @@ mechanics:
     schools: [life_force]
     domains: [death, healing, light]
     base_difficulty: 30
+    max_difficulty: 38
     range: touch
     minimum_spirit: 10
     needs_attack_roll: false
@@ -171,6 +178,7 @@ mechanics:
     returns_at_core: 1
   guard:
     base_difficulty: 8
+    max_difficulty: 34
     range: touch
     minimum_spirit: 2
     needs_attack_roll: false
@@ -215,6 +223,7 @@ mechanics:
     difficulty_per_step: 4
   blessing:
     base_difficulty: 8
+    max_difficulty: 34
     range: touch
     minimum_spirit: 2
     needs_attack_roll: false
@@ -262,6 +271,7 @@ mechanics:
     bonus_per_step: 0
   ward:
     base_difficulty: 6
+    max_difficulty: 32
     template: circle
     area_archetype: diffuse
     minimum_spirit: 2
@@ -304,6 +314,7 @@ mechanics:
   mend:
     tier: minor
     base_difficulty: 4
+    max_difficulty: 16
     schools: [life_force]
     domains: [healing]
     range: touch
@@ -314,6 +325,7 @@ mechanics:
     minimum_spirit: 0
   cure_wounds:
     base_difficulty: 16
+    max_difficulty: 40
     schools: [life_force]
     domains: [healing, death]
     range: touch
@@ -325,6 +337,7 @@ mechanics:
     minimum_spirit_per_point: 3
   cleanse:
     base_difficulty: 10
+    max_difficulty: 18
     schools: [life_force]
     domains: [healing]
     range: touch
@@ -333,6 +346,7 @@ mechanics:
     minimum_spirit: 2
   restoration:
     base_difficulty: 14
+    max_difficulty: 22
     schools: [life_force]
     domains: [healing]
     range: touch
@@ -352,7 +366,7 @@ damage they deal. Every one of them shares a chassis:
 
 {% table mechanics.bolt
    rows=tier,schools,range,needs_attack_roll:"Needs an attack roll",
-        base_difficulty,damage,minimum_spirit
+        base_difficulty,max_difficulty,damage,minimum_spirit
    header=Property %}
 
 and both standard boosts:
@@ -383,7 +397,7 @@ sharing a chassis:
 
 {% table mechanics.lance
    rows=schools,range,needs_attack_roll:"Needs an attack roll",
-        base_difficulty,damage,minimum_spirit
+        base_difficulty,max_difficulty,damage,minimum_spirit
    header=Property %}
 
 It is aimed with the casting roll rather than a ranged attack, and it
@@ -426,7 +440,8 @@ it looks and, for a burst, what it leaves behind.
 
 ### Bursts — {{ mechanics.burst.area_archetype }}
 
-*Base difficulty {{ mechanics.burst.base_difficulty }}, circle,
+*Difficulty {{ mechanics.burst.base_difficulty }} to
+{{ mechanics.burst.max_difficulty }}, circle,
 range {{ mechanics.burst.range }}, minimum spirit
 {{ mechanics.burst.minimum_spirit }}.*
 
@@ -442,7 +457,8 @@ the same conditions the lances carry, resisted the same way. See
 
 ### Blasts — {{ mechanics.blast.area_archetype }}
 
-*Base difficulty {{ mechanics.blast.base_difficulty }}, range
+*Difficulty {{ mechanics.blast.base_difficulty }} to
+{{ mechanics.blast.max_difficulty }}, range
 {{ mechanics.blast.range }}, minimum spirit
 {{ mechanics.blast.minimum_spirit }}.*
 
@@ -460,7 +476,8 @@ or swept across a rank.
 
 ### Fields — {{ mechanics.field.area_archetype }}
 
-*Base difficulty {{ mechanics.field.base_difficulty }}, circle,
+*Difficulty {{ mechanics.field.base_difficulty }} to
+{{ mechanics.field.max_difficulty }}, circle,
 range {{ mechanics.field.range }}, minimum spirit
 {{ mechanics.field.minimum_spirit }}.*
 
@@ -507,7 +524,8 @@ something a night's sleep will not give back.
 
 {% table mechanics
    rows=staunch:Staunch,raise_the_dead:"Raise the Dead"
-   columns=base_difficulty:Difficulty,schools:Schools,
+   columns=base_difficulty:Difficulty,max_difficulty:Maximum,
+           schools:Schools,
            domains:Domains,range:Range,
            minimum_spirit:"Min spirit"
    header=Spell %}
@@ -607,7 +625,8 @@ guard makes them harder to stop doing it.
 
 All of them share a chassis:
 
-- **Base difficulty:** {{ mechanics.guard.base_difficulty }}
+- **Difficulty:** {{ mechanics.guard.base_difficulty }} to
+  {{ mechanics.guard.max_difficulty }}
 - **Range:** {{ mechanics.guard.range }}
 - **Duration:** {{ mechanics.guard.duration_rounds }} rounds, plus
   {{ mechanics.guard.rounds_per_difficulty }} for each further point of
@@ -698,7 +717,8 @@ whose target is usually on your own side.
 
 All of them share a chassis:
 
-- **Base difficulty:** {{ mechanics.blessing.base_difficulty }}
+- **Difficulty:** {{ mechanics.blessing.base_difficulty }} to
+  {{ mechanics.blessing.max_difficulty }}
 - **Range:** {{ mechanics.blessing.range }}
 - **Duration:** {{ mechanics.blessing.duration_rounds }} rounds, plus
   {{ mechanics.blessing.rounds_per_difficulty }} for each further point
@@ -802,7 +822,8 @@ map, for more or less of the fight.
 
 All six share a chassis:
 
-- **Base difficulty:** {{ mechanics.ward.base_difficulty }}
+- **Difficulty:** {{ mechanics.ward.base_difficulty }} to
+  {{ mechanics.ward.max_difficulty }}
 - **Template:** {{ mechanics.ward.template }}, priced as
   {{ mechanics.ward.area_archetype }} — see [[spell-area]]
 - **Range:** {{ mechanics.ward.range }}
@@ -904,7 +925,8 @@ one cast rarely.
 {% table mechanics
    rows=mend:Mend,cure_wounds:"Cure Wounds",
         cleanse:Cleanse,restoration:Restoration
-   columns=base_difficulty:Difficulty,schools:Schools,
+   columns=base_difficulty:Difficulty,max_difficulty:Maximum,
+           schools:Schools,
            domains:Domains,range:Range,
            minimum_spirit:"Min spirit"
    header=Spell %}

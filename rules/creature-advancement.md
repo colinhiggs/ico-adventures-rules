@@ -37,6 +37,21 @@ way a fourth-level character was built, from a different starting block,
 and everything a party can do about a levelled character it can do about
 a levelled goblin.
 
+## Grades are what let a creature hit harder
+
+Most of what a level buys a creature is more of the same: ranks, hit
+points, a wider reservoir. A **grade** buys something a stat block
+cannot, because a grade is what opens the upper rungs of a power — see
+[[using-powers]]. A creature holding Martial at Initiate may declare
+Power Attack and stop where Power Attack stops, however good its attack
+skill; one holding it at Adept may declare Hammer Blow and go on from
+there.
+
+This is where a dangerous individual of an ordinary kind comes from. It
+is not a bigger weapon or an invented number: it is a creature that has
+bought the grade, and its damage climbs the way a character's does
+because it is the same ladder.
+
 ## Threat
 
 Each level adds about {{ mechanics.threat_per_level }} to the creature's

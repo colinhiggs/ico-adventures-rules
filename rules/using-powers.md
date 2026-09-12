@@ -3,9 +3,10 @@ id: using-powers
 title: Using a Power
 tags: [core, powers]
 summary: >
-  Declare how hard you are pushing, roll the power's skill against that
-  difficulty, and pay 10 plus the difficulty minus your roll — never
-  less than a third of the difficulty, unless the power is minor.
+  Declare how hard you are pushing, anywhere inside the power's own band
+  of difficulties, roll its skill against that, and pay 10 plus the
+  difficulty minus your roll — never less than a third of it, unless the
+  power is minor.
 mechanics:
   base_cost: 10
   cost_reduction_per_point_over: 1
@@ -13,6 +14,8 @@ mechanics:
   minimum_cost_divisor: 3
   minor_powers_ignore_minimum_cost: true
   difficulty_declared_before_rolling: true
+  declaration_within_the_powers_band: true
+  band_runs_base_difficulty_to_max_difficulty: true
   failure_spends_the_action: true
   failure_costs_the_minimum: true
   unaffordable_power_does_not_take_effect: true
@@ -22,12 +25,42 @@ mechanics:
 
 ## Declare, then roll
 
-Every power lists a **base difficulty**, a **skill**, and a **step**:
-how much extra difficulty buys one more increment of effect. Before
-rolling, declare the difficulty you are attempting — the base, plus
+Every power lists a **band** of difficulties, a **skill**, and a
+**step**: how much extra difficulty buys one more increment of effect.
+The band runs from the power's **base difficulty**, which is the least
+you may declare, to its **maximum difficulty**, which is the most.
+Before rolling, declare a difficulty inside that band — the base, plus
 however many steps you want. Then roll that skill as the
 [[core-resolution|core roll]]. Meeting the declared difficulty means the
 power works, at the scale you asked for.
+
+## The ladder
+
+A power does not run to whatever a good roll could reach. It covers its
+own band and stops, and reaching past the top of it means owning the
+next power up rather than declaring a bigger number.
+
+Powers therefore come in **rungs**. A discipline's Initiate powers cover
+the low band; its Adept powers begin where those leave off, reach much
+further, and buy their effect at a better rate for each point of
+difficulty. Power Attack and Hammer Blow in [[discipline-powers]] are
+the plainest pair: the second starts at exactly the damage the first
+ends at, and then climbs twice as fast.
+
+Three things follow, and they are the whole reason the band is written
+down.
+
+- **What a beginner can do is bounded by the rung, not by their luck.**
+  A character on the first rung who rolls extravagantly well pays less
+  for the power. They do not get a bigger one.
+- **A low rung stays useful without staying decisive.** It is the cheap
+  trick you can afford every round for the rest of your career, and its
+  ceiling is why it never competes with what you keep for the fights
+  that matter.
+- **Climbing is a choice made in advancement, not in the moment.** The
+  next rung is bought with a [[disciplines|grade]], so reaching further
+  costs what grades cost, and the character who spent elsewhere reaches
+  exactly as far as they did last level.
 
 ## The cost
 
@@ -95,9 +128,13 @@ a bigger effect.
 ## Example
 
 Ashri has a melee attack skill of `9` and `14` stamina left. She invokes
-Power Attack, whose base difficulty is `4` and which buys `1` damage per
-`2` further points of difficulty. She declares a difficulty of `14`,
-going for `5` extra damage.
+Power Attack, which runs from difficulty `4` to `18`, adds `1` damage at
+the base and `1` more per `2` further points. She declares a difficulty
+of `14`: five steps above the base, so `6` damage added.
+
+`14` is a difficulty she is allowed to ask for. `20` would not have
+been, however well she rolled — that is Hammer Blow's band, and she does
+not hold Martial at Adept.
 
 She rolls `9`, for a total of `18`. That beats her declared `14`, so the
 power works. The cost is the base cost plus `14` less `18` — which comes
@@ -142,4 +179,26 @@ cost. That band widens as they improve. A minor power is what you always
 have — the trick you can still pull on the fourth fight of a long day
 with an empty reservoir, growing quietly more impressive as you do,
 while never rivalling what you could do fresh.
+
+The maximum difficulty is newer than the rest of this document and
+answers a measured fault rather than a theoretical one. Without a
+ceiling, one power is the whole of a character's offence for their
+entire career: the same declaration at a bigger number, growing with
+skill and nothing else. That has three costs. The interesting decision
+becomes arithmetic, since the best difficulty to declare is a formula in
+your attack bonus and there is only ever one answer. A creature with a
+good attack skill and a small reservoir declares as hard as a veteran
+does, which is why the bestiary kept coming out stronger than its threat
+level said. And the low, cheap version of a power never stops being the
+same power, so there is nothing for a character to *reach* for.
+
+Bands fix all three by making the rung the unit. Inside a rung the
+choice is the old one — how hard to push, against the risk of missing.
+Between rungs it is an advancement choice, and the two are not the same
+decision made twice.
+
+Continuity between rungs is deliberate: the rung above begins at the
+effect the rung below tops out at, so buying it is never a step
+backwards and never a sudden jump either. What the higher rung buys is
+a steeper slope and further to climb.
 {% endbook-only %}

@@ -26,7 +26,7 @@ mechanics:
     resolve: 6
   disciplines:
     martial: adept
-  powers: [power_attack, follow_through, find_the_gap]
+  powers: [power_attack, hammer_blow, follow_through, find_the_gap]
   levels_up: true
   preferred_disciplines: [martial, awareness]
   outlawed_disciplines: [magical, social]
@@ -71,6 +71,14 @@ them is worse than the arithmetic suggests: drop a character and the
 same swing carries into the next one. And Find the Gap, because
 {{ mechanics.mastery_hit_points }} mastery hit points is not actually
 its most dangerous number — armour is no answer to it.
+
+It is also the first creature in the book to stand on the upper rung of
+a damage power — see [[discipline-powers]]. Its Martial grade is Adept,
+so it may declare Hammer Blow and not merely Power Attack, and that is
+where a giant's damage comes from rather than from an inflated weapon.
+Everything below it in this chapter is an Initiate and is capped
+accordingly, which is the difference a [[using-powers|band]] is there to
+make.
 
 It breaks at half, and half of a giant band is one or two. Giants whose
 companions have fallen leave, which is the one mercy in the entry.

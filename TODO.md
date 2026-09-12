@@ -56,6 +56,31 @@ The damaging spells are done: bolts, lances, and the three area families
   what the simulator can say anything about.
 
 ## Rules gaps found while doing the above
+- **Most powers deliver nothing at the bottom of their own band.** The
+  difficulty ladder gave every power a base and a maximum, and the
+  damage rungs a `base_damage` so that the bottom of a band is worth
+  declaring. The rest were left as they were, and for most of them the
+  base difficulty is the first number you may say rather than the first
+  number that buys anything: Precise Strike, Forewarned, Weak Point,
+  Read the Room, Winning Manner, Sidestep, Redouble, Rattle, Find the
+  Gap, Call the Shot and Second Wind all grant zero at their own base
+  difficulty, and the first real rung is a step above it. Precise
+  Strike was given a base and it was taken away again: a floor on a
+  power that costs nothing is a permanent floor, and it put the level 5
+  spellblade nine points outside the reservoir band on its own. Any
+  general fix has to price that, which is the reason this is its own
+  measured job. The ones that already carry a
+  base — Guard, Rally, Hold the Line, Whirl, Riposte, Anticipate,
+  Command, Turn Undead, Follow Through, Deflect — read correctly. Fixing the rest is a flat
+  buff to ten powers and should be measured as one rather than done
+  quietly along with something else. Until then the bands are honest
+  about what may be declared and misleading about what it is worth.
+- **The spell list's single-target line has two rungs and stops.**
+  Bolt into Lance is a ladder; there is nothing above Lance, so a
+  caster's top rung arrives early and then only widens. Bands have been
+  put on every spell so the mechanic is universal, but whether the
+  damaging spells need a third rung the way the martial line did is an
+  open measured question — see [balancing_notes.md](balancing_notes.md).
 - **The game has no top, and the level clock has consumers past
   fifteen.** Nothing declares a level cap. `sim/balance.py` measures at
   1, 5, 10 and 15 and the prose talks about "level fifteen" as though
