@@ -1575,3 +1575,130 @@ That is a level 1 tuning job — starting spirit, the evoker's field
 affordability, and the spread between a priest and a spellblade on their
 first day — and it is now the only thing between the brief's principles
 and the rules.
+
+## Level 1, tuned, and the progression knobs landed
+
+The entry above left three gate failures, all at level 1, as the only
+thing between the brief's progression principles and the rules. Two of
+the three turned out to be one knob that was not needed, and the third
+was a real trade that has been taken deliberately.
+
+### Two of the three were `base_cost`, not the reservoir
+
+`base_cost: 12` was introduced to hold level 1 down in the
+*flat-minimum* design. Once the flat minimum was dropped it had no job
+left, and it was doing damage:
+
+| | evoker's field | priest's floor | contribution spread |
+|---|---|---|---|
+| `base_cost: 12` | **none affordable** | **34%** (floor 35%) | **2.62x** |
+| `base_cost: 10` | flame field at d16 | 39% | 2.51x |
+
+Both failures are the same mechanism. `base_cost` is how far a roll must
+beat a declared difficulty before a minor power costs nothing, so
+raising it narrows every free band at once — which is exactly what the
+reservoir floor measures — and it raises the price of everything else,
+which is what priced a first-level evoker out of a field. Neither had
+anything to do with the reservoir knobs it was bundled with.
+
+**Committed: `base_cost` stays at `10`.** Only three of the five knobs
+were ever needed.
+
+### The third was mastery, and the fix was eight rather than five
+
+The remaining failure — contribution spread `2.62x` against a bound of
+`2.5x` — is caused by the mastery cut, and the mechanism is worth
+recording because it is not obvious. Offence and damage taken are
+*identical* between the two configurations. Only survival moves, and it
+moves by the same factor for everybody. What widens the spread is that
+`contributions` credits a build's **opening rounds at range** on top of
+its melee term: cut hit points and the melee term shrinks while the
+opening does not, so builds that can act at a distance lose less than
+builds that cannot. Priest against spellblade, not caster against
+fighter.
+
+Sweeping the creation cap on bought mastery hit points:
+
+| cap | L1 mastery | L1 spread |
+|---|---|---|
+| 5 | 15 | 2.51x |
+| **8** | **18** | **2.39x** |
+| 10 | 20 | 2.32x |
+| 25 (before) | 35 | 1.97x |
+
+`8` is the smallest value that clears the bound, and `18` sits inside
+the brief's stated zone of ten to twenty. **Committed: `8`.**
+
+### Grant or cap made no difference at all, and that is a finding
+
+`character-creation.md` carries a design note arguing that raising a
+*cap* is never free — it changes what a build can afford, and hits the
+builds shortest of points hardest — which is why the flat ten was
+granted rather than sold. Lowering a cap should by the same argument
+hand points back. It does not:
+
+| free grant | cap | L1 mastery | L1 spread | total reservoir |
+|---|---|---|---|---|
+| 10 | 8 | 18 | 2.39x | 27–36 |
+| 14 | 4 | 18 | 2.39x | 27–36 |
+| 18 | 0 | 18 | 2.39x | 27–36 |
+
+Every split summing to eighteen measures identically, to the digit. The
+reason is the reservoir ceiling that landed beside it: with only
+`max_power_source_bought_per_level: 1`, refunded points **cannot** be
+spent on stamina or spirit, and at level 1 the skills they could go to
+are already at their ceilings. The points come back and have nowhere to
+go. So the simplest edit wins — the grant stays at `10` and the cap
+comes down to `8`.
+
+### What it cost: level 1 duels
+
+Honestly, this is the bill:
+
+| | L1 mean | under three | L8 mean | L15 mean |
+|---|---|---|---|---|
+| before | 4.47 | 2 of 45 | 4.78 | 4.76 |
+| after | **3.01** | **26 of 45** | 4.21 | 4.51 |
+
+First-level duels are short again — shorter than the state the flat ten
+was written to repair, which reported a third of pairings under the
+floor. This is accepted rather than missed, on two grounds.
+
+The party is the unit that gates, and a party's first-level fights run
+`4.1` rounds, inside the band. And the arithmetic admits no compromise:
+a first-level character deals about `11` damage a round, so four rounds
+of trading blows needs about `44` hit points between the two pools —
+three times a starting constitution. **Either mastery starts far above
+core, or first-level fights are quick.** The brief chose the first
+clause; this is the second one arriving. Both design notes that claimed
+otherwise have been rewritten rather than left standing.
+
+Level 15 is *better* than before on the same measure: `0` of `45`
+pairings under three, against `1`.
+
+### Where it leaves the gates
+
+| configuration | fails | day cleared, L1/L5/L10/L15 |
+|---|---|---|
+| before any of this | 1 | 4.99 / 4.35 / 5.25 / 4.53 |
+| ladder only | 1 | 5.00 / 4.45 / 4.50 / 4.00 |
+| **ladder + tuned progression** | **1** | 3.16 / 3.48 / 3.87 / 3.92 |
+
+One failure throughout, and at the end it is the same hairline the
+ladder alone carried: the level 5 spellblade exactly on the `85%`
+reservoir bound. The day is the thing that changed most, and for the
+better — it used to run from `5.25` of five encounters at level 10,
+which is not a day, down to `4.00`; it now runs `3.16` to `3.92`, which
+is the same day at every level.
+
+### Still open
+
+- **The level 5 spellblade.** It has been within a point of that bound
+  through every configuration measured in this file, which makes it a
+  question about that build rather than about any of these changes: a
+  hybrid's reservoir buys it very little, and `Casting in Harness` was
+  the last thing to move it.
+- **Whether the round band's floor should be level-aware.** Level 1
+  duels now sit on it by design. Either the floor is wrong for level 1,
+  or first-level damage is too high for first-level hit points, and
+  nothing here decides which.

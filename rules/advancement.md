@@ -11,8 +11,8 @@ mechanics:
   free_mastery_hp_per_constitution: 1
   mastery_hp_per_point: 2
   max_mastery_hp_bought_per_level: 1
-  power_source_per_point: 3
-  max_power_source_bought_per_level: 3
+  power_source_per_point: 4
+  max_power_source_bought_per_level: 1
   powers_per_level: 1
   attribute_point_every_n_levels: 4
   level_is_only_a_budget_and_a_clock: true
@@ -74,8 +74,9 @@ power, and a rank of headroom on every ceiling.
 
 She then spends her points: `4` raising four focused skills by a rank
 each at a point apiece, `1` on the mastery hit points she is allowed to
-buy this level, `3` on widening her stamina, and banks the remaining `7`
-toward Martial Master, which she cannot yet afford outright.
+buy this level, `1` on widening her stamina — which is all the widening
+a level allows — and banks the remaining `9` toward Martial Master,
+which she cannot yet afford outright.
 
 This level happens to be divisible by four, so she also takes an
 attribute point and puts it into strength.
@@ -123,17 +124,37 @@ attribute in the game. The same hit points are being handed out; they
 are simply handed to the characters who bought the attribute for them.
 ## Design note
 
-The per-level mastery grant is deliberately small next to the opening
-reserve in [[character-creation]]. Hit points that climb steeply every
-level while damage stays flat do not make a character heroic; they make
-every fight longer than the last. The curve here is meant to be nearly
-flat, with the growth in what a character can *do* rather than in how
-long they take to kill.
+Hit points that climb steeply every level while damage stays flat do not
+make a character heroic; they make every fight longer than the last. The
+growth is meant to be in what a character can *do* rather than in how
+long they take to kill, and what makes that possible is the
+[[discipline-powers|ladder of difficulties]]: the damage a power adds
+climbs with the rungs a character can reach, so the two sides of the
+fight move together.
 
-The two purchase ceilings exist for the same reason. Without them a
-character with nothing else worth buying converts an entire level into
-one runaway statistic, and the balance between damage and durability
-that the rest of the system rests on quietly stops holding.
+This used to say that the per-level grant was deliberately small next to
+the opening reserve in [[character-creation]], and it is no longer true.
+The opening reserve came down to roughly what a constitution is worth,
+so mastery hit points now arrive mostly over a career rather than mostly
+at creation — a starting character has about a quarter of what a
+fifteenth-level one carries, where they used to have most of it.
+
+The two purchase ceilings exist for the same reason as the flat curve.
+Without them a character with nothing else worth buying converts an
+entire level into one runaway statistic, and the balance between damage
+and durability that the rest of the system rests on quietly stops
+holding.
+
+The power source ceiling is the strictest of them: a point buys
+{{ mechanics.power_source_per_point }} stamina or spirit, which is
+generous, and only {{ mechanics.max_power_source_bought_per_level }} may
+be spent on it in a level, which is not. That pairing is deliberate. A
+reservoir wide enough to spend freely in every fight makes the
+interesting decision — how hard to push a power, and how often — into no
+decision at all, and the measurement agrees: under the old ceiling a
+fifteenth-level character finished the day with stamina it had never had
+a use for. Widening it slowly, from a smaller start, is what keeps the
+reservoir a thing a character budgets rather than a number on a sheet.
 
 Mastery hit points are cheap per point precisely because a skill rank
 keeps paying out on every roll you ever make while a mastery hit point

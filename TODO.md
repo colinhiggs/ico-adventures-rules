@@ -75,14 +75,14 @@ The damaging spells are done: bolts, lances, and the three area families
   buff to ten powers and should be measured as one rather than done
   quietly along with something else. Until then the bands are honest
   about what may be declared and misleading about what it is worth.
-- **Level 1 is what stands between the progression knobs and the rules.**
-  Mastery hit points starting near core and a reservoir that grows
-  slowly from a smaller start are the brief's own instructions, and they
-  measure clean everywhere except the first level: three gate failures,
-  all at level 1 — the evoker cannot afford a field, the priest drops
-  below the reservoir floor, and the spread between a priest and a
-  spellblade goes over the bound. Starting spirit, field affordability
-  and that spread are one tuning job. See
+- **Whether the round band's floor should be level-aware.** Mastery hit
+  points now start at about what a constitution is worth, which is what
+  the progression brief asked for, and the consequence is that
+  first-level duels sit on the three-round floor: mean `3.01` rounds
+  with `26` of `45` pairings under it. A party's first-level fights are
+  inside the band, which is what gates, so nothing fails. But either the
+  floor is wrong for level 1 or first-level damage is too high for
+  first-level hit points, and nothing has decided which. See
   [balancing_notes.md](balancing_notes.md).
 - **The spell list's single-target line has two rungs and stops.**
   Bolt into Lance is a ladder; there is nothing above Lance, so a
