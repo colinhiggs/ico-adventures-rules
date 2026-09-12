@@ -1048,6 +1048,16 @@ collapse.
 
 #### What it breaks, and what that says about the ladder
 
+> **Corrected.** Most of this subsection turned out to be an artefact of
+> the crowd planner scoring whole kills — see *The simulator fault that
+> nearly became the headline* below. Re-measured with that fixed, the
+> day does not fall apart: the same design clears `3.29` at level 5 and
+> `4.26` at level 10 rather than `1.15` and `1.91`. The creature
+> asymmetry is also smaller than it reads here, because the two columns
+> compared were not carrying the same reservoir knobs. The numbers below
+> are left as they were taken; *Re-measuring the multiplicative design
+> on the ladder* is the one to read.
+
 The party day falls apart in the middle:
 
 | level | fight length | cleared of 5 |
@@ -1426,3 +1436,142 @@ together and measured, rather than tidied up one at a time.
   under 3x would land near the 10.5x the scaling needs, without the flat
   minimum having to do all the work that broke the bestiary. The knobs
   are unchanged and uncommitted.
+
+## Re-measuring the multiplicative design on the ladder
+
+The ladder was built to make the multiplicative design work. It does,
+and the useful result is that **the half of it that needed a new
+mechanic turns out not to be needed at all.**
+
+Everything below uses the corrected crowd planner, so it is comparable
+with the entry above it and *not* with the multiplicative entry before
+that.
+
+### The configurations
+
+The "knobs" are the five uncommitted progression values the earlier
+entry settled on: `max_starting_mastery_hp: 5`,
+`max_power_source_bought_per_level: 1`, `power_source_per_point: 4`,
+`base_cost: 12`, and `minimum_cost_flat: 2`.
+
+| | configuration | fails | day cleared, L1/L5/L10/L15 |
+|---|---|---|---|
+| 1 | no ladder, committed | 1 | 4.99 / 4.35 / 5.25 / 4.53 |
+| 2 | ladder, committed | 1 | 5.00 / 4.45 / 4.50 / 4.00 |
+| 3 | no ladder + all knobs | **5** | 2.72 / 3.29 / 4.26 / 4.00 |
+| 4 | ladder + knobs, **proportional** floor | **3** | 2.56 / 3.37 / 3.93 / 3.93 |
+| 5 | ladder + knobs, **flat** floor | **3** | 2.72 / 3.31 / 3.84 / 3.77 |
+| 6 | ladder + mastery knob only | 2 | 3.16 / 3.41 / 3.84 / 3.87 |
+| 7 | ladder + pool and cost knobs only | 2 | 4.31 / 3.94 / 3.97 / 4.00 |
+
+Fight length is inside the 3–12 band at every level of all seven.
+
+### The ladder takes the design from five failures to three
+
+Rows 3 and 5 are the same design with and without the ladder. The two
+failures it removes are precisely the two that were about powers:
+
+- `L5 spellblade keeps 91% of its damage with an empty reservoir` — gone,
+  because the ladder gives the spellblade something to spend a fresh
+  reservoir on that a beginner cannot reach.
+- `L10 berserker takes 4.4 rounds to clear 6 goblins` — gone.
+
+The three that survive are **all at level 1 and none of them is about the
+cost rule**. Rows 6 and 7 split them cleanly:
+
+| failure | caused by |
+|---|---|
+| L1 evoker can neither land nor afford any field | the spirit pool knobs |
+| L1 priest keeps 34% with an empty reservoir (floor 35%) | the spirit pool knobs |
+| L1 contribution spread 2.6x (priest 74 vs spellblade 28) | the mastery knob |
+
+All three are the brief's own instructions arriving: mastery hit points
+starting near core (`35` down to `15`) and a reservoir that grows slowly
+from a smaller start. Level 1 has not been re-tuned for either, and the
+level 1 day says so — `5.00` of five encounters cleared becomes `3.16`
+under the mastery knob alone and `4.31` under the pool knobs alone.
+
+### The flat minimum is no longer worth having
+
+This is the result worth keeping. Rows 4 and 5 differ **only** in the
+floor rule, and they measure the same: three failures, the same three,
+and a day within a rounding error at every level. `minimum_cost_flat`
+buys nothing the gates can see once the ladder is in.
+
+It is not that the floor stopped mattering — it still nearly doubles the
+frequency lever:
+
+| ladder + knobs, floor rule | effect | frequency | product |
+|---|---|---|---|
+| proportional, `difficulty / 3` | 3.5x | 2.75x | **9.6x** |
+| flat `2` | 3.5x | 4.50x | **15.7x** |
+
+It is that **the effect lever now covers the ground on its own**. Before
+the ladder, the same two rows were 3.3x x 1.4x = 4.6x and 2.5x x 3.8x =
+9.5x: only the flat floor could reach ten, and it had to carry the
+design. With the rungs in, the proportional floor reaches 9.6x — what
+the flat floor used to reach — using the lever that costs no new
+mechanic.
+
+Frequency ratios are only comparable between rows carrying the same
+reservoir knobs, which is worth stating because it is what the earlier
+entry got wrong. On the committed pool, which grows eightfold on its
+own, frequency is 4.70x without the ladder and 4.41x with it — the
+ladder does not touch that lever, and any comparison that mixes pool
+settings will say it does.
+
+### The bestiary objection was smaller than recorded
+
+The earlier entry's reason for rejecting the flat minimum was that it is
+worth far more to a creature than to a character. Measured like for like
+— same reservoir knobs on both sides, which the earlier table did not do
+— it is worth roughly the same to both:
+
+| who | uses a day, proportional -> flat | gain |
+|---|---|---|
+| hobgoblin | 2.9 -> 4.3 | 1.50x |
+| gnoll | 5.4 -> 10.0 | 1.85x |
+| hill giant | 5.2 -> 10.4 | 1.99x |
+| striker L5 | 5.7 -> 7.0 | 1.23x |
+| striker L10 | 6.8 -> 11.3 | 1.65x |
+| striker L15 | 8.6 -> 15.7 | 1.82x |
+
+The ladder is why: a level 15 striker used to declare Fast Attack at
+`31` and pay a proportional floor of `10`, so the flat rule was an
+enormous discount to creatures and a small one to characters. Capped at
+Hammer Blow's `24`, the character is in the same position the creature
+was. The asymmetry was real and the ceilings closed it — which removes
+the objection rather than vindicating it, and leaves the argument
+against the flat floor resting on it buying nothing.
+
+### Reservoir dependence stays healthy
+
+The wall the quadratic hit is nowhere near. Share of damage kept with an
+empty reservoir, across all ten builds:
+
+| configuration | L5 | L10 | L15 |
+|---|---|---|---|
+| ladder, committed | 46–85% | 51–64% | 48–67% |
+| ladder + knobs, flat floor | 43–84% | 46–61% | 47–63% |
+| (the quadratic, for contrast) | — | 22–31% | — |
+
+Note that the level 5 spellblade at `85%` — the single hairline failure
+the ladder alone carries — comes *inside* the band at `84%` once the
+pool knobs are in. The progression knobs fix it.
+
+### What this settles and what it leaves
+
+**Settled.** The multiplicative design works on the ladder, and it works
+without `minimum_cost_flat`. Neither experimental key —
+`damage_pitch_divisor` or `minimum_cost_flat` — needs to enter the
+ruleset. The model keeps both behind absent-key fallbacks so this can be
+re-run, but nothing is waiting on them.
+
+**Left open.** The five progression knobs are still uncommitted, and
+what stands between them and the rules is level 1 rather than anything
+about powers: three gate failures, all at level 1, all downstream of
+mastery hit points starting at `15` and a reservoir starting smaller.
+That is a level 1 tuning job — starting spirit, the evoker's field
+affordability, and the spread between a priest and a spellblade on their
+first day — and it is now the only thing between the brief's principles
+and the rules.

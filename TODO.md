@@ -75,6 +75,15 @@ The damaging spells are done: bolts, lances, and the three area families
   buff to ten powers and should be measured as one rather than done
   quietly along with something else. Until then the bands are honest
   about what may be declared and misleading about what it is worth.
+- **Level 1 is what stands between the progression knobs and the rules.**
+  Mastery hit points starting near core and a reservoir that grows
+  slowly from a smaller start are the brief's own instructions, and they
+  measure clean everywhere except the first level: three gate failures,
+  all at level 1 — the evoker cannot afford a field, the priest drops
+  below the reservoir floor, and the spread between a priest and a
+  spellblade goes over the bound. Starting spirit, field affordability
+  and that spread are one tuning job. See
+  [balancing_notes.md](balancing_notes.md).
 - **The spell list's single-target line has two rungs and stops.**
   Bolt into Lance is a ladder; there is nothing above Lance, so a
   caster's top rung arrives early and then only widens. Bands have been
