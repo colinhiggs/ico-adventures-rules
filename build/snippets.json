@@ -148,6 +148,27 @@
     "includes": [],
     "book_anchor": "#rule-hobgoblin"
   },
+  "orc": {
+    "id": "orc",
+    "kind": "creature",
+    "title": "Orc",
+    "summary": "A raider that comes straight at you, takes a hit to give one, and is the first thing in this book a first-level character cannot simply out-last.",
+    "summary_html": "A raider that comes straight at you, takes a hit to give one, and is the first thing in this book a first-level character cannot simply out-last.",
+    "html": "<p>Where a <a href=\"#rule-goblin\" data-rule-id=\"goblin\">goblin</a> would rather be behind you, an orc would rather be in front of you and is quite happy for that to cost it something. It is bigger, slower and considerably harder to put down.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>14</td></tr><tr><td>Dexterity</td><td>10</td></tr><tr><td>Constitution</td><td>14</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>10</td></tr><tr><td>Charisma</td><td>8</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>4</td></tr><tr><td>Dodge</td><td>2</td></tr><tr><td>Block</td><td>2</td></tr><tr><td>Spot</td><td>2</td></tr><tr><td>Fortitude</td><td>4</td></tr><tr><td>Resolve</td><td>2</td></tr></tbody></table>\n<h4>How it fights</h4>\n<p>It closes and it swings. There is no more to it than that at this threat, and there does not need to be: strength 14 behind a <a href=\"#rule-weapons\" data-rule-id=\"weapons\">hand axe</a> and 14 core hit points is an opponent a first-level character trades with rather than beats.</p>\n<p>Its dodge is poor and it wears only <a href=\"#rule-armour\" data-rule-id=\"armour\">leather</a>, so it is easy to hit. What it is not is easy to finish, and a party that is used to goblins folding to one blow finds the round it planned for has become three.</p>\n<p>An orc band breaks at about a third, which is later than a goblin band and sooner than it looks — orcs count a fight as going badly when they stop making ground, not when they start losing.</p>\n<h4>Orcs with a career</h4>\n<p>It levels — see <a href=\"#rule-creature-advancement\" data-rule-id=\"creature-advancement\">Creatures That Level</a>. It prefers <strong>Martial</strong>, which is the axe, and <strong>Athletic</strong>, which is the closing. It is barred from <strong>Magical</strong>: orc magic exists and is somebody else's entry.</p>\n<ul><li><strong>Orc veteran</strong> <em>(<code>3</code> levels, threat <code>5</code>)</em>. Martial adept, a shield and a real sword, fighting in block. The same creature with the thing it lacked — the ability to survive being concentrated on.</li><li><strong>Orc chieftain</strong> <em>(<code>7</code> levels, threat <code>9</code>)</em>. Martial adept, Athletic adept, Riposte. Every blow the party misses with costs it.</li></ul>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "humanoid"
+    ],
+    "related": [
+      "armour",
+      "creature-advancement",
+      "goblin",
+      "weapons"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-orc"
+  },
   "character-creation": {
     "id": "character-creation",
     "kind": "rule",
@@ -885,6 +906,7 @@
     "includes": [
       "creature-advancement",
       "goblin",
+      "orc",
       "hobgoblin",
       "gnoll",
       "hill-giant"

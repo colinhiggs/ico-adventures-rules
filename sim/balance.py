@@ -698,7 +698,7 @@ def report_fields(level, chars, M):
         return {}
     out = {}
     for name, c in sorted(casters.items()):
-        for kind in sorted(m.MOOKS):
+        for kind in m.creature_ids(M):
             foe = m.mook(kind, M)
             field = best_field(c, foe, M, c.spirit / 4.0)
             if field is None:
@@ -1370,13 +1370,23 @@ def party_for(role, filler_name, filler_spec, level, M):
     return party
 
 
-# The reference party's capability at level 5, which is the level
-# DEFAULT_DAY was written against. `day_scale` is normalised on it so
-# that a level 5 party still meets the day it has always met, and every
-# other level is scaled to the same challenge. Measured, not declared:
-# recompute it with `--day-anchor` if the numbers underneath move.
-DAY_ANCHOR_CAPABILITY = 8662.7
-DAY_ANCHOR_SCALE = 4.0
+# The reference party's capability at level 5, and the multiple of
+# DEFAULT_DAY that makes a level 5 party's day a real test. Both
+# measured, and both belong to the CREATURES as much as to the party:
+# when `mook` started reading the bestiary instead of a table in
+# sim/model.py the goblin went from six hit points to twelve, and the
+# same multiplier became a different day. The scale fell from 4.0 to
+# 1.6 for that reason and not because anything was rebalanced.
+#
+# 1.6 is chosen for measurement resolution rather than for verisimilitude.
+# It puts the reference party at about 3.5 of 5, which means it fails
+# part of the day -- a day every party finishes compresses every score
+# into the top of the range and stops separating builds, which is what
+# the whole party report is for. The cost is that fights land near the
+# top of the round band; at a scale the party comfortably clears they
+# run about seven rounds instead.
+DAY_ANCHOR_CAPABILITY = 9158.0
+DAY_ANCHOR_SCALE = 1.6
 
 
 def party_capability(party, M):

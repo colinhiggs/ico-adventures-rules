@@ -878,6 +878,45 @@
         "huge": 3
       }
     },
+    "orc": {
+      "challenge_level": 2,
+      "typical_number": 5,
+      "attributes": {
+        "strength": 14,
+        "dexterity": 10,
+        "constitution": 14,
+        "intelligence": 8,
+        "willpower": 10,
+        "charisma": 8
+      },
+      "skills": {
+        "attack_melee": 4,
+        "dodge": 2,
+        "block": 2,
+        "spot": 2,
+        "fortitude": 4,
+        "resolve": 2
+      },
+      "disciplines": {},
+      "powers": [],
+      "levels_up": true,
+      "preferred_disciplines": [
+        "martial",
+        "athletic"
+      ],
+      "outlawed_disciplines": [
+        "magical"
+      ],
+      "mastery_hit_points": 6,
+      "core_hit_points": 14,
+      "stamina": 14,
+      "spirit": 0,
+      "stance": "dodge",
+      "weapon": "hand_axe",
+      "armour": "leather",
+      "shield": "none",
+      "morale_breaks_at_core_fraction": 0.34
+    },
     "power-sources": {
       "stamina_base": "constitution",
       "spirit_base": "will",

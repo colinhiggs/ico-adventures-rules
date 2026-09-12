@@ -17,6 +17,8 @@ which is usually the part that decides how the encounter goes.
 
 {% include goblin %}
 
+{% include orc %}
+
 {% include hobgoblin %}
 
 {% include gnoll %}

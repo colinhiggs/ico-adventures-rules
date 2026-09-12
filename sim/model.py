@@ -519,6 +519,10 @@ class Character:
     # cannot be bought, and is part of what the god IS -- see domains.md.
     armour_relief: int = 0
     max_chp: int = 0
+    # Set only for creatures, from the bestiary entry's `powers` list.
+    # None means "whatever the grades open", which is how a character
+    # works; a tuple means this and no more.
+    allowed_powers: tuple = None
 
     def attr_bonus(self, attribute, M):
         step = int(M.get("attributes", "points_per_bonus_step"))
@@ -2198,38 +2202,68 @@ def best_difficulty(char, power_id, defender, M, stamina_budget):
 # ---------------------------------------------------------------------
 # Duels
 # ---------------------------------------------------------------------
-def make_mook(name, M, attack, dodge, hp, weapon, armour, resist=0):
-    """A rank-and-file opponent, built directly rather than by spending
-    advancement points -- a goblin does not have a character sheet."""
-    flat = {a: int(M.get("attributes", "average_score"))
-            for a in ("strength", "dexterity", "constitution",
-                      "intelligence", "willpower", "charisma")}
-    c = Character(name=name, level=1, disciplines={}, attributes=flat,
-                  stance="dodge")
-    c.skills = {s: 0 for s in TRACKED_SKILLS}
-    c.skills["attack_melee"] = attack
-    c.skills["dodge"] = dodge
-    c.skills["fortitude"] = resist
-    c.skills["resolve"] = resist
-    c.weapon = Weapon.load(M, weapon)
-    c.armour = Armour.load(M, armour)
-    c.shield = None
-    c.chp = hp
-    c.max_chp = hp
-    c.mhp = 0
-    c.stamina = 0
-    return c
+# A creature document is one carrying `challenge_level`. Read from the
+# data, like everything else here, so adding a creature to the bestiary
+# is a rule-file edit and nothing else.
+CREATURE_KEY = "challenge_level"
 
 
-MOOKS = {
-    # name:        attack dodge hp  weapon      armour        resist
-    "goblin":      (3,     4,    6,  "dagger",     "unarmoured", 2),
-    "orc":         (5,     3,    12, "hand_axe",   "leather",    4),
-}
+def creature_ids(M):
+    """Every creature in the bestiary, cheapest to fight first."""
+    out = []
+    for doc_id, block in M.rules.items():
+        if isinstance(block, dict) and CREATURE_KEY in block:
+            out.append((int(block[CREATURE_KEY]), doc_id))
+    return [doc_id for _threat, doc_id in sorted(out)]
+
+
+def creature_def(M, kind):
+    block = M.rules.get(kind)
+    if not isinstance(block, dict) or CREATURE_KEY not in block:
+        raise KeyError("no creature '%s' in the bestiary (have: %s)"
+                       % (kind, ", ".join(creature_ids(M))))
+    return block
 
 
 def mook(kind, M):
-    return make_mook(kind, M, *MOOKS[kind])
+    """A creature, built from its bestiary entry.
+
+    This used to be five numbers in a table in this file, and the table
+    and the book had drifted into different creatures: the goblin here
+    had six hit points, a dagger and no armour, while the goblin in the
+    bestiary had twelve, a short sword and partial leather. Every swarm
+    and party measurement ever taken was taken against something that
+    was not in the book.
+
+    That was the one place `sim/` hardcoded a mechanic value, which the
+    project's own rule forbids for exactly this reason. The entry is the
+    creature now, and a creature added to the bestiary is available here
+    with no edit at all."""
+    c = creature_def(M, kind)
+    char = Character(
+        name=kind, level=1,
+        disciplines={str(k): str(v) for k, v in (c.get("disciplines") or {}).items()},
+        attributes={str(k): int(v) for k, v in c["attributes"].items()},
+        stance=str(c.get("stance", "dodge")))
+    char.skills = {s: 0 for s in TRACKED_SKILLS}
+    char.skills.update({str(k): int(v) for k, v in (c.get("skills") or {}).items()})
+    char.weapon = Weapon.load(M, str(c["weapon"]))
+    char.armour = Armour.load(M, str(c.get("armour") or "unarmoured"))
+    shield = c.get("shield")
+    char.shield = Shield.load(M, None if shield in (None, "none", "") else str(shield))
+    char.mhp = int(c.get("mastery_hit_points", 0))
+    char.chp = int(c.get("core_hit_points", 0))
+    char.max_chp = char.chp
+    char.stamina = int(c.get("stamina", 0))
+    char.spirit = int(c.get("spirit", 0))
+    # A creature may carry fewer powers than its grades would open. The
+    # entry says which, and that is a statement about the creature
+    # rather than a simplification -- an ogre with Martial adept has not
+    # necessarily learned to riposte.
+    listed = c.get("powers")
+    if listed is not None:
+        char.allowed_powers = tuple(str(x) for x in listed)
+    return char
 
 
 def chain_length(p, difficulty):
@@ -4040,6 +4074,9 @@ def opens_for(char, power_id, M):
     Access is read from the power's own mechanics -- its `discipline`
     and `grade` -- rather than hardcoded here, so moving a power between
     disciplines or grades is a rule-file edit and nothing else."""
+    listed = getattr(char, "allowed_powers", None)
+    if listed is not None and power_id not in listed:
+        return False
     p = power_def(M, power_id)
     discipline = p.get("discipline")
     if discipline is None:
