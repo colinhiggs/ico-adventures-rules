@@ -66,19 +66,40 @@
     "includes": [],
     "book_anchor": "#rule-attributes"
   },
-  "goblin": {
-    "id": "goblin",
+  "gnoll": {
+    "id": "gnoll",
     "kind": "creature",
-    "title": "Goblin",
-    "summary": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
-    "summary_html": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
-    "html": "<p>A goblin stands about waist high to a human, and knows it. It carries a bow it is good with and a blade it is not, wears whatever leather it has taken off something else, and would very much rather be behind you than in front of you.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>8</td></tr><tr><td>Dexterity</td><td>14</td></tr><tr><td>Constitution</td><td>8</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>8</td></tr><tr><td>Charisma</td><td>6</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>2</td></tr><tr><td>Attack ranged</td><td>2</td></tr><tr><td>Dodge</td><td>3</td></tr><tr><td>Stealth</td><td>4</td></tr><tr><td>Spot</td><td>2</td></tr><tr><td>Fortitude</td><td>1</td></tr></tbody></table>\n<p>Alone a goblin is barely a fight. The reason it is the first thing in this book is that it is never alone: a raiding band is 6 of them, and 6 attacks a round against one target is a different proposition from one attack six times.</p>\n<h4>How it fights</h4>\n<p>It opens from hiding — Stealth 4 is the best thing about it — and it opens at range. Its <a href=\"#rule-ranged-weapons\" data-rule-id=\"ranged-weapons\">shortbow</a> and its <a href=\"#rule-weapons\" data-rule-id=\"weapons\">short sword</a> do the same damage, and it has the same rank in both, so everything that separates them is who is holding them: dexterity 14 carries the shot and strength 8 drags the swing down. A goblin made to fight at arm's length is a goblin fighting badly, and it knows that too.</p>\n<p>Being reached is therefore what a party is trying to do to it. The bow takes both hands, so a goblin caught in its hiding place either spends its action drawing the blade — see <a href=\"#rule-free-hands\" data-rule-id=\"free-hands\">Free Hands</a> — or goes on shooting with somebody standing over it at the penalty <a href=\"#rule-ranged-weapons\" data-rule-id=\"ranged-weapons\">Ranged Weapons</a> charges for that. Six goblins at 10 squares and six goblins at arm's length are not the same encounter.</p>\n<p>It dodges rather than blocks, because at strength 8 it has nothing to block with. Against a dodging goblin an attacker is looking at a target set by dexterity 14 and Dodge 3, which is more than a first-level party expects from something this small.</p>\n<p>It is fragile in exactly the way that suggests. With 4 mastery hit points and 8 core, a solid hit from a <a href=\"#rule-weapons\" data-rule-id=\"weapons\">two-handed weapon</a> ends it outright, and any hit at all is likely to leave it <a href=\"#rule-dying\" data-rule-id=\"dying\">wounded</a>.</p>\n<p>Goblins break. When a band has lost 0.5 of its number the rest run, and a group that runs on the third round is the difference between a goblin ambush and a goblin massacre. This is a judgement for whoever is running the fight, not a roll.</p>\n<h4>Variants</h4>\n<ul><li><strong>Goblin boss.</strong> One grade of the Martial discipline, a shield, and enough stamina to spend on a power. Worth roughly two ordinary goblins and worth killing first, since the band's morale is really its morale.</li></ul>",
+    "title": "Gnoll",
+    "summary": "A pack hunter that fights the wounded and the separated by choice. Fast, accurate, and entirely uninterested in a fair fight.",
+    "summary_html": "A pack hunter that fights the wounded and the separated by choice. Fast, accurate, and entirely uninterested in a fair fight.",
+    "html": "<p>A gnoll is a head taller than a man and moves like something that has never had to think about it. It hunts in a pack, it hunts by choice, and what it is choosing is whoever is already hurt.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>16</td></tr><tr><td>Dexterity</td><td>14</td></tr><tr><td>Constitution</td><td>14</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>10</td></tr><tr><td>Charisma</td><td>8</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>10</td></tr><tr><td>Dodge</td><td>8</td></tr><tr><td>Spot</td><td>7</td></tr><tr><td>Stealth</td><td>6</td></tr><tr><td>Fortitude</td><td>6</td></tr><tr><td>Resolve</td><td>3</td></tr></tbody></table>\n<h4>How it fights</h4>\n<p>It has Sneak Attack — see <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a> — and the whole of its tactics is arranging to use it. A gnoll pack does not form a line. It goes round one, and the thing it is going round the line to reach is the character with the fewest hit points left rather than the one with the fewest defences.</p>\n<p>At Athletic adept it dodges rather than blocks, and Redouble means the stamina in <code>stamina</code> is a targeting difficulty it can hold up for most of a fight. Against a tenth-level party that is not enough to make it hard to hit. It is enough to make it take three rounds instead of two, and three rounds is another character down.</p>\n<p>Unlike a <a href=\"#rule-hobgoblin\" data-rule-id=\"hobgoblin\">hobgoblin</a> it will break, and it breaks upward: a pack that has lost a third of its number does not run home, it runs at whoever is furthest from help.</p>\n<h4>Gnolls with a career</h4>\n<p>It levels — see <a href=\"#rule-creature-advancement\" data-rule-id=\"creature-advancement\">Creatures That Level</a>. It prefers <strong>Athletic</strong>, which is most of what it is, and <strong>Martial</strong>, which is the axe. It is barred from <strong>Magical</strong> and from <strong>Social</strong>: a gnoll pack has a leader because something has to be biggest, and no gnoll has ever given an order that was not a noise.</p>\n<ul><li><strong>Gnoll pack-leader</strong> <em>(<code>3</code> levels, threat <code>13</code>)</em>. Athletic master, which is Untouchable — it wears its mail and dodges in it with no penalty at all. The pack's targeting difficulty problem, standing where the pack can see it.</li><li><strong>Gnoll fang</strong> <em>(<code>7</code> levels, threat <code>17</code>)</em>. Martial adept and everything else into Attack and Sneak Attack. It exists to remove one character from the fight in one round, and against anybody already wounded it usually does.</li></ul>",
     "tags": [
       "bestiary",
       "creature",
       "humanoid"
     ],
     "related": [
+      "creature-advancement",
+      "discipline-powers",
+      "hobgoblin"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-gnoll"
+  },
+  "goblin": {
+    "id": "goblin",
+    "kind": "creature",
+    "title": "Goblin",
+    "summary": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
+    "summary_html": "A small, quick, cowardly raider that fights in numbers, from cover, and only for as long as it is winning.",
+    "html": "<p>A goblin stands about waist high to a human, and knows it. It carries a bow it is good with and a blade it is not, wears whatever leather it has taken off something else, and would very much rather be behind you than in front of you.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>8</td></tr><tr><td>Dexterity</td><td>14</td></tr><tr><td>Constitution</td><td>8</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>8</td></tr><tr><td>Charisma</td><td>6</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>2</td></tr><tr><td>Attack ranged</td><td>2</td></tr><tr><td>Dodge</td><td>3</td></tr><tr><td>Stealth</td><td>4</td></tr><tr><td>Spot</td><td>2</td></tr><tr><td>Fortitude</td><td>1</td></tr></tbody></table>\n<p>Alone a goblin is barely a fight. The reason it is the first thing in this book is that it is never alone: a raiding band is 6 of them, and 6 attacks a round against one target is a different proposition from one attack six times.</p>\n<h4>How it fights</h4>\n<p>It opens from hiding — Stealth 4 is the best thing about it — and it opens at range. Its <a href=\"#rule-ranged-weapons\" data-rule-id=\"ranged-weapons\">shortbow</a> and its <a href=\"#rule-weapons\" data-rule-id=\"weapons\">short sword</a> do the same damage, and it has the same rank in both, so everything that separates them is who is holding them: dexterity 14 carries the shot and strength 8 drags the swing down. A goblin made to fight at arm's length is a goblin fighting badly, and it knows that too.</p>\n<p>Being reached is therefore what a party is trying to do to it. The bow takes both hands, so a goblin caught in its hiding place either spends its action drawing the blade — see <a href=\"#rule-free-hands\" data-rule-id=\"free-hands\">Free Hands</a> — or goes on shooting with somebody standing over it at the penalty <a href=\"#rule-ranged-weapons\" data-rule-id=\"ranged-weapons\">Ranged Weapons</a> charges for that. Six goblins at 10 squares and six goblins at arm's length are not the same encounter.</p>\n<p>It dodges rather than blocks, because at strength 8 it has nothing to block with. Against a dodging goblin an attacker is looking at a target set by dexterity 14 and Dodge 3, which is more than a first-level party expects from something this small.</p>\n<p>It is fragile in exactly the way that suggests. With 4 mastery hit points and 8 core, a solid hit from a <a href=\"#rule-weapons\" data-rule-id=\"weapons\">two-handed weapon</a> ends it outright, and any hit at all is likely to leave it <a href=\"#rule-dying\" data-rule-id=\"dying\">wounded</a>.</p>\n<p>Goblins break. When a band has lost 0.5 of its number the rest run, and a group that runs on the third round is the difference between a goblin ambush and a goblin massacre. This is a judgement for whoever is running the fight, not a roll.</p>\n<h4>Goblins with a career</h4>\n<p>A goblin levels — see <a href=\"#rule-creature-advancement\" data-rule-id=\"creature-advancement\">Creatures That Level</a>. The block above is a goblin that has not done anything yet, which is most of them and none of the ones worth naming.</p>\n<p>It prefers <strong>Athletic</strong> and <strong>Awareness</strong>, which is what it already is: dexterity 14 against strength 8, and the best thing on the sheet is Stealth. It is barred from <strong>Magical</strong> and <strong>Spiritual</strong>. A goblin that casts is a goblin shaman, and a goblin shaman is a different entry with a different problem in it.</p>\n<ul><li><strong>Goblin boss</strong> <em>(<code>2</code> levels, threat <code>3</code>)</em>. Martial initiate and a shield, which is the first goblin a party meets that would rather be in front than behind. Worth killing first, because the band's morale is really its morale.</li><li><strong>Goblin skulk</strong> <em>(<code>4</code> levels, threat <code>5</code>)</em>. Every point into Athletic and then into Dodge, which Athletic made cheap. It has gained almost no hit points and is very hard to hit — a solid blow still ends it, and the trouble is landing one. This is what a goblin becomes when it survives: not tougher, harder to catch.</li><li><strong>Goblin warlord</strong> <em>(<code>8</code> levels, threat <code>9</code>)</em>. Athletic adept, Awareness adept, and enough Martial to carry a real weapon. It still has 8 core hit points and it still breaks — but it goes last, having spent the fight telling everything else where to stand.</li></ul>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "humanoid"
+    ],
+    "related": [
+      "creature-advancement",
       "dying",
       "free-hands",
       "ranged-weapons",
@@ -86,6 +107,46 @@
     ],
     "includes": [],
     "book_anchor": "#rule-goblin"
+  },
+  "hill-giant": {
+    "id": "hill-giant",
+    "kind": "creature",
+    "title": "Hill Giant",
+    "summary": "Two of these is an encounter. It reaches further than anything a party carries, it hits once for what a lesser creature manages in a round, and there are never enough of it to queue.",
+    "summary_html": "Two of these is an encounter. It reaches further than anything a party carries, it hits once for what a lesser creature manages in a round, and there are never enough of it to queue.",
+    "html": "<p>A hill giant is three times the height of a man and swings something that started as a tree. It is not clever and it does not need to be. Everything about the encounter is decided by the fact that there are <code>2</code> of it and it reaches further than anything the party is holding.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>18</td></tr><tr><td>Dexterity</td><td>8</td></tr><tr><td>Constitution</td><td>18</td></tr><tr><td>Intelligence</td><td>8</td></tr><tr><td>Willpower</td><td>12</td></tr><tr><td>Charisma</td><td>8</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>14</td></tr><tr><td>Block</td><td>11</td></tr><tr><td>Dodge</td><td>4</td></tr><tr><td>Spot</td><td>6</td></tr><tr><td>Fortitude</td><td>12</td></tr><tr><td>Resolve</td><td>6</td></tr></tbody></table>\n<h4>How it fights</h4>\n<p>It is the answer to a problem the rest of this book has: the <a href=\"#rule-reach\" data-rule-id=\"reach\">engagement limit</a> means a crowd can only ever get so many bodies onto a party at once, so past a point more enemies is a longer fight rather than a harder one. A giant is the other shape. There are two, both of them can reach, and neither is waiting for a turn.</p>\n<p>Its weapon has reach, which almost nothing else on this side of the table has. A party that wants to fight it has to cross its band, and <a href=\"#rule-reach\" data-rule-id=\"reach\">Reach and Closing</a> says what that costs — a free attack, out of the giant's reaction, at Attack 14 with a two-handed sword behind it. Closing on a giant is a decision rather than a move.</p>\n<p>It has Follow Through, which is why 2 of them is worse than the arithmetic suggests: drop a character and the same swing carries into the next one. And Find the Gap, because 60 mastery hit points is not actually its most dangerous number — armour is no answer to it.</p>\n<p>It breaks at half, and half of <code>2</code> is one. A giant whose companion has fallen leaves, which is the one mercy in the entry.</p>\n<h4>Giants with a career</h4>\n<p>It levels — see <a href=\"#rule-creature-advancement\" data-rule-id=\"creature-advancement\">Creatures That Level</a> — and it is the clearest case in the book for why the rule exists, because there is no larger giant to reach for. It prefers <strong>Martial</strong> and <strong>Awareness</strong>; it is barred from <strong>Magical</strong> and <strong>Social</strong>.</p>\n<ul><li><strong>Giant chieftain</strong> <em>(<code>4</code> levels, threat <code>19</code>)</em>. Martial master, which is Killing Blow, on a creature whose margin on a hit is already the largest in the book. One of these with two ordinary giants beside it.</li><li><strong>Giant thane</strong> <em>(<code>10</code> levels, threat <code>25</code>)</em>. Martial master and Awareness adept, carrying Anticipate. It acts out of turn, which means the round in which a party thinks it has an opening is the round it does not have.</li></ul>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "giant"
+    ],
+    "related": [
+      "creature-advancement",
+      "reach"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-hill-giant"
+  },
+  "hobgoblin": {
+    "id": "hobgoblin",
+    "kind": "creature",
+    "title": "Hobgoblin",
+    "summary": "Drilled infantry. It holds a line, it does not break, and it is the first thing in this book that fights as a unit rather than as a number of individuals.",
+    "summary_html": "Drilled infantry. It holds a line, it does not break, and it is the first thing in this book that fights as a unit rather than as a number of individuals.",
+    "html": "<p>A hobgoblin is what a goblin is not: tall, disciplined, and entirely willing to be in front. It wears armour issued to it rather than taken off something, it has been taught to use the sword it carries, and it has been taught it standing next to somebody else.</p>\n<table><thead><tr><th>Attribute</th><th>Score</th></tr></thead><tbody><tr><td>Strength</td><td>14</td></tr><tr><td>Dexterity</td><td>12</td></tr><tr><td>Constitution</td><td>14</td></tr><tr><td>Intelligence</td><td>10</td></tr><tr><td>Willpower</td><td>12</td></tr><tr><td>Charisma</td><td>10</td></tr></tbody></table>\n<table><thead><tr><th>Skill</th><th>Rank</th></tr></thead><tbody><tr><td>Attack melee</td><td>6</td></tr><tr><td>Block</td><td>6</td></tr><tr><td>Dodge</td><td>3</td></tr><tr><td>Spot</td><td>3</td></tr><tr><td>Fortitude</td><td>4</td></tr><tr><td>Resolve</td><td>4</td></tr></tbody></table>\n<h4>How it fights</h4>\n<p>It blocks. Strength 14 and Block 6 behind a <a href=\"#rule-armour\" data-rule-id=\"armour\">shield</a> is a targeting difficulty a fifth-level party has to work at, and unlike a <a href=\"#rule-goblin\" data-rule-id=\"goblin\">goblin</a> it is not trying to be somewhere else — it is trying to be exactly where it is, for as long as that is useful.</p>\n<p>It has Guard — see <a href=\"#rule-discipline-powers\" data-rule-id=\"discipline-powers\">Discipline Powers</a> — and it is the first creature in this book that will spend a reaction on somebody else. A line of hobgoblins is not 8 separate fights. The ones in front cover the ones behind, and a party that concentrates on one of them finds the blow arriving somewhere it did not aim.</p>\n<p>Hobgoblins do not break. The fraction in <code>morale_breaks_at_core_fraction</code> is half what a goblin band will take, and it is there for form's sake: a hobgoblin unit that is losing withdraws in order and comes back, which is a different problem for whoever is running the fight and not an easier one.</p>\n<h4>Hobgoblins with a career</h4>\n<p>It levels — see <a href=\"#rule-creature-advancement\" data-rule-id=\"creature-advancement\">Creatures That Level</a>. The block above is a soldier in the ranks, and the ranks are where hobgoblins put the ones who have not done anything yet.</p>\n<p>It prefers <strong>Martial</strong>, which is what it already is, and <strong>Social</strong>, which is the one thing this book's bestiary has otherwise had no use for: Rally and Hold the Line are powers for somebody with people to give orders to, and a hobgoblin has those. It is barred from <strong>Magical</strong>. Hobgoblin sorcery exists and belongs to something else.</p>\n<ul><li><strong>Hobgoblin sergeant</strong> <em>(<code>2</code> levels, threat <code>7</code>)</em>. Martial adept and Social initiate, carrying Rally. It spends its own action making four other hobgoblins better, which is the first enemy in this book whose action does not point at a character at all.</li><li><strong>Hobgoblin captain</strong> <em>(<code>6</code> levels, threat <code>11</code>)</em>. Martial adept, Social adept, Hold the Line. Its unit does not rout, and it has the Block to survive being the one the party goes for.</li><li><strong>Hobgoblin warlord</strong> <em>(<code>12</code> levels, threat <code>17</code>)</em>. Martial master, which is Killing Blow, and Social adept. A single one of these in front of a line of ordinary hobgoblins is a fifteenth-level encounter, and the line is what makes it one.</li></ul>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "humanoid"
+    ],
+    "related": [
+      "armour",
+      "creature-advancement",
+      "discipline-powers",
+      "goblin"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-hobgoblin"
   },
   "character-creation": {
     "id": "character-creation",
@@ -152,6 +213,27 @@
     ],
     "includes": [],
     "book_anchor": "#rule-core-resolution"
+  },
+  "creature-advancement": {
+    "id": "creature-advancement",
+    "kind": "rule",
+    "title": "Creatures That Level",
+    "summary": "An intelligent creature's stat block is what it is before it has done anything. Give it levels and it advances on exactly the character rules, within the disciplines its kind is suited to and outside the ones it is barred from.",
+    "summary_html": "An intelligent creature's stat block is what it is before it has done anything. Give it levels and it advances on exactly the character rules, within the disciplines its kind is suited to and outside the ones it is barred from.",
+    "html": "<p>A goblin is a person. So is an orc, a hobgoblin, an ogre and a giant, and a person who has been doing something dangerous for twenty years is not the same as one who started last week. The stat block in <a href=\"#rule-ch-bestiary\" data-rule-id=\"ch-bestiary\">the bestiary</a> is the second of those: <strong>what the creature is before it has done anything</strong>, and the floor of what its kind can be rather than the whole of it.</p>\n<h4>Levelling a creature</h4>\n<p>An entry marked as one that levels advances on the character rules and no others — see <a href=\"#rule-advancement\" data-rule-id=\"advancement\">Advancement</a>. Each level gives it 15 points to spend on discipline grades, skill ranks, mastery hit points or a power source, at the prices <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a> charges, under the ceilings <a href=\"#rule-skills\" data-rule-id=\"skills\">Using and Focusing Skills</a> sets, plus the free mastery hit points a level grants anybody.</p>\n<p>Nothing here is a second system. A goblin with four levels was built the way a fourth-level character was built, from a different starting block, and everything a party can do about a levelled character it can do about a levelled goblin.</p>\n<h4>Threat</h4>\n<p>Each level adds about 1 to the creature's threat level, which is a starting guess and not a calculation. Threat is a claim about which party a creature is a fair fight for, and the only way to know it is to measure it — see the design note in <a href=\"#rule-goblin\" data-rule-id=\"goblin\">Goblin</a>, which has been saying so since there was one creature in this book.</p>\n<h4>What a kind is suited to</h4>\n<p>A creature that levels carries two lists, and they are about what the creature <em>is</em> rather than what would be convenient:</p>\n<ul><li><strong>Preferred disciplines</strong> — what it takes first, and what its stat block is already leaning towards. A hobgoblin that has been promoted has been promoted for soldiering.</li><li><strong>Outlawed disciplines</strong> — what it may never take at all. A goblin does not become a wizard; a thing with no soul of its own does not become a priest. An outlawed discipline bars its powers too, so nothing can be reached round the back by taking the power without the grade.</li></ul>\n<p>Preferences are guidance for whoever is building the creature. Outlaws are not: they are part of what the kind is, and a creature that breaks one is a different creature and wants its own entry.</p>\n<p>An <strong>unintelligent</strong> creature does not level. It has no career to have had. A dire wolf is a dire wolf, and a bigger one is a different stat block rather than an advanced one.</p>\n<h4>Example</h4>\n<p>Ashri's party is four levels in when it walks into the goblin warband it walked into at first level, and the fight goes differently.</p>\n<p>The rank and file are the same: threat 1, and Dune goes through them. The one giving the orders has four levels on it. Goblins prefer Athletic and Awareness, so its levels went into Athletic, which made Dodge cheap and its ceiling high, and its 15 points a level bought rank after rank of it. It is threat <code>5</code> by the rule above — one for the goblin it started as and about one a level — and Sela cannot hit it.</p>\n<p>It is still a goblin. It has eight core hit points, it breaks when its band breaks, and Bramm's first solid blow ends it. What four levels bought was not durability but the four rounds it took to land one.</p>",
+    "tags": [
+      "bestiary",
+      "creature",
+      "progression"
+    ],
+    "related": [
+      "advancement",
+      "ch-bestiary",
+      "goblin",
+      "skills"
+    ],
+    "includes": [],
+    "book_anchor": "#rule-creature-advancement"
   },
   "damage": {
     "id": "damage",
@@ -801,7 +883,11 @@
     "tags": [],
     "related": [],
     "includes": [
-      "goblin"
+      "creature-advancement",
+      "goblin",
+      "hobgoblin",
+      "gnoll",
+      "hill-giant"
     ],
     "book_anchor": "#rule-ch-bestiary"
   },

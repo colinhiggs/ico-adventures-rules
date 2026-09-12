@@ -13,4 +13,12 @@ separate system for the other side of the table.
 Each entry says what the creature is, how it fights, and what it wants —
 which is usually the part that decides how the encounter goes.
 
+{% include creature-advancement %}
+
 {% include goblin %}
+
+{% include hobgoblin %}
+
+{% include gnoll %}
+
+{% include hill-giant %}
