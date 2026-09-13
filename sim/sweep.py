@@ -57,6 +57,7 @@ def measure_level(M, level, trials, pool=None):
               in b.duel_grid(level, chars, M, trials, pool)]
     contrib = b.contributions(chars, level, M)
     return {
+        "level": level,
         "fastest": min(rounds),
         "mean": sum(rounds) / len(rounds),
         "slowest": max(rounds),
@@ -69,7 +70,8 @@ def evaluate(M, levels, trials, pool=None):
     per_level = [measure_level(M, level, trials, pool) for level in levels]
     out_of_band = 0
     for r in per_level:
-        if r["fastest"] < b.TARGET_ROUNDS[0] or r["slowest"] > b.TARGET_ROUNDS[1]:
+        if (r["fastest"] < b.round_floor(r["level"])
+                or r["slowest"] > b.TARGET_ROUNDS[1]):
             out_of_band += 1
         if r["spread"] > b.MAX_CONTRIBUTION_SPREAD:
             out_of_band += 1
@@ -115,8 +117,11 @@ def main():
           % (" x ".join(".".join(p) for p, _ in specs),
              ",".join(str(x) for x in levels), args.trials))
     print("source: %s" % m.resolve_mechanics_path(args.path))
-    print("target: %.0f-%.0f rounds, spread <= %.1fx, drift near 1.0\n"
-          % (b.TARGET_ROUNDS[0], b.TARGET_ROUNDS[1], b.MAX_CONTRIBUTION_SPREAD))
+    print("target: %.0f-%.0f rounds, and %.0f-%.0f at level 1, which has "
+          "nothing yet to\nspend on stretching a fight; spread <= %.1fx, "
+          "drift near 1.0\n"
+          % (b.TARGET_ROUNDS[0], b.TARGET_ROUNDS[1],
+             b.round_floor(1), b.TARGET_ROUNDS[1], b.MAX_CONTRIBUTION_SPREAD))
 
     head = "%-10s %-10s %-8s %-8s %-8s %-7s %-6s %s" % (
         labels[0], labels[1] if len(labels) > 1 else "",

@@ -502,7 +502,10 @@ is the same day at every level.
   question about that build rather than about any of these changes: a
   hybrid's reservoir buys it very little, and `Casting in Harness` was
   the last thing to move it.
-- **Whether the round band's floor should be level-aware.** Level 1
-  duels now sit on it by design. Either the floor is wrong for level 1,
-  or first-level damage is too high for first-level hit points, and
-  nothing here decides which.
+- ~~**Whether the round band's floor should be level-aware.**~~
+  Settled, and neither of the two answers offered here was the right
+  one. Hit points measured in rounds turn out to be flat across the
+  whole progression, so first-level damage is not too high for
+  first-level hit points; and there is no curve for a level-aware floor
+  to follow, only a single riser between level 1 and level 2. The
+  entry in [DONE.md](DONE.md) has the measurements and the value.
