@@ -547,26 +547,38 @@ The damaging spells are done: bolts, lances, and the three area families
   dial and fall at the all-offence extreme, which is the right shape,
   but "right shape" is an eyeball and not a gate. Level 15 is still
   inert and will stay so until there are rungs above difficulty 48.
-- **The build cascade still chooses which thing starves.** *Half
-  fixed.* `build_character` fills mastery hit points, then every
-  tracked skill to its cap, then the leftovers. Under a budget tight
-  enough to bind, that buys no reservoir at all, which no player would
-  do. `usable_push()` fixes it for push — buy what your skill can
-  actually roll to before the last ranks of a skill — and the same
-  treatment is what the power source wants. It matters because a
-  measurement taken through a bad allocator measures the allocator: the
-  seven failures that a cut budget produces on top of push are partly
-  this, and nobody has separated the two.
+- **The build cascade still chooses which thing starves.** *Two thirds
+  fixed, and it has now produced a false gate failure as well as a
+  suspect measurement, so the remaining third is worth doing.* The
+  power source half is done: `build_character` used to send the whole
+  purchase to spirit the moment a build cast anything, which is a
+  choice `advancement.md` does not impose — a point buys one source, so
+  a career splits across levels freely. It left the level 5 spellblade
+  fighting out of Power Attack with its stamina stuck at its
+  constitution for its entire career, and the empty-reservoir gate that
+  caught it was reading the allocator rather than the rules. The split
+  is even because nothing here can derive a better one: which pool a
+  hybrid leans on depends on foe, kit and level. What is left is the
+  skills half: it fills mastery hit points, then every tracked skill to
+  its cap, then the leftovers, so under a budget tight enough to bind it
+  buys no reservoir at all — which no player would do. `usable_push()`
+  is the pattern to copy, buying what the skill can actually roll to
+  ahead of the last ranks of a skill. It matters because a measurement
+  taken through a bad allocator measures the allocator: the seven
+  failures that a cut budget produces on top of push are partly this,
+  and nobody has separated the two.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons
   have one from attack skill — see the design note in `damage.md`.*
   Casters now keep 39% to 62% of their damage with an empty reservoir
-  across every level, inside the 35-85% band throughout. What is left is
-  the same complaint about two HYBRID builds: the paragon at level 8 and
-  the spellblade at level 15 keep 86% and 92%, because their floor is a
-  great axe rather than a spell. That is a statement about those builds,
-  not about the magic rules.
+  across every level, inside the 35-85% band throughout. *The hybrid
+  complaint that outlived it is fixed too, and it was not a rules fault
+  at all* — see the power source entry above. The last standing failure,
+  the level 5 spellblade at `85%`, was the allocator sending every
+  power-source point to spirit while the build fought out of stamina.
+  Splitting the purchase took it to `69%` and `--check` now passes
+  outright.
 - **Nothing grants an extra action, deliberately**, and at some point
   somebody will want a Haste. The reasoning against is written up in the
   blessings design note; it is a decision, not an oversight.

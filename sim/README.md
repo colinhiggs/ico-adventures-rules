@@ -683,6 +683,32 @@ cost *falls* as a declared difficulty runs away, because the spell
 simply stops going off, so `MIN_FIELD_SUCCESS` requires the caster to
 land the thing at least half the time before it counts.
 
+## A hybrid buys both pools
+
+`power-sources.md` says physical powers cost stamina and magical ones
+cost spirit, so a character holding both kinds spends from both.
+`build_character` used not to model that: the whole power source
+purchase went to spirit the moment a build cast anything, and a
+spellblade's stamina therefore sat at its constitution for its entire
+career while its best attack -- Power Attack, at level 5 -- was paid
+for out of exactly that pool.
+
+It produced a false gate failure, which is the reason to record it
+rather than just fix it. The empty-reservoir gate reported the level 5
+spellblade keeping 85% of its damage with nothing left, and read as a
+statement about the magic rules that complaint is nonsense: the build
+was not out of anything, it had simply bought the wrong reservoir. Two
+of its four points moved to stamina take it to 69%.
+
+The split is even. Which pool a hybrid actually leans on depends on the
+foe, the kit and the level -- the same spellblade prefers Power Attack
+at level 5 and a lance at level 10 -- so any weighting would be the
+model measuring its own guess. Even is the choice with no free
+parameter in it, and `spends_stamina()` decides who gets it by asking
+whether the build opened an offensive power with a DISCIPLINE behind
+it, since every character can reach the general powers and reaching
+them proves nothing.
+
 ## Push, and buying what you can roll to
 
 `push` is the ceiling on the hardest difficulty a character may declare,

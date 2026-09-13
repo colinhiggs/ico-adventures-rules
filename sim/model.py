@@ -1308,10 +1308,24 @@ def build_character(name, spec, level, M, shopping_foe=None,
     char.max_chp = char.chp
     char.stamina = char.attributes["constitution"]
     char.spirit = char.attributes["willpower"]
-    if uses_spirit:
-        char.spirit += source_points * source_per_point
-    else:
-        char.stamina += source_points * source_per_point
+    # A hybrid spends from both pools and so buys both. This used to be
+    # all-or-nothing -- everything into spirit the moment a build cast
+    # anything -- which is a choice `advancement.md` does not impose:
+    # a point buys one source, so a career splits across levels freely.
+    # It mattered. A level 5 spellblade fought out of Power Attack while
+    # every point it bought went to spirit, leaving its stamina at its
+    # constitution for its whole career, and the gate that noticed was
+    # reading the allocator rather than the rules.
+    #
+    # The split is even because there is nothing here to derive a better
+    # one from: which pool a build leans on depends on the foe, the kit
+    # and the level, and a model that guessed would be measuring its own
+    # guess. Even is the choice with no free parameter in it.
+    to_spirit = source_points if uses_spirit else 0
+    if uses_spirit and spends_stamina(char, M):
+        to_spirit = source_points // 2
+    char.spirit += to_spirit * source_per_point
+    char.stamina += (source_points - to_spirit) * source_per_point
     char.major_domain = spec.get("major_domain")
     char.minor_domains = tuple(spec.get("minor_domains", ()))
     # What the god grants against armour, clamped to the span domains.md
@@ -2222,6 +2236,22 @@ def difficulty_band(p, span=60, char=None):
     if ceiling is not None:
         hi = min(hi, int(ceiling))
     return range(lo, hi + 1)
+
+
+def spends_stamina(char, M):
+    """Whether this build has a physical power worth paying for.
+
+    Every character can reach the general powers, so merely having one
+    proves nothing -- what marks a hybrid is a DISCIPLINE power it has
+    bought a grade to open, since that is the part of the sheet a pure
+    caster did not pay for. `power-sources.md` is what makes this a real
+    question: physical powers cost stamina and magical ones cost spirit,
+    so a character holding both kinds needs both pools."""
+    for power_id in offensive_powers(char, M, conditional=False):
+        p = power_def(M, power_id)
+        if p.get("discipline") and opens_for(char, power_id, M):
+            return True
+    return False
 
 
 def usable_push(char, level, M):
