@@ -8,6 +8,50 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.6.1
+
+**No mechanic value changed.** Nothing added, nothing renamed, nothing
+removed, and no number moved: `mechanics.json` and `snippets.json` are
+byte-identical to 2.6.0's. An adventure built against 2.6.0 needs to do
+nothing at all, and does not need its `rules_version` re-checked.
+
+Two changes, one to how the book reads and one to how the rules are
+measured. Neither touches what any number applies to, which is the
+question the tiers are actually defined by — see the end of
+`VERSIONING.md` for why a byte-identical diff is not on its own enough
+to call something a PATCH.
+
+### Design notes fold away in the book
+
+Every rule document ends with a design note, and a design note is not
+how the rule works — it is how the rule was arrived at, and often what
+was measured and rejected on the way. All sixty now render **closed** in
+`book.html`, and open on a click.
+
+Nothing is hidden and nothing is lost: the notes are in the same place,
+under the same headings, and still searchable by the browser's own find.
+A reader following a rule is simply no longer walking through the
+reasoning behind it to reach the next rule.
+
+This is a presentation change to `book.html` only. Design notes have
+never appeared in `snippets.json` — `{% book-only %}` has always
+stripped them — and never reached `mechanics.json` at all.
+
+### The round band's floor is level-aware
+
+A simulator change, invisible to anything outside this repository, and
+recorded here because it changes what the gates will accept in future.
+
+The floor of `TARGET_ROUNDS` is now `2` rounds at level 1 and `3`
+everywhere above it. Level 1 duels had a median of `2.99` rounds with
+`24` of `45` pairings under three, against one to three of forty-five at
+every other level, and a floor that half the field is under is not a
+floor. The measurements — including that hit points expressed in rounds
+are flat across the whole progression, and that funding level 1's
+armour does not reach the old floor at any purse — are in `DONE.md`.
+
+No rule value moved, so no encounter tuned against 2.6.0 is affected.
+
 ## 2.6.0
 
 **Six documents and 231 mechanics keys added, eight values changed.
