@@ -56,15 +56,16 @@ The damaging spells are done: bolts, lances, and the three area families
   what the simulator can say anything about.
 
 ## Rules gaps found while doing the above
-- **Whether the round band's floor should be level-aware.** Mastery hit
-  points now start at about what a constitution is worth, which is what
-  the progression brief asked for, and the consequence is that
-  first-level duels sit on the three-round floor: mean `3.01` rounds
-  with `26` of `45` pairings under it. A party's first-level fights are
-  inside the band, which is what gates, so nothing fails. But either the
-  floor is wrong for level 1 or first-level damage is too high for
-  first-level hit points, and nothing has decided which. See
-  [balancing_notes.md](balancing_notes.md).
+- **Level 1 has no armour it can afford, and nothing prices that.** A
+  breastplate costs more than the whole starting purse, so a level 1
+  party fights in a chain shirt and everybody from level 2 up fights in
+  a breastplate they never take off. Settled as a texture worth keeping
+  when the round floor was made level-aware — see [DONE.md](DONE.md) —
+  and the measurement there says raising the purse buys very little
+  anyway. What is still unpriced is the other direction: the first
+  level is the one stretch of the game where the armour table has a
+  real choice in it, because it is the only time the expensive rows are
+  out of reach, and no gate looks at whether that choice is a good one.
 - **The game has no top, and the level clock has consumers past
   fifteen.** Nothing declares a level cap. `sim/balance.py` measures at
   1, 5, 10 and 15 and the prose talks about "level fifteen" as though

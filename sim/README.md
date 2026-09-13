@@ -189,6 +189,7 @@ goals stated in the book's opening chapter:
 | Gate | Why |
 |---|---|
 | `TARGET_ROUNDS` | Fights should be decisive but not a grind |
+| `FIRST_LEVEL_ROUNDS_FLOOR` | Three rounds describes a character with a toolbox |
 | `MAX_CONTRIBUTION_SPREAD` | Every build should be worth playing |
 | `MIN_DAMAGE_VS_ANY_ARMOUR` | No weapon should be a prop |
 | `MIN_POWER_COST` | Powers must not become free with experience |
@@ -827,12 +828,22 @@ the cascade.
   by survival, so a build that raises both at once is the worst case the
   metric can be shown. Read its numbers as a bound, not as a build
   anybody would play.
-- **Level 1 duels sit on the floor of `TARGET_ROUNDS` and always have.**
-  They average barely above three rounds before any weapon rule is
-  applied, so anything that makes anybody easier to hit tips several
-  pairings under it at once. When a change fails the round-length gate
-  at level 1 and passes or improves it everywhere else, suspect the
-  level rather than the change.
+- **Level 1 has a floor of its own, and the reason is worth knowing.**
+  Level 1 duels used to sit on the floor of `TARGET_ROUNDS` — median
+  `2.99` rounds with `24` of `45` pairings under three, against one to
+  three of forty-five at every other level — so anything that made
+  anybody easier to hit tipped several pairings under at once. That is
+  now `FIRST_LEVEL_ROUNDS_FLOOR`, and the measurements behind it are in
+  [DONE.md](../DONE.md). The short version for reading a report: a level
+  1 fight runs at its own first-order arithmetic and every level above
+  runs a fifth to a third longer, because a fight gets long by somebody
+  spending something to stretch it and level 1 has nothing to spend.
+  Part of that is the armour — the purse will not cover a breastplate,
+  so level 1 is the only level not wearing one — but only three of the
+  twenty-four, and funding it saturates by `250` gold and then does
+  nothing at all. When a change fails the round-length gate at level 1
+  and passes or improves it everywhere else, suspect the level rather
+  than the change.
 - **Wounded is modelled and barely shows, which is a fact about the
   model rather than about the rule.** Damage runs through the mastery
   pool first, and a mastery pool is several times the size of a core

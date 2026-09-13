@@ -1803,3 +1803,130 @@ so the residual dead points at level 15 are untouched -- and a spell
 rung could never have helped a martial build there anyway, since
 `hardest_rung` is asked per character.
 
+
+## The round band's floor, and why it is level-aware
+
+The question was whether the floor of `TARGET_ROUNDS` should vary by
+level. Level 1 duels sat on it — median `2.99` rounds with `24` of `45`
+pairings under three, against one to three of forty-five at every other
+level — and `TODO.md` recorded two possible readings without deciding
+between them: either the floor was wrong for level 1, or first-level
+damage was too high for first-level hit points.
+
+**Both readings were wrong, and the floor is level-aware anyway.**
+
+### There is no curve
+
+The first thing measured was the shape, because "level-aware" quietly
+assumes a curve and a curve is a thing you can check for. Duel length
+by level, median across all `45` pairings:
+
+| level | 1 | 2 | 3 | 4 | 5 | 10 | 15 |
+|---|---|---|---|---|---|---|---|
+| median rounds | 2.99 | 4.29 | 4.73 | 4.73 | 4.78 | 4.19 | 4.47 |
+| under three | 24/45 | 1/45 | 1/45 | 3/45 | 1/45 | 1/45 | 2/45 |
+
+There is no curve. There is one riser, between level 1 and level 2, and
+a flat population above it. So whatever the answer was, it was not a
+function of level — it was an exception for one level.
+
+### It is not hit points
+
+Measured against a *fixed* foe, so that neither side's kit or build can
+move, hit points come to `3.27` rounds of the median build's attention
+at level 1 against `3.58`, `3.46` and `3.67` at levels 5, 10 and 15.
+The first-order arithmetic of a level 1 fight — hit points over damage —
+is the arithmetic of a level 15 fight, within a tenth of a round.
+
+So first-level damage is not too high for first-level hit points, and
+the second of the two readings is dead. Note that this measurement only
+works *because* it holds the foe fixed: peer against peer the number
+does move, and that is the next section rather than a contradiction.
+
+### It is not the reservoir either
+
+This was the obvious candidate and it is why `RESERVOIR_MATTERS_FROM_LEVEL`
+is **not** the threshold the floor ends up using. What an empty
+reservoir costs the median build slopes smoothly — it keeps 88% of its
+damage at level 1, then 83, 81, 79 and 71% through level 5 — and a
+smooth slope cannot produce a step.
+
+### It is partly the armour, and that part is not for sale
+
+What *is* discontinuous at level 1 is the kit. The starting purse is
+`150` gold and a breastplate costs `200`, so it is out of reach before
+a weapon is bought at all. A level 1 party wears a chain shirt, scale
+mail or studded leather; from level 2 to level 15 nine builds in ten
+wear a breastplate or better and never take it off. That is a point of
+damage reduction on every hit in both directions — a raw `10` lands as
+`6` at level 1 and as `5` above it.
+
+It looks like the whole answer. It is not, and the measurement that
+shows it is the most useful thing in this entry, because *funding the
+armour was the obvious fix and it does not work.* Raising the purse
+saturates almost immediately:
+
+| starting gold | median | under three | armour worn |
+|---|---|---|---|
+| 150 | 2.99 | 24/45 | chain shirt, scale mail, studded leather |
+| 250 | 3.27 | 21/45 | breastplate ×6, chain mail ×3 |
+| 400 | 3.27 | 21/45 | breastplate ×9 |
+| 800 | 3.27 | 21/45 | breastplate ×9 |
+
+By `250` gold everybody who wants a breastplate has one, and from there
+the purse can be raised fivefold and *nothing whatever changes* — same
+median, same twenty-one. The armour gap is real and it closes three of
+the twenty-four. The other twenty-one are not for sale at any price.
+
+### What the riser actually is
+
+With the kit equalised, a level 1 fight runs at almost exactly its own
+first-order arithmetic, and every level above it runs a fifth to a third
+longer than its arithmetic. That is the content of the step. A fight
+gets long by somebody spending something to stretch it — a power, a
+guard, a heal, a point of push — and at level 1 there is nothing yet to
+spend: no advancement bought, and the gear you could afford rather than
+the gear you want.
+
+**Three rounds is a statement about a character with a toolbox.** A
+level 1 character has not got one, so the floor was measuring the game
+against something it does not yet have.
+
+### The value
+
+`FIRST_LEVEL_ROUNDS_FLOOR = 2.0`, applied at level 1 only, through a
+`round_floor(level)` that every caller uses in place of
+`TARGET_ROUNDS[0]`. The ceiling is unchanged and is the same at every
+level.
+
+Two was not fitted to the data — it is calibrated so that the floor
+makes the **same statement** at level 1 that three makes everywhere
+else. Three catches one pairing in forty-five at levels 2, 3, 5, 10 and
+15, and three of forty-five at level 4: the glass cannon against the
+glass cannon that the constant's own comment already blesses as those
+builds working. Two catches one of forty-five at level 1. Three at level
+1 catches twenty-four, and **a floor that half the field is under is not
+a floor, it is a mislabel** — which is the real fault being fixed here.
+
+### What it changes
+
+Nothing fails differently: no gate outcome moves, because the gated
+number is the party encounter and a level 1 party's fights run `4.4`
+rounds, comfortably inside the band either way. What moves is the
+diagnostic, which stops printing twenty-four lines at level 1 that mean
+nothing, and the gate's honesty about what it would catch in future — a
+level 1 party fight that dropped to `2.8` rounds used to fail and now
+does not, which is correct, and one that dropped to `1.9` still fails,
+which is also correct.
+
+No mechanic value moved: this is `sim/` only, and a release carrying it
+alone would be a PATCH.
+
+### Left open
+
+The armour finding was not a fault but it is a design fact nobody had
+written down, and it went to `TODO.md` in the one form that is still
+open: the first level is the only stretch of the game where the armour
+table's expensive rows are out of reach, so it is the only time that
+table presents a real choice — and no gate looks at whether that choice
+is a good one.

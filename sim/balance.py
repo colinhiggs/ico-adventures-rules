@@ -50,6 +50,65 @@ CHECKPOINT = None
 # built -- and short duels are still reported, as a diagnostic.
 TARGET_ROUNDS = (3.0, 12.0)
 
+# ...except at level 1, where three rounds has never been a statement
+# about anything level 1 has.
+#
+# The shape first. Median duel length is 2.99 rounds at level 1 with 24
+# of 45 pairings under three; it is 4.29 at level 2 and stays between
+# 4.19 and 4.78 all the way to 15, with one to three pairings under
+# three at every one of those levels. There is no curve here and so
+# nothing for a level-aware FUNCTION to be aware of -- there is one
+# riser, between level 1 and level 2, and a flat population above it.
+#
+# Both of the explanations this was open on are wrong.
+#
+# It is not that first-level damage is too high for first-level hit
+# points. Measured against a fixed foe, so that neither side's kit can
+# move, hit points come to 3.27 rounds of the median build's attention
+# at level 1 against 3.58, 3.46 and 3.67 at levels 5, 10 and 15. The
+# first-order arithmetic of a level 1 fight is the arithmetic of a level
+# 15 fight.
+#
+# Nor is it the reservoir, which was the obvious candidate and is why
+# RESERVOIR_MATTERS_FROM_LEVEL is NOT the threshold used below. What an
+# empty reservoir costs a build slopes smoothly -- the median build
+# keeps 88% of its damage at level 1, 83, 81, 79, 71 through level 5 --
+# and a smooth slope cannot produce a step.
+#
+# What IS different at level 1 is the kit, and it is worth writing down
+# because it looks like the whole answer and is not. The purse is
+# `character-creation.starting_gold` and a breastplate costs more than
+# all of it, so a level 1 party reaches a chain shirt or scale mail and
+# no further, while from level 2 to level 15 essentially everybody wears
+# a breastplate or better and never takes it off. That is a point of
+# damage reduction on every hit in both directions: a raw 10 lands as 6
+# at level 1 and as 5 above it.
+#
+# But funding it does not reach the floor, which is the measurement that
+# actually settles this. Raise the purse and the effect saturates almost
+# at once: by 250 gold every build that wants a breastplate has one, and
+# the level 1 median moves 2.99 to 3.27 with 21 of 45 still under three.
+# At 400 and at 800 nothing changes at all -- same median, same 21. So
+# the armour gap is real and closes three of the twenty-four, and the
+# other twenty-one are not for sale.
+#
+# With the kit equalised a level 1 fight runs at almost exactly its own
+# arithmetic, and every level above it runs a fifth to a third longer
+# than its arithmetic. That is the real content of the riser: a fight
+# gets long by someone spending something to stretch it, and at level 1
+# there is nothing yet to spend -- no advancement bought, and the gear
+# you could afford rather than the gear you want. Three rounds describes
+# a character with a toolbox.
+#
+# Hence a value and not a function, and 2.0 because it makes the SAME
+# statement at level 1 that three makes everywhere else. Three catches
+# one pairing in forty-five at levels 2, 3, 5, 10 and 15 and three of
+# forty-five at level 4 -- the glass cannon the comment above blesses.
+# Two catches one of forty-five at level 1. Three at level 1 catches
+# twenty-four, and a floor that half the field is under is not a floor,
+# it is a mislabel.
+FIRST_LEVEL_ROUNDS_FLOOR = 2.0
+
 # Trials for the party fight-length gate.
 #
 # Twelve was measured and chosen at level 5, where eight seeds put the
@@ -103,6 +162,16 @@ SURVIVAL_CLAMP_ROUNDS = 25.0     # beyond this a fight is a stalemate
 # means sitting the fight out; too high and the reservoir never mattered.
 FLOOR_RATIO_BAND = (0.35, 0.85)
 RESERVOIR_MATTERS_FROM_LEVEL = 5
+
+
+def round_floor(level):
+    """The shortest a fight at `level` may run and still be a fight.
+
+    Every caller wants this rather than TARGET_ROUNDS[0]; the ceiling is
+    the same at every level and can still be read off the tuple."""
+    return FIRST_LEVEL_ROUNDS_FLOOR if level <= 1 else TARGET_ROUNDS[0]
+
+
 # A mid-level character should be able to deal with rank-and-file
 # opposition briskly and without it costing much.
 SWARM_SIZE = 6
@@ -1063,7 +1132,7 @@ def run_gates(levels, M, trials, pool=None):
                 failures.append(
                     "L%d %s vs %s: %.1f rounds (target <= %.0f)"
                     % (level, a, b, rounds, TARGET_ROUNDS[1]))
-            elif rounds < TARGET_ROUNDS[0]:
+            elif rounds < round_floor(level):
                 short_duels.append("L%d %s vs %s: %.1f rounds"
                                    % (level, a, b, rounds))
 
@@ -1079,11 +1148,12 @@ def run_gates(levels, M, trials, pool=None):
                 "%.2f of 5, so its %.1f-round fights are the length of "
                 "defeats and gate nothing"
                 % (level, cleared, overall))
-        elif not (TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1]):
+        elif not (round_floor(level) <= overall <= TARGET_ROUNDS[1]):
             failures.append(
                 "L%d a balanced party's fights run %.1f rounds "
                 "(target %.0f-%.0f), clearing %.2f of 5"
-                % (level, overall, *TARGET_ROUNDS, cleared))
+                % (level, overall, round_floor(level), TARGET_ROUNDS[1],
+                   cleared))
         party_rounds.append((level, overall, cleared))
 
         # A minor power must never match its standard twin at the same
@@ -1178,9 +1248,12 @@ def run_gates(levels, M, trials, pool=None):
         for level, overall, cleared in party_rounds:
             print("    L%-3d %.1f rounds, clearing %.2f of 5" % (level, overall, cleared))
     if short_duels:
-        print("\n  duels under %.0f rounds -- reported, not failed, because a "
-              "short\n  fight between a glass cannon and a glass cannon is "
-              "those builds working:" % TARGET_ROUNDS[0])
+        print("\n  duels under the floor for their level -- reported, not "
+              "failed, because\n  a short fight between a glass cannon and a "
+              "glass cannon is those builds\n  working. The floor is %.0f "
+              "rounds, and %.0f at level 1, which has nothing\n  yet to spend "
+              "on stretching a fight:"
+              % (TARGET_ROUNDS[0], FIRST_LEVEL_ROUNDS_FLOOR))
         for s in short_duels:
             print("    " + s)
     return failures
@@ -1591,14 +1664,15 @@ def report_party_rounds(level, M, trials=PARTY_TRIALS):
     """The gated number, printed with the fights it came from."""
     overall, means, cleared = party_fight_length(level, M, trials)
     hr("How long a balanced party's fights run, at level %d" % level)
-    print("%-16s %-8s %s" % ("encounter", "rounds", "in band %s" % (TARGET_ROUNDS,)))
+    band = (round_floor(level), TARGET_ROUNDS[1])
+    print("%-16s %-8s %s" % ("encounter", "rounds", "in band %s" % (band,)))
     for (kind, count), mean in means.items():
         print("%-16s %-8.1f %s"
               % ("%d %s" % (count, kind), mean,
-                 "yes" if TARGET_ROUNDS[0] <= mean <= TARGET_ROUNDS[1] else "NO"))
+                 "yes" if band[0] <= mean <= band[1] else "NO"))
     print("%-16s %-8.1f %s"
           % ("over the day", overall,
-             "yes" if TARGET_ROUNDS[0] <= overall <= TARGET_ROUNDS[1] else "NO"))
+             "yes" if band[0] <= overall <= band[1] else "NO"))
     print("\nThe party cleared %.2f of 5 in the same run. A short fight from a "
           "party\nthat is winning and one from a party that is being wiped out "
           "are not the\nsame reading." % cleared)
