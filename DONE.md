@@ -1726,3 +1726,80 @@ restoration are all outside what it scores. For those six the gate run
 says nothing broke; it does not say the values are right, and no
 measurement here should be read as though it did.
 
+## The spell list's third rung
+
+*Done, as the comets.* `TODO.md` asked "whether the damaging spells need
+a third rung the way the martial line did". They did, and the obvious
+version of it would have done nothing.
+
+### A rung above Lance would have been decorative
+
+The first design was a rung opening where Lance tops out, at difficulty
+34. Measuring where casters actually declare killed it:
+
+| | declares | unconstrained optimum | band tops at |
+|---|---|---|---|
+| L1 evoker | d14 | d12 | 34 |
+| L5 evoker | d16 | d16 | 34 |
+| L10 priest | d24 | d20 | 34 |
+| L15 priest | d28 | d24 | 34 |
+
+**Lance's ceiling never binds at any level.** A caster's declaration is
+limited by the arithmetic -- more damage against a worse chance of
+meeting it -- and not by the rung, so a rung opening at 34 would never
+have been reached by anybody.
+
+### Why the martial line works and this one did not
+
+The same measurement on the martial side:
+
+| | Power Attack | Hammer Blow |
+|---|---|---|
+| L5 berserker | d12 | no grade |
+| L10 berserker | **d18, its ceiling** | d20 |
+| L15 paragon | **d18, its ceiling** | d24 |
+
+Power Attack is pinned at its ceiling from level 10 onward, and Hammer
+Blow opens at exactly that number. **The ceiling binding is what makes
+the next rung get taken.** Lance was simply too wide for that to
+happen: 26 points of band at `0.5` damage per difficulty, where Power
+Attack gets 14 at the same rate.
+
+### What landed
+
+Lance's band comes down to where it starts to bind, and the comet opens
+there at double the rate:
+
+| | band | damage | per difficulty | minimum spirit |
+|---|---|---|---|---|
+| bolt | 2-14 | 6-10 | 0.33 | 0 |
+| lance | 8-**22** | 10-17 | 0.50 | 2 |
+| comet | **22-38** | 17-33 | **1.00** | 6 |
+
+Continuity holds the way the ladder design note asks: a lance at 22
+deals 17, which is where the comet opens, exactly as Hammer Blow opens
+at the 8 Power Attack ends on. The comet carries the same conditions as
+the lance of its type, so the rung buys slope and nothing else -- the
+same thing Hammer Blow buys over Power Attack.
+
+`minimum_spirit` is what gates it, at 6 against a lance's 2 and a
+bolt's 0, so the three rungs arrive in the order a caster grows into
+them. No model change was needed: `combat_spells` finds any spell with
+a `damage` key, so a new chassis is a rule-file edit and nothing else.
+
+### What it measures
+
+`all gates pass`, and party fight length does not move at all -- 4.4 /
+5.3 / 3.6 / 6.4 either side. What moves is the top of a caster's career:
+the level 15 evoker goes from `17.8` to `22.6` expected damage, the
+priest from `26.9` to `30.2`, the spellblade from `15.0` to `18.5`, and
+declared difficulty now climbs to 30 where it stopped at 28. Duels under
+the three-round floor go from 26 to 28. Contribution spread stays inside
+the band at 2.15 / 1.62 / 2.24 / 2.22.
+
+**It does not deepen the push sink**, which had been suggested as a
+reason to want it. `hardest_rung` is still 48 and still Quick Attack's,
+so the residual dead points at level 15 are untouched -- and a spell
+rung could never have helped a martial build there anyway, since
+`hardest_rung` is asked per character.
+

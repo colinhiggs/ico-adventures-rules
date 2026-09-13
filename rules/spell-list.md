@@ -38,7 +38,7 @@ mechanics:
   lance:
     schools: [energy]
     base_difficulty: 8
-    max_difficulty: 34
+    max_difficulty: 22
     damage: 10
     difficulty_per_step: 2
     damage_per_step: 1
@@ -64,6 +64,38 @@ mechanics:
     condition: slowed
   storm_lance:
     family: lance
+    damage_type: lightning
+    domains: [war]
+    condition: dazed
+  comet:
+    schools: [energy]
+    base_difficulty: 22
+    max_difficulty: 38
+    damage: 17
+    difficulty_per_step: 2
+    damage_per_step: 2
+    difficulty_per_extra_bolt: 40
+    minimum_spirit: 6
+    needs_attack_roll: true
+    range: 10
+    applies_condition: true
+  force_comet:
+    family: comet
+    damage_type: force
+    domains: [magic]
+    condition: stunned
+  flame_comet:
+    family: comet
+    damage_type: fire
+    domains: [war]
+    condition: burning
+  frost_comet:
+    family: comet
+    damage_type: cold
+    domains: [nature]
+    condition: slowed
+  storm_comet:
+    family: comet
     damage_type: lightning
     domains: [war]
     condition: dazed
@@ -420,6 +452,35 @@ carry:
 Which lance to carry is a question about the fight rather than about the
 numbers: they deal the same damage, and the condition is the whole
 difference.
+
+## The comets
+
+A lance covers the middle of a career and stops. Above it sits the
+**comet**, the third and last rung of the single-target line, and it is
+the same four spells a third time:
+
+{% table mechanics.comet
+   rows=schools,range,needs_attack_roll:"Needs an attack roll",
+        base_difficulty,max_difficulty,damage,minimum_spirit
+   header=Property %}
+
+It opens at exactly the damage a lance ends on, and then climbs twice as
+fast: {{ mechanics.comet.damage_per_step }} more damage for each further
+{{ mechanics.comet.difficulty_per_step }} points of difficulty, against
+a lance's {{ mechanics.lance.damage_per_step }}. It carries the same
+conditions as the lance of its type, so what the rung buys is the slope
+and nothing else.
+
+{% table mechanics
+   rows=force_comet:"Force Comet",flame_comet:"Flame Comet",
+        frost_comet:"Frost Comet",storm_comet:"Storm Comet"
+   columns=damage_type:Damage,domains:Domains,condition:Condition
+   header=Spell %}
+
+What gates it is the reservoir. A comet may not be cast at all below
+{{ mechanics.comet.minimum_spirit }} spirit, where a lance needs
+{{ mechanics.lance.minimum_spirit }} and a bolt needs none, so the three
+rungs arrive in the order a caster grows into them.
 
 ## The area spells
 
