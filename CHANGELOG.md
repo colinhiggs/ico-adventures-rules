@@ -8,6 +8,124 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.6.0
+
+**Six documents and 231 mechanics keys added, eight values changed.
+Nothing renamed or removed**, so every `[[link]]` and every
+`snippets.json` key an adventure uses still resolves. The two changes
+most likely to matter to something already written are the creature
+`push` field and the narrowing of the lances — both below.
+
+This is a large release. It carries the power ladder, the creature day,
+the advancement economy, and two campaigns that only exist because the
+first three did.
+
+### Powers climb a ladder of rungs
+
+Every power and spell now has a **maximum** difficulty as well as a
+base, so a power covers the band it was priced for and stops. Reaching
+further means owning the rung above rather than declaring a bigger
+number. `discipline-powers.hammer_blow` is the new martial rung above
+Power Attack, and it opens at exactly the damage Power Attack ends on.
+
+Nothing an adventure names has gone away, but a creature or NPC written
+to declare a power at a high difficulty may now be declaring outside its
+band. The bands are in `mechanics.json` as `base_difficulty` and
+`max_difficulty` on each power.
+
+### ⚠ Push, and what a creature stat block now needs
+
+**Push** is new: a number on a sheet that is the highest difficulty its
+owner may declare, with any power or spell. It is bought with
+advancement points and has no per-level ceiling.
+
+A creature that carries powers now needs a `push` on its stat block. The
+three in the bestiary that do have one, set to what each was already
+declaring, so no creature in the book changed behaviour. **A creature
+written elsewhere that carries powers will need one adding** — the
+builder raises rather than guessing, because unlimited would make every
+stat block a veteran and the starting value would make every one a
+novice.
+
+| | new key |
+| --- | --- |
+| `using-powers.declaration_capped_by_push` | the rule |
+| `character-creation.starting_push` | what everybody begins with |
+| `advancement.push_per_point` | what a point buys |
+| `<creature>.push` | required on a creature carrying powers |
+
+### ⚠ The lances are narrower, and the comets are above them
+
+The single-target spell line was two rungs and is now three. Lance's
+band comes down from `8-34` to `8-22`, and the **comet** opens there at
+double the rate.
+
+| | was | now |
+| --- | --- | --- |
+| `spell-list.lance.max_difficulty` | `34` | `22` |
+
+Nothing about a lance below difficulty 22 changed. An encounter that had
+an NPC declaring a lance above 22 wants re-reading; it is now a comet,
+and `force_comet`, `flame_comet`, `frost_comet` and `storm_comet` are
+the four new spells.
+
+### Creatures have careers
+
+`creature-advancement` is a new document: an intelligent creature levels
+on the character rules, within the disciplines its kind suits. `gnoll`,
+`hobgoblin`, `hill-giant` and `orc` join the bestiary, and the simulator
+now fights the creatures that are in the book rather than a goblin
+standing in for all of them.
+
+### Experience
+
+`experience` is a new document. Experience points **are** advancement
+points, one for one, awarded for milestones the adventure names rather
+than for bodies. An adventure that wants to hand out experience now has
+a rule to do it by; one that does not is unaffected.
+
+### The advancement economy, retuned
+
+A level was charging full price for about four fifths of a level, worse
+at the top than the bottom. Push is what absorbs the rest; the reservoir
+and the starting mastery cushion came down to match.
+
+| | was | now |
+| --- | --- | --- |
+| `advancement.power_source_per_point` | `3` | `4` |
+| `advancement.max_power_source_bought_per_level` | `3` | `1` |
+| `character-creation.max_starting_mastery_hp` | `25` | `8` |
+
+A character built against 2.5.x has a wider reservoir and a larger
+opening cushion than one built now. Rebuild rather than convert.
+
+### Bands that opened on nothing
+
+Thirteen powers granted nothing at their own base difficulty and now
+grant one step's worth, via a `base_*` key each. Precise Strike moves
+with them:
+
+| | was | now |
+| --- | --- | --- |
+| `discipline-powers.precise_strike.base_difficulty` | `2` | `6` |
+
+### The two general attack powers moved
+
+Fast Attack and Quick Attack both opened at difficulty `1`, which made
+Fast Attack the best power in the game at every level.
+
+| | was | now |
+| --- | --- | --- |
+| `general-powers.fast_attack.base_difficulty` | `1` | `22` |
+| `general-powers.fast_attack.difficulty_per_extra_attack` | `15` | `25` |
+| `general-powers.quick_attack.base_difficulty` | `1` | `18` |
+| `general-powers.quick_attack.difficulty_per_extra_attack` | `14` | `30` |
+
+### `--check` passes
+
+For the first time. The gate count has been six, ten, eleven, fourteen,
+nine, three, one, and is now none.
+
 ## 2.5.1
 
 **No mechanic value changed at all.** `build/` rebuilds byte-identical
