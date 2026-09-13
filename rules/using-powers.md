@@ -16,6 +16,7 @@ mechanics:
   difficulty_declared_before_rolling: true
   declaration_within_the_powers_band: true
   band_runs_base_difficulty_to_max_difficulty: true
+  declaration_capped_by_push: true
   failure_spends_the_action: true
   failure_costs_the_minimum: true
   unaffordable_power_does_not_take_effect: true
@@ -61,6 +62,27 @@ down.
   next rung is bought with a [[disciplines|grade]], so reaching further
   costs what grades cost, and the character who spent elsewhere reaches
   exactly as far as they did last level.
+
+## How far up the ladder you reach
+
+A band says how far a power goes. **Push** says how far *you* go: it is
+a number on your sheet, and it is the highest difficulty you may
+declare at all — with any power, and with any spell.
+
+Push is not a second chance at succeeding; the roll still decides
+whether the declaration is met. Push decides what you are allowed to
+attempt in the first place, and two things follow from it.
+
+- A power whose base difficulty is above your push is not a power you
+  can use yet, however good the skill it runs on and however many
+  grades opened it.
+- A band whose top is above your push stops where you stop.
+
+You begin with {{ character-creation:mechanics.starting_push }} and
+raise it by spending advancement points — see [[advancement]]. It is
+the only thing on that list with no limit per level, and it needs none:
+push you cannot roll to is not a better character, it is a more
+expensive way to fail.
 
 ## The cost
 
@@ -132,9 +154,12 @@ Power Attack, which runs from difficulty `4` to `18`, adds `1` damage at
 the base and `1` more per `2` further points. She declares a difficulty
 of `14`: five steps above the base, so `6` damage added.
 
-`14` is a difficulty she is allowed to ask for. `20` would not have
-been, however well she rolled — that is Hammer Blow's band, and she does
-not hold Martial at Adept.
+`14` is a difficulty she is allowed to ask for, on both counts that
+matter: it is inside Power Attack's band, and her push is `16`, so she
+can reach it. `20` would not have been, however well she rolled — that
+is Hammer Blow's band, and she does not hold Martial at Adept. Nor, for
+that matter, could she have declared `17` on a power whose band did
+run that far, because that is a point above her push.
 
 She rolls `9`, for a total of `18`. That beats her declared `14`, so the
 power works. The cost is the base cost plus `14` less `18` — which comes
@@ -201,4 +226,24 @@ Continuity between rungs is deliberate: the rung above begins at the
 effect the rung below tops out at, so buying it is never a step
 backwards and never a sudden jump either. What the higher rung buys is
 a steeper slope and further to climb.
+
+Push is the newest part of this and closes a hole the bands left open.
+A grade decides *which* rungs exist for you; until push, nothing decided
+how high you could stand on the one you had. A first-level character
+with Martial at Initiate could declare Power Attack at the top of its
+band on the day they made the character, and the only thing stopping
+them was that they would usually miss — which is a reason not to, not a
+rule. Worse, the general powers belong to no discipline at all, so the
+deepest band in the game was open to everybody from the start.
+
+Making that a purchase does three things at once, and the third is the
+one it was built for. It finishes the sentence the bands started, so
+that reaching further is always something you bought rather than
+something you rolled. It gives a beginner a visible thing to climb
+towards inside a power they already own. And it is the only item on the
+advancement menu that a character can keep buying: everything else has
+a ceiling per level, so a senior character used to reach the end of what
+points could buy and hand back a fifth of every level — see the design
+note in [[advancement]] for what that was doing to the economy.
+
 {% endbook-only %}

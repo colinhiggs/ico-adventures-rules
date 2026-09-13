@@ -670,7 +670,7 @@ def best_field(char, foe, M, budget):
             continue
         sp = m.spell_def(M, spell_id)
         for extra in range(0, 5):
-            for difficulty in m.difficulty_band(sp, 70):
+            for difficulty in m.difficulty_band(sp, 70, char=char):
                 success = sum(w for face, w, _c in m.d20_faces(M)
                               if face + char.casting_bonus(M) >= difficulty)
                 if success < MIN_FIELD_SUCCESS:
@@ -1726,6 +1726,12 @@ def headroom(name, level, M):
                   if m.SKILL_ROLE.get(s) == "offence")
     offence += int(M.get("advancement",
                          "max_power_source_bought_per_level")) * level
+    if m.uses_push(M):
+        # The deep end, where there is one: what it would cost to have
+        # no rung in the game closed to you.
+        wanted = max(0, m.hardest_rung(M)
+                     - int(M.get("character-creation", "starting_push")))
+        offence += -(-wanted // int(M.get("advancement", "push_per_point")))
     defence = -(-(int(M.get("character-creation", "max_starting_mastery_hp"))
                   + int(M.get("advancement",
                               "max_mastery_hp_bought_per_level")) * (level - 1))

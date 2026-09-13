@@ -182,20 +182,25 @@ dying rule. It pays out for recklessness and taxes competence: a party
 that scouts, opens from hiding and wins cleanly would advance slower
 than one that blundered in. That is a strange thing to teach.
 
-## Design note: a known softness at the top
+## Design note: the softness at the top, and what is left of it
 
-One number this rests on is not yet true at the top of the game. A
-level is worth {{ advancement:mechanics.points_per_level }} points
-everywhere, and at the top of the game a fifth of them buy nothing that
-can be measured — partly points nobody can place, and mostly a power
-source reservoir far past the size any fight can empty. The share is
-about a fourteenth at level five and a seventh at level ten, so it
-grows with the career. The flat cost charges as though none of that were
-happening.
+A flat price for a level rests on a level being worth the same
+everywhere, and that used to be plainly untrue at the top. A fifth of a
+level `15` budget bought nothing anything could measure — partly points
+nobody could place, and mostly a power source far past the size a fight
+can empty — against a fourteenth at level five. The share grew with the
+career, so the flat cost was at its least honest exactly where a
+character had earned the most.
 
-The fix is a change to the advancement menu rather than anything in this
-document, and it is worth making before these numbers are treated as
-settled. What is written here is honest about the middle of the game,
-where it was designed, and slightly generous to the top, where the menu
-runs out before the budget does.
+That has been fixed on the advancement menu rather than here, which is
+what the shape of this document was for: push is a purchase with no
+ceiling per level, and it took the unbuyable share to nothing at first
+level and about a twelfth at fifteenth. Nothing in this document had to
+move for it.
+
+What is left of the complaint is that twelfth, and it is now a small
+and well-understood thing: the ladder of powers stops at a top rung, and
+a character who has bought all of it has nowhere left to put the last
+few points of a level. It closes when something is added above the
+present top, not when a price changes here.
 {% endbook-only %}
