@@ -10,6 +10,7 @@
       "max_mastery_hp_bought_per_level": 1,
       "power_source_per_point": 4,
       "max_power_source_bought_per_level": 1,
+      "push_per_point": 1,
       "powers_per_level": 1,
       "attribute_point_every_n_levels": 4,
       "level_is_only_a_budget_and_a_clock": true
@@ -110,6 +111,7 @@
       "attribute_max": 18,
       "starting_discipline_budget": 20,
       "max_starting_mastery_hp": 8,
+      "starting_push": 6,
       "free_starting_mastery_hp": 10,
       "skill_point_pool": 30,
       "starting_powers": 1,
@@ -723,6 +725,7 @@
         "sneak_attack",
         "redouble"
       ],
+      "push": 24,
       "levels_up": true,
       "preferred_disciplines": [
         "athletic",
@@ -811,6 +814,7 @@
         "follow_through",
         "find_the_gap"
       ],
+      "push": 34,
       "levels_up": true,
       "preferred_disciplines": [
         "martial",
@@ -870,6 +874,7 @@
         "power_attack",
         "guard"
       ],
+      "push": 21,
       "levels_up": true,
       "preferred_disciplines": [
         "martial",
@@ -1762,6 +1767,7 @@
       "difficulty_declared_before_rolling": true,
       "declaration_within_the_powers_band": true,
       "band_runs_base_difficulty_to_max_difficulty": true,
+      "declaration_capped_by_push": true,
       "failure_spends_the_action": true,
       "failure_costs_the_minimum": true,
       "unaffordable_power_does_not_take_effect": true,

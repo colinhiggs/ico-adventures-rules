@@ -52,6 +52,19 @@ is not a bigger weapon or an invented number: it is a creature that has
 bought the grade, and its damage climbs the way a character's does
 because it is the same ladder.
 
+A grade says which rungs exist for a creature. **Push** says how high it
+can stand on one, and it is on the stat block like any other number —
+see [[using-powers]]. A creature that carries powers carries a push, and
+a creature that carries none needs none. Levelling buys push with points
+at the price [[advancement]] charges everybody, so a goblin that has
+been raiding for ten years can declare things a fresh one cannot, with
+no new mechanic and no invented number.
+
+Put the other way: the stat block's push is what stops a creature with a
+good attack skill declaring like a veteran. That was a real fault before
+push existed, and the bestiary kept coming out stronger than its threat
+levels claimed because of it.
+
 ## Threat
 
 Each level adds about {{ mechanics.threat_per_level }} to the creature's

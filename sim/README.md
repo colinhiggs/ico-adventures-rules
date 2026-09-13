@@ -683,6 +683,34 @@ cost *falls* as a declared difficulty runs away, because the spell
 simply stops going off, so `MIN_FIELD_SUCCESS` requires the caster to
 land the thing at least half the time before it counts.
 
+## Push, and buying what you can roll to
+
+`push` is the ceiling on the hardest difficulty a character may declare,
+and it is bought with advancement points -- see `using-powers.md`.
+`difficulty_band()` takes an optional `char` and clamps every band to
+it, so a power whose base difficulty is above a character's push simply
+has no band and drops out of every search. Creatures take theirs from
+the stat block, and a creature carrying powers without one raises rather
+than defaulting: unlimited would make every stat block a veteran and the
+starting value would make every one a novice, and inventing either here
+would be a mechanic the rules do not contain.
+
+Allocating it needed something the cascade did not have. `build_character`
+fills mastery hit points, then every tracked skill to its cap, then the
+leftovers -- a fair model of a player while points were abundant, and a
+bad one the moment they are not. Left alone it bought a level 10 build a
+push of 6, which is a character nobody would make. `usable_push()` is
+the fix: a declaration is only worth points while the roll can meet it,
+so the useful ceiling is the best attack skill the level allows plus
+`base_cost`, and push is bought to there *before* the last ranks of a
+skill and only then out of what is left.
+
+That split is not a tuning choice, and it is worth being suspicious of
+it anyway. A model that decides how a player spends is measuring its own
+policy as much as the rules, which is why `--spectrum` exists and why
+the aggression dial puts push on the offence side rather than trusting
+the cascade.
+
 ## Known limits
 
 - **Damaging spells are modelled; nothing else about magic is.** A
@@ -717,9 +745,15 @@ land the thing at least half the time before it counts.
   burns its whole reservoir in one climactic fight the way a player
   might; builds with a small reservoir therefore look closer to their
   own floor than they would in play.
-- Only five combat skills are tracked, so a build's spare points have
-  fewer sinks here than in a real character, which slightly inflates
-  what lands in mastery hit points and stamina.
+- **Only five combat skills are tracked, so "unspent points" here means
+  "points the combat sheet could not absorb".** The real skill list runs
+  to about thirty-five entries plus languages, and a character with
+  points left over in this model spends them on Climb and Diplomacy in
+  play. That is the single biggest caveat on every economy measurement
+  taken here, and it cuts both ways: the surplus is not points thrown
+  away, it is combat power that stops being a budget decision. What the
+  numbers actually say is that the *combat* sheet was unconstrained, not
+  that the character was.
 - The day model is melee only, like everything else here, so it cannot
   see a spellcaster spending spirit on every spell. The bolts are a
   caster's equivalent of the free minor attack powers, so the same

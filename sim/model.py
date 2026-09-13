@@ -383,6 +383,7 @@ TRACKED_SKILLS = ("attack_melee", "dodge", "block", "fortitude", "spot")
 # spending loop can hold them in the same table as the skills.
 MHP = "@mastery_hp"
 SOURCE = "@power_source"
+PUSH = "@push"
 
 # Which end of the tank-to-striker spectrum each tracked skill sits at.
 # ASSUMPTION: this is a reading of skill-list.md's prose and not a
@@ -450,7 +451,8 @@ def _spend_by_aggression(buys, order, budget, aggression):
     as unspent. Without that, a high `aggression` would look worse than
     it is for the accounting reason that the offence list ran out."""
     aggression = min(1.0, max(0.0, float(aggression)))
-    offence = [s for s in order if SKILL_ROLE.get(s) == "offence"] + [SOURCE]
+    offence = ([s for s in order if SKILL_ROLE.get(s) == "offence"]
+               + [PUSH, SOURCE])
     defence = [MHP] + [s for s in order if SKILL_ROLE.get(s) == "defence"]
     neither = [s for s in order if SKILL_ROLE.get(s, "neither") == "neither"]
 
@@ -1232,6 +1234,19 @@ def build_character(name, spec, level, M, shopping_foe=None,
     # without knowing what any of them are.
     buys = {MHP: _Buy(1, -(-mhp_ceiling // per_point)),
             SOURCE: _Buy(1, source_ceiling)}
+    # `push` is optional and absent by default, so a ruleset without the
+    # key builds exactly the character it built before. Where it is
+    # present it is the deep end of the offence list: its cap is however
+    # many points it takes to reach the hardest rung THIS character can
+    # stand on, which is far more than any level's budget, and that is
+    # the whole point of it -- a sink only sinks while it is deeper than
+    # the budget.
+    push_granted = push_per_point = 0
+    if uses_push(M):
+        push_granted = int(M.get("character-creation", "starting_push"))
+        push_per_point = int(M.get("advancement", "push_per_point"))
+        wanted = max(0, hardest_rung(M, char) - push_granted)
+        buys[PUSH] = _Buy(1, -(-wanted // push_per_point))
     for skill_name in order:
         focus = skill_focus(char, skill_name, M)
         buys[skill_name] = _Buy(rank_cost(focus, M),
@@ -1244,7 +1259,24 @@ def build_character(name, spec, level, M, shopping_foe=None,
         # they are allowed before pushing the last ranks of a skill;
         # then the tracked skills to their caps; then whatever is left
         # widens the power source.
-        points = _spend(buys, [MHP] + order + [SOURCE], points)
+        if PUSH in buys:
+            # Push is bought in two tranches, and the split is not a
+            # tuning choice -- it is the difference between a player and
+            # a greedy loop. Nobody buys push they cannot roll to, and
+            # nobody leaves themselves unable to declare the powers they
+            # have. So the first tranche goes as far as the character
+            # could plausibly reach, ahead of the last ranks of a skill;
+            # everything still spare afterwards goes on further push,
+            # which is where the surplus that used to be unspent lands.
+            full = buys[PUSH].cap
+            buys[PUSH].cap = min(full, -(-max(0, usable_push(char, level, M)
+                                              - push_granted)
+                                         // push_per_point))
+            points = _spend(buys, [MHP, PUSH], points)
+            buys[PUSH].cap = full
+            points = _spend(buys, order + [SOURCE, PUSH], points)
+        else:
+            points = _spend(buys, [MHP] + order + [SOURCE], points)
     else:
         points = _spend_by_aggression(buys, order, points, aggression)
 
@@ -1252,6 +1284,8 @@ def build_character(name, spec, level, M, shopping_foe=None,
         char.skills[skill_name] = buys[skill_name].taken
     mhp_points = buys[MHP].taken
     source_points = buys[SOURCE].taken
+    if PUSH in buys:
+        char.push = push_granted + buys[PUSH].taken * push_per_point
 
     # advancement.md lists the free mastery hit point under WHAT A LEVEL
     # GIVES, beside the points -- so it arrives on the same schedule they
@@ -1291,6 +1325,7 @@ def build_character(name, spec, level, M, shopping_foe=None,
         "disciplines": disc_spend,
         "mhp_points": mhp_points,
         "power_source_points": source_points,
+        "push_points": buys[PUSH].taken if PUSH in buys else 0,
         "unspent": points,
     }
 
@@ -1914,7 +1949,7 @@ def best_self_guard(char, foe, M):
         if not castable(char, spell_id, M):
             continue
         sp = spell_def(M, spell_id)
-        for difficulty in difficulty_band(sp, 60):
+        for difficulty in difficulty_band(sp, 60, char=char):
             got = self_guard_value(char, spell_id, difficulty, foe, M)
             if got is None:
                 break
@@ -1983,7 +2018,7 @@ def best_self_blessing(char, foe, M):
         if not castable(char, spell_id, M):
             continue
         sp = spell_def(M, spell_id)
-        for difficulty in difficulty_band(sp, 60):
+        for difficulty in difficulty_band(sp, 60, char=char):
             got = self_blessing_value(char, spell_id, difficulty, foe, M)
             if got is None:
                 break
@@ -2050,7 +2085,7 @@ def best_heal(char, M, spirit_budget, free_only=False):
     for spell_id in healing_spells(M):
         sp = spell_def(M, spell_id)
         minor = sp.get("tier") == "minor"
-        for difficulty in difficulty_band(sp, 70):
+        for difficulty in difficulty_band(sp, 70, char=char):
             if free_only:
                 if not minor:
                     continue
@@ -2152,7 +2187,7 @@ def circle_squares(M, radius):
     return int(M.get("spell-area", "circle_squares", "radius_%d" % radius))
 
 
-def difficulty_band(p, span=60):
+def difficulty_band(p, span=60, char=None):
     """The difficulties a power may be declared at.
 
     A power is a RUNG: it names the least difficulty that invokes it at
@@ -2171,11 +2206,80 @@ def difficulty_band(p, span=60):
     `span` is what a search should try when a power names no ceiling,
     and exists only so that this replaces the bare `range(base, base +
     N)` the searches used to carry without changing any of them.
+
+    `char` is the second ceiling: see `push` below. Passing it is always
+    correct and omitting it measures a character who may declare
+    anything, which is what every ruleset without the key describes.
     """
     lo = int(p["base_difficulty"])
-    if "max_difficulty" in p:
-        return range(lo, int(p["max_difficulty"]) + 1)
-    return range(lo, lo + span)
+    hi = int(p["max_difficulty"]) if "max_difficulty" in p else lo + span - 1
+    # `push`, when the ruleset has it, is the hardest thing this
+    # character may attempt at all -- so it cuts the top off every band
+    # and, where it falls below a power's opening rung, takes the power
+    # away entirely. Absent from the character (every creature, and
+    # every character under a ruleset without the key) it does nothing.
+    ceiling = getattr(char, "push", None)
+    if ceiling is not None:
+        hi = min(hi, int(ceiling))
+    return range(lo, hi + 1)
+
+
+def usable_push(char, level, M):
+    """The push this character could actually roll to.
+
+    A declaration is worth the points only while the roll can meet it,
+    so the useful ceiling is the best attack skill the level allows plus
+    what a middling d20 adds -- `base_cost`, which is the same number
+    the cost formula is built around and is close enough to the median
+    face to serve. Push above this is not a better character, it is a
+    more expensive way to fail, and a model that bought it would be
+    measuring a mistake nobody makes."""
+    focus = skill_focus(char, "attack_melee", M)
+    ranks = skill_cap(focus, level, M)
+    best = max(char.attr_bonus("strength", M), char.attr_bonus("dexterity", M),
+               char.attr_bonus("intelligence", M), char.attr_bonus("willpower", M))
+    return ranks + best + int(M.get("using-powers", "base_cost"))
+
+
+def uses_push(M):
+    """Whether this ruleset caps a declaration by what the character
+    bought. Absent -- as it is in every ruleset before this -- every
+    band runs to its own top for everybody."""
+    return "declaration_capped_by_push" in M.keys("using-powers")
+
+
+def hardest_rung(M, char=None):
+    """The highest difficulty that can be declared at all.
+
+    What a character would have to reach to have no band closed to it,
+    read off the rules rather than named here, so that adding a rung
+    above the present top deepens the sink by itself.
+
+    Given a character it answers for that character, over the powers
+    their grades have actually opened. The difference matters: push
+    above the top of anything you can invoke is as dead as a point left
+    unspent, so counting the whole ruleset's top for a martial build
+    that cannot cast would flatter the sink by pricing in rungs it can
+    never stand on."""
+    if char is None:
+        got = M.derived.get("hardest_rung")
+        if got is not None:
+            return got
+    top = 0
+    for rule_id in ("discipline-powers", "general-powers", "spell-list"):
+        for power_id, entry in M.rules.get(rule_id, {}).items():
+            if not isinstance(entry, dict) or "max_difficulty" not in entry:
+                continue
+            if char is not None and rule_id != "spell-list":
+                if not opens_for(char, power_id, M):
+                    continue
+            if char is not None and rule_id == "spell-list":
+                if not castable(char, power_id, M):
+                    continue
+            top = max(top, int(entry["max_difficulty"]))
+    if char is None:
+        M.derived["hardest_rung"] = top
+    return top
 
 
 def power_def(M, power_id):
@@ -2267,7 +2371,7 @@ def best_difficulty(char, power_id, defender, M, stamina_budget):
     expected stamina spend the character can sustain."""
     p = power_def(M, power_id)
     best = (None, -1.0, 0.0)
-    for difficulty in difficulty_band(p, 60):
+    for difficulty in difficulty_band(p, 60, char=char):
         damage, cost = power_expectation(char, power_id, difficulty, defender, M)
         if cost > stamina_budget:
             continue
@@ -2340,6 +2444,17 @@ def mook(kind, M):
     listed = c.get("powers")
     if listed is not None:
         char.allowed_powers = tuple(str(x) for x in listed)
+    # Under a ruleset that caps declarations, a creature that can
+    # declare anything at all has to say how far it reaches, the same
+    # way it says what its skills are. Defaulting it either way would
+    # be a mechanic invented here: unlimited makes every stat block a
+    # veteran, and the starting value makes every stat block a novice.
+    if uses_push(M) and listed:
+        if "push" not in c:
+            raise KeyError(
+                "creature %r carries powers but no 'push', and this "
+                "ruleset caps a declaration by it" % kind)
+        char.push = int(c["push"])
     return char
 
 
@@ -2429,7 +2544,7 @@ def _spell_swarm_plan(hero, foe, M, count, budget):
         for extra in durations:
             rounds = spell_rounds(M, spell_id, extra)
             ticks = field_ticks(rounds) if persists(M, spell_id) else 1.0
-            for difficulty in difficulty_band(sp, 70):
+            for difficulty in difficulty_band(sp, 70, char=hero):
                 # Pick the shape that kills, not the one that covers most.
                 need = _hp_needed(foe, M, spell_id, difficulty, ticks)
                 damage, squares, bodies = spell_best_for_crowd(
@@ -2472,7 +2587,10 @@ def _swarm_plan(hero, foe, M):
         base_d = int(p["base_difficulty"])
         step = int(p["difficulty_per_extra_attack"] if not (sweep or chain)
                    else p["difficulty_per_step"])
-        ceiling = difficulty_band(p, 6 * max(1, step))[-1]
+        band = difficulty_band(p, 6 * max(1, step), char=hero)
+        if not band:
+            continue                 # push below the rung: no such power
+        ceiling = band[-1]
         for extras in range(0, 6):
             difficulty = base_d + extras * step
             if difficulty > ceiling:
@@ -2984,7 +3102,7 @@ def riposte_plan(char, foe, M):
     budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
     skill = char.attack_bonus(M)
     best = None
-    for difficulty in difficulty_band(p, 40):
+    for difficulty in difficulty_band(p, 40, char=char):
         attacks = (int(p["base_ripostes"])
                    + ((difficulty - base_d) // step)
                    * int(p["extra_ripostes_per_step"]))
@@ -3020,7 +3138,7 @@ def deflect_plan(char, foe, M):
     budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
     skill = char.skill("dodge", M)
     best = None
-    for difficulty in difficulty_band(p, 40):
+    for difficulty in difficulty_band(p, 40, char=char):
         reduction = per_step * (1 + (difficulty - base_d) // step)
         landed, cost = _power_odds(skill, difficulty, M, divisor)
         if cost > budget:
@@ -4233,7 +4351,7 @@ def redouble_plan(char, M):
     per_step = int(p["dodge_bonus_per_step"])
     skill = char.skill("dodge", M)
     best = None
-    for difficulty in difficulty_band(p, 40):
+    for difficulty in difficulty_band(p, 40, char=char):
         chance = max(0.0, min(1.0, (20 - (difficulty - skill) + 1) / 20.0))
         if chance <= 0:
             break
@@ -4619,7 +4737,7 @@ def best_spell(char, foe, M, spirit_budget):
         sp = spell_def(M, spell_id)
         durations = range(0, 5) if persists(M, spell_id) else (0,)
         for extra in durations:
-            for difficulty in difficulty_band(sp, 70):
+            for difficulty in difficulty_band(sp, 70, char=char):
                 damage, cost, control = cast_expectation(
                     char, spell_id, difficulty, foe, M, extra)
                 if cost > spirit_budget:
@@ -4639,7 +4757,7 @@ def best_spell_free(char, spell_id, foe, M):
     on_tie = bool(M.get("core-resolution", "success_on_matching_target"))
     skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
     best = 0.0
-    for difficulty in difficulty_band(sp, 60):
+    for difficulty in difficulty_band(sp, 60, char=char):
         damage, _sq = spell_shape(M, spell_id, difficulty)
         damage += spell_skill_damage(char, M, spell_id)
         total = 0.0
@@ -4707,7 +4825,7 @@ def floor_offence(char, foe, M):
         extras_power = "difficulty_per_extra_attack" in p
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
-        for difficulty in difficulty_band(p, 60):
+        for difficulty in difficulty_band(p, 60, char=char):
             damage = 0.0
             for face, weight, _crit in d20_faces(M):
                 roll = face + skill
@@ -4777,7 +4895,7 @@ def cheapest_spell(char, foe, M):
         if sp.get("tier") != "minor":
             continue
         skill = char.casting_bonus(M) + domain_bonus(char, spell_id, M)
-        for difficulty in difficulty_band(sp, 40):
+        for difficulty in difficulty_band(sp, 40, char=char):
             damage, _sq = spell_shape(M, spell_id, difficulty)
             damage += spell_skill_damage(char, M, spell_id)
             got = sum(w for face, w, _c in d20_faces(M)

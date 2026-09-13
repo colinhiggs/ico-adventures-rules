@@ -27,6 +27,7 @@ mechanics:
   disciplines:
     martial: initiate
   powers: [power_attack, guard]
+  push: 21
   levels_up: true
   preferred_disciplines: [martial, social]
   outlawed_disciplines: [magical]

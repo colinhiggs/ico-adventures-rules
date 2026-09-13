@@ -12,6 +12,7 @@ mechanics:
   attribute_max: 18
   starting_discipline_budget: 20
   max_starting_mastery_hp: 8
+  starting_push: 6
   free_starting_mastery_hp: 10
   skill_point_pool: 30
   starting_powers: 1
@@ -42,12 +43,20 @@ hit points, free and before anything is spent. Nobody chooses them and
 nobody pays for them: a character who has survived long enough to become
 an adventurer has learned something about not being hit.
 
-You then have {{ mechanics.skill_point_pool }} points for skill ranks
-and further mastery hit points together, spent at the same prices
-[[advancement]] uses at every later level — there is no special chargen
-exchange rate. You may **buy** at most
+You then have {{ mechanics.skill_point_pool }} points for skill ranks,
+further mastery hit points and [[using-powers|push]] together, spent at
+the same prices [[advancement]] uses at every later level — there is no
+special chargen exchange rate. You may **buy** at most
 {{ mechanics.max_starting_mastery_hp }} mastery hit points on top of the
 free ones.
+
+Everybody also begins with a push of
+{{ mechanics.starting_push }}, free, which is the hardest difficulty
+you may declare before you have spent anything on it. It is worth
+knowing what that buys before you spend: it covers the opening rungs of
+the martial and athletic powers and the smallest spells, and it does
+not reach Lance, Blessing, or either of the powers that grant a second
+swing.
 
 ## Languages
 
@@ -75,10 +84,19 @@ willpower `12`.
 She spends her whole discipline budget on Martial, reaching Adept, which
 focuses her combat skills and leaves every other group peripheral.
 
-Of her pool for skills and mastery she puts `4` points into mastery hit
-points, buying the maximum she is allowed, and the remaining `26` into
-skill ranks — which at a point each in her focused group takes her melee
-attack and block to their ceilings with plenty left for fortitude.
+Of her pool she puts `4` points into mastery hit points, buying the
+maximum she is allowed, and `12` into skill ranks — at a point each in
+her focused group that takes her melee attack, block and fortitude to
+their ceilings, which is as far as a first level goes.
+
+That leaves `14`. She spends `6` of them on two ranks of stealth, which
+is peripheral to her and costs `3` a rank, and the last `8` on push,
+taking it from `6` to `14`.
+
+Push is the only thing on the list she is allowed to buy more of once
+the ceilings are met, and it is the reason her Power Attack opens at
+something worth declaring rather than at the bottom of its band. Had she
+wanted, every one of those `14` could have gone there.
 
 She takes Power Attack as her power, buys a sword, a shield and a chain
 shirt, and pockets the change.

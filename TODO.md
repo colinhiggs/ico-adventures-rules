@@ -103,17 +103,19 @@ The damaging spells are done: bolts, lances, and the three area families
     aim at. It also makes the panel's top level the actual top level,
     which is what every gate currently assumes without saying so.
   - **Open it up.** Levels past fifteen need something to spend a
-    budget on, and today they have less than nothing: about a fifth of
-    a level 15 budget already buys nothing measurable — see
-    [balancing_notes.md](balancing_notes.md). A sixteenth level under
-    the present menu is mostly a ceiling raise and a power. Options
-    worth measuring are a fourth discipline grade above Master, a
-    second attribute track, or letting a Master grade open a second
+    budget on. Push is that, for a while — it is the one purchase with
+    no per-level ceiling — but it runs out at the top of the deepest
+    band in the game, which is why about a twelfth of a level 15 budget
+    still buys nothing measurable. A sixteenth level under the present
+    menu is a ceiling raise, a power, and push nobody can roll to.
+    Options worth measuring are a fourth discipline grade above Master,
+    a second attribute track, or letting a Master grade open a second
     power pool — all of which are new material rather than a bigger
     number.
-  Settle the economy first either way. Deciding the cap while a level
-  at the top is worth a fifth less than it says decides it against a
-  number that is known to be wrong.
+  **The economy is settled now** — see the sink entry in
+  [DONE.md](DONE.md) — so this is no longer blocked on it. What it is
+  waiting on is whichever of the two answers is wanted, and the second
+  one wants rungs above difficulty 48 before it wants anything else.
 - **Experience is drafted and threat is not in it yet.** `experience.md`
   awards points for milestones the adventure names, one experience point
   to one advancement point, with level derived from the career total.
@@ -536,18 +538,25 @@ The damaging spells are done: bolts, lances, and the three area families
   view of at all. The arithmetic is what it is — a wound that keeps a
   constitution 10 character down for six nights keeps a constitution 18
   character down for two.
-- **The advancement point economy is oversupplied.** *Measured at
-  length; see [balancing_notes.md](balancing_notes.md), which supersedes
-  what this entry used to say.* The short form: unspent points were the
-  small half. Counting the reservoir bought past the point where it
-  measurably stops paying, dead points run 7% of the budget at level 5,
-  14% at level 10 and 20% at level 15. Every tracked skill is at its
-  ceiling from level 5 onward, so points do not constrain the combat
-  sheet at all. A supply cut to 13 or 14 a level and a reservoir cap
-  near saturation both measure well; mastery hit points do not work as
-  a sink and neither does raising prices. What is still open is the
-  sink for what is left, and whether points should constrain combat at
-  all.
+- **The two ends of the aggression dial are live now but not priced
+  against each other.** Push made the dial move: builds responding to
+  it go from 1 / 0 / 0 / 0 out of ten at levels 1 / 5 / 10 / 15 to
+  10 / 10 / 8 / 1 — see the sink entry in [DONE.md](DONE.md). What
+  nobody has measured is whether offence and defence are *fairly*
+  priced once both are buyable. The curves run flat across most of the
+  dial and fall at the all-offence extreme, which is the right shape,
+  but "right shape" is an eyeball and not a gate. Level 15 is still
+  inert and will stay so until there are rungs above difficulty 48.
+- **The build cascade still chooses which thing starves.** *Half
+  fixed.* `build_character` fills mastery hit points, then every
+  tracked skill to its cap, then the leftovers. Under a budget tight
+  enough to bind, that buys no reservoir at all, which no player would
+  do. `usable_push()` fixes it for push — buy what your skill can
+  actually roll to before the last ranks of a skill — and the same
+  treatment is what the power source wants. It matters because a
+  measurement taken through a bad allocator measures the allocator: the
+  seven failures that a cut budget produces on top of push are partly
+  this, and nobody has separated the two.
 
 - **A caster's free floor was out of band at both ends.** *Fixed, by
   giving spells a damage rate from spellcasting skill the way weapons

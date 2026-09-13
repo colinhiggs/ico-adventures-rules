@@ -27,6 +27,7 @@ mechanics:
   disciplines:
     martial: adept
   powers: [power_attack, hammer_blow, follow_through, find_the_gap]
+  push: 34
   levels_up: true
   preferred_disciplines: [martial, awareness]
   outlawed_disciplines: [magical, social]
@@ -79,6 +80,12 @@ where a giant's damage comes from rather than from an inflated weapon.
 Everything below it in this chapter is an Initiate and is capped
 accordingly, which is the difference a [[using-powers|band]] is there to
 make.
+
+Its **push** of {{ mechanics.push }} is the other half of that, and the
+half a stat block controls directly: a grade decides that Hammer Blow
+exists for a giant, and push decides that it can stand at the top of it.
+A giant that had the grade and a beginner's push would be an Adept who
+still hit like an Initiate.
 
 It breaks at half, and half of a giant band is one or two. Giants whose
 companions have fallen leave, which is the one mercy in the entry.

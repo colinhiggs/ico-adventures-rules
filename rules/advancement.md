@@ -13,6 +13,7 @@ mechanics:
   max_mastery_hp_bought_per_level: 1
   power_source_per_point: 4
   max_power_source_bought_per_level: 1
+  push_per_point: 1
   powers_per_level: 1
   attribute_point_every_n_levels: 4
   level_is_only_a_budget_and_a_clock: true
@@ -59,9 +60,13 @@ and the ceilings that move.
   [[power-sources|power source]], to a limit of
   {{ mechanics.max_power_source_bought_per_level }} points spent per
   level.
+- **Push** — one point buys {{ mechanics.push_per_point }} point of
+  [[using-powers|push]], the hardest difficulty you may declare. This
+  is the one purchase with no limit per level.
 
-Both ceilings are per level and cumulative: a character who skipped them
-last level may catch up on this one.
+Both hit point and power source ceilings are per level and cumulative: a
+character who skipped them last level may catch up on this one. Push has
+no ceiling to catch up on.
 
 Core hit points are not on this list. They remain equal to your
 constitution and grow only when that attribute does — see
@@ -75,8 +80,15 @@ power, and a rank of headroom on every ceiling.
 She then spends her points: `4` raising four focused skills by a rank
 each at a point apiece, `1` on the mastery hit points she is allowed to
 buy this level, `1` on widening her stamina — which is all the widening
-a level allows — and banks the remaining `9` toward Martial Master,
-which she cannot yet afford outright.
+a level allows — and `3` on push, taking her from `16` to `19`, which
+brings the top of Power Attack's band into reach for the first time.
+The remaining `6` she banks toward Martial Master, which she cannot yet
+afford outright.
+
+She could have put all `9` of those last points into push instead.
+Nothing in the rules stops her; her attack skill is what stops her,
+since a difficulty she meets one roll in twenty is not a difficulty she
+can use.
 
 This level happens to be divisible by four, so she also takes an
 attribute point and puts it into strength.
@@ -144,6 +156,38 @@ Without them a character with nothing else worth buying converts an
 entire level into one runaway statistic, and the balance between damage
 and durability that the rest of the system rests on quietly stops
 holding.
+
+Push is the exception, and it is the exception on purpose. Every other
+item on the menu needs a ceiling because nothing in play limits how much
+of it is useful: a character who converts a level into mastery hit
+points gets all of them, and they all work. Push limits itself. Buying
+more of it than your skill can roll to buys the right to declare a
+difficulty you will miss, and missing spends the action and costs you
+the minimum anyway. That is why it can be sold without a cap, and being
+the one uncapped thing is what makes it the only item on this list deep
+enough to take a whole budget.
+
+It had to be, because the list was running out. Measured across the
+panel of test builds, the share of a level that bought nothing anything
+could detect — points nobody could place, plus reservoir past the size a
+fight can empty — ran `16%` at first level, `15%` at fifth, `18%` at
+tenth and `23%` at fifteenth. A level was charging full price for four
+fifths of a level, and worse at the top than the bottom, so the problem
+grew with the career it was meant to reward. With push on the menu the
+same measurement gives `0%`, `1%`, `3%` and `8%`.
+
+The obvious alternative was measured first and rejected, which is worth
+recording because it is the change anybody would try. Cutting the
+budget from `15` points a level to `13` produced *identical* gate
+output — the same single failure at the same round counts, to the
+decimal — because the two points removed were points nobody could
+spend. Clearing the surplus by supply alone needs `15` down to `9`, and
+even that leaves first level untouched, since a first-level budget is
+the pool in [[character-creation]] and not this number at all. Then,
+once push existed to absorb them, the same cut to `13` stopped being
+free and cost six new failures. A supply cut is only painless while the
+supply is worthless; the honest order is to give the points something
+to buy, and then leave the budget alone.
 
 The power source ceiling is the strictest of them: a point buys
 {{ mechanics.power_source_per_point }} stamina or spirit, which is

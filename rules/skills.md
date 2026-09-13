@@ -79,4 +79,14 @@ skill; they are merely made to spend three points where a specialist
 spends one, so keeping pace everywhere costs them everything. The
 trade-off is then a budget decision the player makes each level, rather
 than a wall the rules put in front of them.
+
+For a long time that last sentence was not true, and it is worth
+recording that it had to be earned. Measured across the test panel,
+every tracked skill on every build sat exactly at its ceiling from level
+five onward: the ceilings decided the combat sheet and the budget
+decided nothing, because there was nothing else on the menu worth
+buying and the points ran out of places to go. A price is only a
+trade-off while something else wants the money. What made this
+paragraph honest was giving the other end somewhere to spend — see
+[[using-powers|push]] and the design note in [[advancement]].
 {% endbook-only %}

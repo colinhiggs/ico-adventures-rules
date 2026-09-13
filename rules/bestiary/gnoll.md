@@ -27,6 +27,7 @@ mechanics:
     martial: initiate
     athletic: adept
   powers: [power_attack, sneak_attack, redouble]
+  push: 24
   levels_up: true
   preferred_disciplines: [athletic, martial]
   outlawed_disciplines: [magical, social]
