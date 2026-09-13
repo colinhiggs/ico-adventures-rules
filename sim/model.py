@@ -2334,7 +2334,12 @@ def power_expectation(char, power_id, difficulty, defender, M):
     step = int(p.get("difficulty_per_step", p.get("difficulty_per_extra_attack", 1)))
     steps = max(0, (difficulty - base_d) // step)
     bonus = step_damage(p, steps, M)
-    pierce = steps * int(p.get("reduction_ignored_per_step", 0))
+    # `base_reduction_ignored` is the grant for invoking the power at
+    # all, in the same idiom as `base_allies`. Without it the bottom of
+    # Find the Gap's band pierced nothing, which is a rung that buys
+    # nothing and so is not a rung.
+    pierce = (int(p.get("base_reduction_ignored", 0))
+              + steps * int(p.get("reduction_ignored_per_step", 0)))
     swings = extra_attacks(p, difficulty)
     weak_extras = bool(p.get("extra_attacks_deal_weapon_damage_only"))
 
@@ -2507,13 +2512,20 @@ def extra_attacks(p, difficulty):
 
 
 def chain_length(p, difficulty):
-    """How many further bodies a Follow Through cascades into."""
+    """How many further bodies a Follow Through cascades into.
+
+    `base_follow_through` is the grant for invoking it at all, in the
+    same idiom as `base_allies` and `base_targets`. This used to add one
+    step's worth unconditionally instead, which was a mechanic value
+    living in the simulator: the rules said the power granted nothing at
+    its own base difficulty and the model said it chained into a body,
+    and the model was the only place the truth was written down."""
     if "extra_follow_through_per_step" not in p:
         return 0
     step = int(p["difficulty_per_step"])
     steps = max(0, (difficulty - int(p["base_difficulty"])) // step)
-    per = int(p["extra_follow_through_per_step"])
-    return per + steps * per
+    return (int(p.get("base_follow_through", 0))
+            + steps * int(p["extra_follow_through_per_step"]))
 
 
 def sweep_targets(p, difficulty):
@@ -3164,12 +3176,15 @@ def deflect_plan(char, foe, M):
     base_d = int(p["base_difficulty"])
     step = int(p["difficulty_per_step"])
     per_step = int(p["damage_reduced_per_step"])
+    # This used to read `per_step * (1 + steps)`, which put Deflect's
+    # base grant in the simulator and nowhere else.
+    base_reduced = int(p.get("base_damage_reduced", 0))
     divisor = int(M.get("using-powers", "minimum_cost_divisor"))
     budget = char.stamina / float(TYPICAL_FIGHT_ROUNDS)
     skill = char.skill("dodge", M)
     best = None
     for difficulty in difficulty_band(p, 40, char=char):
-        reduction = per_step * (1 + (difficulty - base_d) // step)
+        reduction = base_reduced + per_step * ((difficulty - base_d) // step)
         landed, cost = _power_odds(skill, difficulty, M, divisor)
         if cost > budget:
             continue
@@ -4385,7 +4400,8 @@ def redouble_plan(char, M):
         chance = max(0.0, min(1.0, (20 - (difficulty - skill) + 1) / 20.0))
         if chance <= 0:
             break
-        bonus = ((difficulty - base) // step) * per_step
+        bonus = (int(p.get("base_dodge_bonus", 0))
+                 + ((difficulty - base) // step) * per_step)
         expected_cost = 0.0
         for face, weight, _crit in d20_faces(M):
             roll = face + skill
@@ -4869,7 +4885,9 @@ def floor_offence(char, foe, M):
                 damage += weight * damage_from(
                     char, foe, total - td, M,
                     bonus=0 if extras_power else step_damage(p, steps, M),
-                    pierce=0 if extras_power else steps * int(p.get("reduction_ignored_per_step", 0)))
+                    pierce=0 if extras_power else
+                    (int(p.get("base_reduction_ignored", 0))
+                     + steps * int(p.get("reduction_ignored_per_step", 0))))
                 for _ in range(swings):
                     damage += weight * damage_from(char, foe, total - td, M,
                                                    weapon_only=weak)
@@ -5040,7 +5058,8 @@ def _act(actor, target, plan, M, dodge_bonus=0):
             return
         actor.stamina -= cost
         bonus = step_damage(p, steps, M)
-        pierce = steps * int(p.get("reduction_ignored_per_step", 0))
+        pierce = (int(p.get("base_reduction_ignored", 0))
+                  + steps * int(p.get("reduction_ignored_per_step", 0)))
         weak = bool(p.get("extra_attacks_deal_weapon_damage_only"))
         extras = extra_attacks(p, difficulty)
         if (total >= td) if on_tie else (total > td):

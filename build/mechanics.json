@@ -297,8 +297,9 @@
         "tier": "minor",
         "source": "stamina",
         "skill": "attack_melee",
-        "base_difficulty": 2,
+        "base_difficulty": 6,
         "max_difficulty": 10,
+        "base_damage": 1,
         "difficulty_per_step": 4,
         "damage_per_step": 1
       },
@@ -320,6 +321,7 @@
         "skill": "attack_melee",
         "base_difficulty": 4,
         "max_difficulty": 20,
+        "base_follow_through": 1,
         "difficulty_per_step": 8,
         "extra_follow_through_per_step": 1,
         "triggers_on_dropping_a_target": true
@@ -355,6 +357,7 @@
         "skill": "attack_melee",
         "base_difficulty": 6,
         "max_difficulty": 22,
+        "base_reduction_ignored": 1,
         "difficulty_per_step": 2,
         "reduction_ignored_per_step": 1
       },
@@ -365,6 +368,7 @@
         "skill": "dodge",
         "base_difficulty": 4,
         "max_difficulty": 24,
+        "base_dodge_bonus": 1,
         "difficulty_per_step": 10,
         "dodge_bonus_per_step": 1
       },
@@ -376,6 +380,7 @@
         "skill": "dodge",
         "base_difficulty": 2,
         "max_difficulty": 16,
+        "base_dodge_bonus": 1,
         "difficulty_per_step": 14,
         "dodge_bonus_per_step": 1
       },
@@ -399,6 +404,7 @@
         "costs_the_reaction": true,
         "base_difficulty": 5,
         "max_difficulty": 20,
+        "base_damage_reduced": 2,
         "difficulty_per_step": 3,
         "damage_reduced_per_step": 2
       },
@@ -420,6 +426,7 @@
         "skill": "spot",
         "base_difficulty": 4,
         "max_difficulty": 18,
+        "base_initiative_bonus": 2,
         "difficulty_per_step": 2,
         "initiative_bonus_per_step": 2
       },
@@ -431,6 +438,7 @@
         "skill": "spot",
         "base_difficulty": 2,
         "max_difficulty": 14,
+        "base_reduction_ignored": 1,
         "difficulty_per_step": 6,
         "reduction_ignored_per_step": 1
       },
@@ -442,6 +450,7 @@
         "skill": "spot",
         "base_difficulty": 2,
         "max_difficulty": 12,
+        "base_facts": 1,
         "difficulty_per_step": 5,
         "facts_per_step": 1
       },
@@ -452,6 +461,7 @@
         "skill": "spot",
         "base_difficulty": 6,
         "max_difficulty": 30,
+        "base_ally_bonus": 1,
         "difficulty_per_step": 3,
         "ally_bonus_per_step": 1
       },
@@ -502,6 +512,7 @@
         "skill": "bluff",
         "base_difficulty": 2,
         "max_difficulty": 14,
+        "base_check_bonus": 1,
         "difficulty_per_step": 6,
         "check_bonus_per_step": 1
       },
@@ -512,6 +523,7 @@
         "skill": "intimidate",
         "base_difficulty": 4,
         "max_difficulty": 19,
+        "base_penalty": 1,
         "difficulty_per_step": 3,
         "penalty_per_step": 1
       },
@@ -693,6 +705,7 @@
         "skill": "fortitude",
         "base_difficulty": 8,
         "max_difficulty": 26,
+        "base_mastery_hp": 2,
         "difficulty_per_step": 3,
         "mastery_hp_per_step": 2
       }

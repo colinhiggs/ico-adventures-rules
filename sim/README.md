@@ -683,6 +683,28 @@ cost *falls* as a declared difficulty runs away, because the spell
 simply stops going off, so `MIN_FIELD_SUCCESS` requires the caster to
 land the thing at least half the time before it counts.
 
+## Two mechanic values that were living in here
+
+Found while giving every power a base grant, and worth naming because
+both had been correct for so long that nothing looked wrong.
+
+`chain_length` computed Follow Through's reach as `per + steps * per`,
+and `deflect_plan` computed Deflect's reduction as
+`per_step * (1 + steps)`. Each is a base grant of one step's worth,
+written in Python and in no rule file. The rules said both powers
+granted nothing at their own base difficulty; the model said otherwise;
+the model was right and was the only place it was written down.
+
+That is the failure mode the single-source rule exists for, and it is
+not loud. Neither produced a wrong number -- the prose for both powers
+described the grant in words, so the book was right too, and only the
+mechanics block disagreed. What it cost was that the value could not be
+swept, could not be read by an adventure, and would have been lost by
+anyone reimplementing from the rules.
+
+Both now read `base_follow_through` and `base_damage_reduced`. The check
+that the reading was right is that neither number moved.
+
 ## A hybrid buys both pools
 
 `power-sources.md` says physical powers cost stamina and magical ones
