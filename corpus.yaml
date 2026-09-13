@@ -1,0 +1,55 @@
+# What this ruleset declares about itself.
+#
+# Ico had no corpus.yaml for most of its life, because it wanted exactly
+# the toolset's default behaviour and a corpus that declares nothing
+# gets that. This file exists for one line of it — `collapse` on the
+# book target — and everything else here is the default written out
+# unchanged, because `targets` is declared as a whole or not at all.
+#
+# See rpg-master/rules-toolset/CORPUS.md for the format.
+
+# --- Document kinds -------------------------------------------------
+# The three the toolset defaults to, and the three Ico uses: a rule
+# document, a book section that exists to order other documents, and a
+# bestiary creature, which is found in an index rather than by
+# cross-reference and so is not warned about when nothing links to it.
+kinds:
+  rule:     { summary: required, data: [mechanics], discovery: link }
+  section:  { summary: optional, data: [mechanics], discovery: include }
+  creature: { summary: required, data: [mechanics], discovery: lookup }
+
+audiences: [book-only]
+roots: [rulebook]
+
+# --- Outputs --------------------------------------------------------
+targets:
+  book:
+    shape: book
+    root: rulebook
+    audiences: { default: keep }
+    # Every Ico rule document ends with a design note, and a design note
+    # is not how the rule works — it is how the rule was arrived at, and
+    # in a good many cases what was measured and rejected on the way.
+    # That is worth keeping and worth being able to find, and it is not
+    # worth walking through to get from one rule to the next. So the
+    # book renders them closed and a reader opens the ones they want.
+    #
+    # Declared here rather than in the documents because it is a
+    # property of the book and not of the rule: the same note is dropped
+    # from `snippets.json` altogether, by the audience policy below,
+    # and neither rule document says anything about either decision.
+    #
+    # One name covers all fifty-odd of them, including the fourteen that
+    # carry a subject after a colon or a dash.
+    collapse: ["Design note"]
+    output: build/book.html
+  snippets:
+    shape: snippets
+    # A snippet is a tooltip in the game engine. A design note is for a
+    # reader of the book, so `{% book-only %}` strips it here.
+    audiences: { default: drop }
+    output: build/snippets.json
+  mechanics:
+    shape: data
+    blocks: [mechanics]
+    output: build/mechanics.json
