@@ -65,12 +65,6 @@ The damaging spells are done: bolts, lances, and the three area families
   floor is wrong for level 1 or first-level damage is too high for
   first-level hit points, and nothing has decided which. See
   [balancing_notes.md](balancing_notes.md).
-- **The spell list's single-target line has two rungs and stops.**
-  Bolt into Lance is a ladder; there is nothing above Lance, so a
-  caster's top rung arrives early and then only widens. Bands have been
-  put on every spell so the mechanic is universal, but whether the
-  damaging spells need a third rung the way the martial line did is an
-  open measured question — see [balancing_notes.md](balancing_notes.md).
 - **The game has no top, and the level clock has consumers past
   fifteen.** Nothing declares a level cap. `sim/balance.py` measures at
   1, 5, 10 and 15 and the prose talks about "level fifteen" as though

@@ -1213,7 +1213,7 @@
           "energy"
         ],
         "base_difficulty": 8,
-        "max_difficulty": 34,
+        "max_difficulty": 22,
         "damage": 10,
         "difficulty_per_step": 2,
         "damage_per_step": 1,
@@ -1249,6 +1249,53 @@
       },
       "storm_lance": {
         "family": "lance",
+        "damage_type": "lightning",
+        "domains": [
+          "war"
+        ],
+        "condition": "dazed"
+      },
+      "comet": {
+        "schools": [
+          "energy"
+        ],
+        "base_difficulty": 22,
+        "max_difficulty": 38,
+        "damage": 17,
+        "difficulty_per_step": 2,
+        "damage_per_step": 2,
+        "difficulty_per_extra_bolt": 40,
+        "minimum_spirit": 6,
+        "needs_attack_roll": true,
+        "range": 10,
+        "applies_condition": true
+      },
+      "force_comet": {
+        "family": "comet",
+        "damage_type": "force",
+        "domains": [
+          "magic"
+        ],
+        "condition": "stunned"
+      },
+      "flame_comet": {
+        "family": "comet",
+        "damage_type": "fire",
+        "domains": [
+          "war"
+        ],
+        "condition": "burning"
+      },
+      "frost_comet": {
+        "family": "comet",
+        "damage_type": "cold",
+        "domains": [
+          "nature"
+        ],
+        "condition": "slowed"
+      },
+      "storm_comet": {
+        "family": "comet",
         "damage_type": "lightning",
         "domains": [
           "war"
