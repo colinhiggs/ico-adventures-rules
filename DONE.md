@@ -1631,3 +1631,98 @@ where the points really go.
   still there for the reservoir under a cut budget, and is recorded in
   `TODO.md`.
 
+## Every band opens on something now
+
+*Done, as a `base_*` grant on thirteen powers.* `TODO.md` carried this
+as "most powers deliver nothing at the bottom of their own band": the
+ladder gave every power a base difficulty and a maximum, and for most of
+them the base was the first number you could **say** rather than the
+first that bought anything.
+
+### It was thirteen, not ten, and the list was wrong in both directions
+
+Counting them mechanically -- a power has a hole if it carries a
+`*_per_step` effect and no matching `base_*` -- turns up thirteen:
+Precise Strike, Forewarned, Weak Point, Read the Room, Winning Manner,
+Sidestep, Redouble, Rattle, Find the Gap, Call the Shot, Second Wind,
+**Deflect** and **Follow Through**.
+
+The last two were on the entry's list of powers that *read correctly*,
+and they behaved correctly, and the reason they did is the interesting
+part: the simulator was hardcoding their base grant. `chain_length`
+computed `per + steps * per` and `deflect_plan` computed
+`per_step * (1 + steps)`. Both are mechanic values living in `sim/` and
+nowhere else, which is exactly what the single-source rule exists to
+prevent -- the rules said Follow Through chained into nothing at its own
+base difficulty and the model said it chained into a body.
+
+Their **prose** was right all along, and so was Read the Room's: all
+three described a base grant in words while the mechanics block had no
+key for it. So on those three the frontmatter was the odd one out, and
+the fix is that the prose now interpolates a real `base_*` key instead
+of borrowing the per-step value. Moving the hardcodes into the rules is
+numerically neutral, which is how the reading was checked.
+
+### The minor powers are the whole of the difficulty
+
+Five of the thirteen are **minor**, and minor powers ignore the minimum
+cost, so they trend to free. A base grant on one is therefore a
+permanent free bonus from first level -- which is why Precise Strike was
+given a base once before and had it taken away again.
+
+Measured one at a time, Precise Strike is the entire effect. Paragon
+floor ratio at level 5:
+
+| | L5 | L10 |
+|---|---|---|
+| no base grants on the minor five | 74% | 57% |
+| all five, Precise Strike at base difficulty `2` | **81%** | 60% |
+| Weak Point's grant removed | 81% | 60% |
+| Sidestep's grant removed | 81% | 60% |
+
+Weak Point and Sidestep move nothing. Precise Strike moves everything,
+and the mechanism is visible in the floor itself: at base difficulty `2`
+it became the best free option for **every** martial build, taking a
+level 5 paragon's empty-reservoir damage from `8.39` to `9.34` for
+nothing, for ever.
+
+### The fix for a free power is its base difficulty, not its grant
+
+A dead end worth recording, because it is the obvious first thought and
+it cannot work: raising `base_difficulty` *instead of* adding a grant
+fixes nothing. Steps are `(difficulty - base_difficulty) // step`, so
+the base always buys zero whatever the base is -- moving it only
+relabels the same hole.
+
+The two together do work, and for a free power they are the right
+answer. A minor power costs nothing once the roll beats
+`base_cost + difficulty`, so its base difficulty is what decides *when*
+the floor becomes free:
+
+| Precise Strike | paragon L5 | L10 |
+|---|---|---|
+| unfixed | 74% | 57% |
+| base `2` + grant | 81% | 60% |
+| base `6` + grant | **76%** | 57% |
+| base `8` + grant | 72% | 55% |
+
+`6` is what landed: a band that opens on something, at a cost of two
+points of floor ratio at level 5 and none at level 10. It also lands
+exactly on `character-creation.starting_push`, so the beginner's free
+trick sits precisely at the beginner's reach.
+
+### What the gates say, and what they cannot
+
+`all gates pass`. Party fight length goes from 4.4 / 5.4 / 4.0 / 6.6 to
+4.4 / 5.3 / 3.6 / 6.4, and the duels under the three-round floor drop
+from 28 to 26. The number to watch is level 10 at `3.6` rounds against a
+floor of `3.0`: this is a buff to thirteen powers and that is where it
+shows.
+
+**Six of the thirteen are invisible to `sim/`.** Second Wind, Rattle,
+Forewarned, Call the Shot, Read the Room and Winning Manner appear
+nowhere in it -- initiative, social checks, facts and mastery hit point
+restoration are all outside what it scores. For those six the gate run
+says nothing broke; it does not say the values are right, and no
+measurement here should be read as though it did.
+

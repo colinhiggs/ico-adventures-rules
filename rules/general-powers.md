@@ -29,6 +29,7 @@ mechanics:
     skill: fortitude
     base_difficulty: 8
     max_difficulty: 26
+    base_mastery_hp: 2
     difficulty_per_step: 3
     mastery_hp_per_step: 2
 ---
@@ -97,7 +98,8 @@ end.
 recovers {{ mechanics.second_wind.mastery_hp_per_step }} more)*
 
 Shrug off a near miss and keep going, recovering
-[[hit-points|mastery hit points]] but never core hit points.
+{{ mechanics.second_wind.base_mastery_hp }}
+[[hit-points|mastery hit points]] — but never core hit points.
 
 ## Example
 

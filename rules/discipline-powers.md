@@ -23,8 +23,9 @@ mechanics:
     tier: minor
     source: stamina
     skill: attack_melee
-    base_difficulty: 2
+    base_difficulty: 6
     max_difficulty: 10
+    base_damage: 1
     difficulty_per_step: 4
     damage_per_step: 1
   hammer_blow:
@@ -44,6 +45,7 @@ mechanics:
     skill: attack_melee
     base_difficulty: 4
     max_difficulty: 20
+    base_follow_through: 1
     difficulty_per_step: 8
     extra_follow_through_per_step: 1
     triggers_on_dropping_a_target: true
@@ -76,6 +78,7 @@ mechanics:
     skill: attack_melee
     base_difficulty: 6
     max_difficulty: 22
+    base_reduction_ignored: 1
     difficulty_per_step: 2
     reduction_ignored_per_step: 1
   redouble:
@@ -85,6 +88,7 @@ mechanics:
     skill: dodge
     base_difficulty: 4
     max_difficulty: 24
+    base_dodge_bonus: 1
     difficulty_per_step: 10
     dodge_bonus_per_step: 1
   sidestep:
@@ -95,6 +99,7 @@ mechanics:
     skill: dodge
     base_difficulty: 2
     max_difficulty: 16
+    base_dodge_bonus: 1
     difficulty_per_step: 14
     dodge_bonus_per_step: 1
   whirl:
@@ -116,6 +121,7 @@ mechanics:
     costs_the_reaction: true
     base_difficulty: 5
     max_difficulty: 20
+    base_damage_reduced: 2
     difficulty_per_step: 3
     damage_reduced_per_step: 2
   sneak_attack:
@@ -135,6 +141,7 @@ mechanics:
     skill: spot
     base_difficulty: 4
     max_difficulty: 18
+    base_initiative_bonus: 2
     difficulty_per_step: 2
     initiative_bonus_per_step: 2
   weak_point:
@@ -145,6 +152,7 @@ mechanics:
     skill: spot
     base_difficulty: 2
     max_difficulty: 14
+    base_reduction_ignored: 1
     difficulty_per_step: 6
     reduction_ignored_per_step: 1
   read_the_room:
@@ -155,6 +163,7 @@ mechanics:
     skill: spot
     base_difficulty: 2
     max_difficulty: 12
+    base_facts: 1
     difficulty_per_step: 5
     facts_per_step: 1
   call_the_shot:
@@ -164,6 +173,7 @@ mechanics:
     skill: spot
     base_difficulty: 6
     max_difficulty: 30
+    base_ally_bonus: 1
     difficulty_per_step: 3
     ally_bonus_per_step: 1
   anticipate:
@@ -208,6 +218,7 @@ mechanics:
     skill: bluff
     base_difficulty: 2
     max_difficulty: 14
+    base_check_bonus: 1
     difficulty_per_step: 6
     check_bonus_per_step: 1
   rattle:
@@ -217,6 +228,7 @@ mechanics:
     skill: intimidate
     base_difficulty: 4
     max_difficulty: 19
+    base_penalty: 1
     difficulty_per_step: 3
     penalty_per_step: 1
   rally:
@@ -296,9 +308,10 @@ and {{ mechanics.power_attack.damage_per_step }} more for each further
 **Precise Strike** *(Initiate, **minor**; stamina, melee attack,
 difficulty {{ mechanics.precise_strike.base_difficulty }} to
 {{ mechanics.precise_strike.max_difficulty }})*
-— placing the blow rather than forcing it. Each further
-{{ mechanics.precise_strike.difficulty_per_step }} points of difficulty
-adds {{ mechanics.precise_strike.damage_per_step }} damage.
+— placing the blow rather than forcing it. It adds
+{{ mechanics.precise_strike.base_damage }} damage at the base
+difficulty, and {{ mechanics.precise_strike.damage_per_step }} more for
+each further {{ mechanics.precise_strike.difficulty_per_step }} points.
 
 **Hammer Blow** *(Adept; stamina, melee attack, difficulty
 {{ mechanics.hammer_blow.base_difficulty }} to
@@ -321,7 +334,7 @@ difficulty {{ mechanics.follow_through.base_difficulty }} to
 — when your attack drops a target outright, carry the same swing into
 another enemy
 you can reach and resolve it as a fresh attack. The chain runs
-{{ mechanics.follow_through.extra_follow_through_per_step }} body deep
+{{ mechanics.follow_through.base_follow_through }} body deep
 for the base difficulty, and
 {{ mechanics.follow_through.extra_follow_through_per_step }} deeper for
 each further {{ mechanics.follow_through.difficulty_per_step }} points.
@@ -358,10 +371,12 @@ When an attack against you misses, spend your reaction (see
 **Find the Gap** *(Adept; stamina, melee attack, difficulty
 {{ mechanics.find_the_gap.base_difficulty }} to
 {{ mechanics.find_the_gap.max_difficulty }})* — a blow aimed at a
-join or a strap. Each further
-{{ mechanics.find_the_gap.difficulty_per_step }} points of difficulty
-ignores {{ mechanics.find_the_gap.reduction_ignored_per_step }} point of
-the target's damage reduction — worn armour and a raised shield alike.
+join or a strap. It ignores
+{{ mechanics.find_the_gap.base_reduction_ignored }} point of the
+target's damage reduction — worn armour and a raised shield alike — and
+{{ mechanics.find_the_gap.reduction_ignored_per_step }} more for each
+further {{ mechanics.find_the_gap.difficulty_per_step }} points of
+difficulty.
 
 **Killing Blow** *(Master signature)* — your attacks convert margin
 into damage at
@@ -373,18 +388,20 @@ instead of the usual half. See [[damage]].
 **Redouble** *(Initiate; stamina, dodge, difficulty
 {{ mechanics.redouble.base_difficulty }} to
 {{ mechanics.redouble.max_difficulty }})* — thrown weight and a
-second movement. Each further
-{{ mechanics.redouble.difficulty_per_step }} points of difficulty adds
-{{ mechanics.redouble.dodge_bonus_per_step }} to your targeting
-difficulty against one attack, if you are dodging.
+second movement. If you are dodging, add
+{{ mechanics.redouble.base_dodge_bonus }} to your targeting difficulty
+against one attack, and {{ mechanics.redouble.dodge_bonus_per_step }}
+more for each further {{ mechanics.redouble.difficulty_per_step }}
+points of difficulty.
 
 **Sidestep** *(Initiate, **minor**; stamina, dodge, difficulty
 {{ mechanics.sidestep.base_difficulty }} to
 {{ mechanics.sidestep.max_difficulty }})* — a small, cheap shift of
-weight. Each further
-{{ mechanics.sidestep.difficulty_per_step }} points of difficulty adds
-{{ mechanics.sidestep.dodge_bonus_per_step }} to your targeting
-difficulty against one attack, if you are dodging.
+weight. If you are dodging, add
+{{ mechanics.sidestep.base_dodge_bonus }} to your targeting difficulty
+against one attack, and {{ mechanics.sidestep.dodge_bonus_per_step }}
+more for each further {{ mechanics.sidestep.difficulty_per_step }}
+points of difficulty.
 
 **Whirl** *(Adept; stamina, melee attack, difficulty
 {{ mechanics.whirl.base_difficulty }} to
@@ -402,8 +419,9 @@ adds, and nothing for how cleanly the roll landed.
 {{ mechanics.deflect.base_difficulty }} to
 {{ mechanics.deflect.max_difficulty }})* — you cannot avoid the blow,
 so you take it at an angle. Spend your reaction (see [[turn-order]]) to
-reduce the damage of one blow that has already landed by {{ mechanics.deflect.damage_reduced_per_step }}, and
-by {{ mechanics.deflect.damage_reduced_per_step }} more for each further
+reduce the damage of one blow that has already landed by
+{{ mechanics.deflect.base_damage_reduced }}, and by
+{{ mechanics.deflect.damage_reduced_per_step }} more for each further
 {{ mechanics.deflect.difficulty_per_step }} points of difficulty. This
 reduction is not armour and is not subject to the cap in [[damage]].
 
@@ -426,24 +444,28 @@ you cannot move like that in plate.
 
 **Forewarned** *(Initiate; stamina, spot, difficulty
 {{ mechanics.forewarned.base_difficulty }} to
-{{ mechanics.forewarned.max_difficulty }})* — you saw it coming. Each
+{{ mechanics.forewarned.max_difficulty }})* — you saw it coming. Add
+{{ mechanics.forewarned.base_initiative_bonus }} to your place in the
+order for the coming fight, and
+{{ mechanics.forewarned.initiative_bonus_per_step }} more for each
 further {{ mechanics.forewarned.difficulty_per_step }} points of
-difficulty adds {{ mechanics.forewarned.initiative_bonus_per_step }} to
-your place in the order for the coming fight — see [[turn-order]].
+difficulty — see [[turn-order]].
 
 **Weak Point** *(Initiate, **minor**; stamina, spot, difficulty
 {{ mechanics.weak_point.base_difficulty }} to
 {{ mechanics.weak_point.max_difficulty }})* — you spot the strap, the
-gap, the badly-set plate, and say so. Each further
-{{ mechanics.weak_point.difficulty_per_step }} points of difficulty
-ignores {{ mechanics.weak_point.reduction_ignored_per_step }} point of
-the target's damage reduction on your next blow.
+gap, the badly-set plate, and say so. Your next blow ignores
+{{ mechanics.weak_point.base_reduction_ignored }} point of the target's
+damage reduction, and
+{{ mechanics.weak_point.reduction_ignored_per_step }} more for each
+further {{ mechanics.weak_point.difficulty_per_step }} points of
+difficulty.
 
 **Read the Room** *(Initiate, **minor**; stamina, spot, difficulty
 {{ mechanics.read_the_room.base_difficulty }} to
 {{ mechanics.read_the_room.max_difficulty }})* — a moment spent working
 out who actually matters. Learn
-{{ mechanics.read_the_room.facts_per_step }} true thing about the
+{{ mechanics.read_the_room.base_facts }} true thing about the
 opposition — which of them is the most dangerous, which is the least
 armoured, which is about to break — and
 {{ mechanics.read_the_room.facts_per_step }} more for each further
@@ -454,6 +476,7 @@ The Dungeon Master answers honestly.
 {{ mechanics.call_the_shot.base_difficulty }} to
 {{ mechanics.call_the_shot.max_difficulty }})* — you saw the opening
 and said so in time. An ally's next attack gains
+`+{{ mechanics.call_the_shot.base_ally_bonus }}`, and a further
 `+{{ mechanics.call_the_shot.ally_bonus_per_step }}` for each
 {{ mechanics.call_the_shot.difficulty_per_step }} points of difficulty
 beyond the base.
@@ -477,17 +500,20 @@ inverting the usual guess in [[hitting]].
 **Winning Manner** *(Initiate, **minor**; spirit, bluff, difficulty
 {{ mechanics.winning_manner.base_difficulty }} to
 {{ mechanics.winning_manner.max_difficulty }})* — you are simply easy
-to agree with. Add `+{{ mechanics.winning_manner.check_bonus_per_step }}`
-to one social skill check for each
-{{ mechanics.winning_manner.difficulty_per_step }} points of difficulty
-beyond the base.
+to agree with. Add
+`+{{ mechanics.winning_manner.base_check_bonus }}` to one social skill
+check, and `+{{ mechanics.winning_manner.check_bonus_per_step }}` more
+for each {{ mechanics.winning_manner.difficulty_per_step }} points of
+difficulty beyond the base.
 
 **Rattle** *(Initiate; spirit, intimidate, difficulty
 {{ mechanics.rattle.base_difficulty }} to
 {{ mechanics.rattle.max_difficulty }})* — a word, a look, a laugh at
 the wrong moment. One creature that can see and hear you takes
-`-{{ mechanics.rattle.penalty_per_step }}` on its next roll for each
-further {{ mechanics.rattle.difficulty_per_step }} points of difficulty.
+`-{{ mechanics.rattle.base_penalty }}` on its next roll, and a further
+`-{{ mechanics.rattle.penalty_per_step }}` for each
+{{ mechanics.rattle.difficulty_per_step }} points of difficulty beyond
+the base.
 This is Social's contribution to a fight, and it works on anything with
 a mind to unsettle.
 
