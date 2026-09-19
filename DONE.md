@@ -16,6 +16,11 @@ Entries keep the headings they had in `TODO.md`, and an entry that
 still has something outstanding stayed there rather than coming here,
 however much of it was finished.
 
+The **Now:** line an entry carried while it was in flight does not come
+with it: that line was always about the present, and the present has
+moved on. Whatever it held that is still worth having gets written into
+the body of the entry before it moves.
+
 ## The spell list
 
 - **Curing and restorative.** *Done: Mend, Cure Wounds, Cleanse,
