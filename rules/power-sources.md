@@ -7,7 +7,7 @@ summary: >
   spend spirit, based on will.
 mechanics:
   stamina_base: constitution
-  spirit_base: will
+  spirit_base: willpower
   physical_powers_cost: stamina
   magical_powers_cost: spirit
 ---
