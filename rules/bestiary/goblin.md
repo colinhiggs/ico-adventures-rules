@@ -30,7 +30,7 @@ mechanics:
   outlawed_disciplines: [magical, spiritual]
   mastery_hit_points: 4
   core_hit_points: 8
-  stamina: 5
+  stamina: 8
   spirit: 0
   stance: dodge
   weapon: short_sword
