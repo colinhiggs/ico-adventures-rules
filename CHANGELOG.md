@@ -8,6 +8,66 @@ Every MAJOR entry must name its renames and removals old-to-new. That
 list is the whole reason this file exists: without it, "revisit your
 adventure" is a search, and with it, it is a substitution.
 
+## 2.7.0
+
+**Two values moved, and no name was added, renamed or removed.** An
+adventure built against 2.6.1 still refers to everything it referred
+to before. Nothing has to be revisited by hand; both changes are
+corrections rather than retunes, and neither changes what any number
+applies to.
+
+| key | was | is |
+|---|---|---|
+| `power-sources.spirit_base` | `will` | `willpower` |
+| `goblin.stamina` | `5` | `8` |
+
+### `spirit_base` named an attribute that does not exist
+
+Spirit's base value is a character's willpower, and the mechanic said
+`will`. The six attributes are strength, dexterity, constitution,
+intelligence, willpower and charisma; `will` is not one of them, and
+was the only occurrence of that spelling anywhere in the ruleset.
+
+Nothing was reading it, which is why it survived. The prose
+interpolates the value — "Its base value is a character's
+{{ mechanics.spirit_base }}" — and "a character's will" reads as
+English rather than as a dangling reference, three lines above an
+example that says "Sela has willpower `15`, giving her a base spirit of
+`15`". `sim/model.py` takes `attributes["willpower"]` directly rather
+than looking the name up, so the one consumer that could have caught it
+was not using the key.
+
+An adventure that quoted the value in its own text should reread the
+sentence; nothing else follows. The gates did not move, and could not
+have.
+
+### A creature's power sources start where a character's do
+
+The goblin's `stamina` was `5` against a constitution of `8`. Stamina's
+base value is constitution for anybody, and advancement only ever
+widens it, so a creature below its own base is not a convention — it is
+a slip. The other four were already right: the orc's stamina equals its
+constitution exactly, and the gnoll, hobgoblin and hill giant are all
+above theirs, which is what a creature that has spent advancement looks
+like.
+
+It matters more than one number because `rules/bestiary/goblin.md` is
+the stat block `SHARING.md` tells creature authors to copy. The
+convention is now written down there: a creature's stamina is its
+constitution and its spirit its willpower, the same derivation a
+character gets, and an intelligent creature advances the same way now
+that `levels_up` exists.
+
+An encounter that leaned on a goblin running out of stamina should be
+re-checked. Goblins have no powers in the stat block, so for most
+adventures this is inert.
+
+Spirit is deliberately untouched. It is `0` on all five creatures
+against willpowers of `8` to `12`, and every one of them has the
+magical and spiritual disciplines outlawed — but social powers draw on
+spirit too, so whether `0` is right is a live question rather than a
+settled convention, and it is five values rather than one.
+
 ## 2.6.1
 
 **No mechanic value changed.** Nothing added, nothing renamed, nothing
