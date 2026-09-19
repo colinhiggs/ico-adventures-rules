@@ -76,8 +76,24 @@ A new creature is a MINOR change: it adds a name and takes nothing
 away. It does not need a release of its own — the rules project tags
 when it next merges to `main`.
 
-One thing to know while writing it: `challenge_level` is an author's
-estimate. The simulator cannot yet load a creature and measure it
+Two things to know while writing it.
+
+**A creature's power sources start where a character's do.** Stamina is
+its constitution and spirit is its willpower, the same derivation
+`power-sources.md` states for anybody — a creature is not a different
+kind of thing, and now that `levels_up` exists an intelligent one
+advances the way a character does. Write the stat block's `stamina` and
+`spirit` out in full rather than leaving them to be inferred, but let
+the attribute decide the number. Above the attribute is fine and means
+the creature has spent advancement on it: the gnoll, hobgoblin and hill
+giant are all widened that way. *Below* it is not a thing that can
+happen, and the goblin said `5` against a constitution of `8` for a
+while because nothing was checking. Spirit is `0` throughout the
+bestiary today, which is a live question rather than a convention —
+every creature in it has the magical and spiritual disciplines
+outlawed, but social powers draw on spirit too.
+
+**`challenge_level` is an author's estimate.** The simulator cannot yet load a creature and measure it
 against the archetype panel, so nothing has checked that number. Pitch
 it against the goblin, and expect it to be revised when the loader
 lands.
