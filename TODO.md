@@ -16,6 +16,49 @@ question that has been measured hard but not decided. Read it before
 reopening anything it covers: the numbers are expensive to produce and
 the dead ends are the expensive part to rediscover.
 
+## How an entry moves
+
+There are four places an entry can be, and the place it is in *is* its
+status. Nothing carries a status field.
+
+- **An area section** below — parked. Nobody is working on it.
+- **In flight**, immediately below this — being worked on now. At most
+  three, and the limit is the point: a fourth thing in flight means
+  three things are half-finished.
+- **[balancing_notes.md](balancing_notes.md)** — measured hard, not
+  decided.
+- **[DONE.md](DONE.md)** — finished.
+
+An entry travels whole and keeps the area heading it came from, which
+is why those headings are mirrored in `DONE.md`.
+
+An entry in flight gains a **Now:** paragraph saying what is true as of
+the last time it was touched, and may carry a checklist of the steps
+left. The rule that makes this worth doing:
+
+> **Now: is rewritten, never appended to.**
+
+Anything in a superseded **Now:** still worth keeping — a measurement,
+a dead end, a reason something was abandoned — moves into the body of
+the entry, or to `balancing_notes.md` or `DONE.md`. Otherwise it goes,
+and git holds the history. Several entries below predate this and read
+as three layers of amendment stacked on one headline, so that knowing
+what is currently true means reading the whole thing and working out
+which sentence has not yet been contradicted; they are left as they
+are, and nothing new should be written that way.
+
+A blocked entry is not a fifth place. It stays in flight with a
+**Blocked:** line naming what it waits on, and keeps occupying one of
+the three slots — that is what makes a block cost something. If it will
+be blocked for weeks it goes back to its area section, which is an
+honest statement that nobody is working on it.
+
+## In flight
+
+*Nothing.*
+
+---
+
 ## The spell list
 
 The damaging spells are done: bolts, lances, and the three area families
